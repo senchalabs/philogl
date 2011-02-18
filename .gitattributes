@@ -1,0 +1,10 @@
+.gitignore export-ignore
+.gitattributes export-ignore
+build/compiler.jar export-ignore
+build/build.py export-ignore
+build.sh export-ignore
+examples export-ignore
+shaders export-ignore
+TODO export-ignore
+src export-ignore
+tests export-ignore
