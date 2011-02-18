@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Math</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>Math</h1>
+
+<h1 id='Math'>Script: Math</h1>
+
+<p>The Math script provides <code>Vec3</code> and <code>Mat4</code> classes to manage three dimensional vectors and four by four matrices respectively.</p>
+
+<h3 id='generics'>Generics:</h3>
+
+<p>One very interesting thing to point about the Math script is that all <code>Vec3</code> and <code>Mat4</code> methods are generics. This means that all instance methods of <code>Vec3</code> and <code>Mat4</code> can also be accessed as static methods in which the first parameter of the static method is the receiver. The receiver does not <em>have to be</em> an instance of the class but can instead be a <code>Vec3</code>-like or <code>Mat4</code>-like object. This means that a simple object (i.e <code>{}</code>) can be used as the receiver for these methods.</p>
+
+<p>Although the <em>syntax</em> section for each method will include the generic and non-generic one, the arguments for each method will be described as with the instance method syntax.</p>
+
+<h3 id='chainable_methods'>Chainable Methods:</h3>
+
+<p>All methods that do not return something in particular in the math package are chainable.</p>
+
+<h3 id='conventions'>Conventions:</h3>
+
+<p>Say you want to add two <code>Vec3</code> vectors, <code>v1</code> and <code>v2</code>. Then there are three ways of performing this operation:</p>
+
+<ol>
+<li><code>v1.add(v2)</code> Returns a new class with the result of adding <code>v1</code> and <code>v2</code>. This operation does not modify <code>v1</code> or <code>v2</code>.</li>
+
+<li><code>v1.$add(v2)</code> Returns the result of adding <code>v1</code> to <code>v2</code>, but it alters <code>v1</code> updating it with the result.</li>
+
+<li><code>vResult.add2(v1, v2)</code> Stores the result of adding <code>v1</code> to <code>v2</code> in <code>vResult</code>, another <code>Vec3</code> instance.</li>
+</ol>
+
+<p>These are the conventions we will be using for method naming. Methods altering the receiver will have a dollar sign (i.e. <code>$</code>), as opposed to methods creating a new instance with the result. Methods requiring a receiver <em>and</em> the instances involved in the operation as formal parameters will be suffixed with the number <code>2</code>.</p>
+
+<h1 id='Vec3'>Class: Vec3</h1>
+
+<p>A class to handle three dimensional vectors.</p>
+
+<h2 id='Vec3:constructor'>Vec3 Method: constructor</h2>
+
+<p>Creates a new <code>Vec3</code> instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var v = new PhiloGL.Vec3(x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>, optional) The x component. If not provided is 0.</li>
+
+<li>y - (<em>number</em>, optional) The y component. If not provided is 0.</li>
+
+<li>z - (<em>number</em>, optional) The z component. If not provided is 0.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a (0, 0, 0) vector.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>();</span>
+</code></pre>
+</div>
+<p>Create a (1, 2, 3) vector.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:setVec3'>Vec3 Method: setVec3</h2>
+
+<p>Set <code>x</code>, <code>y</code>, <code>z</code> coordinates of one <code>Vec3</code> into another <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.setVec3(v2);
+
+PhiloGL.Vec3.setVec3(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and assign one vectors components to the other one.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>setVec3</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 now contains (x=4, y=5, z=6)</span>
+</code></pre>
+</div>
+<p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code> components to another object.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>setVec3</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 now has (x=4, y=5, z=6)</span>
+</code></pre>
+</div>
+<h2 id='Vec3:set'>Vec3 Method: set</h2>
+
+<p>Set <code>x</code>, <code>y</code>, <code>z</code> coordinates.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.set(x, y, z);
+
+PhiloGL.Vec3.set(v1, x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The x coordinate.</li>
+
+<li>y - (<em>number</em>) The y coordinate.</li>
+
+<li>z - (<em>number</em>) The z coordinate.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and assign one vectors components to the other one.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>);</span> <span class='c1'>//v1 now contains (x=4, y=5, z=6)</span>
+</code></pre>
+</div>
+<p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code> components to another object.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>);</span> <span class='c1'>//v1 now has (x=4, y=5, z=6)</span>
+</code></pre>
+</div>
+<h2 id='Vec3:add'>Vec3 Method: add</h2>
+
+<p>Adds the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects. Creates a new <code>Vec3</code> instance and does not modify the original objects.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.add(v2);
+
+PhiloGL.Vec3.add(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(5, 7, 9) was created.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(5, 7, 9) was created.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$add'>Vec3 Method: $add</h2>
+
+<p>Adds the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects. Modifies the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$add(v2);
+
+PhiloGL.Vec3.$add(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now Vec3(5, 7, 9).</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: 5, y: 7, z: 9 }.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:add2'>Vec3 Method: add2</h2>
+
+<p>Adds the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects and stores the result in the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.add2(v2, v3);
+
+PhiloGL.Vec3.add2(v1, v2, v3);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+
+<li>v3 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>add2</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v1 is now Vec3(5, 7, 9), v2 and v3 are unchanged.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>add2</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v2 and v3 are still the same but v1 is { x: 5, y: 7, z: 9 }.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:sub'>Vec3 Method: sub</h2>
+
+<p>Substracts the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects. Creates a new <code>Vec3</code> instance and does not modify the original objects.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.sub(v2);
+
+PhiloGL.Vec3.sub(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(-3, -3, -3) was created.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(-3, -3, -3) was created.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$sub'>Vec3 Method: $sub</h2>
+
+<p>Substracts the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects. Modifies the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$sub(v2);
+
+PhiloGL.Vec3.$sub(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now Vec3(-3, -3, -3).</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: -3, y: -3, z: -3 }.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:sub2'>Vec3 Method: sub2</h2>
+
+<p>Substracts the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Vec3</code> objects and stores the result in the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.sub2(v2, v3);
+
+PhiloGL.Vec3.sub2(v1, v2, v3);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+
+<li>v3 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>sub2</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v1 is now Vec3(-3, -3, -3), v2 and v3 are unchanged.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>sub2</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v2 and v3 are still the same but v1 is { x: -3, y: -3, z: -3 }.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:scale'>Vec3 Method: scale</h2>
+
+<p>Scales the Vec3 vector by a real number. Creates a new Vec3 with the scaled components.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.scale(s);
+
+PhiloGL.Vec3.scale(v1, s);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>s - (<em>number</em>) A real number to scale the Vec3.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is unchanged but a new Vec3(2, 4, 6) is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3(2, 4, 6) was created.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$scale'>Vec3 Method: $scale</h2>
+
+<p>Scales the Vec3 vector by a real number. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$scale(s);
+
+PhiloGL.Vec3.$scale(v1, s);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>s - (<em>number</em>) A real number to scale the Vec3.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is now Vec3(2, 4, 6).</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: 2, y: 4, z: 6 }.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:neg'>Vec3 Method: neg</h2>
+
+<p>Negates a <code>Vec3</code>. Returns a new instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.neg();
+
+PhiloGL.Vec3.neg(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>();</span> <span class='c1'>//v1 is unchanged but a new Vec3(-1, -2, -3) is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3(-1, -2, -3).</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$neg'>Vec3 Method: $neg</h2>
+
+<p>Negates a <code>Vec3</code>. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$neg();
+
+PhiloGL.Vec3.$neg(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$neg</span><span class='p'>();</span> <span class='c1'>//v1 is now Vec3(-1, -2, -3).</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: -1, y: -2, z: -3).</span>
+</code></pre>
+</div>
+<h2 id='Vec3:unit'>Vec3 Method: unit</h2>
+
+<p>Creates a unit vector from the coordinates of <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.unit();
+
+PhiloGL.Vec3.unit(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and make a unit vector from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>();</span> <span class='c1'>//v1 is unchanged but a new unit vector Vec3 is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and make a unit vector from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3 that is a unit vector is created.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$unit'>Vec3 Method: $unit</h2>
+
+<p>Creates a unit vector from the <code>Vec3</code> coordinates. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$unit();
+
+PhiloGL.Vec3.$unit(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and make a unit vector from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>();</span> <span class='c1'>//v1 is now a unit vector.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object make a unit vector from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is now a unit vector object.</span>
+</code></pre>
+</div>
+<h2 id='Vec3:cross'>Vec3 Method: cross</h2>
+
+<p>Makes a cross product of two <code>Vec3</code> instances. Creates a new <code>Vec3</code> and does not modify the original objects. You can find more information about the cross product <a href='http://en.wikipedia.org/wiki/Cross_product'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.cross(v2);
+
+PhiloGL.Vec3.cross(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and make a cross product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>cross</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3 was created with the result.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and make a cross product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//v1 and v2 are still the same but a new Vec3 with the result was created.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>cross</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:$cross'>Vec3 Method: $cross</h2>
+
+<p>Makes a cross product of two <code>Vec3</code> instances. Modifies the original object. You can find more information about the cross product <a href='http://en.wikipedia.org/wiki/Cross_product'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.$cross(v2);
+
+PhiloGL.Vec3.$cross(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and make a cross product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>$cross</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 contains now the result.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and make a cross product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//v1 contains now the result.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$cross</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:distTo'>Vec3 Method: distTo</h2>
+
+<p>Calculates the distance between two <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.distTo(v2);
+
+PhiloGL.Vec3.distTo(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and calculate the distance.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>distTo</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//a real value with the distance is returned.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate their distance.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//a real number with the distance is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>distTo</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:distToSq'>Vec3 Method: distToSq</h2>
+
+<p>Calculates the squared distance between two <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.distToSq(v2);
+
+PhiloGL.Vec3.distToSq(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and calculate the squared distance.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>distToSq</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//a real value with the squared distance is returned.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate their squared distance.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//a real number with the squared distance is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>distToSq</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:norm'>Vec3 Method: norm</h2>
+
+<p>Calculates the norm of <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.norm();
+
+PhiloGL.Vec3.norm(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and calculate its norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>vi</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>();</span> <span class='c1'>//returns the real valued norm.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and calculate its norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//A real number with the norm is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:normSq'>Vec3 Method: normSq</h2>
+
+<p>Calculates the squared norm of <code>Vec3</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.normSq();
+
+PhiloGL.Vec3.normSq(v1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector and calculate its squared norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>);</span>
+
+  <span class='nx'>vi</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>();</span> <span class='c1'>//returns the real valued norm.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and calculate its squared norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//A real number with the squared norm is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:dot'>Vec3 Method: dot</h2>
+
+<p>Calculates the dot product between two <code>Vec3</code>. You can find more information about the dot product <a href='http://en.wikipedia.org/wiki/Dot_product'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.dot(v2);
+
+PhiloGL.Vec3.dot(v1, v2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v2 - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two vectors and calculate the dot product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>);</span>
+
+  <span class='nx'>v1</span><span class='p'>.</span><span class='nx'>dot</span><span class='p'>(</span><span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//a real value with the dot product is returned.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate the dot product.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
+      <span class='p'>},</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//a real number with the dot product is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>dot</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Vec3:clone'>Vec3 Method: clone</h2>
+
+<p>Clones a vector.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>v1.clone();
+
+PhiloGL.Vec3.clone(v1);</code></pre>
+
+<h1 id='Mat4'>Class: Mat4</h1>
+
+<p>A class to handle four by four matrices.</p>
+
+<h2 id='Mat4:constructor'>Mat4 Method: constructor</h2>
+
+<p>Creates a new <code>Mat4</code> instance. If no arguments are set then an Identity matrix is created.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var m = new PhiloGL.Mat4();
+
+var m = new PhiloGL.Mat4(n11, n12, n13, n14,
+                         n21, n22, n23, n24,
+                         n31, n32, n33, n34,
+                         n41, n42, n43, n44);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>n - (<em>number</em>) The matrix component.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create an identity matrix.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+</code></pre>
+</div>
+<p>Create a null matrix.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='mi'>0</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:id'>Mat4 Method: id</h2>
+
+<p>Modifies the matrix to be an Identity matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.id();
+
+PhiloGL.Mat4.id(m);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create an identity matrix from some random matrix.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                            <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                            <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                            <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>();</span> <span class='c1'>//m is now the Identity matrix.</span>
+</code></pre>
+</div>
+<p>Create an identity matrix object.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span> <span class='c1'>//m object components are the Identity matrix ones.</span>
+</code></pre>
+</div>
+<h2 id='Mat4:set'>Mat4 Method: set</h2>
+
+<p>Set all matrix coordinates.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.set(n11, n12, n13, n14,
+      n21, n22, n23, n24,
+      n31, n32, n33, n34,
+      n41, n42, n43, n44);
+
+PhiloGL.Mat4.set(m, n11, n12, n13, n14,
+                    n21, n22, n23, n24,
+                    n31, n32, n33, n34,
+                    n41, n42, n43, n44);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>n - (<em>number</em>) The n matrix coordinates.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a matrix and set some values to it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+</code></pre>
+</div>
+<p>Set an empty object matrix coordinates onto some values.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                      <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                      <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
+                      <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:mulVec3'>Mat4 Method: mulVec3</h2>
+
+<p>Multiplies a <code>Mat4</code> by a <code>Vec3</code>. Returns a new <code>Vec3</code> without modifying the passed in object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.mulVec3(v);
+
+PhiloGL.Mat4.mulVec3(m, v);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a matrix and a vector and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>mulVec3</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>);</span>
+</code></pre>
+</div>
+<p>Create a matrix object and a vector object and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>mulVec3</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$mulVec3'>Mat4 Method: $mulVec3</h2>
+
+<p>Multiplies a <code>Mat4</code> by a <code>Vec3</code>. Modifies the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$mulVec3(v);
+
+PhiloGL.Mat4.$mulVec3(m, v);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v - (<em>object</em>) A <code>Vec3</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a matrix and a vector and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$mulVec3</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>);</span>
+</code></pre>
+</div>
+<p>Create a matrix object and a vector object and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$mulVec3</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:mulMat4'>Mat4 Method: mulMat4</h2>
+
+<p>Multiplies two <code>Mat4</code>. Creates a new <code>Mat4</code> with the result and does not modify the original instances.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.mulMat4(m1);
+
+PhiloGL.Mat4.mulMat4(m, m1);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m1 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two matrices and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>mulMat4</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span> <span class='c1'>//the result is a new Identity matrix</span>
+</code></pre>
+</div>
+<p>Create a two matrices objects and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>mulMat4</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>m1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$mulMat4'>Mat4 Method: $mulMat4</h2>
+
+<p>Multiplies two <code>Mat4</code>, storing the result in the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$mulMat4(m1);
+
+PhiloGL.Mat4.$mulMat4(m, m1);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m1 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two matrices and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$mulMat4</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span> <span class='c1'>//the result is stored in m.</span>
+</code></pre>
+</div>
+<p>Create a two matrices objects and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$mulMat4</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>m1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:mulMat42'>Mat4 Method: mulMat42</h2>
+
+<p>Multiplies two <code>Mat4</code>, storing the result in the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.mulMat42(m1, m2);
+
+PhiloGL.Mat4.mulMat42(m, m1, m2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m1 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+
+<li>m2 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two matrices and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>mulMat42</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>,</span> <span class='nx'>m2</span><span class='p'>);</span> <span class='c1'>//the result is stored in m.</span>
+</code></pre>
+</div>
+<p>Create a two matrices objects and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m2</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m2</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>mulMat42</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>m1</span><span class='p'>,</span> <span class='nx'>m2</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:add'>Mat4 Method: add</h2>
+
+<p>Adds two <code>Mat4</code>. Creates a new <code>Mat4</code> with the result and does not modify the original instances.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.add(m1);
+
+PhiloGL.Mat4.add(m, m1);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m1 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two matrices and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<p>Create a two matrices objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>m1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$add'>Mat4 Method: $add</h2>
+
+<p>Adds two <code>Mat4</code>, storing the result in the receiver.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$add(m1);
+
+PhiloGL.Mat4.$add(m, m1);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m1 - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two matrices and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span> <span class='c1'>//the result is stored in m.</span>
+</code></pre>
+</div>
+<p>Create a two matrices objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>m1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Mat4:transpose'>Mat4 Method: transpose</h2>
+
+<p>Transposes a <code>Mat4</code> matrix. More info about this operation can be found <a href='http://en.wikipedia.org/wiki/Matrix_transpose'>here</a>. Creates a new <code>Mat4</code> with the result.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.transpose();
+
+PhiloGL.Mat4.transpose(m);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a <code>Mat4</code> matrix and transpose it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>transpose</span><span class='p'>();</span> <span class='c1'>//the result is a new Identity matrix</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$transpose'>Mat4 Method: $transpose</h2>
+
+<p>Transposes a <code>Mat4</code> matrix. More info about this operation can be found <a href='http://en.wikipedia.org/wiki/Matrix_transpose'>here</a>. Modifies the current matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$transpose();
+
+PhiloGL.Mat4.$transpose(m);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a <code>Mat4</code> matrix and transpose it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$transpose</span><span class='p'>();</span> <span class='c1'>//the result is stored in m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:rotateAxis'>Mat4 Method: rotateAxis</h2>
+
+<p>Applies a rotation of <code>theta</code> by <code>vec</code> to a <code>Mat4</code> matrix returning the result in a new matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.rotateAxis(theta, vec);
+
+PhiloGL.Mat4.rotateAxis(m, theta, vec);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>theta - (<em>number</em>) An angle in radians.</li>
+
+<li>vec - (<em>object</em>) A <code>Vec3</code> (or x, y, z object).</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a rotation by <code>theta</code> and <code>v</code>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+  
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<p>Another way of doing the same thing without creating a <code>Vec3</code>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>};</span>
+  
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$rotateAxis'>Mat4 Method: $rotateAxis</h2>
+
+<p>Applies a rotation of angle <code>theta</code> by vector <code>vec</code> to a <code>Mat4</code> altering the current matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$rotateAxis(theta, vec);
+
+PhiloGL.Mat4.$rotateAxis(m, theta, vec);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>theta - (<em>number</em>) An angle in radians.</li>
+
+<li>vec - (<em>object</em>) A <code>Vec3</code> (or x, y, z object).</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a rotation by <code>theta</code> and <code>v</code>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
+  
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<p>Another way of doing the same thing without creating a <code>Vec3</code>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>};</span>
+  
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:rotateXYZ'>Mat4 Method: rotateXYZ</h2>
+
+<p>Applies a rotation of angle <code>rx</code> in the x-axis, <code>ry</code> in the y-axis and <code>rz</code> in the z-axis. Creates a new <code>Mat4</code> with the result.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.rotateXYZ(rx, ry, rz);
+
+PhiloGL.Mat4.rotateXYZ(m, rx, ry, rz);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>rx - (<em>number</em>) An angle in radians.</li>
+
+<li>ry - (<em>number</em>) An angle in radians.</li>
+
+<li>rz - (<em>number</em>) An angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a rotation on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>rotateXYZ</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>rotateXYZ</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$rotateXYZ'>Mat4 Method: $rotateXYZ</h2>
+
+<p>Applies a rotation of angle <code>rx</code> in the x-axis, <code>ry</code> in the y-axis and <code>rz</code> in the z-axis. Alters the matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$rotateXYZ(rx, ry, rz);
+
+PhiloGL.Mat4.$rotateXYZ(m, rx, ry, rz);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>rx - (<em>number</em>) An angle in radians.</li>
+
+<li>ry - (<em>number</em>) An angle in radians.</li>
+
+<li>rz - (<em>number</em>) An angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a rotation on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$rotateXYZ</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//alters m</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$rotateXYZ</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//alters m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:translate'>Mat4 Method: translate</h2>
+
+<p>Applies a translation to <code>Mat4</code> in the directions <code>x</code>, <code>y</code> and <code>z</code>. Stores the result in a new <code>Mat4</code> instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.translate(x, y, z);
+
+PhiloGL.Mat4.translate(m, x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The amount to be translated in the x direction.</li>
+
+<li>y - (<em>number</em>) The amount to be translated in the y direction.</li>
+
+<li>z - (<em>number</em>) The amount to be translated in the z direction..</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a translation on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>translate</span><span class='p'>(</span><span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>translate</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$translate'>Mat4 Method: $translate</h2>
+
+<p>Applies a translation to <code>Mat4</code> in the directions <code>x</code>, <code>y</code> and <code>z</code>. Alters the original matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$translate(x, y, z);
+
+PhiloGL.Mat4.$translate(m, x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The amount to be translated in the x direction.</li>
+
+<li>y - (<em>number</em>) The amount to be translated in the y direction.</li>
+
+<li>z - (<em>number</em>) The amount to be translated in the z direction..</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a translation on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$translate</span><span class='p'>(</span><span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$translate</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:scale'>Mat4 Method: scale</h2>
+
+<p>Applies scaling to <code>Mat4</code> in the directions <code>x</code>, <code>y</code> and <code>z</code>. Stores the result in a new <code>Mat4</code> instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.scale(x, y, z);
+
+PhiloGL.Mat4.scale(m, x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The amount to be scaled in the x direction.</li>
+
+<li>y - (<em>number</em>) The amount to be scaled in the y direction.</li>
+
+<li>z - (<em>number</em>) The amount to be scaled in the z direction..</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a scaling on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$scale'>Mat4 Method: $scale</h2>
+
+<p>Applies scaling to <code>Mat4</code> in the directions <code>x</code>, <code>y</code> and <code>z</code>. Alters the original matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$scale(x, y, z);
+
+PhiloGL.Mat4.$scale(m, x, y, z);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The amount to be scaled in the x direction.</li>
+
+<li>y - (<em>number</em>) The amount to be scaled in the y direction.</li>
+
+<li>z - (<em>number</em>) The amount to be scaled in the z direction..</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a scaling on the x-axis.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+  
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:invert'>Mat4 Method: invert</h2>
+
+<p>Inverts a <code>Mat4</code> matrix. The matrix has to be invertible. Creates a new <code>Mat4</code> with the result.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.invert();
+
+PhiloGL.Mat4.invert(m);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a <code>Mat4</code> matrix and invert it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>invert</span><span class='p'>();</span> <span class='c1'>//the result is a new matrix</span>
+</code></pre>
+</div>
+<h2 id='Mat4:$invert'>Mat4 Method: $invert</h2>
+
+<p>Inverts a <code>Mat4</code> matrix. The matrix has to be invertible. Modifies the current matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.$invert();
+
+PhiloGL.Mat4.$invert(m);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a <code>Mat4</code> matrix and invert it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>();</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$invert</span><span class='p'>();</span> <span class='c1'>//the result is stored in m</span>
+</code></pre>
+</div>
+<h2 id='Mat4:lookAt'>Mat4 Method: lookAt</h2>
+
+<p>Performs a <code>lookAt</code> operation on a matrix. Modifies the current matrix. Ths method is useful when setting a camera matrix class. For more information about the <code>lookAt</code> operation look <a href='http://www.euclideanspace.com/maths/algebra/vectors/lookat/index.htm'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.lookAt(eye, center, up);
+
+PhiloGL.Mat4.lookAt(m, eye, center, up);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>eye - (<em>object</em>) The eye position as a <code>Vec3</code> (or x,y,z object).</li>
+
+<li>center - (<em>number</em>) The center position as a <code>Vec3</code> (or x,y,z object).</li>
+
+<li>up - (<em>number</em>) The up vector of the &#8220;camera&#8221; as a <code>Vec3</code> (or x,y,z object).</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a lookAt matrix. The eye is looking at the origin.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>},</span>
+      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>},</span>
+      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>};</span>
+
+  <span class='nx'>m</span><span class='p'>.</span><span class='nx'>lookAt</span><span class='p'>(</span><span class='nx'>eye</span><span class='p'>,</span> <span class='nx'>center</span><span class='p'>,</span> <span class='nx'>up</span><span class='p'>);</span> <span class='c1'>//the original matrix is modified.</span>
+</code></pre>
+</div>
+<p>Another way of doing it with generics:</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>},</span>
+      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>},</span>
+      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>lookAt</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>eye</span><span class='p'>,</span> <span class='nx'>center</span><span class='p'>,</span> <span class='nx'>up</span><span class='p'>);</span> <span class='c1'>//the original object is modified.</span>
+</code></pre>
+</div>
+<h2 id='Mat4:frustum'>Mat4 Method: frustum</h2>
+
+<p>Performs a <code>frustum</code> operation on a matrix. Modifies the current matrix. This method is useful when setting a camera projection matrix class. For more information about the <code>frustum</code> geometry look <a href='http://en.wikipedia.org/wiki/Frustum'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.frustum(left, right, bottom, top, near, far);
+
+PhiloGL.Mat4.frustum(m, left, right, bottom, top, near, far);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>left - (<em>number</em>) The left part of the frustum.</li>
+
+<li>right - (<em>number</em>) The right part of the frustum.</li>
+
+<li>bottom - (<em>number</em>) The bottom part of the frustum.</li>
+
+<li>top - (<em>number</em>) The top part of the frustum.</li>
+
+<li>near - (<em>number</em>) The nearest part of the frustum.</li>
+
+<li>far - (<em>number</em>) The furthest part of the frustum.</li>
+</ol>
+
+<h2 id='Mat4:perspective'>Mat4 Method: perspective</h2>
+
+<p>Creates a perspective matrix. This operation is based on creating a frustum matrix. Modifies the current matrix. This method is useful when setting a camera projection matrix class.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.perspective(fov, aspect, near, far);
+
+PhiloGL.Mat4.perspective(m, fov, aspect, near, far);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>fov - (<em>number</em>) The field of view. An angle in degrees.</li>
+
+<li>aspect - (<em>number</em>) The aspect ratio. Generally <code>canvas.width / canvas.height</code>.</li>
+
+<li>near - (<em>number</em>) The nearest part to be captured by the camera.</li>
+
+<li>far - (<em>number</em>) The furthest part to be captured by the camera.</li>
+</ol>
+
+<h2 id='Mat4:toFloat32Array'>Mat4 Method: toFloat32Array</h2>
+
+<p>Converts the matrix in a <a href='https://developer.mozilla.org/en/JavaScript_typed_arrays/Float32Array'>Float32Array</a>. Useful when setting matrix uniforms.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.toFloat32Array();
+
+PhiloGL.Mat4.toFloat32Array(m);</code></pre>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

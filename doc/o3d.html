@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>O3D</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>O3D</h1>
+
+<h1 id='O3D'>Module: O3D</h1>
+
+<p>O3D provides Model management and 3D primitives. Here you&#8217;ll find methods for creating 3D models and primitives that are compatible with the <a href='scene.html'>Scene</a> class.</p>
+
+<h2 id='O3D:Model'>O3D Class: O3D.Model</h2>
+
+<p>The class Model enables you to create 3D models which are compatible with the <a href='scene.html'>Scene</a> class. All primitives (Sphere, etc) inherit from Model too.</p>
+
+<h3 id='properties'>Properties:</h3>
+
+<p>A Model instance has a number of public properties that can be accessed/modified:</p>
+
+<ul>
+<li>position - (<em>object</em>) A <code>Vec3</code> indicating the position of the Model.</li>
+
+<li>rotation - (<em>object</em>) A <code>Vec3</code> indicating the rotation of the Model.</li>
+
+<li>scale - (<em>object</em>) A <code>Vec3</code> indicating the scaling of the Model.</li>
+
+<li>matrix - (<em>object</em>) A <code>Mat4</code> containing information about position, rotation and scale. This matrix gets updated each time the method <code>update</code> is called on a Model instance.</li>
+</ul>
+
+<h2 id='O3D:Model:constructor'>O3D.Model Method: constructor</h2>
+
+<p>The main constructor function for the Model class. Use this to create a new Model.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var model = new PhiloGL.O3D.Model(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>dynamic - (<em>boolean</em>, optional) If true then the vertices and normals will always be updated in the Buffer Objects before rendering. Default&#8217;s false.</li>
+
+<li>vertices - (<em>array</em>, optional) An array of floats that describe the vertices of the model.</li>
+
+<li>normals - (<em>array</em>, optional) An array of floats that describe the normals of the model.</li>
+
+<li>textures - (<em>array</em>, optional) An array of strings of texture ids.</li>
+
+<li>colors - (<em>array</em>, optional) An array of colors in RGBA. If just one color is specified that color will be used for all faces.</li>
+
+<li>indices - (<em>array</em>, optional) An array of numbers describing the vertex indices for each face.</li>
+
+<li>shininess - (<em>number</em>, optional) A number between <span>0.1, 200</span> describing how shiny an object is.</li>
+
+<li>uniforms - (<em>object</em>, optional) An object with uniform names and values to be set before rendering the model.</li>
+
+<li>render - (<em>function</em>, optional) A function to be called for rendering the object instead of the default <a href='scene.html'>Scene</a> rendering methods.</li>
+
+<li>drawType - (<em>string</em>, optional) A string describing the drawType. Some options are <code>TRIANGLES</code>, <code>TRIANGLE_STRIP</code>, <code>POINTS</code>, <code>LINES</code>. Default&#8217;s <code>TRIANGLES</code>.</li>
+
+<li>texCoords - (<em>mixed</em>, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and array of floats as values (to handle multiple textures).</li>
+
+<li>onBeforeRender - (<em>function</em>, optional) Called before rendering an object. The first two formal parameters are the program and the camera respectively.</li>
+
+<li>onAfterRender - (<em>function</em>, optional) Called after rendering an object. The first two formal parameters are the program and the camera respectively.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a pyramid model (used in lesson 4 of learning WebGL examples).</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>pyramid</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Model</span><span class='p'>({</span>
+    <span class='nx'>vertices</span><span class='o'>:</span> <span class='p'>[[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
+               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
+               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
+               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>]],</span>
+    
+    <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
+             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]]</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='O3D:Model:update'>O3D.Model Method: update</h2>
+
+<p>Update the model matrix. Useful to update changes to the <code>position</code>, <code>rotation</code> or <code>scale</code> properties.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>model.update();</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Change the position of the pyramid model and update its matrix.</p>
+<div class='highlight'><pre><code class='js'>  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>position</span> <span class='o'>=</span> <span class='p'>{</span>
+    <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>10</span><span class='p'>,</span>
+    <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>10</span><span class='p'>,</span>
+    <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>20</span>
+  <span class='p'>};</span>
+  
+  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
+</code></pre>
+</div>
+<h2 id='O3D:Model:toFloat32Array'>O3D.Model Method: toFloat32Array</h2>
+
+<p>Returns a <code>Float32Array</code> version of the named property.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>model.toFloat32Array(name);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name of the property to be converted into a <code>Float32Array</code>. Can be <code>vertices</code>, <code>normals</code>, <code>colors</code>, etc.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Make the pyramid model return a <code>Float32Array</code> of the vertices array.</p>
+<div class='highlight'><pre><code class='js'>  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>toFloat32Array</span><span class='p'>(</span><span class='s1'>&#39;vertices&#39;</span><span class='p'>);</span> <span class='c1'>//returns the Float32Array of the vertices array.</span>
+</code></pre>
+</div>
+<h2 id='O3D:Model:toUint16Array'>O3D.Model Method: toUint16Array</h2>
+
+<p>Returns a <code>Uint16Array</code> version of the named property.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>model.toUint16Array(name);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name of the property to be converted into a <code>Uint16Array</code>. Can be <code>indices</code>, etc.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Make the pyramid model return a <code>Uint16Array</code> of the vertices array.</p>
+<div class='highlight'><pre><code class='js'>  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>toUint16Array</span><span class='p'>(</span><span class='s1'>&#39;indices&#39;</span><span class='p'>);</span> <span class='c1'>//returns the Uint16Array of the indices array.</span>
+</code></pre>
+</div>
+<h2 id='O3D:Cube'>O3D Class: O3D.Cube</h2>
+
+<p>Creates a Cube model. Inherits instance methods from O3D.Model.</p>
+
+<h3 id='extends'>Extends</h3>
+
+<p>O3D.Model</p>
+
+<h2 id='O3D:Cube:constructor'>O3D.Cube Method: constructor</h2>
+
+<p>The main constructor function for the Cube class. Use this to create a new Cube. Accepts the same properties and options as O3D.Model constructor but has preset for <code>vertices</code>, <code>normals</code> and <code>indices</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var model = new PhiloGL.O3D.Cube(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) The same options as in O3D.Model constructor but has preset for <code>vertices</code>, <code>normals</code> and <code>indices</code>.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a white cube.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>whiteCube</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Cube</span><span class='p'>({</span>
+      <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
+    <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='O3D:Sphere'>O3D Class: O3D.Sphere</h2>
+
+<p>Creates a Sphere model.</p>
+
+<h3 id='extends'>Extends</h3>
+
+<p>O3D.Model</p>
+
+<h2 id='O3D:Sphere:constructor'>O3D.Sphere Method: constructor</h2>
+
+<p>The main constructor function for the Sphere class. Use this to create a new Sphere.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var model = new PhiloGL.O3D.Sphere(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing as poperties:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>nlat - (<em>number</em>, optional) The number of vertices for latitude. Default&#8217;s 10.</li>
+
+<li>nlong - (<em>number</em>, optional) The number of vertices for longitude. Default&#8217;s 10.</li>
+
+<li>radius - (<em>number</em>, optional) The radius of the sphere. Default&#8217;s 1.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a white Sphere of radius 2.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>whiteSphere</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Sphere</span><span class='p'>({</span>
+  <span class='nx'>radius</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

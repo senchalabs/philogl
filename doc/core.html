@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Core</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>Core</h1>
+
+<h1 id='Core'>Script: Core</h1>
+
+<p>Provides the global <code>PhiloGL</code> function to create WebGL applications, the static <code>hasWebGL</code> method to detect if the browser is WebGL capable and the static <code>PhiloGL.unpack()</code> method for unpacking modules into the global namespace.</p>
+
+<h2 id='PhiloGL:hasWebGL'>PhiloGL Static Method: hasWebGL</h2>
+
+<p>Returns true or false whether the browser supports WebGL or not.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.hasWebGL();</code></pre>
+
+<h2 id='PhiloGL:unpack'>PhiloGL Static Method: unpack</h2>
+
+<p>Unpacks <a href='math.html'>Vec3</a>, <a href='math.html'>Mat4</a>, <a href='camera.html'>Camera</a>, <a href='program.html'>Program</a>, <a href='webgl.html'>WebGL</a>, <a href='o3d.html'>O3D</a>, <a href='scene.html'>Scene</a>, <a href='shaders.html'>Shaders</a>, <a href='io.html'>IO</a>, <a href='event.html'>Events</a>, <a href='workers.html'>WorkerGroup</a>, <a href='fx.html'>Fx</a> modules and classes so they can be accessed by the global scope and not through PhiloGL.<em>moduleName</em>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.unpack();</code></pre>
+
+<h2 id='PhiloGL:constructor'>PhiloGL Method: constructor</h2>
+
+<p>Creates a PhiloGL application. The PhiloGL application provides a <a href='webgl.html'>WebGL</a> context, a <a href='program.html'>Program</a>, a <a href='camera.html'>Camera</a>, a <a href='scene.html'>Scene</a>, and also options for handling <a href='event.html'>Events</a>, loading textures via <a href='io.html'>IO</a> and more.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL(canvasId, options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>canvasId - (<em>string</em>) The <em>id</em> of the canvas element.</li>
+
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>
+<p>context - (<em>object</em>, optional) An object to pass in options for when the <a href=''>WebGL context</a> is created. For now the only option supported is <code>debug: true</code>.</p>
+</li>
+
+<li>
+<p>program - (<em>object</em>, optional) An object that contains options for creating a <a href='program.html'>Program</a>. The options for program are:</p>
+
+<ul>
+<li>from - (<em>string</em>) Possible options are <code>defaults</code>, <code>ids</code>, <code>sources</code>, <code>uris</code>.</li>
+
+<li>path - (<em>string</em>, optional) Sets a link path appended as prefix to the <code>vs</code> and <code>fs</code> string properties.</li>
+
+<li>vs - (<em>string</em>) The name, id, source or path to the Vertex Shader.</li>
+
+<li>fs - (<em>string</em>) The name, id, source or path to the Fragment Shader.</li>
+</ul>
+</li>
+
+<li>
+<p>camera - (<em>object</em>, optional) An object with options for creating a <a href='camera.html'>Camera</a>. These options are:</p>
+
+<ul>
+<li>fov - (<em>number</em>) Field of View. Default&#8217;s <code>45</code>.</li>
+
+<li>near - (<em>number</em>) Near distance. Default&#8217;s <code>0.1</code>.</li>
+
+<li>far - (<em>number</em>) Far distance. Default&#8217;s <code>500</code>.</li>
+
+<li>position - (<em>object</em>) The position of the camera. Default&#8217;s <code>{ x: 0, y: 0, z: 0 }</code>.</li>
+
+<li>target - (<em>object</em>) The target position to where the camera will look at. Default&#8217;s <code>{ x: 0, y: 0, z: 0 }</code>.</li>
+</ul>
+</li>
+
+<li>
+<p>scene - (<em>object</em>, optional) <a href='scene.html'>Scene</a> creation options. These options are:</p>
+
+<ul>
+<li>
+<p>lights - (<em>object</em>, optional) An object for managing lights. The options for lighting are:</p>
+
+<ul>
+<li>
+<p>enable - (<em>boolean</em>) Set this to <code>true</code> to enable lighting.</p>
+</li>
+
+<li>
+<p>ambient - (<em>object</em>, optional) A r, g, b object with values in <span>0, 1</span> to select ambient lighting.</p>
+</li>
+
+<li>
+<p>directional - (<em>object</em>, optional) An object with properties:</p>
+
+<ul>
+<li>direction - (<em>object</em>) An object with x, y, z coordinates to display the light direction.</li>
+
+<li>color - (<em>object</em>) A r, g, b object with values in <span>0, 1</span> to select the color.</li>
+</ul>
+</li>
+
+<li>
+<p>points - (<em>mixed</em>, optional) An array of point lights configuration objects containing as properties:</p>
+
+<ul>
+<li>position - (<em>object</em>) A x, y, z object with the point light position.</li>
+
+<li>color|diffuse - (<em>object</em>) A r, g, b object with values in <span>0, 1</span> that sets the (diffuse) color for the point light.</li>
+
+<li>specular - (<em>object</em>, optional) A r, g, b object with values in <span>0, 1</span> that sets the specular light color.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+
+<li>
+<p>textures - (<em>object</em>, optional) An object to load textures with the <a href='io.html'>IO</a> module. See also <a href=''>Program.setTexture</a>. The object has as properties:</p>
+
+<ul>
+<li>
+<p>src - (<em>array</em>) An array of strings containing the path of the images to be loaded.</p>
+</li>
+
+<li>
+<p>textureType - (<em>string</em>, optional) The type of the texture. Default&#8217;s <code>TEXTURE_2D</code>.</p>
+</li>
+
+<li>
+<p>pixelStore - (<em>array</em>, optional) An array of name, value objects to define how pixels are stored into the texture. Defualt&#8217;s <code>[ { name: &#39;UNPACK_FLIP_Y_WEBGL&#39;, value: true }]</code>.</p>
+</li>
+
+<li>
+<p>parameters - (<em>array</em>, optional) Parameters to set texture filters among other things. Default&#8217;s <code>NEAREST</code> for <code>MAG</code> and <code>MIN</code> filters.</p>
+</li>
+
+<li>
+<p>data - (<em>object</em>) An object containing either the dimensions of the texture or the image itself. The properties for the data object are:</p>
+
+<ul>
+<li>format - (<em>number</em>, optional) The color format of the image. Defaults <code>RGBA</code>.</li>
+
+<li>value - (<em>ImageElement</em>, optional) An image element (if any) to paste into the texture.</li>
+
+<li>width - (<em>number</em>, optional) The width of the texture. Used when no image is provided. Default&#8217;s 0.</li>
+
+<li>height - (<em>number</em>, optional) The height of the texture. Used when no image is provided. Default&#8217;s 0.</li>
+
+<li>border - (<em>number</em>, optional) The borde of the texture. Default&#8217;s 0.</li>
+</ul>
+</li>
+</ul>
+</li>
+
+<li>
+<p>events - (<em>object</em>, optional) An object with callbacks and configuration for event handling. For more information about the event callbacks check the <a href='event.html'>Event</a> documentation. These options are:</p>
+
+<ul>
+<li>cachePosition - (<em>boolean</em>, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default&#8217;s <code>true</code>.</li>
+
+<li>cacheSize - (<em>boolean</em>, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default&#8217;s <code>true</code>.</li>
+
+<li>relative - (<em>boolean</em>, optional) Whether to calculate the mouse position as relative to the canvas position or absolute. Default&#8217;s <code>true</code>.</li>
+
+<li>centerOrigin - (<em>boolean</em>, optional) Whether to set the center (0, 0) coordinate to the center of the canvas or to the top-left corner. Default&#8217;s <code>true</code>.</li>
+
+<li>disableContextMenu - (<em>boolean</em>, optional) Disable the context menu (generally shown when the canvas is right clicked). Default&#8217;s <code>true</code>.</li>
+
+<li>bind - (<em>mixed</em>, optional) bind the <em>thisArg</em> in the callbacks to the specified object.</li>
+
+<li>onClick - (<em>function</em>, optional) Handles the onClick event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onRightClick - (<em>function</em>, optional) Handles the onRightClick event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onDragStart - (<em>function</em>, optional) Handles the onDragStart event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onDragMove - (<em>function</em>, optional) Handles the onDragMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onDragEnd - (<em>function</em>, optional) Handles the onDragEnd event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onDragCancel - (<em>function</em>, optional) Handles the onDragCancel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onTouchStart - (<em>function</em>, optional) Handles the onTouchStart event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onTouchMove - (<em>function</em>, optional) Handles the onTouchMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onTouchEnd - (<em>function</em>, optional) Handles the onTouchEnd event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onTouchCancel - (<em>function</em>, optional) Handles the onTouchCancel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onMouseMove - (<em>function</em>, optional) Handles the onMouseMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onMouseEnter - (<em>function</em>, optional) Handles the onMouseEnter event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onMouseLeave - (<em>function</em>, optional) Handles the onMouseLeave event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onMouseWheel - (<em>function</em>, optional) Handles the onMouseWheel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onKeyDown - (<em>function</em>, optional) Handles the onKeyDown event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+
+<li>onKeyUp - (<em>function</em>, optional) Handles the onKeyUp event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+</ul>
+</li>
+
+<li>
+<p>onError - (<em>function</em>, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.</p>
+</li>
+
+<li>
+<p>onLoad - (<em>function</em>) A function called when the application is successfully created. An app is created if the context is loaded, the program is compiled and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly loaded and set and the camera is created. The first parameter of the callback function is an app object that has a properties:</p>
+
+<ul>
+<li>gl - (<em>object</em>) The WebGL context.</li>
+
+<li>camera - (<em>object</em>) The <a href='camera.html'>Camera</a> instance.</li>
+
+<li>scene - (<em>object</em>) The <a href='scene.html'>Scene</a> instance.</li>
+
+<li>program - (<em>object</em>) The <a href='program.html'>Program</a> instance.</li>
+</ul>
+</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creates an application from two shader files, sets some camera properties and loads two images as textures. Taken from LearningWebGL <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/14/'>lesson 14</a>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='c1'>//Create application</span>
+  <span class='nx'>PhiloGL</span><span class='p'>(</span><span class='s1'>&#39;lesson14-canvas&#39;</span><span class='p'>,</span> <span class='p'>{</span>
+    <span class='nx'>program</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>from</span><span class='o'>:</span> <span class='s1'>&#39;uris&#39;</span><span class='p'>,</span>
+      <span class='nx'>path</span><span class='o'>:</span> <span class='s1'>&#39;../../../shaders/&#39;</span><span class='p'>,</span>
+      <span class='nx'>vs</span><span class='o'>:</span> <span class='s1'>&#39;frag-lighting.vs.glsl&#39;</span><span class='p'>,</span>
+      <span class='nx'>fs</span><span class='o'>:</span> <span class='s1'>&#39;frag-lighting.fs.glsl&#39;</span>
+    <span class='p'>},</span>
+    <span class='nx'>camera</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>position</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>50</span>
+      <span class='p'>}</span>
+    <span class='p'>},</span>
+    <span class='nx'>textures</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>src</span><span class='o'>:</span> <span class='p'>[</span><span class='s1'>&#39;arroway.jpg&#39;</span><span class='p'>,</span> <span class='s1'>&#39;earth.jpg&#39;</span><span class='p'>],</span>
+      <span class='nx'>parameters</span><span class='o'>:</span> <span class='p'>[{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MAG_FILTER&#39;</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR&#39;</span>
+      <span class='p'>},</span> <span class='p'>{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MIN_FILTER&#39;</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR_MIPMAP_NEAREST&#39;</span><span class='p'>,</span>
+        <span class='nx'>generateMipmap</span><span class='o'>:</span> <span class='kc'>true</span>
+      <span class='p'>}]</span>
+    <span class='p'>},</span>
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;There was an error creating the app.&quot;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+    <span class='nx'>onLoad</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>app</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='cm'>/* Do things here */</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<p>Creates an application with a moon texture and sets events to apply drag and drop to the moon object as well as to zoom in and out. Taken from LearningWebGL <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/11/'>lesson 11</a>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='c1'>//Create application</span>
+  <span class='nx'>PhiloGL</span><span class='p'>(</span><span class='s1'>&#39;lesson11-canvas&#39;</span><span class='p'>,</span> <span class='p'>{</span>
+    <span class='nx'>camera</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>position</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>7</span>
+      <span class='p'>}</span>
+    <span class='p'>},</span>
+    <span class='nx'>textures</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>src</span><span class='o'>:</span> <span class='p'>[</span><span class='s1'>&#39;moon.gif&#39;</span><span class='p'>],</span>
+      <span class='nx'>parameters</span><span class='o'>:</span> <span class='p'>[{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MAG_FILTER&#39;</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR&#39;</span>
+      <span class='p'>},</span> <span class='p'>{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MIN_FILTER&#39;</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR_MIPMAP_NEAREST&#39;</span><span class='p'>,</span>
+        <span class='nx'>generateMipmap</span><span class='o'>:</span> <span class='kc'>true</span>
+      <span class='p'>}]</span>
+    <span class='p'>},</span>
+    <span class='nx'>events</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>onDragStart</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>e</span><span class='p'>)</span> <span class='p'>{</span>
+        <span class='nx'>pos</span> <span class='o'>=</span> <span class='p'>{</span>
+          <span class='nx'>x</span><span class='o'>:</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span>
+          <span class='nx'>y</span><span class='o'>:</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>y</span>
+        <span class='p'>};</span>
+      <span class='p'>},</span>
+      <span class='nx'>onDragMove</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>e</span><span class='p'>)</span> <span class='p'>{</span>
+        <span class='kd'>var</span> <span class='nx'>z</span> <span class='o'>=</span> <span class='k'>this</span><span class='p'>.</span><span class='nx'>camera</span><span class='p'>.</span><span class='nx'>position</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span>
+            <span class='nx'>sign</span> <span class='o'>=</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>abs</span><span class='p'>(</span><span class='nx'>z</span><span class='p'>)</span> <span class='o'>/</span> <span class='nx'>z</span><span class='p'>;</span>
+
+        <span class='nx'>moon</span><span class='p'>.</span><span class='nx'>rotation</span><span class='p'>.</span><span class='nx'>y</span> <span class='o'>+=</span> <span class='o'>-</span><span class='p'>(</span><span class='nx'>pos</span><span class='p'>.</span><span class='nx'>x</span> <span class='o'>-</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>)</span> <span class='o'>/</span> <span class='mi'>100</span><span class='p'>;</span>
+        <span class='nx'>moon</span><span class='p'>.</span><span class='nx'>rotation</span><span class='p'>.</span><span class='nx'>x</span> <span class='o'>+=</span> <span class='nx'>sign</span> <span class='o'>*</span> <span class='p'>(</span><span class='nx'>pos</span><span class='p'>.</span><span class='nx'>y</span> <span class='o'>-</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>)</span> <span class='o'>/</span> <span class='mi'>100</span><span class='p'>;</span>
+        <span class='nx'>moon</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
+        <span class='nx'>pos</span><span class='p'>.</span><span class='nx'>x</span> <span class='o'>=</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>;</span>
+        <span class='nx'>pos</span><span class='p'>.</span><span class='nx'>y</span> <span class='o'>=</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>;</span>
+      <span class='p'>},</span>
+      <span class='nx'>onMouseWheel</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>e</span><span class='p'>)</span> <span class='p'>{</span>
+        <span class='nx'>e</span><span class='p'>.</span><span class='nx'>stop</span><span class='p'>();</span>
+        <span class='kd'>var</span> <span class='nx'>camera</span> <span class='o'>=</span> <span class='k'>this</span><span class='p'>.</span><span class='nx'>camera</span><span class='p'>;</span>
+        <span class='nx'>camera</span><span class='p'>.</span><span class='nx'>position</span><span class='p'>.</span><span class='nx'>z</span> <span class='o'>+=</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>wheel</span><span class='p'>;</span>
+        <span class='nx'>camera</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
+      <span class='p'>}</span>
+    <span class='p'>},</span>
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;There was an error creating the app.&quot;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+    <span class='nx'>onLoad</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>app</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='cm'>/* Do stuff here... */</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Shaders</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>Shaders</h1>
+
+<h1 id='Shaders'>Object: Shaders</h1>
+
+<p>An object that contains default shaders that could be used with the <a href='scene.html'>Scene</a> class. Only one vertex shader and one fragment shader are shipped in this object. This is so because we encourage having shaders in separate files and access them in an asynchronous way by using <code>Program.fromShaderURIs</code> and other methods available in the Framework. You can set shader strings into <code>Shaders.Vertex</code> and <code>Shaders.Fragment</code>. We provide a default vertex and fragment shader in <code>Shaders.Vertex.Default</code> and <code>Shaders.Fragment.Default</code>. These shaders can also be conveniently used with <code>Program.fromDefaultShaders(vertexShaderName, fragmentShaderName)</code>.</p>
+
+<h2 id='Shaders:Vertex'>Shaders Object: Vertex</h2>
+
+<p>Append in this object vertex shaders to be used with a <a href='scene.html'>Scene</a>. We provide <code>Shaders.Vertex.Default</code> which is the default shader used in the library. You can find more scene compatible shaders <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. In order to get familiar with the attributes and uniforms used by the <a href='scene.html'>Scene</a> we provide the default vertex shader code:</p>
+
+<pre><code>    attribute vec3 position;
+    attribute vec3 normal;
+    attribute vec4 color;
+    attribute vec2 texCoord;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 viewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat4 normalMatrix;
+
+    uniform bool enableLights;
+    uniform vec3 ambientColor;
+    uniform vec3 directionalColor;
+    uniform vec3 lightingDirection;
+
+    uniform bool enablePoint1;
+    uniform vec3 pointLocation1;
+    uniform vec3 pointColor1;
+
+    uniform bool enablePoint2;
+    uniform vec3 pointLocation2;
+    uniform vec3 pointColor2;
+
+    uniform bool enablePoint3;
+    uniform vec3 pointLocation3;
+    uniform vec3 pointColor3;
+
+    varying vec4 vColor;
+    varying vec2 vTexCoord;
+    varying vec3 lightWeighting;
+
+    void main(void) {
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      
+      if(!enableLights) {
+        lightWeighting = vec3(1.0, 1.0, 1.0);
+      } else {
+        vec3 plightDirection;
+        vec3 pointWeight1 = vec3(0.0, 0.0, 0.0);
+        vec3 pointWeight2 = vec3(0.0, 0.0, 0.0);
+        vec3 pointWeight3 = vec3(0.0, 0.0, 0.0);
+
+        vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+        
+        float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
+
+        if(enablePoint1) {
+          plightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - mvPosition.xyz);
+          pointWeight1 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor1;
+        }
+        
+        if(enablePoint2) {
+          plightDirection = normalize((viewMatrix * vec4(pointLocation2, 1.0)).xyz - mvPosition.xyz);
+          pointWeight2 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor2;,
+        }
+        
+        if(enablePoint3) {
+          plightDirection = normalize((viewMatrix * vec4(pointLocation3, 1.0)).xyz - mvPosition.xyz);
+          pointWeight3 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor3;
+        }
+
+        lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight1 + pointWeight2 + pointWeight3;
+      }
+      
+      vColor = color;
+      vTexCoord = texCoord;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }</code></pre>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Shaders.Vertex.MyName = shaderCode;</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>See the example on how to extend the fragment shader object below.</p>
+
+<h2 id='Shaders:Fragment'>Shaders Object: Fragment</h2>
+
+<p>Append in this object fragment shaders to be used with a <a href='scene.html'>Scene</a>. We provide <code>Shaders.Fragment.Default</code> which is the default shader used in the library. You can find more scene compatible shaders <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. In order to get familiar with the attributes and uniforms used by the <a href='scene.html'>Scene</a> we provide the default fragment shader code:</p>
+
+<pre><code>    #ifdef GL_ES
+    precision highp float;
+    #endif
+
+    varying vec4 vColor;
+    varying vec2 vTexCoord;
+    varying vec3 lightWeighting;
+
+    uniform bool hasTexture;
+    uniform sampler2D sampler;
+
+    void main(){
+      
+      if(!hasTexture) {
+        gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
+      } else {
+        gl_FragColor = vec4(texture2D(sampler, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
+      }
+
+    }</code></pre>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Shaders.Fragment.MyName = shaderCode;</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Extending the Fragment Shader object to use a blending uniform. You can see the entire example in <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/8/'>lesson 8</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='c1'>//Add Blend Fragment Shader</span>
+<span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Shaders</span><span class='p'>.</span><span class='nx'>Fragment</span><span class='p'>.</span><span class='nx'>Blend</span> <span class='o'>=</span> <span class='p'>[</span>
+
+    <span class='s2'>&quot;#ifdef GL_ES&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;precision highp float;&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;#endif&quot;</span><span class='p'>,</span>
+    
+    <span class='s2'>&quot;varying vec4 vColor;&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;varying vec2 vTexCoord;&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;varying vec3 lightWeighting;&quot;</span><span class='p'>,</span>
+    
+    <span class='s2'>&quot;uniform bool hasTexture1;&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;uniform sampler2D sampler1;&quot;</span><span class='p'>,</span>
+    <span class='s2'>&quot;uniform float alpha;&quot;</span><span class='p'>,</span>
+
+    <span class='s2'>&quot;void main(){&quot;</span><span class='p'>,</span>
+      
+      <span class='s2'>&quot;if (hasTexture1) {&quot;</span><span class='p'>,</span>
+      
+        <span class='s2'>&quot;gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, alpha);&quot;</span><span class='p'>,</span>
+
+      <span class='s2'>&quot;}&quot;</span><span class='p'>,</span>
+    
+    <span class='s2'>&quot;}&quot;</span>
+
+<span class='p'>].</span><span class='nx'>join</span><span class='p'>(</span><span class='s2'>&quot;\n&quot;</span><span class='p'>);</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

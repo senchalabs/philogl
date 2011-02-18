@@ -1,0 +1,347 @@
+body {
+    font-family: "Lucida Grande", Verdana;
+    color: #313334;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #313334;
+    font-weight: bold;
+}
+
+#download {
+    position:absolute;
+    top:140px;
+    right:136px;
+    width:229px;
+    height: 70px;
+}
+
+
+#download a {
+    text-decoration:none;
+    display:block;
+    border:none;
+    height:30px;
+    font-size: 1.7em;
+}
+
+#download .description {
+    font-size:0.7em;
+    font-style:italic;
+    text-align:center;
+    margin-top:5px;
+}
+
+a:link, a:visited {
+    color: #23A4FF;
+}
+
+a:hover, a:active {
+    color: #6EC3FF;
+}
+
+a.selected:link, a.selected:visited {
+    color: #222;
+}
+
+em {
+    color: #686c70;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+/* Layout */
+#main-container {
+    width:950px;
+    margin:auto;
+    border-left:1px solid #ddd;
+    border-right:1px solid #ddd;
+    border-bottom:1px solid #ddd;
+    background:white;
+    position: relative;
+}
+
+#top-header {
+  height:26px;
+  background-image:url('/philogl/img/gradient.png');
+  background-position:bottom left;
+  background-repeat:repeat-x;
+}
+
+#header {
+    height: 70px;
+    border-bottom: 1px solid #ddd;
+    background-image: url('/philogl/img/gradient-reverse.png');
+    background-position:left bottom;
+    background-repeat:repeat-x;
+}
+
+#header .container {
+    position: relative;
+}
+
+#header h1, #header h2 {
+    margin: 0;
+    padding: 0;
+}
+
+
+#header h1 a {
+    display: block;
+    width: 184px;
+    height: 46px;
+    /*background: red;*/
+}
+
+#header h2 {
+    height: 19px;
+    width: 233px;
+    /* background: yellow; */
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+#logo img {
+  position: absolute;
+  top: 15px;
+  width: 170px;
+  left: 30px;
+}
+
+#logo h4 {
+   color:#555;
+   margin:0;
+   padding:0;
+}
+
+#navigation {
+    position: absolute;
+    right: 28px;
+    top: 0px;
+}
+
+#navigation a {
+    padding: 0.3em 0.7em;
+    border-left: 1px solid #ddd;
+    font-size: 0.9em;
+    text-decoration: none;
+}
+
+#navigation a.first {
+    border: 0;
+}
+
+#header, #footer {
+    background-color:#fff;
+}
+
+#wrapper {
+    /*background-color: #1a1a1a;*/
+    background-color: #000;
+    height:280px;
+    position:relative;
+    color:#CCC;
+}
+
+#main-text-container {
+  width: 290px;
+  position: absolute;
+  right: 75px;
+  top: 25px;
+  line-height: 20px;
+  font-size: 1.05em;
+}
+
+#description {
+  font-size:0.9em;
+  margin-top:6px;
+}
+
+#image-switcher {
+    background-color:#1a1a1a;
+    position:absolute;
+    width:500px;
+    height:280px;
+    left:30px;
+    overflow:hidden;
+    
+    -webkit-transition: opacity 1200ms;
+    -o-transition: opacity 1200ms;
+    -ms-transition: opacity 1200ms;
+    -moz-transition: opacity 1200ms;
+    transition: opacity 1200ms;
+    opacity: 1;
+
+}
+
+#image-switcher.hidden {
+  opacity: 0;
+}
+
+#more {
+    position:relative;
+    height:670px;
+    margin:0 auto;
+    background-image: url('/philogl/img/gradient.png');
+    background-position:left top;
+    background-repeat:repeat-x;
+}
+
+#more ul li {
+  font-size:0.9em;
+  margin-bottom:3px;
+  color: #686c70;
+}
+
+#more .col div.title {
+/*    color: #23A4FF;*/
+    color: #1a1a1a;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    font-size:1.1em;
+    text-indent: 7px;
+    margin:7px;
+}
+
+.featured-title {
+    font-size:1.1em;
+    text-indent: 2px;
+    margin:7px;
+}
+
+
+#more .col {
+    position:absolute;
+    width:250px;
+    height:440px;
+    top:55px;
+    font-size:0.9em;
+    background-image:url('/philogl/img/column.png');
+    background-repeat:no-repeat;
+}
+
+#col1 {
+    left:10px;
+}
+
+#col2 {
+    left:280px;
+}
+
+#col2 li {
+  line-height: 18px;
+}
+
+#col3.col {
+    left:575px;
+    width:326px;
+}
+
+#col3 img {
+  width: 270px;
+  margin-left: 10px;
+  -webkit-box-shadow: #000 0 0 5px;
+  -o-box-shadow: #000 0 0 5px;
+  -ms-box-shadow: #000 0 0 5px;
+  -moz-box-shadow: #000 0 0 5px;
+  box-shadow: #000 0 0 5px;
+}
+
+#col3 ul {
+  margin: 15px 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+#col3 a {
+  font-size: 0.9em;
+}
+
+.col .description {
+  font-size: 0.9em;
+  margin: 13px -5px 0 20px;
+  color: #555;
+}
+
+#footer p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+#footer {
+    padding: 2em;
+    text-align: center;
+    font-size: 0.75em;
+    color: #888;
+}
+
+.tag {
+    position: absolute;
+    bottom: 3px;
+    right: 0;
+    text-align: center;
+    font-style: italic;
+    font-size: 0.7em;
+    background-color: #313334;
+    padding: 5px;
+    opacity: 0.95;
+    color: #fff;
+}
+
+.button {
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font: 14px / 100% Arial, Helvetica, sans-serif;
+  padding: 0.5em 2em 0.55em;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  border-radius: 0.5em;
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+  text-decoration: none;
+}
+
+.button:active {
+  position: relative;
+  top: 1px;
+}
+
+a.button.blue {
+  color:#d9eef7;
+}
+
+.blue { /* Blue */
+  color: #d9eef7;
+  border: solid 1px #0076a3;
+  background: #007ead;
+  background: -webkit-gradient(linear, left top, left bottom, from(#0095cc), to(#00678e));
+  background: -moz-linear-gradient(top,  #0095cc,  #00678e);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
+}
+
+.blue:hover {
+  background: #0095cd;
+  background: -webkit-gradient(linear, left top, left bottom, from(#00adee), to(#0078a5));
+  background: -moz-linear-gradient(top,  #00adee,  #0078a5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
+}
+
+.blue:active {
+  color: #80bed6;
+  background: -webkit-gradient(linear, left top, left bottom, from(#0078a5), to(#00adee));
+  background: -moz-linear-gradient(top,  #0078a5,  #00adee);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0078a5', endColorstr='#00adee');
+}
+

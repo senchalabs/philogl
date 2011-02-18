@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>IO</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>IO</h1>
+
+<h1 id='IO'>Module: IO</h1>
+
+<p>The IO module contains classes to load remote assets like images, shader files, textures, and more via different methods like XHR or JSONP. These methods are also exposed to the user so he can load models and data sets in an asynchronous way.</p>
+
+<h2 id='IO:XHR'>IO Class: IO.XHR</h2>
+
+<p>The XHR class provides an API for loading remote data asynchronously via an http request (AJAX). The domain serving the data must match the domain where the data is queried.</p>
+
+<h2 id='IO:XHR:constructor'>IO.XHR Method: constructor</h2>
+
+<p>Initializes a new XHR instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var xhr = new PhiloGL.IO.XHR(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>url - (<em>string</em>) The url to make the request to.</li>
+
+<li>method - (<em>string</em>, optional) The request method. Possible values are <code>GET</code> or <code>POST</code>. Default&#8217;s <code>GET</code>.</li>
+
+<li>async - (<em>boolean</em>, optional) Whether to make the request asynchronous or not. Default&#8217;s <code>true</code>.</li>
+
+<li>sendAsBinary - (<em>boolean</em>, optional) Whether the content should be sent as binary or not. Default&#8217;s false. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
+
+<li>body - (<em>mixed</em>, optional) To be used when <code>sendAsBinary</code> is <code>true</code>. The binary content to be sent. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
+
+<li>onProgress - (<em>function</em>, optional) A callback executed while the data is being downloaded. The first parameter of the callback is the percentage downloaded.</li>
+
+<li>onSuccess - (<em>function</em>, optional) A callback executed once the connection was successful and the information completely sent. The first parameter of the callback is the <code>responseText</code> content.</li>
+
+<li>onError - (<em>function</em>, optional) A callback executed if there&#8217;s an error while making the connection or sending the data.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request object to a specific url.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>req</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>XHR</span><span class='p'>({</span>
+    <span class='nx'>url</span><span class='o'>:</span> <span class='s1'>&#39;/mydomain/somethingelse/&#39;</span><span class='p'>,</span>
+    
+    <span class='nx'>onSuccess</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>);</span>
+    <span class='p'>},</span>
+
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;An error ocurred&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='IO:XHR:send'>IO.XHR Method: send</h2>
+
+<p>Creates a connection and sends the information to be sent.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>xhr.send();</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request object to a specific url and making the request. Note the <code>send</code> call at the end of the instanciation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>req</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>XHR</span><span class='p'>({</span>
+    <span class='nx'>url</span><span class='o'>:</span> <span class='s1'>&#39;/mydomain/somethingelse/&#39;</span><span class='p'>,</span>
+    
+    <span class='nx'>onSuccess</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>);</span>
+    <span class='p'>},</span>
+
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;An error ocurred&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>}).</span><span class='nx'>send</span><span class='p'>();</span>
+</code></pre>
+</div>
+<h2 id='IO:JSONP'>IO Class: IO.JSONP</h2>
+
+<p>The JSONP class provides an API for loading remote data asynchronously via an http request. Instead of using the <code>XMLHttpRequest</code> object JSONP creates a <code>script</code> document that is appended to the head tag of the HTML page. This technique enables the user to query a different domain for JSON data. More information about this technique can be found <a href='http://en.wikipedia.org/wiki/JSON#JSONP'>here</a>.</p>
+
+<h2 id='IO:JSONP:constructor'>IO.JSONP Method: constructor</h2>
+
+<p>Creates and sends a JSONP request. Can be called without the <code>new</code> keyword.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.IO.JSONP(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>url - (<em>string</em>) The url to make the request to.</li>
+
+<li>data - (<em>object</em>, optional) A key/value object to build a query string from it. Default&#8217;s an empty object (i.e. <code>{}</code>)</li>
+
+<li>callbackKey - (<em>string</em>) The name of the query string parameter to set the name of the callback function to.</li>
+
+<li>onComplete - (<em>function</em>, optional) A callback executed once the connection ended. The first parameter of the callback is the JSON content.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request object to a specific url.</p>
+<div class='highlight'><pre><code class='js'>  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>JSONP</span><span class='p'>({</span>
+    <span class='nx'>url</span><span class='o'>:</span> <span class='s1'>&#39;/anotherdomain/somethingelse/&#39;</span><span class='p'>,</span>
+    <span class='nx'>callbackKey</span><span class='o'>:</span> <span class='s1'>&#39;callbackName&#39;</span><span class='p'>,</span>
+    <span class='nx'>data</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='s1'>&#39;somekey&#39;</span><span class='o'>:</span> <span class='s1'>&#39;somevalue&#39;</span>
+    <span class='p'>},</span>
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>json</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>console</span><span class='p'>.</span><span class='nx'>log</span><span class='p'>(</span><span class='nx'>json</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='IO:Images'>IO Class: IO.Images</h2>
+
+<p>A very useful class that enables loading of multiple remote images asynchronously and returns an array with all the images loaded.</p>
+
+<h2 id='IO:Images:constructor'>IO.Images Method: constructor</h2>
+
+<p>Creates a request to Images providing an array that will be asynchonously filled with loaded images.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var images = new PhiloGL.IO.Images(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>src - (<em>array</em>) An array of strings pointing to image urls.</li>
+
+<li>onProgress - (<em>function</em>, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.</li>
+
+<li>onComplete - (<em>function</em>, optional) Callback executed when all images finished loading. The <code>images</code> variable will now have all loaded images.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request to load images.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>imageUrls</span> <span class='o'>=</span> <span class='p'>[</span><span class='s1'>&#39;image1.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image2.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image3.png&#39;</span><span class='p'>];</span>
+
+  <span class='kd'>var</span> <span class='nx'>images</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>Images</span><span class='p'>({</span>
+    <span class='nx'>src</span><span class='o'>:</span> <span class='nx'>imageUrls</span><span class='p'>,</span>
+    <span class='nx'>onProgress</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>perc</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>console</span><span class='p'>.</span><span class='nx'>log</span><span class='p'>(</span><span class='nx'>perc</span> <span class='o'>+</span> <span class='s1'>&#39; loaded&#39;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;All images loaded! Now do something with the images array&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='IO:Images'>IO Class: IO.Images</h2>
+
+<p>A very useful class that enables loading of multiple remote images asynchronously and returns an array with all the images loaded.</p>
+
+<h2 id='IO:Images:constructor'>IO.Images Method: constructor</h2>
+
+<p>Creates a request to Images providing an array that will be asynchonously filled with loaded images.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var images = new PhiloGL.IO.Images(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>src - (<em>array</em>) An array of strings pointing to image urls.</li>
+
+<li>onProgress - (<em>function</em>, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.</li>
+
+<li>onComplete - (<em>function</em>, optional) Callback executed when all images finished loading. The <code>images</code> variable will now have all loaded images.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request to load images.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>imageUrls</span> <span class='o'>=</span> <span class='p'>[</span><span class='s1'>&#39;image1.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image2.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image3.png&#39;</span><span class='p'>];</span>
+
+  <span class='kd'>var</span> <span class='nx'>images</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>Images</span><span class='p'>({</span>
+    <span class='nx'>src</span><span class='o'>:</span> <span class='nx'>imageUrls</span><span class='p'>,</span>
+    <span class='nx'>onProgress</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>perc</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>console</span><span class='p'>.</span><span class='nx'>log</span><span class='p'>(</span><span class='nx'>perc</span> <span class='o'>+</span> <span class='s1'>&#39; loaded&#39;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;All images loaded! Now do something with the images array&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='IO:Textures'>IO Class: IO.Textures</h2>
+
+<p>A very useful class that enables loading of multiple textures from remote images asynchronously.</p>
+
+<h2 id='IO:Textures:constructor'>IO.Textures Method: constructor</h2>
+
+<p>Creates a request to Images to load the array of remote images and then generates Textures from them. The id of each texture will be the same as the url for each image. Can be called without the <code>new</code> keyword.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.IO.Textures(program, options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>program - (<em>object</em>) The program instance where we want to load the textures to. Read <a href='program.html'>Program</a> for more information.</li>
+
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>src - (<em>array</em>) An array of strings pointing to image urls.</li>
+
+<li>onComplete - (<em>function</em>, optional) Callback executed when all images and textures finished loading.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request to load images and set them as textures for a specific program.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>program</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Program</span><span class='p'>.</span><span class='nx'>fromShaderIds</span><span class='p'>(</span><span class='s1'>&#39;vs-id&#39;</span><span class='p'>,</span> <span class='s1'>&#39;fs-id&#39;</span><span class='p'>);</span>
+  <span class='kd'>var</span> <span class='nx'>imageUrls</span> <span class='o'>=</span> <span class='p'>[</span><span class='s1'>&#39;image1.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image2.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image3.png&#39;</span><span class='p'>];</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>Textures</span><span class='p'>(</span><span class='nx'>program</span><span class='p'>,</span> <span class='p'>{</span>
+    <span class='nx'>src</span><span class='o'>:</span> <span class='nx'>imageUrls</span><span class='p'>,</span>
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;All images and textures loaded!&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

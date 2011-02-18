@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Scene</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>Scene</h1>
+
+<h1 id='Scene'>Class: Scene</h1>
+
+<p>The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that plays well with objects created with <a href='o3d.html'>O3D</a> and the default shaders in <a href='shaders.html'>Shaders</a> to enable rendering of multiple models in the scene with different options. The Scene role is to connect the properties set in the <a href='o3d.html'>O3D</a> models to the attributes defined in the shaders so that the buffer creation and updating is transparent to the user. The good thing about the design though is that the Scene provides many callback functions that can be executed at different stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you to create your own shader files that are compatible with the <a href='scene.html'>Scene</a> class. Some examples of <a href='scene.html'>Scene</a> compatible shader files can be found <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. Also, for more information about the default shaders take a look at the <a href='shaders.html'>Shaders</a> class. The <a href='o3d.html'>O3D</a> options describe how to override or set callbacks when rendering objects with a default scene.</p>
+
+<h2 id='Scene:constructor'>Scene Method: constructor</h2>
+
+<p>Creates a new <a href='scene.html'>Scene</a> instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var scene = new PhiloGL.Scene(program, camera, options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>program - (<em>object</em>) A Program instance. For more information check the <a href='program.html'>Program</a> class.</li>
+
+<li>camera - (<em>object</em>) A Camera instance. For more information check the <a href='camera.html'>Camera</a> class.</li>
+
+<li>options - (<em>object</em>) An object with the following properties:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>
+<p>lights - (<em>object</em>, optional) An object for managing lights. The options for lighting are:</p>
+
+<ul>
+<li>
+<p>enable - (<em>boolean</em>) Set this to <code>true</code> to enable lighting.</p>
+</li>
+
+<li>
+<p>ambient - (<em>object</em>, optional) A r, g, b object with values in <span>0, 1</span> to select ambient lighting.</p>
+</li>
+
+<li>
+<p>directional - (<em>object</em>, optional) An object with properties:</p>
+
+<ul>
+<li>direction - (<em>object</em>) An object with x, y, z coordinates to display the light direction.</li>
+
+<li>color - (<em>object</em>) A r, g, b object with values in <span>0, 1</span> to select the color.</li>
+</ul>
+</li>
+
+<li>
+<p>points - (<em>mixed</em>, optional) An array of up to 3 point lights configuration objects containing as properties:</p>
+
+<ul>
+<li>position - (<em>object</em>) A x, y, z object with the point light position.</li>
+
+<li>color|diffuse - (<em>object</em>) A r, g, b object with values in <span>0, 1</span> that sets the (diffuse) color for the point light.</li>
+
+<li>specular - (<em>object</em>, optional) A r, g, b object with values in <span>0, 1</span> that sets the specular light color.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a new Scene instance. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>innerScene</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Scene</span><span class='p'>(</span><span class='nx'>program</span><span class='p'>,</span> <span class='nx'>innerCamera</span><span class='p'>,</span> <span class='p'>{</span>
+  <span class='nx'>lights</span><span class='o'>:</span> <span class='p'>{</span>
+    <span class='nx'>enable</span><span class='o'>:</span> <span class='kc'>true</span><span class='p'>,</span>
+    <span class='nx'>points</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>position</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>1</span>
+      <span class='p'>},</span>
+      <span class='nx'>diffuse</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.8</span>
+      <span class='p'>},</span>
+      <span class='nx'>specular</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.8</span>
+      <span class='p'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='Scene:add'>Scene Method: add</h2>
+
+<p>Add an <a href='o3d.html'>O3D</a> object to the Scene.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.add(o[, ...]);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<p>A variable argument list of <a href='o3d.html'>O3D</a> instances.</p>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Add a moon and a box models to the scene. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/12/'>lesson 12</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='c1'>//Add objects to the scene</span>
+<span class='nx'>scene</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>box</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Scene:render'>Scene Method: render</h2>
+
+<p>Renders all the objects added to the scene.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.render();</code></pre>
+
+<h2 id='Scene:renderToTexture'>Scene Method: renderToTexture</h2>
+
+<p>Performs <code>scene.render()</code> but binds a texture afterwards to store the rendered image in the texture itself and not the main buffer.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.renderToTexture(name);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name/id of the texture to bind the rendering to.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done to render the inner scene in the laptop example on <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>function</span> <span class='nx'>drawInnerScene</span><span class='p'>()</span> <span class='p'>{</span>
+  <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>);</span>
+  
+  <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>viewport</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>screenWidth</span><span class='p'>,</span> <span class='nx'>screenHeight</span><span class='p'>);</span>
+  <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>clear</span><span class='p'>(</span><span class='nx'>gl</span><span class='p'>.</span><span class='nx'>COLOR_BUFFER_BIT</span> <span class='o'>|</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>DEPTH_BUFFER_BIT</span><span class='p'>);</span>
+  
+  <span class='nx'>theta</span> <span class='o'>+=</span> <span class='mf'>0.01</span><span class='p'>;</span>
+  
+  <span class='nx'>moon</span><span class='p'>.</span><span class='nx'>position</span> <span class='o'>=</span> <span class='p'>{</span>
+    <span class='nx'>x</span><span class='o'>:</span> <span class='nx'>rho</span> <span class='o'>*</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>cos</span><span class='p'>(</span><span class='nx'>theta</span><span class='p'>),</span>
+    <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span>
+    <span class='nx'>z</span><span class='o'>:</span> <span class='nx'>rho</span> <span class='o'>*</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>sin</span><span class='p'>(</span><span class='nx'>theta</span><span class='p'>)</span>
+  <span class='p'>};</span>
+  <span class='nx'>moon</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
+  
+  <span class='nx'>box</span><span class='p'>.</span><span class='nx'>position</span> <span class='o'>=</span> <span class='p'>{</span>
+    <span class='nx'>x</span><span class='o'>:</span> <span class='nx'>rho</span> <span class='o'>*</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>cos</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span> <span class='o'>+</span> <span class='nx'>theta</span><span class='p'>),</span>
+    <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span>
+    <span class='nx'>z</span><span class='o'>:</span> <span class='nx'>rho</span> <span class='o'>*</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>sin</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span> <span class='o'>+</span> <span class='nx'>theta</span><span class='p'>)</span>
+  <span class='p'>};</span>
+  <span class='nx'>box</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
+  
+  <span class='nx'>innerScene</span><span class='p'>.</span><span class='nx'>renderToTexture</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>);</span>
+  
+  <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='kc'>false</span><span class='p'>);</span>
+<span class='p'>}</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

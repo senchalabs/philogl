@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Workers</title>
+   <meta name="author" content="Nicolas Garcia Belmonte" />
+   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>   
+   <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>   
+   <link rel="shortcut icon" type="image/ico" href="assets/favicon.ico" /> 
+   <link rel="stylesheet" href="assets/style.css" type="text/css" media="screen, projection, handheld" />
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1601691-8']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script>    
+</head>
+<body>
+
+<div class="site">
+  <div class="title">
+    <a href="/philogl/"><img src="assets/logo.png" alt="library logo" /></a>
+  </div>
+  
+  <div id="sidebar">
+    <div class="box help">
+      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+    </div>
+    <div class="box" id="modules">
+      <b>Modules:</b>
+      <ul>
+        <li>
+          <a href="core.html">Core</a>
+        </li>
+        <li>
+          <a href="math.html">Math</a>
+        </li>
+        <li>
+          <a href="webgl.html">WebGL</a>
+        </li>
+        <li>
+          <a href="program.html">Program</a>
+        </li>
+        <li>
+          <a href="shaders.html">Shaders</a>
+        </li>
+      <li>
+          <a href="o3d.html">O3D</a>
+        </li>
+       <li>
+          <a href="camera.html">Camera</a>
+       </li>
+       <li>
+          <a href="scene.html">Scene</a>
+       </li>
+       <li>
+          <a href="event.html">Event</a>
+       </li>
+       <li>
+          <a href="fx.html">Fx</a>
+      </li>
+       <li>
+          <a href="io.html">IO</a>
+        </li>
+       <li>
+          <a href="workers.html">Workers</a>
+        </li>
+     </ul>
+   </div>
+
+   <div class="box" id="method-summary">
+     <b>Methods: </b>
+    <ul id="method-summary-list">
+    </ul>
+   </div>
+  </div>
+  
+  <div id="doc">
+
+<h1>Workers</h1>
+
+<h1 id='Workers'>Script: Workers</h1>
+
+<p>When there&#8217;s no possibility to pass in the computations into the GPU the best way to gain some performance is by using multi-threading on the client side. Even if we&#8217;re using just one <a href='https://developer.mozilla.org/En/DOM/Worker'>Worker</a> we separate the UI thread from the execution thread making calculations in a much simple execution context and in most cases we can do faster calculations. The workers script has utility methods for dealing with web workers and coordinate groups of web workers with the map-reduce paradigm.</p>
+
+<h1 id='WorkerGroup'>Class: WorkerGroup</h1>
+
+<p>Coordinates groups of web workers.</p>
+
+<h2 id='WorkerGroup:constructor'>WorkerGroup Method: constructor</h2>
+
+<p>Creates a group of web workers out of the same script.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var workerGroup = new PhiloGL.WorkerGroup(scriptName, n);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>scriptName - (<em>string</em>) A string with the name/path of the script to be used as web worker.</li>
+
+<li>n - (<em>number</em>) The number of Web Workers to be created.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a group of workers to divide as an octree the space of marching cubes calculations. More information about that can be found <a href='http://blog.thejit.org/2010/12/10/animating-isosurfaces-with-webgl-and-workers/'>here</a>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='c1'>//initialize workers</span>
+  <span class='kd'>var</span> <span class='nx'>workerGroup</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>WorkerGroup</span><span class='p'>(</span><span class='s1'>&#39;WorkerMarchingCube.js&#39;</span><span class='p'>,</span> <span class='nx'>nWorkers</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='WorkerGroup:map'>WorkerGroup Method: map</h2>
+
+<p>Map different configuration objects into each worker. Just like using <code>map</code> as an <code>Array</code> method.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>workerGroup.map(callback);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>callback - (<em>function</em>) A callback function to be executed for each worker. The first formal parameter of the function is the current index.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Divide the calculation space into an octree providing each worker with the grid dimensions of an octant. The entire application can be seen <a href='https://github.com/philogb/Playground/blob/master/Isosurface/Metaballs/cubes.js'>here</a>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='nx'>workerGroup</span><span class='p'>.</span><span class='nx'>map</span><span class='p'>(</span><span class='kd'>function</span><span class='p'>(</span><span class='nx'>nb</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='kd'>var</span> <span class='nx'>idx</span> <span class='o'>=</span> <span class='nx'>nb</span> <span class='o'>%</span> <span class='nx'>den</span><span class='p'>,</span>
+        <span class='nx'>idy</span> <span class='o'>=</span> <span class='p'>((</span><span class='nx'>nb</span> <span class='o'>/</span> <span class='nx'>den</span><span class='p'>)</span> <span class='o'>&gt;&gt;</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>%</span> <span class='nx'>den</span><span class='p'>,</span>
+        <span class='nx'>idz</span> <span class='o'>=</span> <span class='p'>((</span><span class='nx'>nb</span> <span class='o'>/</span> <span class='nx'>den</span> <span class='o'>/</span> <span class='nx'>den</span><span class='p'>)</span> <span class='o'>&gt;&gt;</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>%</span> <span class='nx'>den</span><span class='p'>;</span>
+    <span class='kd'>var</span> <span class='nx'>o</span> <span class='o'>=</span> <span class='p'>{</span>
+      <span class='nx'>grid</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='p'>{</span>
+          <span class='nx'>from</span><span class='o'>:</span> <span class='nx'>xfrom</span> <span class='o'>+</span> <span class='nx'>idx</span> <span class='o'>*</span> <span class='nx'>nx</span><span class='p'>,</span>
+          <span class='nx'>to</span><span class='o'>:</span> <span class='nx'>xfrom</span> <span class='o'>+</span> <span class='nx'>idx</span> <span class='o'>*</span> <span class='nx'>nx</span> <span class='o'>+</span> <span class='nx'>nx</span><span class='p'>,</span>
+          <span class='nx'>step</span><span class='o'>:</span> <span class='nx'>xstep</span>
+        <span class='p'>},</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='p'>{</span>
+          <span class='nx'>from</span><span class='o'>:</span> <span class='nx'>yfrom</span> <span class='o'>+</span> <span class='nx'>idy</span> <span class='o'>*</span> <span class='nx'>ny</span><span class='p'>,</span>
+          <span class='nx'>to</span><span class='o'>:</span> <span class='nx'>yfrom</span> <span class='o'>+</span> <span class='nx'>idy</span> <span class='o'>*</span> <span class='nx'>ny</span> <span class='o'>+</span> <span class='nx'>ny</span><span class='p'>,</span>
+          <span class='nx'>step</span><span class='o'>:</span> <span class='nx'>ystep</span>
+        <span class='p'>},</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='p'>{</span>
+          <span class='nx'>from</span><span class='o'>:</span> <span class='nx'>zfrom</span> <span class='o'>+</span> <span class='nx'>idz</span> <span class='o'>*</span> <span class='nx'>nz</span><span class='p'>,</span>
+          <span class='nx'>to</span><span class='o'>:</span> <span class='nx'>zfrom</span> <span class='o'>+</span> <span class='nx'>idz</span> <span class='o'>*</span> <span class='nx'>nz</span> <span class='o'>+</span> <span class='nx'>nz</span><span class='p'>,</span>
+          <span class='nx'>step</span><span class='o'>:</span> <span class='nx'>zstep</span>
+        <span class='p'>}</span>
+      <span class='p'>},</span>
+      <span class='nx'>isolevel</span><span class='o'>:</span> <span class='mi'>10</span><span class='p'>,</span>
+      <span class='nx'>balls</span><span class='o'>:</span> <span class='nx'>balls</span><span class='p'>.</span><span class='nx'>ballsArray</span>
+    <span class='p'>};</span>
+    <span class='k'>return</span> <span class='nx'>o</span><span class='p'>;</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='WorkerGroup:reduce'>WorkerGroup Method: reduce</h2>
+
+<p>Collect all the information each worker responded and merge it into a new object/value.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>workerGroup.reduce(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object with the following properties.</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>reduceFn - (<em>function</em>) The callback to be called each time we want to reduce two elements. The function gets two parameters, the acumulated value as first parameter and the new value responded by a worker as second parameter.</li>
+
+<li>intialValue - (<em>mixed</em>, optional) The initialValue to be merged.</li>
+
+<li>onComplete - (<em>function</em>) A callback to be executed when call the merging stage is done. The first formal parameter of the onComplete callback is the acumulated result.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Reduce all calculations from each octant into a single object. More information <a href='https://github.com/philogb/Playground/blob/master/Isosurface/Metaballs/cubes.js'>here</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>indexAcum</span> <span class='o'>=</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>initialValue</span> <span class='o'>=</span> <span class='p'>{</span>
+  <span class='nx'>vertices</span><span class='o'>:</span> <span class='p'>[],</span>
+  <span class='nx'>normals</span><span class='o'>:</span> <span class='p'>[],</span>
+  <span class='nx'>indices</span><span class='o'>:</span> <span class='p'>[]</span>
+<span class='p'>};</span>
+
+<span class='nx'>workerGroup</span><span class='p'>.</span><span class='nx'>reduce</span><span class='p'>({</span>
+  <span class='nx'>reduceFn</span><span class='o'>:</span> <span class='kd'>function</span> <span class='p'>(</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>y</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='kd'>var</span> <span class='nx'>l</span> <span class='o'>=</span> <span class='nx'>y</span><span class='p'>.</span><span class='nx'>vertices</span><span class='p'>.</span><span class='nx'>length</span> <span class='o'>/</span><span class='mi'>3</span><span class='p'>;</span>
+    <span class='nx'>x</span><span class='p'>.</span><span class='nx'>vertices</span> <span class='o'>=</span> <span class='nx'>x</span><span class='p'>.</span><span class='nx'>vertices</span><span class='p'>.</span><span class='nx'>concat</span><span class='p'>(</span><span class='nx'>y</span><span class='p'>.</span><span class='nx'>vertices</span><span class='p'>);</span>
+    <span class='nx'>x</span><span class='p'>.</span><span class='nx'>normals</span> <span class='o'>=</span> <span class='nx'>x</span><span class='p'>.</span><span class='nx'>normals</span><span class='p'>.</span><span class='nx'>concat</span><span class='p'>(</span><span class='nx'>y</span><span class='p'>.</span><span class='nx'>normals</span><span class='p'>);</span>
+    <span class='k'>while</span> <span class='p'>(</span><span class='nx'>l</span><span class='o'>--</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>x</span><span class='p'>.</span><span class='nx'>indices</span><span class='p'>.</span><span class='nx'>push</span><span class='p'>(</span><span class='nx'>indexAcum</span><span class='o'>++</span><span class='p'>);</span>
+    <span class='p'>}</span>
+    <span class='k'>return</span> <span class='nx'>x</span><span class='p'>;</span>
+  <span class='p'>},</span>
+  <span class='nx'>initialValue</span><span class='o'>:</span> <span class='nx'>initialValue</span><span class='p'>,</span>
+  <span class='nx'>onComplete</span><span class='o'>:</span> <span class='nx'>complete</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+
+  
+<div class="footer">
+  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+</div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    var h2 = document.getElementById('doc').getElementsByTagName('h2'),
+        ans = [];
+    for (var i = 0, l = h2.length; i < l; i++) {
+      var elem = h2[i];
+      ans.push('<a href=\'#' + elem.id + '\'>' + (elem.innerText || elem.textContent) + '</a>');
+    }
+    document.getElementById('method-summary-list').innerHTML = '<li>' + ans.join('</li><li>') + '</li>';
+  })();
+</script>
+
+  
+</div>
+</body>
+</html>

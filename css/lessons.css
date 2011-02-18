@@ -1,0 +1,41 @@
+div.section {
+  font-size: 1.1em;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #ccc;
+  margin: 15px;
+  text-indent: 10px;
+}
+
+ul {
+  list-style: none;
+  margin: 10px 20px;
+  padding:0;
+}
+
+ul li {
+  width: 150px;
+  font-size: 0.8em;
+  display: block;
+  margin: 3px;
+  padding: 4px;
+  border: 1px solid #eee;
+  float: left;
+}
+
+ul li img {
+  width: 100px;
+  margin: 10px 25px;
+  -webkit-box-shadow: #000 0 0 5px;
+  -o-box-shadow: #000 0 0 5px;
+  -ms-box-shadow: #000 0 0 5px;
+  -moz-box-shadow: #000 0 0 5px;
+  box-shadow: #000 0 0 5px;
+}
+
+div.lesson-title {
+  height: 35px;
+  margin:0;
+  padding:0;
+  font-size: 0.8em;
+  text-align: center;
+}

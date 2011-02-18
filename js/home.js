@@ -1,0 +1,36 @@
+PhiloGL.unpack();
+
+function init() {
+  var imageUrls = ['tanomalies', 'marching-cubes', 'histogram', 'fractal', 'explorer'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
+      descriptions = ['World Temperature Anomalies from 1880 to 2010', 
+                      'Marching Cubes Algorithm using Web Workers', 
+                      'Real-time 3D Color Histogram Analysis',
+                      'Animating Fractals',
+                      '3D Surface Explorer'];
+
+  var images = new IO.Images({
+    src: imageUrls,
+    onComplete: function() {
+      var imageSwitcher = document.getElementById('image-switcher'),
+          image = imageSwitcher.getElementsByTagName('img')[0],
+          caption = imageSwitcher.querySelectorAll('.tag')[0],
+          transitionCallback = function() {
+            if (imageSwitcher.className == 'hidden') {
+                image.src = imageUrls[i];
+                caption.innerHTML = descriptions[i];
+                i = (i + 1) % imageUrls.length;
+                imageSwitcher.className = '';
+            } else {
+                setTimeout(function() {
+                  imageSwitcher.className = 'hidden';
+                }, 4000);
+            }
+          },
+          i = 1;
+      ['transitionend', 'oTransitionEnd', 'webkitTransitionEnd'].forEach(function(e) {
+        imageSwitcher.addEventListener(e, transitionCallback, false);
+      });
+      transitionCallback();
+    }
+  });
+}
