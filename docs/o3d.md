@@ -155,7 +155,7 @@ Returns a `Uint16Array` version of the named property.
 
 ### Examples:
 
-Make the pyramid model return a `Uint16Array` of the vertices array.
+Make the pyramid model return a `Uint16Array` of the indices array.
 
 {% highlight js %}
   pyramid.toUint16Array('indices'); //returns the Uint16Array of the indices array.
