@@ -46,6 +46,8 @@ project organized.
 * path - (*string*, optional) A common path used as prefix for the vertex and fragment shaders url path.
 * vs - (*string*) The path to the vertex shader source file.
 * fs - (*string*) The path to the fragment shader source file.
+* noCache - (*boolean*, optional) If true, files will be reloaded and not taken
+  from the cache. Useful on development phase. Default's `false`.
 * onSuccess - (*function*) A callback function executed when the program was successfully created. The 
 first formal parameter of the function is the `Program` instance.
 * onError - (*function*) A callback function executed when there's an error while fetching/compiling the shaders.

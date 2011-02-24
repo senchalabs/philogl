@@ -35,6 +35,8 @@ Initializes a new XHR instance.
 * url - (*string*) The url to make the request to.
 * method - (*string*, optional) The request method. Possible values are `GET` or `POST`. Default's `GET`.
 * async - (*boolean*, optional) Whether to make the request asynchronous or not. Default's `true`.
+* noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
+Default's `false`.
 * sendAsBinary - (*boolean*, optional) Whether the content should be sent as binary or not. Default's false. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
 * body - (*mixed*, optional) To be used when `sendAsBinary` is `true`. The binary content to be sent. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
 * onProgress - (*function*, optional) A callback executed while the data is being downloaded. The first parameter of the callback is the percentage downloaded.
@@ -115,6 +117,8 @@ Creates and sends a JSONP request. Can be called without the `new` keyword.
 * data - (*object*, optional) A key/value object to build a query string from it. Default's an empty object (i.e. `{}`)
 * callbackKey - (*string*) The name of the query string parameter to set the name of the callback function to.
 * onComplete - (*function*, optional) A callback executed once the connection ended. The first parameter of the callback is the JSON content.
+* noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
+Default's `false`.
 
 ### Examples:
 
@@ -157,48 +161,8 @@ Creates a request to Images providing an array that will be asynchonously filled
 * src - (*array*) An array of strings pointing to image urls.
 * onProgress - (*function*, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.
 * onComplete - (*function*, optional) Callback executed when all images finished loading. The `images` variable will now have all loaded images.
-
-### Examples:
-
-Creating a request to load images.
-
-{% highlight js %}
-  var imageUrls = ['image1.png', 'image2.png', 'image3.png'];
-
-  var images = new PhiloGL.IO.Images({
-    src: imageUrls,
-    onProgress: function(perc) {
-      console.log(perc + ' loaded');
-    },
-    onComplete: function() {
-      alert("All images loaded! Now do something with the images array");
-    }
-  });
-{% endhighlight %}
-
-IO Class: IO.Images {#IO:Images}
----------------------------
-
-A very useful class that enables loading of multiple remote images asynchronously and returns an array with all the images loaded.
-
-IO.Images Method: constructor {#IO:Images:constructor}
--------------------------------------------------
-
-Creates a request to Images providing an array that will be asynchonously filled with loaded images.
-
-### Syntax:
-
-	var images = new PhiloGL.IO.Images(options);
-
-### Arguments:
-
-1. options - (*object*) An object containing the following options:
-
-### Options:
-
-* src - (*array*) An array of strings pointing to image urls.
-* onProgress - (*function*, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.
-* onComplete - (*function*, optional) Callback executed when all images finished loading. The `images` variable will now have all loaded images.
+* noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
+Default's `false`.
 
 ### Examples:
 
@@ -219,12 +183,12 @@ Creating a request to load images.
 {% endhighlight %}
 
 IO Class: IO.Textures {#IO:Textures}
----------------------------
+--------------------------------------
 
 A very useful class that enables loading of multiple textures from remote images asynchronously.
 
 IO.Textures Method: constructor {#IO:Textures:constructor}
--------------------------------------------------
+-----------------------------------------------------------
 
 Creates a request to Images to load the array of remote images and then generates Textures from them. The id of each texture will be the same as the url for each image. 
 Can be called without the `new` keyword.
@@ -242,6 +206,8 @@ Can be called without the `new` keyword.
 
 * src - (*array*) An array of strings pointing to image urls.
 * onComplete - (*function*, optional) Callback executed when all images and textures finished loading.
+* noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
+Default's `false`.
 
 ### Examples:
 
