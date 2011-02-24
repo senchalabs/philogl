@@ -53,19 +53,10 @@
 
   };
 
-  //Feature test WebGL
-  (function() {
-    try {
-      var canvas = document.createElement('canvas');
-      PhiloGL.hasWebGL = function() {
-          return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-      };
-    } catch(e) {
-      PhiloGL.hasWebGL = function() {
-          return false;
-      };
-    }
-  })();
+  //Test WebGL
+  PhiloGL.hasWebGL = function() {
+    return !!(window && window.WebGLRenderingContext);
+  };
 
   PhiloGL.WebGL = WebGL;
   
