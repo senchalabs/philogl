@@ -9,7 +9,7 @@
       url: 'http://sencha.com/',
       method: 'GET',
       async: true,
-      useCache: true,
+      noCache: false,
       //body: null,
       sendAsBinary: false,
       onProgress: $.empty,
@@ -45,7 +45,7 @@
           opt = this.opt,
           async = opt.async;
       
-      if (!opt.useCache) {
+      if (opt.noCache) {
         opt.url += (opt.url.indexOf('?') >= 0? '&' : '?') + $.uid();
       }
 
@@ -108,7 +108,7 @@
     opt = $.merge({
       url: 'http://sencha.com/',
       data: {},
-      useCache: true,
+      noCache: false,
       onComplete: $.empty,
       callbackKey: 'callback'
     }, opt || {});
@@ -121,7 +121,7 @@
     }
     data = data.join('&');
     //append unique id for cache
-    if (!opt.useCache) {
+    if (opt.noCache) {
       data += (data.indexOf('?') >= 0? '&' : '?') + $.uid();
     }
     //create source url
@@ -155,7 +155,7 @@
   var Images = function(opt) {
     opt = $.merge({
       src: [],
-      useCache: true,
+      noCache: false,
       onProgress: $.empty,
       onComplete: $.empty
     }, opt || {});
@@ -175,7 +175,7 @@
       }
     };
     //uid for image sources
-    var useCache = opt.useCache,
+    var noCache = opt.noCache,
         uid = $.uid(),
         getSuffix = function(s) { return (s.indexOf('?') >= 0? '&' : '?') + uid; };
     //Create image array
@@ -184,7 +184,7 @@
       img.index = i;
       img.onload = load;
       img.onerror = error;
-      img.src = src + (useCache? '' : getSuffix(src));
+      img.src = src + (noCache? getSuffix(src) : '');
       return img;
     });
     return images;
@@ -194,13 +194,13 @@
   var Textures = function(program, opt) {
     opt = $.merge({
       src: [],
-      useCache: true,
+      noCache: false,
       onComplete: $.empty
     }, opt || {});
 
     Images({
       src: opt.src,
-      useCache: opt.useCache,
+      noCache: opt.noCache,
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {

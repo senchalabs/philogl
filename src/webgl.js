@@ -54,9 +54,7 @@
   };
 
   //Test WebGL
-  PhiloGL.hasWebGL = function() {
-    return !!(window && window.WebGLRenderingContext);
-  };
+  PhiloGL.hasWebGL = !!(window && window.WebGLRenderingContext);
 
   PhiloGL.WebGL = WebGL;
   
