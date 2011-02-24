@@ -461,6 +461,7 @@
       path: '',
       vs: '',
       fs: '',
+      useCache: true,
       onSuccess: $.empty,
       onError: $.empty
     }, opt || {});
@@ -471,12 +472,14 @@
 
     new XHR({
       url: vertexShaderURI,
+      useCache: opt.useCache,
       onError: function(arg) {
         opt.onError(arg);
       },
       onSuccess: function(vs) {        
         new XHR({
           url: fragmentShaderURI,
+          useCache: opt.useCache,
           onError: function(arg) {
             opt.onError(arg);
           },

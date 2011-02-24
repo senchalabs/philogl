@@ -9,6 +9,7 @@
       url: 'http://sencha.com/',
       method: 'GET',
       async: true,
+      useCache: true,
       //body: null,
       sendAsBinary: false,
       onProgress: $.empty,
@@ -44,6 +45,10 @@
           opt = this.opt,
           async = opt.async;
       
+      if (!opt.useCache) {
+        opt.url += (opt.url.indexOf('?') >= 0? '&' : '?') + $.uid();
+      }
+
       req.open(opt.method, opt.url, async);
       
       if (async) {
@@ -103,6 +108,7 @@
     opt = $.merge({
       url: 'http://sencha.com/',
       data: {},
+      useCache: true,
       onComplete: $.empty,
       callbackKey: 'callback'
     }, opt || {});
@@ -114,6 +120,10 @@
       data.push(prop + '=' + opt.data[prop]);
     }
     data = data.join('&');
+    //append unique id for cache
+    if (!opt.useCache) {
+      data += (data.indexOf('?') >= 0? '&' : '?') + $.uid();
+    }
     //create source url
     var src = opt.url + 
       (opt.url.indexOf('?') > -1 ? '&' : '?') +
@@ -145,6 +155,7 @@
   var Images = function(opt) {
     opt = $.merge({
       src: [],
+      useCache: true,
       onProgress: $.empty,
       onComplete: $.empty
     }, opt || {});
@@ -163,13 +174,17 @@
         opt.onComplete(images);
       }
     };
+    //uid for image sources
+    var useCache = opt.useCache,
+        uid = $.uid(),
+        getSuffix = function(s) { return (s.indexOf('?') >= 0? '&' : '?') + uid; };
     //Create image array
     var images = opt.src.map(function(src, i) {
       var img = new Image();
       img.index = i;
       img.onload = load;
       img.onerror = error;
-      img.src = src;
+      img.src = src + (useCache? '' : getSuffix(src));
       return img;
     });
     return images;
@@ -179,11 +194,13 @@
   var Textures = function(program, opt) {
     opt = $.merge({
       src: [],
+      useCache: true,
       onComplete: $.empty
     }, opt || {});
 
     Images({
       src: opt.src,
+      useCache: opt.useCache,
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {

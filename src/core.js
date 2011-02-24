@@ -160,10 +160,17 @@ function $(d) {
 
 $.empty = function() {};
 
-//TODO(nico): check for mozAnimationTime implementations
 $.time = Date.now || function() {
   return +new Date;
 };
+
+$.uid = (function() {
+  var t = $.time();
+  
+  return function() {
+    return t++;
+  };
+})();
 
 $.extend = function(to, from) {
   for (var p in from) {
