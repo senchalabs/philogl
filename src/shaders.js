@@ -98,12 +98,25 @@
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
 
+    "uniform bool hasFog;",
+    "uniform vec3 fogColor;",
+
+    "uniform float fogNear;",
+    "uniform float fogFar;",
+
     "void main(){",
       
       "if(!hasTexture1) {",
         "gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);",
       "} else {",
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);",
+      "}",
+
+      /* handle fog */
+      "if (hasFog) {",
+        "float depth = gl_FragCoord.z / gl_FragCoord.w;",
+        "float fogFactor = 1.0 - clamp(fogFactor, 0.0, 1.0);",
+        "gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);",
       "}",
     
     "}"

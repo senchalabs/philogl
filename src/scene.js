@@ -31,7 +31,11 @@
           }
         },
         //point light
-        point: []
+        //points: []
+      },
+      effects: {
+        fog: false
+        // { near, far, color }
       }
     }, opt || {});
     
@@ -66,6 +70,16 @@
     },
 
     beforeRender: function() {
+      this.setupLighting();
+      this.setupEffects();
+      //Set Camera view and projection matrix
+      var camera = this.camera;
+      program.setUniform('projectionMatrix', camera.projection);
+      program.setUniform('viewMatrix', camera.modelView);
+    },
+
+    //Setup the lighting system: ambient, directional, point lights.
+    setupLighting: function() {
       //Setup Lighting
       var abs = Math.abs,
           program = this.program,
@@ -111,10 +125,25 @@
           program.setUniform('enablePoint' + index, false);
         }
       }
-      
-      //Set Camera view and projection matrix
-      program.setUniform('projectionMatrix', camera.projection);
-      program.setUniform('viewMatrix', camera.modelView);
+    },
+
+    //Setup effects like fog, etc.
+    setupEffects: function() {
+      var program = this.program,
+          config = this.config.effects,
+          fog = config.fog,
+          color = fog.color || { r: 0.5, g: 0.5, b: 0.5 };
+
+      if (fog) {
+        program.setUniforms({
+          'hasFog': true,
+          'near': fog.near,
+          'far': fog.far,
+          'color': [color.r, color.g, color.b]
+        });
+      } else {
+        program.setUniform('hasFog', false);
+      }
     },
 
     //Renders all objects in the scene.

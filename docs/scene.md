@@ -46,6 +46,11 @@ Creates a new [Scene](scene.html) instance.
     * position - (*object*) A x, y, z object with the point light position.
     * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
     * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
+* effects - (*object*, optional) An object with scene effect options.
+  * fog - (*object*, optional) An object with linear fog options explained below.
+    * near - (*number*) The near fog factor.
+    * far - (*number*) The far fog factor.
+    * color - (*object*) An `{ r, g, b }` object with the fog color.
 
 ### Examples:
 
@@ -69,6 +74,40 @@ var innerScene = new PhiloGL.Scene(program, innerCamera, {
   }
 });
 {% endhighlight %}
+
+Create a new Scene instance and add some fog to it.
+
+{% highlight js %}
+var scene = new PhiloGL.Scene(program, camera, {
+  //Setup lighting.
+  lights: {
+    enable: true,
+    points: {
+      position: {
+        x: -1, y: 2, z: -1
+      },
+      diffuse: {
+        r: 0.8, g: 0.8, b: 0.8
+      },
+      specular: {
+        r: 0.8, g: 0.8, b: 0.8
+      }
+    }
+  },
+  //Add fog effect.
+  effects: {
+    fog: {
+      near: 0.5,
+      far: 500,
+      color: { 
+        r: 0.3, g: 0.4, b: 0.7
+      }
+    }
+  }
+});
+{% endhighlight %}
+
+
 
 
 Scene Method: add {#Scene:add}
