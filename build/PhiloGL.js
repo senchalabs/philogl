@@ -2109,7 +2109,11 @@ $.splat = (function() {
   };
 
   //Test WebGL
-  PhiloGL.hasWebGL = !!(window && window.WebGLRenderingContext);
+  try {
+    PhiloGL.hasWebGL = !!(window.WebGLRenderingContext);
+  } catch(e) {
+    PhiloGL.hasWebGL = false;
+  }
 
   PhiloGL.WebGL = WebGL;
   
@@ -2849,7 +2853,8 @@ $.splat = (function() {
       this.setupLighting();
       this.setupEffects();
       //Set Camera view and projection matrix
-      var camera = this.camera;
+      var camera = this.camera,
+          program = this.program;
       program.setUniform('projectionMatrix', camera.projection);
       program.setUniform('viewMatrix', camera.modelView);
     },

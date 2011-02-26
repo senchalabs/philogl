@@ -73,7 +73,8 @@
       this.setupLighting();
       this.setupEffects();
       //Set Camera view and projection matrix
-      var camera = this.camera;
+      var camera = this.camera,
+          program = this.program;
       program.setUniform('projectionMatrix', camera.projection);
       program.setUniform('viewMatrix', camera.modelView);
     },
