@@ -7,18 +7,18 @@ categories: [Documentation]
 Script: Core {#Core}
 ===========================
 
-Provides the global `PhiloGL` function to create WebGL applications, the static `hasWebGL` method to detect if the browser is WebGL capable 
+Provides the global `PhiloGL` function to create WebGL applications, the static `hasWebGL` property to detect if the browser is WebGL capable 
 and the static `PhiloGL.unpack()` method for unpacking modules into the global namespace.
 
 
-PhiloGL Static Method: hasWebGL {#PhiloGL:hasWebGL}
--------------------------------------------------
+PhiloGL Static Property: hasWebGL {#PhiloGL:hasWebGL}
+------------------------------------------------------
 
 Returns true or false whether the browser supports WebGL or not.
 
 ### Syntax:
 
-	PhiloGL.hasWebGL();
+	PhiloGL.hasWebGL;
 
 
 PhiloGL Static Method: unpack {#PhiloGL:unpack}
