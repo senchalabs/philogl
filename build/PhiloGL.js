@@ -1754,6 +1754,7 @@ $.splat = (function() {
       path: '',
       vs: '',
       fs: '',
+      noCache: false,
       onSuccess: $.empty,
       onError: $.empty
     }, opt || {});
@@ -1764,12 +1765,14 @@ $.splat = (function() {
 
     new XHR({
       url: vertexShaderURI,
+      noCache: opt.noCache,
       onError: function(arg) {
         opt.onError(arg);
       },
       onSuccess: function(vs) {        
         new XHR({
           url: fragmentShaderURI,
+          noCache: opt.noCache,
           onError: function(arg) {
             opt.onError(arg);
           },
@@ -1796,7 +1799,7 @@ $.splat = (function() {
       url: 'http://sencha.com/',
       method: 'GET',
       async: true,
-      useCache: false,
+      noCache: false,
       //body: null,
       sendAsBinary: false,
       onProgress: $.empty,
@@ -1832,7 +1835,7 @@ $.splat = (function() {
           opt = this.opt,
           async = opt.async;
       
-      if (!opt.useCache) {
+      if (opt.noCache) {
         opt.url += (opt.url.indexOf('?') >= 0? '&' : '?') + $.uid();
       }
 
@@ -1895,7 +1898,7 @@ $.splat = (function() {
     opt = $.merge({
       url: 'http://sencha.com/',
       data: {},
-      useCache: true,
+      noCache: false,
       onComplete: $.empty,
       callbackKey: 'callback'
     }, opt || {});
@@ -1908,7 +1911,7 @@ $.splat = (function() {
     }
     data = data.join('&');
     //append unique id for cache
-    if (!opt.useCache) {
+    if (opt.noCache) {
       data += (data.indexOf('?') >= 0? '&' : '?') + $.uid();
     }
     //create source url
@@ -1942,7 +1945,7 @@ $.splat = (function() {
   var Images = function(opt) {
     opt = $.merge({
       src: [],
-      useCache: true,
+      noCache: false,
       onProgress: $.empty,
       onComplete: $.empty
     }, opt || {});
@@ -1962,7 +1965,7 @@ $.splat = (function() {
       }
     };
     //uid for image sources
-    var useCache = opt.useCache,
+    var noCache = opt.noCache,
         uid = $.uid(),
         getSuffix = function(s) { return (s.indexOf('?') >= 0? '&' : '?') + uid; };
     //Create image array
@@ -1971,7 +1974,7 @@ $.splat = (function() {
       img.index = i;
       img.onload = load;
       img.onerror = error;
-      img.src = src + (useCache? '' : getSuffix(src));
+      img.src = src + (noCache? getSuffix(src) : '');
       return img;
     });
     return images;
@@ -1981,13 +1984,13 @@ $.splat = (function() {
   var Textures = function(program, opt) {
     opt = $.merge({
       src: [],
-      useCache: true,
+      noCache: false,
       onComplete: $.empty
     }, opt || {});
 
     Images({
       src: opt.src,
-      useCache: opt.useCache,
+      noCache: opt.noCache,
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {
@@ -2027,6 +2030,8 @@ $.splat = (function() {
         target = opt.target,
         up = opt.up;
 
+    this.near = near;
+    this.far = far;
     this.position = pos && new Vec3(pos.x, pos.y, pos.z) || new Vec3;
     this.target = target && new Vec3(target.x, target.y, target.z) || new Vec3;
     this.up = up && new Vec3(up.x, up.y, up.z) || new Vec3(0, 1, 0);
@@ -2103,19 +2108,8 @@ $.splat = (function() {
 
   };
 
-  //Feature test WebGL
-  (function() {
-    try {
-      var canvas = document.createElement('canvas');
-      PhiloGL.hasWebGL = function() {
-          return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-      };
-    } catch(e) {
-      PhiloGL.hasWebGL = function() {
-          return false;
-      };
-    }
-  })();
+  //Test WebGL
+  PhiloGL.hasWebGL = !!(window && window.WebGLRenderingContext);
 
   PhiloGL.WebGL = WebGL;
   
@@ -2751,6 +2745,12 @@ $.splat = (function() {
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
 
+    "uniform bool hasFog;",
+    "uniform vec3 fogColor;",
+
+    "uniform float fogNear;",
+    "uniform float fogFar;",
+
     "void main(){",
       
       "if(!hasTexture1) {",
@@ -2758,6 +2758,13 @@ $.splat = (function() {
       "} else {",
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);",
       "}",
+
+      /* handle fog */
+      "if (hasFog) {",
+        "float depth = gl_FragCoord.z / gl_FragCoord.w;",
+        "float fogFactor = smoothstep(fogNear, fogFar, depth);",
+        "gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);",
+      "}",  
     
     "}"
 
@@ -2798,9 +2805,13 @@ $.splat = (function() {
             g: 0,
             b: 0
           }
-        },
+        }
         //point light
-        point: []
+        //points: []
+      },
+      effects: {
+        fog: false
+        // { near, far, color }
       }
     }, opt || {});
     
@@ -2835,6 +2846,16 @@ $.splat = (function() {
     },
 
     beforeRender: function() {
+      this.setupLighting();
+      this.setupEffects();
+      //Set Camera view and projection matrix
+      var camera = this.camera;
+      program.setUniform('projectionMatrix', camera.projection);
+      program.setUniform('viewMatrix', camera.modelView);
+    },
+
+    //Setup the lighting system: ambient, directional, point lights.
+    setupLighting: function() {
       //Setup Lighting
       var abs = Math.abs,
           program = this.program,
@@ -2880,10 +2901,25 @@ $.splat = (function() {
           program.setUniform('enablePoint' + index, false);
         }
       }
-      
-      //Set Camera view and projection matrix
-      program.setUniform('projectionMatrix', camera.projection);
-      program.setUniform('viewMatrix', camera.modelView);
+    },
+
+    //Setup effects like fog, etc.
+    setupEffects: function() {
+      var program = this.program,
+          config = this.config.effects,
+          fog = config.fog,
+          color = fog.color || { r: 0.5, g: 0.5, b: 0.5 };
+
+      if (fog) {
+        program.setUniforms({
+          'hasFog': true,
+          'fogNear': fog.near,
+          'fogFar': fog.far,
+          'fogColor': [color.r, color.g, color.b]
+        });
+      } else {
+        program.setUniform('hasFog', false);
+      }
     },
 
     //Renders all objects in the scene.

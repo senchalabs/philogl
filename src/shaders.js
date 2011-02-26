@@ -115,9 +115,9 @@
       /* handle fog */
       "if (hasFog) {",
         "float depth = gl_FragCoord.z / gl_FragCoord.w;",
-        "float fogFactor = 1.0 - clamp(fogFactor, 0.0, 1.0);",
+        "float fogFactor = smoothstep(fogNear, fogFar, depth);",
         "gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);",
-      "}",
+      "}",  
     
     "}"
 

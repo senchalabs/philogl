@@ -29,7 +29,7 @@
             g: 0,
             b: 0
           }
-        },
+        }
         //point light
         //points: []
       },
@@ -137,9 +137,9 @@
       if (fog) {
         program.setUniforms({
           'hasFog': true,
-          'near': fog.near,
-          'far': fog.far,
-          'color': [color.r, color.g, color.b]
+          'fogNear': fog.near,
+          'fogFar': fog.far,
+          'fogColor': [color.r, color.g, color.b]
         });
       } else {
         program.setUniform('hasFog', false);
