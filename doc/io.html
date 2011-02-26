@@ -117,6 +117,8 @@
 
 <li>async - (<em>boolean</em>, optional) Whether to make the request asynchronous or not. Default&#8217;s <code>true</code>.</li>
 
+<li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
+
 <li>sendAsBinary - (<em>boolean</em>, optional) Whether the content should be sent as binary or not. Default&#8217;s false. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
 
 <li>body - (<em>mixed</em>, optional) To be used when <code>sendAsBinary</code> is <code>true</code>. The binary content to be sent. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
@@ -196,6 +198,8 @@
 <li>callbackKey - (<em>string</em>) The name of the query string parameter to set the name of the callback function to.</li>
 
 <li>onComplete - (<em>function</em>, optional) A callback executed once the connection ended. The first parameter of the callback is the JSON content.</li>
+
+<li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
 </ul>
 
 <h3 id='examples'>Examples:</h3>
@@ -239,50 +243,8 @@
 <li>onProgress - (<em>function</em>, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.</li>
 
 <li>onComplete - (<em>function</em>, optional) Callback executed when all images finished loading. The <code>images</code> variable will now have all loaded images.</li>
-</ul>
 
-<h3 id='examples'>Examples:</h3>
-
-<p>Creating a request to load images.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>imageUrls</span> <span class='o'>=</span> <span class='p'>[</span><span class='s1'>&#39;image1.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image2.png&#39;</span><span class='p'>,</span> <span class='s1'>&#39;image3.png&#39;</span><span class='p'>];</span>
-
-  <span class='kd'>var</span> <span class='nx'>images</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>Images</span><span class='p'>({</span>
-    <span class='nx'>src</span><span class='o'>:</span> <span class='nx'>imageUrls</span><span class='p'>,</span>
-    <span class='nx'>onProgress</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>perc</span><span class='p'>)</span> <span class='p'>{</span>
-      <span class='nx'>console</span><span class='p'>.</span><span class='nx'>log</span><span class='p'>(</span><span class='nx'>perc</span> <span class='o'>+</span> <span class='s1'>&#39; loaded&#39;</span><span class='p'>);</span>
-    <span class='p'>},</span>
-    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
-      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;All images loaded! Now do something with the images array&quot;</span><span class='p'>);</span>
-    <span class='p'>}</span>
-  <span class='p'>});</span>
-</code></pre>
-</div>
-<h2 id='IO:Images'>IO Class: IO.Images</h2>
-
-<p>A very useful class that enables loading of multiple remote images asynchronously and returns an array with all the images loaded.</p>
-
-<h2 id='IO:Images:constructor'>IO.Images Method: constructor</h2>
-
-<p>Creates a request to Images providing an array that will be asynchonously filled with loaded images.</p>
-
-<h3 id='syntax'>Syntax:</h3>
-
-<pre><code>var images = new PhiloGL.IO.Images(options);</code></pre>
-
-<h3 id='arguments'>Arguments:</h3>
-
-<ol>
-<li>options - (<em>object</em>) An object containing the following options:</li>
-</ol>
-
-<h3 id='options'>Options:</h3>
-
-<ul>
-<li>src - (<em>array</em>) An array of strings pointing to image urls.</li>
-
-<li>onProgress - (<em>function</em>, optional) Callback executed each time an image is loaded. Provides as first argument the percentage of images loaded.</li>
-
-<li>onComplete - (<em>function</em>, optional) Callback executed when all images finished loading. The <code>images</code> variable will now have all loaded images.</li>
+<li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
 </ul>
 
 <h3 id='examples'>Examples:</h3>
@@ -327,6 +289,8 @@
 <li>src - (<em>array</em>) An array of strings pointing to image urls.</li>
 
 <li>onComplete - (<em>function</em>, optional) Callback executed when all images and textures finished loading.</li>
+
+<li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
 </ul>
 
 <h3 id='examples'>Examples:</h3>

@@ -146,6 +146,10 @@
 </li>
 </ul>
 </li>
+
+<li>
+<p>effects - (<em>object</em>, optional) An object with scene effect options. * fog - (<em>object</em>, optional) An object with linear fog options explained below. * near - (<em>number</em>, optional) The near fog factor. Default&#8217;s the <a href='camera.html'>Camera</a> near factor. * far - (<em>number</em>) The far fog factor. Default&#8217;s the <a href='camera.html'>Camera</a> far factor. * color - (<em>object</em>) An <code>{ r, g, b }</code> object with the fog color.</p>
+</li>
 </ul>
 
 <h3 id='examples'>Examples:</h3>
@@ -163,6 +167,36 @@
       <span class='p'>},</span>
       <span class='nx'>specular</span><span class='o'>:</span> <span class='p'>{</span>
         <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.8</span>
+      <span class='p'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<p>Create a new Scene instance and add some fog to it.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>scene</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Scene</span><span class='p'>(</span><span class='nx'>program</span><span class='p'>,</span> <span class='nx'>camera</span><span class='p'>,</span> <span class='p'>{</span>
+  <span class='c1'>//Setup lighting.</span>
+  <span class='nx'>lights</span><span class='o'>:</span> <span class='p'>{</span>
+    <span class='nx'>enable</span><span class='o'>:</span> <span class='kc'>true</span><span class='p'>,</span>
+    <span class='nx'>points</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>position</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='o'>-</span><span class='mi'>1</span>
+      <span class='p'>},</span>
+      <span class='nx'>diffuse</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.8</span>
+      <span class='p'>},</span>
+      <span class='nx'>specular</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.8</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.8</span>
+      <span class='p'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>},</span>
+  <span class='c1'>//Add fog effect.</span>
+  <span class='nx'>effects</span><span class='o'>:</span> <span class='p'>{</span>
+    <span class='nx'>fog</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>near</span><span class='o'>:</span> <span class='mf'>0.5</span><span class='p'>,</span>
+      <span class='nx'>far</span><span class='o'>:</span> <span class='mi'>500</span><span class='p'>,</span>
+      <span class='nx'>color</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>r</span><span class='o'>:</span> <span class='mf'>0.3</span><span class='p'>,</span> <span class='nx'>g</span><span class='o'>:</span> <span class='mf'>0.4</span><span class='p'>,</span> <span class='nx'>b</span><span class='o'>:</span> <span class='mf'>0.7</span>
       <span class='p'>}</span>
     <span class='p'>}</span>
   <span class='p'>}</span>
