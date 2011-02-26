@@ -7,4 +7,5 @@ examples export-ignore
 shaders export-ignore
 TODO export-ignore
 src export-ignore
+docs export-ignore
 tests export-ignore
