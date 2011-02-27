@@ -180,10 +180,14 @@ $.extend = function(to, from) {
 };
 
 $.type = (function() {
-  var oString = Object.prototype.toString,
-      re = /^\[object\s(.*)\]$/,
-      type = function(e) { return oString.call(e).match(re)[1].toLowerCase(); };
-  
+  var isArray = Array.isArray,
+      type = function(e) {
+        if (Array.isArray(e)) return 'array';
+        var t = typeof e;
+        if (t !== 'object') return t;
+        return e.constructor.name.toLowerCase();
+      };
+
   return function(elem) {
     var elemType = type(elem);
     if (elemType != 'object') {
