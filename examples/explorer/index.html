@@ -107,7 +107,7 @@
     <div id="fallback" class="fallback"></div>
 
   <script>
-    if (!PhiloGL.hasWebGL) {
+    if (!PhiloGL.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

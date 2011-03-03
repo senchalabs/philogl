@@ -2107,13 +2107,20 @@ $.splat = (function() {
     } 
 
   };
-
-  //Test WebGL
-  try {
-    PhiloGL.hasWebGL = !!(window.WebGLRenderingContext);
-  } catch(e) {
-    PhiloGL.hasWebGL = false;
-  }
+  
+  //Feature test WebGL
+  (function() {
+    try {
+      var canvas = document.createElement('canvas');
+      PhiloGL.hasWebGL = function() {
+          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      };
+    } catch(e) {
+      PhiloGL.hasWebGL = function() {
+          return false;
+      };
+    }
+  })();
 
   PhiloGL.WebGL = WebGL;
   

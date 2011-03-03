@@ -8,7 +8,7 @@ Module: WebGL {#WebGL}
 ===============================
 
 Provides the `getContext` method which is a wrapper around the method that returns the native context for a 3D canvas. Also 
-has the code to add `PhiloGL.hasWebGL` that returns a *boolean* whether the current browser supports WebGL or not.
+has the code to add `PhiloGL.hasWebGL()` that returns a *boolean* whether the current browser supports WebGL or not.
 
 WebGL Function: getContext {#WebGL:getContext}
 ------------------------------------------------
