@@ -44,7 +44,6 @@
     this.models = [];
     this.config = opt;
 
-    this.o3dHash = {};
     this.setupPicking();
   };
 
@@ -241,7 +240,7 @@
     
     //returns an element at the given position
     pick: function(x, y) {
-      var o3dHash = this.o3dHash,
+      var o3dHash = {},
           program = this.program,
           camera = this.camera,
           config = this.config,
@@ -263,7 +262,6 @@
       program.setFrameBuffer('$picking', true);
       
       //render the scene to a texture
-      o3dHash = this.o3dHash = {};
       gl.disable(gl.BLEND);
       gl.viewport(-x, y - height, width, height);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
