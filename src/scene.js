@@ -44,6 +44,7 @@
     this.models = [];
     this.config = opt;
 
+    this.o3dHash = {};
     this.setupPicking();
   };
 
@@ -221,8 +222,8 @@
           program = this.program;
       //create framebuffer
       program.setFrameBuffer('$picking', {
-        width: canvas.width,
-        height: canvas.height,
+        width: 1,
+        height: 1,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -240,7 +241,7 @@
     
     //returns an element at the given position
     pick: function(x, y) {
-      var o3dHash = {},
+      var o3dHash = this.o3dHash,
           program = this.program,
           camera = this.camera,
           config = this.config,
@@ -261,27 +262,27 @@
       program.setUniform('enablePicking', true);
       program.setFrameBuffer('$picking', true);
       
-      if (true || now - last > delay) {
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, width, height);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        this.renderToTexture('$picking', {
-          onBeforeRender: function(elem, i) {
-            var suc = i + 1;
-            hash[0] = suc % 256;
-            hash[1] = ((suc / 256) >> 0) % 256;
-            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
-            program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
-            o3dHash[String(hash)] = elem;
-          }
-        });
-        this.last = $.time();
-      }
+      //render the scene to a texture
+      o3dHash = this.o3dHash = {};
+      gl.disable(gl.BLEND);
+      gl.viewport(-x, y - height, width, height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      this.renderToTexture('$picking', {
+        onBeforeRender: function(elem, i) {
+          var suc = i + 1;
+          hash[0] = suc % 256;
+          hash[1] = ((suc / 256) >> 0) % 256;
+          hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+          program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+          o3dHash[String(hash)] = elem;
+        }
+      });
+      this.last = $.time();
       
-      //grab the color of the pointed object
+      //grab the color of the pointed pixel in the texture
       var pixels = new Uint8Array(1 * 1 * 4);
-      gl.readPixels(x, height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      var elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
 
       //restore all values
       program.setFrameBuffer('$picking', false);

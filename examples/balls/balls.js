@@ -54,9 +54,9 @@
     return document.getElementById(d);
   }
   
-  var models = [], i = 100;
+  var models = [], i = 50;
   while (i--) {
-    var model = new O3D.Sphere({
+    var model = new O3D[i % 2? "Sphere" : "Cube"]({
       shininess: 2,
       radius: Math.random() * 2 + 1,
       colors: [0.5, 0.5, 0.5, 1],
