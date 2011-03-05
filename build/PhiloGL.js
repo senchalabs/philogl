@@ -142,7 +142,7 @@ this.PhiloGL = null;
 
       //get Events
       if (optEvents) {
-        PhiloGL.Events.create(canvas, $.extend(optEvents, {
+        PhiloGL.Events.create(app, $.extend(optEvents, {
           bind: app
         }));
       }
@@ -928,6 +928,11 @@ $.splat = (function() {
 
 (function() {
   
+  //returns an O3D object or false otherwise.
+  function toO3D(n) {
+    return n !== true? n : false;
+  }
+  
   //Returns an element position
   var getPos = function(elem) {
     var offset = getOffsets(elem);
@@ -1021,7 +1026,9 @@ $.splat = (function() {
     }
   };
 
-  var EventsProxy = function(domElem, opt) {
+  var EventsProxy = function(app, opt) {
+    var domElem = app.canvas;
+    this.scene = app.scene;
     this.domElem = domElem;
     this.pos = getPos(domElem);
     this.opt = this.callbacks = opt;
@@ -1078,6 +1085,7 @@ $.splat = (function() {
     
     eventInfo: function(type, e, win) {
       var domElem = this.domElem,
+          scene = this.scene,
           opt = this.opt,
           size = this.getSize(),
           relative = opt.relative,
@@ -1110,11 +1118,20 @@ $.splat = (function() {
           break;
       }
 
+      var cacheTarget;
+      
       $.extend(evt, {
         x: x,
         y: y,
+        cache: false,
+        //stop event propagation
         stop: function() {
           event.stop(ge);
+        },
+        //get the target element of the event
+        getTarget: function() {
+          if (cacheTarget) return cacheTarget;
+          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y) || true);
         }
       });
       //wrap native event
@@ -1139,14 +1156,14 @@ $.splat = (function() {
         if(e.isRightClick) {
           this.callbacks.onRightClick(e, this.hovered);
         } else {
-          this.callbacks.onClick(e, this.pressed);
+          this.callbacks.onClick(e, toO3D(this.pressed));
         }
       }
       if(this.pressed) {
         if(this.moved) {
-          this.callbacks.onDragEnd(e, this.pressed);
+          this.callbacks.onDragEnd(e, toO3D(this.pressed));
         } else {
-          this.callbacks.onDragCancel(e, this.pressed);
+          this.callbacks.onDragCancel(e, toO3D(this.pressed));
         }
         this.pressed = this.moved = false;
       }
@@ -1171,10 +1188,26 @@ $.splat = (function() {
     mousemove: function(e) {
       if(this.pressed) {
         this.moved = true;
-        this.callbacks.onDragMove(e, this.pressed);
+        this.callbacks.onDragMove(e, toO3D(this.pressed));
         return;
       }
-      this.callbacks.onMouseMove(e, false);
+      if(this.hovered) {
+        var target = toO3D(e.getTarget());
+        if(this.hovered != target) {
+          this.callbacks.onMouseLeave(e, this.hovered);
+          this.hovered = target;
+          if(target) {
+            this.callbacks.onMouseEnter(e, this.hovered);
+          }
+        } else {
+          this.callbacks.onMouseMove(e, this.hovered);
+        }
+      } else {
+        this.hovered = toO3D(e.getTarget());
+        if(this.hovered) {
+          this.callbacks.onMouseEnter(e, this.hovered);
+        }
+      }
     },
     
     mousewheel: function(e) {
@@ -1182,28 +1215,28 @@ $.splat = (function() {
     },
     
     mousedown: function(e) {
-      this.pressed = true;
-      this.callbacks.onDragStart(e, this.pressed);
+      this.pressed = e.getTarget();
+      this.callbacks.onDragStart(e, toO3D(this.pressed));
     },
     
     touchstart: function(e) {
-      this.touched = true;
-      this.callbacks.onTouchStart(e, this.touched);
+      this.touched = e.getTarget();
+      this.callbacks.onTouchStart(e, toO3D(this.touched));
     },
     
     touchmove: function(e) {
       if(this.touched) {
         this.touchMoved = true;
-        this.callbacks.onTouchMove(e, this.touched);
+        this.callbacks.onTouchMove(e, toO3D(this.touched));
       }
     },
     
     touchend: function(e) {
       if(this.touched) {
         if(this.touchMoved) {
-          this.callbacks.onTouchEnd(e, this.touched);
+          this.callbacks.onTouchEnd(e, toO3D(this.touched));
         } else {
-          this.callbacks.onTouchCancel(e, this.touched);
+          this.callbacks.onTouchCancel(e, toO3D(this.touched));
         }
         this.touched = this.touchMoved = false;
       }
@@ -1220,7 +1253,7 @@ $.splat = (function() {
     
   var Events = {};
 
-  Events.create = function(domElem, opt) {
+  Events.create = function(app, opt) {
     opt = $.merge({
       cachePosition: true,
       cacheSize: true,
@@ -1228,6 +1261,7 @@ $.splat = (function() {
       centerOrigin: true,
       disableContextMenu: true,
       bind: false,
+      picking: false,
       
       onClick: $.empty,
       onRightClick: $.empty,
@@ -1262,20 +1296,20 @@ $.splat = (function() {
       }
     }
 
-    new EventsProxy(domElem, opt);
+    new EventsProxy(app, opt);
   };
 
   Events.Keys = {
-	'enter': 13,
-	'up': 38,
-	'down': 40,
-	'left': 37,
-	'right': 39,
-	'esc': 27,
-	'space': 32,
-	'backspace': 8,
-	'tab': 9,
-	'delete': 46
+  	'enter': 13,
+  	'up': 38,
+  	'down': 40,
+  	'left': 37,
+  	'right': 39,
+  	'esc': 27,
+  	'space': 32,
+  	'backspace': 8,
+  	'tab': 9,
+  	'delete': 46
   };
 
   function keyOf(code) {
@@ -2756,6 +2790,9 @@ $.splat = (function() {
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
 
+    "uniform bool enablePicking;",
+    "uniform vec3 pickColor;",
+
     "uniform bool hasFog;",
     "uniform vec3 fogColor;",
 
@@ -2770,6 +2807,10 @@ $.splat = (function() {
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);",
       "}",
 
+      "if(enablePicking) {",
+        "gl_FragColor = vec4(pickColor, 1.0);",
+      "}",
+      
       /* handle fog */
       "if (hasFog) {",
         "float depth = gl_FragCoord.z / gl_FragCoord.w;",
@@ -2830,6 +2871,8 @@ $.splat = (function() {
     this.camera = camera;
     this.models = [];
     this.config = opt;
+
+    this.setupPicking();
   };
 
   Scene.prototype = {
@@ -2878,14 +2921,17 @@ $.splat = (function() {
           directional = light.directional,
           dcolor = directional.color,
           dir = directional.direction,
+          enable = light.enable,
           points = light.points && $.splat(light.points) || [];
       
       //Normalize lighting direction vector
-      Vec3.$unit(dir);
-      Vec3.$scale(dir, -1);
+      var newDir = Vec3.clone(dir);
+      Vec3.$unit(newDir);
+      Vec3.$scale(newDir, -1);
+      dir = newDir;
       
       //Set light uniforms. Ambient and directional lights.
-      program.setUniform('enableLights', light.enable);
+      program.setUniform('enableLights', enable);
       if (light.enable) {
         program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
         program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
@@ -2896,7 +2942,7 @@ $.splat = (function() {
       program.setUniform('enableSpecularHighlights', false);
       for (var i = 0, l = Scene.MAX_POINT_LIGHTS, pl = points.length; i < l; i++) {
         var index = i + 1;
-        if (i < pl) {
+        if (enable && i < pl) {
           var point = points[i],
               position = point.position,
               color = point.color || point.diffuse,
@@ -2935,23 +2981,30 @@ $.splat = (function() {
     },
 
     //Renders all objects in the scene.
-    render: function() {
+    render: function(opt) {
       var program = this.program,
-          camera = this.camera;
+          camera = this.camera,
+          options = $.merge({
+            onBeforeRender: $.empty,
+            onAfterRender: $.empty
+          }, opt || {});
+
       this.beforeRender();
-      this.models.forEach(function(elem) {
+      this.models.forEach(function(elem, i) {
         elem.onBeforeRender(program, camera);
+        options.onBeforeRender(elem, i);
         this.renderObject(elem);
+        options.onAfterRender(elem, i);
         elem.onAfterRender(program, camera);
       }, this);
     },
 
-    renderToTexture: function(name) {
+    renderToTexture: function(name, opt) {
       var program = this.program,
           texture = program.textures[name + '-texture'],
           texMemo = program.textureMemo[name + '-texture'];
       
-      this.render();
+      this.render(opt);
 
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
@@ -2988,8 +3041,84 @@ $.splat = (function() {
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+    },
+    
+    //setup picking framebuffer
+    setupPicking: function() {
+      var canvas = gl.canvas,
+          program = this.program;
+      //create framebuffer
+      program.setFrameBuffer('$picking', {
+        width: canvas.width,
+        height: canvas.height,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
+      });
+      program.setFrameBuffer('$picking', false);
+    },
+    
+    //returns an element at the given position
+    pick: function(x, y) {
+      var o3dHash = {},
+          program = this.program,
+          camera = this.camera,
+          config = this.config,
+          memoLightEnable = config.lights.enable,
+          memoFog = config.effects.fog,
+          width = gl.canvas.width,
+          height = gl.canvas.height,
+          hash = [],
+          delay = 200,
+          now = $.time(),
+          last = this.last || 0;
+
+      //setup the scene for picking
+      config.lights.enable = false;
+      config.effects.fog = false;
+      
+      //enable picking and render to texture
+      program.setUniform('enablePicking', true);
+      program.setFrameBuffer('$picking', true);
+      
+      if (true || now - last > delay) {
+        gl.disable(gl.BLEND);
+        gl.viewport(0, 0, width, height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        this.renderToTexture('$picking', {
+          onBeforeRender: function(elem, i) {
+            var suc = i + 1;
+            hash[0] = suc % 256;
+            hash[1] = ((suc / 256) >> 0) % 256;
+            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+            program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+            o3dHash[String(hash)] = elem;
+          }
+        });
+        this.last = $.time();
+      }
+      
+      //grab the color of the pointed object
+      var pixels = new Uint8Array(1 * 1 * 4);
+      gl.readPixels(x, height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
+
+      //restore all values
+      program.setFrameBuffer('$picking', false);
+      program.setUniform('enablePicking', false);
+      config.lights.enable = memoLightEnable;
+      config.effects.fog = memoFog;
+      
+      return elem;
     }
-  
   };
 
   Scene.id = $.time();

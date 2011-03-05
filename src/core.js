@@ -118,7 +118,7 @@ this.PhiloGL = null;
 
       //get Events
       if (optEvents) {
-        PhiloGL.Events.create(canvas, $.extend(optEvents, {
+        PhiloGL.Events.create(app, $.extend(optEvents, {
           bind: app
         }));
       }

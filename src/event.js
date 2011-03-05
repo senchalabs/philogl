@@ -3,6 +3,11 @@
 
 (function() {
   
+  //returns an O3D object or false otherwise.
+  function toO3D(n) {
+    return n !== true? n : false;
+  }
+  
   //Returns an element position
   var getPos = function(elem) {
     var offset = getOffsets(elem);
@@ -96,7 +101,9 @@
     }
   };
 
-  var EventsProxy = function(domElem, opt) {
+  var EventsProxy = function(app, opt) {
+    var domElem = app.canvas;
+    this.scene = app.scene;
     this.domElem = domElem;
     this.pos = getPos(domElem);
     this.opt = this.callbacks = opt;
@@ -153,6 +160,7 @@
     
     eventInfo: function(type, e, win) {
       var domElem = this.domElem,
+          scene = this.scene,
           opt = this.opt,
           size = this.getSize(),
           relative = opt.relative,
@@ -185,11 +193,20 @@
           break;
       }
 
+      var cacheTarget;
+      
       $.extend(evt, {
         x: x,
         y: y,
+        cache: false,
+        //stop event propagation
         stop: function() {
           event.stop(ge);
+        },
+        //get the target element of the event
+        getTarget: function() {
+          if (cacheTarget) return cacheTarget;
+          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y) || true);
         }
       });
       //wrap native event
@@ -214,14 +231,14 @@
         if(e.isRightClick) {
           this.callbacks.onRightClick(e, this.hovered);
         } else {
-          this.callbacks.onClick(e, this.pressed);
+          this.callbacks.onClick(e, toO3D(this.pressed));
         }
       }
       if(this.pressed) {
         if(this.moved) {
-          this.callbacks.onDragEnd(e, this.pressed);
+          this.callbacks.onDragEnd(e, toO3D(this.pressed));
         } else {
-          this.callbacks.onDragCancel(e, this.pressed);
+          this.callbacks.onDragCancel(e, toO3D(this.pressed));
         }
         this.pressed = this.moved = false;
       }
@@ -246,10 +263,26 @@
     mousemove: function(e) {
       if(this.pressed) {
         this.moved = true;
-        this.callbacks.onDragMove(e, this.pressed);
+        this.callbacks.onDragMove(e, toO3D(this.pressed));
         return;
       }
-      this.callbacks.onMouseMove(e, false);
+      if(this.hovered) {
+        var target = toO3D(e.getTarget());
+        if(this.hovered != target) {
+          this.callbacks.onMouseLeave(e, this.hovered);
+          this.hovered = target;
+          if(target) {
+            this.callbacks.onMouseEnter(e, this.hovered);
+          }
+        } else {
+          this.callbacks.onMouseMove(e, this.hovered);
+        }
+      } else {
+        this.hovered = toO3D(e.getTarget());
+        if(this.hovered) {
+          this.callbacks.onMouseEnter(e, this.hovered);
+        }
+      }
     },
     
     mousewheel: function(e) {
@@ -257,28 +290,28 @@
     },
     
     mousedown: function(e) {
-      this.pressed = true;
-      this.callbacks.onDragStart(e, this.pressed);
+      this.pressed = e.getTarget();
+      this.callbacks.onDragStart(e, toO3D(this.pressed));
     },
     
     touchstart: function(e) {
-      this.touched = true;
-      this.callbacks.onTouchStart(e, this.touched);
+      this.touched = e.getTarget();
+      this.callbacks.onTouchStart(e, toO3D(this.touched));
     },
     
     touchmove: function(e) {
       if(this.touched) {
         this.touchMoved = true;
-        this.callbacks.onTouchMove(e, this.touched);
+        this.callbacks.onTouchMove(e, toO3D(this.touched));
       }
     },
     
     touchend: function(e) {
       if(this.touched) {
         if(this.touchMoved) {
-          this.callbacks.onTouchEnd(e, this.touched);
+          this.callbacks.onTouchEnd(e, toO3D(this.touched));
         } else {
-          this.callbacks.onTouchCancel(e, this.touched);
+          this.callbacks.onTouchCancel(e, toO3D(this.touched));
         }
         this.touched = this.touchMoved = false;
       }
@@ -295,7 +328,7 @@
     
   var Events = {};
 
-  Events.create = function(domElem, opt) {
+  Events.create = function(app, opt) {
     opt = $.merge({
       cachePosition: true,
       cacheSize: true,
@@ -303,6 +336,7 @@
       centerOrigin: true,
       disableContextMenu: true,
       bind: false,
+      picking: false,
       
       onClick: $.empty,
       onRightClick: $.empty,
@@ -337,20 +371,20 @@
       }
     }
 
-    new EventsProxy(domElem, opt);
+    new EventsProxy(app, opt);
   };
 
   Events.Keys = {
-	'enter': 13,
-	'up': 38,
-	'down': 40,
-	'left': 37,
-	'right': 39,
-	'esc': 27,
-	'space': 32,
-	'backspace': 8,
-	'tab': 9,
-	'delete': 46
+  	'enter': 13,
+  	'up': 38,
+  	'down': 40,
+  	'left': 37,
+  	'right': 39,
+  	'esc': 27,
+  	'space': 32,
+  	'backspace': 8,
+  	'tab': 9,
+  	'delete': 46
   };
 
   function keyOf(code) {

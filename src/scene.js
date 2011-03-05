@@ -43,6 +43,8 @@
     this.camera = camera;
     this.models = [];
     this.config = opt;
+
+    this.setupPicking();
   };
 
   Scene.prototype = {
@@ -91,14 +93,17 @@
           directional = light.directional,
           dcolor = directional.color,
           dir = directional.direction,
+          enable = light.enable,
           points = light.points && $.splat(light.points) || [];
       
       //Normalize lighting direction vector
-      Vec3.$unit(dir);
-      Vec3.$scale(dir, -1);
+      var newDir = Vec3.clone(dir);
+      Vec3.$unit(newDir);
+      Vec3.$scale(newDir, -1);
+      dir = newDir;
       
       //Set light uniforms. Ambient and directional lights.
-      program.setUniform('enableLights', light.enable);
+      program.setUniform('enableLights', enable);
       if (light.enable) {
         program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
         program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
@@ -109,7 +114,7 @@
       program.setUniform('enableSpecularHighlights', false);
       for (var i = 0, l = Scene.MAX_POINT_LIGHTS, pl = points.length; i < l; i++) {
         var index = i + 1;
-        if (i < pl) {
+        if (enable && i < pl) {
           var point = points[i],
               position = point.position,
               color = point.color || point.diffuse,
@@ -148,23 +153,30 @@
     },
 
     //Renders all objects in the scene.
-    render: function() {
+    render: function(opt) {
       var program = this.program,
-          camera = this.camera;
+          camera = this.camera,
+          options = $.merge({
+            onBeforeRender: $.empty,
+            onAfterRender: $.empty
+          }, opt || {});
+
       this.beforeRender();
-      this.models.forEach(function(elem) {
+      this.models.forEach(function(elem, i) {
         elem.onBeforeRender(program, camera);
+        options.onBeforeRender(elem, i);
         this.renderObject(elem);
+        options.onAfterRender(elem, i);
         elem.onAfterRender(program, camera);
       }, this);
     },
 
-    renderToTexture: function(name) {
+    renderToTexture: function(name, opt) {
       var program = this.program,
           texture = program.textures[name + '-texture'],
           texMemo = program.textureMemo[name + '-texture'];
       
-      this.render();
+      this.render(opt);
 
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
@@ -201,8 +213,84 @@
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+    },
+    
+    //setup picking framebuffer
+    setupPicking: function() {
+      var canvas = gl.canvas,
+          program = this.program;
+      //create framebuffer
+      program.setFrameBuffer('$picking', {
+        width: canvas.width,
+        height: canvas.height,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
+      });
+      program.setFrameBuffer('$picking', false);
+    },
+    
+    //returns an element at the given position
+    pick: function(x, y) {
+      var o3dHash = {},
+          program = this.program,
+          camera = this.camera,
+          config = this.config,
+          memoLightEnable = config.lights.enable,
+          memoFog = config.effects.fog,
+          width = gl.canvas.width,
+          height = gl.canvas.height,
+          hash = [],
+          delay = 200,
+          now = $.time(),
+          last = this.last || 0;
+
+      //setup the scene for picking
+      config.lights.enable = false;
+      config.effects.fog = false;
+      
+      //enable picking and render to texture
+      program.setUniform('enablePicking', true);
+      program.setFrameBuffer('$picking', true);
+      
+      if (true || now - last > delay) {
+        gl.disable(gl.BLEND);
+        gl.viewport(0, 0, width, height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        this.renderToTexture('$picking', {
+          onBeforeRender: function(elem, i) {
+            var suc = i + 1;
+            hash[0] = suc % 256;
+            hash[1] = ((suc / 256) >> 0) % 256;
+            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+            program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+            o3dHash[String(hash)] = elem;
+          }
+        });
+        this.last = $.time();
+      }
+      
+      //grab the color of the pointed object
+      var pixels = new Uint8Array(1 * 1 * 4);
+      gl.readPixels(x, height - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
+
+      //restore all values
+      program.setFrameBuffer('$picking', false);
+      program.setUniform('enablePicking', false);
+      config.lights.enable = memoLightEnable;
+      config.effects.fog = memoFog;
+      
+      return elem;
     }
-  
   };
 
   Scene.id = $.time();
