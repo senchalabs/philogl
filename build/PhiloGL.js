@@ -2184,6 +2184,7 @@ $.splat = (function() {
   O3D.Model = function(opt) {
     this.$$family = 'model';
 
+    this.pickable = !!opt.pickable;
     this.vertices = flatten(opt.vertices);
     this.faces = flatten(opt.faces);
     this.normals = flatten(opt.normals);
@@ -2498,7 +2499,7 @@ $.splat = (function() {
     }
 });    
 */
-  //Now some primitives, Cube, Sphere
+  //Now some primitives, Cube, Sphere, Cone, Cylinder
   //Cube
   O3D.Cube = function(config) {
     O3D.Model.call(this, $.extend({
@@ -2617,6 +2618,9 @@ $.splat = (function() {
 
   O3D.Cube.prototype = Object.create(O3D.Model.prototype);
   
+  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
+  //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
+
   O3D.Sphere = function(opt) {
        var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
@@ -2685,7 +2689,106 @@ $.splat = (function() {
   };
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.TruncatedCone = function(config) {
+    var bottomRadius = config.bottomRadius || 0,
+        topRadius = config.topRadius || 0,
+        height = config.height || 1,
+        nradial = config.nradial || 10,
+        nvertical = config.nvertical || 10,
+        topCap = !!config.topCap,
+        bottomCap = !!config.bottomCap,
+        extra = (topCap? 2 : 0) + (bottomCap? 2 : 0),
+        numVertices = (nradial + 1) * (nvertical + 1 + extra),
+        vertices = [],
+        normals = [],
+        texCoords = [],
+        indices = [],
+        vertsAroundEdge = nradial + 1,
+        slant = Math.atan2(bottomRadius - topRadius, height),
+        math = Math,
+        msin = math.sin,
+        mcos = math.cos,
+        mpi = math.PI,
+        cosSlant = mcos(slant),
+        sinSlant = msin(slant),
+        start = topCap? -2 : 0,
+        end = nvertical + (bottomCap? 2 : 0);
 
+    for (var i = start; i <= end; i++) {
+      var v = i / nvertical,
+          y = height * v,
+          ringRadius;
+      
+      if (i < 0) {
+        y = 0;
+        v = 1;
+        ringRadius = bottomRadius;
+      } else if (i > nvertical) {
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        ringRadius = bottomRadius +
+          (topRadius - bottomRadius) * (i / nvertical);
+      }
+      if (i == -2 || i == nvertical + 2) {
+        ringRadius = 0;
+        v = 0;
+      }
+      y -= height / 2;
+      for (var j = 0; j < vertsAroundEdge; j++) {
+        var sin = msin(j * mpi * 2 / nradial);
+        var cos = mcos(j * mpi * 2 / nradial);
+        vertices.push(sin * ringRadius, y, cos * ringRadius);
+        normals.push(
+            (i < 0 || i > nvertical) ? 0 : (sin * cosSlant),
+            (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant),
+            (i < 0 || i > nvertical) ? 0 : (cos * cosSlant));
+        texCoords.push(j / nradial, v);
+      }
+    }
+
+    for (i = 0; i < nvertical + extra; i++) {
+      for (j = 0; j < nradial; j++) {
+        indices.push(vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 0) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                      
+                     vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 0 + j);
+      }
+    }
+
+    O3D.Model.call(this, $.extend({
+      vertices: vertices,
+      normals: normals,
+      texCoords: texCoords,
+      indices: indices
+    }, config || {}));
+  };
+  
+  O3D.TruncatedCone.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.Cone = function(config) {
+    config.topRadius = 0;
+    config.topCap = !!config.cap;
+    config.bottomCap = !!config.cap;
+    config.bottomRadius = config.radius || 3;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cone.prototype = Object.create(O3D.TruncatedCone.prototype);
+
+  O3D.Cylinder = function(config) {
+    config.bottomRadius = config.radius;
+    config.topRadius = config.radius;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
+  
   //Assign to namespace
   PhiloGL.O3D = O3D;
 })();
@@ -2872,7 +2975,6 @@ $.splat = (function() {
     this.models = [];
     this.config = opt;
 
-    this.o3dHash = {};
     this.setupPicking();
   };
 
@@ -2926,10 +3028,7 @@ $.splat = (function() {
           points = light.points && $.splat(light.points) || [];
       
       //Normalize lighting direction vector
-      var newDir = Vec3.clone(dir);
-      Vec3.$unit(newDir);
-      Vec3.$scale(newDir, -1);
-      dir = newDir;
+      dir = Vec3.unit(dir).$scale(-1);
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
@@ -3069,7 +3168,7 @@ $.splat = (function() {
     
     //returns an element at the given position
     pick: function(x, y) {
-      var o3dHash = this.o3dHash,
+      var o3dHash = {},
           program = this.program,
           camera = this.camera,
           config = this.config,
@@ -3078,9 +3177,10 @@ $.splat = (function() {
           width = gl.canvas.width,
           height = gl.canvas.height,
           hash = [],
-          delay = 200,
           now = $.time(),
-          last = this.last || 0;
+          last = this.last || 0,
+          pixel = new Uint8Array(1 * 1 * 4),
+          index = 0, backgroundColor;
 
       //setup the scene for picking
       config.lights.enable = false;
@@ -3091,13 +3191,20 @@ $.splat = (function() {
       program.setFrameBuffer('$picking', true);
       
       //render the scene to a texture
-      o3dHash = this.o3dHash = {};
       gl.disable(gl.BLEND);
       gl.viewport(-x, y - height, width, height);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      //read the background color so we don't step on it
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      backgroundColor = pixel[0] + pixel[1] * 256 + pixel[2] * 256 * 256;
+
+      //render to texture
       this.renderToTexture('$picking', {
         onBeforeRender: function(elem, i) {
-          var suc = i + 1;
+          if (i == backgroundColor) {
+            index = 1;
+          }
+          var suc = i + index;
           hash[0] = suc % 256;
           hash[1] = ((suc / 256) >> 0) % 256;
           hash[2] = ((suc / (256 * 256)) >> 0) % 256;
@@ -3105,12 +3212,10 @@ $.splat = (function() {
           o3dHash[String(hash)] = elem;
         }
       });
-      this.last = $.time();
       
       //grab the color of the pointed pixel in the texture
-      var pixels = new Uint8Array(1 * 1 * 4);
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      var elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
       //restore all values
       program.setFrameBuffer('$picking', false);
@@ -3118,7 +3223,7 @@ $.splat = (function() {
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
       
-      return elem;
+      return elem && elem.pickable && elem;
     }
   };
 

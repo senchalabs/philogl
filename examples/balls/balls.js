@@ -108,6 +108,15 @@
               x: -1, y: 1, z: 1
             }
           }
+        },
+        effects: {
+          fog: {
+            color: {
+              r: 0.1, g: 0.1, b: 0.1
+            },
+            near: 0,
+            far: 70
+          }
         }
       },
       events: {
