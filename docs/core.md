@@ -74,6 +74,12 @@ and also options for handling [Events](event.html), loading textures via [IO](io
       * position - (*object*) A x, y, z object with the point light position.
       * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
       * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
+    * effects - (*object*, optional) An object with scene effect options.
+      
+      * fog - (*object*, optional) An object with linear fog options explained below.
+        * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
+        * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
+        * color - (*object*) An `{ r, g, b }` object with the fog color.
 * textures - (*object*, optional) An object to load textures with the [IO](io.html) module. See also [Program.setTexture](). The object has as properties:
   * src - (*array*) An array of strings containing the path of the images to be loaded.
   * textureType - (*string*, optional) The type of the texture. Default's `TEXTURE_2D`.
@@ -92,22 +98,23 @@ and also options for handling [Events](event.html), loading textures via [IO](io
   * centerOrigin - (*boolean*, optional) Whether to set the center (0, 0) coordinate to the center of the canvas or to the top-left corner. Default's `true`.
   * disableContextMenu - (*boolean*, optional) Disable the context menu (generally shown when the canvas is right clicked). Default's `true`.
   * bind - (*mixed*, optional) bind the *thisArg* in the callbacks to the specified object.
-  * onClick - (*function*, optional) Handles the onClick event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onRightClick - (*function*, optional) Handles the onRightClick event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onDragStart - (*function*, optional) Handles the onDragStart event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onDragMove - (*function*, optional) Handles the onDragMove event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onDragEnd - (*function*, optional) Handles the onDragEnd event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onDragCancel - (*function*, optional) Handles the onDragCancel event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onTouchStart - (*function*, optional) Handles the onTouchStart event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onTouchMove - (*function*, optional) Handles the onTouchMove event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onTouchEnd - (*function*, optional) Handles the onTouchEnd event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onTouchCancel - (*function*, optional) Handles the onTouchCancel event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onMouseMove - (*function*, optional) Handles the onMouseMove event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onMouseEnter - (*function*, optional) Handles the onMouseEnter event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onMouseLeave - (*function*, optional) Handles the onMouseLeave event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onMouseWheel - (*function*, optional) Handles the onMouseWheel event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onKeyDown - (*function*, optional) Handles the onKeyDown event. For more information about the callback arguments check the [Event](event.html) documentation.
-  * onKeyUp - (*function*, optional) Handles the onKeyUp event. For more information about the callback arguments check the [Event](event.html) documentation.
+  * pick - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
+  * onClick - (*function*, optional) Handles the onClick event.
+  * onRightClick - (*function*, optional) Handles the onRightClick event.
+  * onDragStart - (*function*, optional) Handles the onDragStart event.
+  * onDragMove - (*function*, optional) Handles the onDragMove event.
+  * onDragEnd - (*function*, optional) Handles the onDragEnd event.
+  * onDragCancel - (*function*, optional) Handles the onDragCancel event.
+  * onTouchStart - (*function*, optional) Handles the onTouchStart event.
+  * onTouchMove - (*function*, optional) Handles the onTouchMove event.
+  * onTouchEnd - (*function*, optional) Handles the onTouchEnd event.
+  * onTouchCancel - (*function*, optional) Handles the onTouchCancel event.
+  * onMouseMove - (*function*, optional) Handles the onMouseMove event.
+  * onMouseEnter - (*function*, optional) Handles the onMouseEnter event.
+  * onMouseLeave - (*function*, optional) Handles the onMouseLeave event.
+  * onMouseWheel - (*function*, optional) Handles the onMouseWheel event.
+  * onKeyDown - (*function*, optional) Handles the onKeyDown event.
+  * onKeyUp - (*function*, optional) Handles the onKeyUp event.
 * onError - (*function*, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.
 * onLoad - (*function*) A function called when the application is successfully created. An app is created if the context is loaded, the program is compiled 
 and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly 

@@ -166,7 +166,7 @@ Make the pyramid model return a `Uint16Array` of the indices array.
 O3D Class: O3D.Cube {#O3D:Cube}
 ----------------------------------
 
-Creates a Cube model. Inherits instance methods from O3D.Model.
+Creates a Cube model. Inherits methods from [O3D.Model](#O3D:Model).
 
 ### Extends
 
@@ -201,7 +201,7 @@ var whiteCube = new PhiloGL.O3D.Cube({
 O3D Class: O3D.Sphere {#O3D:Sphere}
 ------------------------------------
 
-Creates a Sphere model.
+Creates a Sphere model. Inherits methods from [O3D.Model](#O3D:Model).
 
 ### Extends
 
@@ -242,7 +242,7 @@ var whiteSphere = new PhiloGL.O3D.Sphere({
 O3D Class: O3D.Cylinder {#O3D:Cylinder}
 ----------------------------------------
 
-Creates a Cylinder model.
+Creates a Cylinder model. Inherits methods from [O3D.Model](#O3D:Model).
 
 ### Extends
 
@@ -287,7 +287,7 @@ var whiteCylinder = new PhiloGL.O3D.Cylinder({
 O3D Class: O3D.Cone {#O3D:Cone}
 ---------------------------------
 
-Creates a Cone model.
+Creates a Cone model. Inherits methods from [O3D.Model](#O3D:Model).
 
 ### Extends
 

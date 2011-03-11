@@ -30,11 +30,11 @@ Creates a set of events for the given domElement that can be handled through a c
 
 ### Syntax:
 
-    PhiloGL.Events.create(domElement, options);	
+    PhiloGL.Events.create(app, options);	
 
 ### Arguments:
 
-1. domElement  - (*element*) A domElement. Generally a canvas element.
+1. app  - (*element*) A [PhiloGL application](core.html#PhiloGL:constructor).
 5. options - (*object*) An object containing the following options:
 
 ### Options:
@@ -76,19 +76,19 @@ following callbacks are:
 
 ### Notes:
 
-Even though the *Events* object is accessible via the PhiloGL function the events are often set in the PhiloGL constructor. For more information about 
-the PhiloGL constructor check the [Core](core.html) Script.
+Even though the *Events* object is accessible via the PhiloGL function
+the events should be set in the [PhiloGL constructor](core.html#PhiloGL:constructor).
 
 ### Examples:
 
 Setting rotation and zoom to a moon object with drag and drop and mousewheel events.
 
 {% highlight js %}
-    var pos, camera, moon, canvas;
+    var pos, camera, moon, app;
     
     //create and assign variables to objects...
 
-    PhiloGL.Events.create(canvas, {
+    PhiloGL.Events.create(app, {
       onDragStart: function(e) {
         pos = {
           x: e.x,

@@ -160,7 +160,7 @@ buffer.
 ### Examples:
 
 Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done 
-to render the inner scene in the laptop example on [lesson 16](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/).
+to render the inner scene in the laptop example on [lesson 16](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/).
 
 {% highlight js %}
 function drawInnerScene() {
@@ -205,9 +205,9 @@ the default O3D constructor value).
 
 ### Arguments:
 
-x - (*number*) The `x` position. The upper left corner of the viewport
+* x - (*number*) The `x` position. The upper left corner of the viewport
 is considered to be `(0, 0)`.
-y - (*number*) The `y` position. The upper left corner of the viewport
+* y - (*number*) The `y` position. The upper left corner of the viewport
 is considered to be `(0, 0)`.
 
 ### Notes:
