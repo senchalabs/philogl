@@ -171,7 +171,7 @@ PhiloGL.unpack = function(global) {
 };
 
 //Version
-PhiloGL.version = '1.0.2';
+PhiloGL.version = '1.1.0';
 
 //Holds the 3D context
 var gl;
