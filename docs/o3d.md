@@ -266,7 +266,7 @@ The main constructor function for the Cylinder class. Use this to create a new C
 
 * nradial - (*number*, optional) The number of vertices for the disk. Default's 10.
 * nvertical - (*number*, optional) The number of vertices for the height. Default's 10.
-* radius - (*number*, optional) The radius of the cylinder. Default's 1.
+* radius - (*number*) The radius of the cylinder.
 * topCap - (*boolean*, optional) Whether to put the cap on the top of the cylinder. Default's false.
 * bottomCap - (*boolean*, optional) Whether to put the cap on the bottom
   part of the cylinder. Default's false.
@@ -311,7 +311,7 @@ The main constructor function for the Cone class. Use this to create a new Cone.
 
 * nradial - (*number*, optional) The number of vertices used to create the disk for a given height. Default's 10.
 * nvertical - (*number*, optional) The number of vertices for the height. Default's 10.
-* radius - (*number*, optional) The radius of the base of the cone. Default's 1.
+* radius - (*number*) The radius of the base of the cone.
 * cap - (*boolean*, optional) Whether to put the cap on the base of the cone. Default's false.
 
 ### Examples:

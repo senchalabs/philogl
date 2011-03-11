@@ -529,8 +529,8 @@
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
   
   O3D.TruncatedCone = function(config) {
-    var bottomRadius = config.bottomRadius || 1,
-        topRadius = config.topRadius || 1,
+    var bottomRadius = config.bottomRadius || 0,
+        topRadius = config.topRadius || 0,
         height = config.height || 1,
         nradial = config.nradial || 10,
         nvertical = config.nvertical || 10,
