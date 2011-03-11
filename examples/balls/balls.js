@@ -56,9 +56,16 @@
   
   var models = [], i = 50;
   while (i--) {
-    var model = new O3D[i % 2? "Sphere" : "Cube"]({
+    var model = new O3D[["Cylinder", "Cone", "Cube", "Sphere"][i % 4]]({
+      pickable: !!(i % 2),
       shininess: 2,
       radius: Math.random() * 2 + 1,
+      nvertical: 10,
+      nradial: 10,
+      height: 10,
+      topCap: true,
+      bottomCap: true,
+      cap: true,
       colors: [0.5, 0.5, 0.5, 1],
       uniforms: {
         'colorUfm': [0.5, 0.5, 0.5, 1]
