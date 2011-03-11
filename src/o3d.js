@@ -22,6 +22,7 @@
   O3D.Model = function(opt) {
     this.$$family = 'model';
 
+    this.pickable = !!opt.pickable;
     this.vertices = flatten(opt.vertices);
     this.faces = flatten(opt.faces);
     this.normals = flatten(opt.normals);
@@ -336,7 +337,7 @@
     }
 });    
 */
-  //Now some primitives, Cube, Sphere
+  //Now some primitives, Cube, Sphere, Cone, Cylinder
   //Cube
   O3D.Cube = function(config) {
     O3D.Model.call(this, $.extend({
@@ -455,6 +456,9 @@
 
   O3D.Cube.prototype = Object.create(O3D.Model.prototype);
   
+  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
+  //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
+
   O3D.Sphere = function(opt) {
        var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
@@ -523,7 +527,106 @@
   };
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.TruncatedCone = function(config) {
+    var bottomRadius = config.bottomRadius || 1,
+        topRadius = config.topRadius || 1,
+        height = config.height || 1,
+        nradial = config.nradial || 10,
+        nvertical = config.nvertical || 10,
+        topCap = !!config.topCap,
+        bottomCap = !!config.bottomCap,
+        extra = (topCap? 2 : 0) + (bottomCap? 2 : 0),
+        numVertices = (nradial + 1) * (nvertical + 1 + extra),
+        vertices = [],
+        normals = [],
+        texCoords = [],
+        indices = [],
+        vertsAroundEdge = nradial + 1,
+        slant = Math.atan2(bottomRadius - topRadius, height),
+        math = Math,
+        msin = math.sin,
+        mcos = math.cos,
+        mpi = math.PI,
+        cosSlant = mcos(slant),
+        sinSlant = msin(slant),
+        start = topCap? -2 : 0,
+        end = nvertical + (bottomCap? 2 : 0);
 
+    for (var i = start; i <= end; i++) {
+      var v = i / nvertical,
+          y = height * v,
+          ringRadius;
+      
+      if (i < 0) {
+        y = 0;
+        v = 1;
+        ringRadius = bottomRadius;
+      } else if (i > nvertical) {
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        ringRadius = bottomRadius +
+          (topRadius - bottomRadius) * (i / nvertical);
+      }
+      if (i == -2 || i == nvertical + 2) {
+        ringRadius = 0;
+        v = 0;
+      }
+      y -= height / 2;
+      for (var j = 0; j < vertsAroundEdge; j++) {
+        var sin = msin(j * mpi * 2 / nradial);
+        var cos = mcos(j * mpi * 2 / nradial);
+        vertices.push(sin * ringRadius, y, cos * ringRadius);
+        normals.push(
+            (i < 0 || i > nvertical) ? 0 : (sin * cosSlant),
+            (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant),
+            (i < 0 || i > nvertical) ? 0 : (cos * cosSlant));
+        texCoords.push(j / nradial, v);
+      }
+    }
+
+    for (i = 0; i < nvertical + extra; i++) {
+      for (j = 0; j < nradial; j++) {
+        indices.push(vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 0) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                      
+                     vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 0 + j);
+      }
+    }
+
+    O3D.Model.call(this, $.extend({
+      vertices: vertices,
+      normals: normals,
+      texCoords: texCoords,
+      indices: indices
+    }, config || {}));
+  };
+  
+  O3D.TruncatedCone.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.Cone = function(config) {
+    config.topRadius = 0;
+    config.topCap = !!config.cap;
+    config.bottomCap = !!config.cap;
+    config.bottomRadius = config.radius || 3;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cone.prototype = Object.create(O3D.TruncatedCone.prototype);
+
+  O3D.Cylinder = function(config) {
+    config.bottomRadius = config.radius;
+    config.topRadius = config.radius;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
+  
   //Assign to namespace
   PhiloGL.O3D = O3D;
 })();
