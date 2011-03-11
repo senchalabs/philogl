@@ -97,10 +97,7 @@
           points = light.points && $.splat(light.points) || [];
       
       //Normalize lighting direction vector
-      var newDir = Vec3.clone(dir);
-      Vec3.$unit(newDir);
-      Vec3.$scale(newDir, -1);
-      dir = newDir;
+      dir = Vec3.unit(dir).$scale(-1);
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
@@ -249,9 +246,10 @@
           width = gl.canvas.width,
           height = gl.canvas.height,
           hash = [],
-          delay = 200,
           now = $.time(),
-          last = this.last || 0;
+          last = this.last || 0,
+          pixel = new Uint8Array(1 * 1 * 4),
+          index = 0, backgroundColor;
 
       //setup the scene for picking
       config.lights.enable = false;
@@ -265,9 +263,17 @@
       gl.disable(gl.BLEND);
       gl.viewport(-x, y - height, width, height);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      //read the background color so we don't step on it
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      backgroundColor = pixel[0] + pixel[1] * 256 + pixel[2] * 256 * 256;
+
+      //render to texture
       this.renderToTexture('$picking', {
         onBeforeRender: function(elem, i) {
-          var suc = i + 1;
+          if (i == backgroundColor) {
+            index = 1;
+          }
+          var suc = i + index;
           hash[0] = suc % 256;
           hash[1] = ((suc / 256) >> 0) % 256;
           hash[2] = ((suc / (256 * 256)) >> 0) % 256;
@@ -275,12 +281,10 @@
           o3dHash[String(hash)] = elem;
         }
       });
-      this.last = $.time();
       
       //grab the color of the pointed pixel in the texture
-      var pixels = new Uint8Array(1 * 1 * 4);
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      var elem = o3dHash[String([pixels[0], pixels[1], pixels[2]])];
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
       //restore all values
       program.setFrameBuffer('$picking', false);
@@ -288,7 +292,7 @@
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
       
-      return elem;
+      return elem && elem.pickable && elem;
     }
   };
 
