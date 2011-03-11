@@ -191,3 +191,42 @@ function drawInnerScene() {
 }
 {% endhighlight %}
 
+
+Scene Method: pick {#Scene:pick}
+--------------------------------
+
+Returns an [O3D](o3d.html) object under the given `x` and `y`
+coordinates. The object must have `pickable` set to `true` (which is
+the default O3D constructor value).
+
+### Syntax:
+
+    scene.pick(x, y);
+
+### Arguments:
+
+x - (*number*) The `x` position. The upper left corner of the viewport
+is considered to be `(0, 0)`.
+y - (*number*) The `y` position. The upper left corner of the viewport
+is considered to be `(0, 0)`.
+
+### Notes:
+
+ * You might want to check how picking is used in the [Event](event.html) options. There you can grab 
+the target of the event in a simple way.
+ * Also, the picking method will disable blending. If you are using
+   blending in your application (along with picking), you might want to
+   turn blending `on` in the rendering loop to ensure it is always on.
+
+### Examples:
+
+Get an object at `(100, 100)` and change its color by altering a
+uniform value.
+
+{% highlight js %}
+var model = scene.pick(100, 100);
+
+if (model) {
+  model.uniforms.colorUfm = [1, 1, 1, 1];
+}
+{% endhighlight %}

@@ -23,7 +23,6 @@ The first parameter of each event callback function is an event wrapper object t
 * alt - (*boolean*) Available onKeyDown only. Whether the alt key is pressed.
 * meta - (*boolean*) Available onKeyDown only. Whether the meta key is pressed.
 
-
 Events Method: create {#Events:create}
 ----------------------------------------------------
 
@@ -40,12 +39,24 @@ Creates a set of events for the given domElement that can be handled through a c
 
 ### Options:
 
+* pick - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
 * cachePosition - (*boolean*, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default's `true`.
 * cacheSize - (*boolean*, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default's `true`.
 * relative - (*boolean*, optional) Whether to calculate the mouse position as relative to the canvas position or absolute. Default's `true`.
 * centerOrigin - (*boolean*, optional) Whether to set the center (0, 0) coordinate to the center of the canvas or to the top-left corner. Default's `true`.
 * disableContextMenu - (*boolean*, optional) Disable the context menu (generally shown when the canvas is right clicked). Default's `true`.
 * bind - (*mixed*, optional) bind the *thisArg* in the callbacks to the specified object.
+
+### Callbacks:
+
+You can also provide callback functions for the events you need to
+handle. The first parameter of the callback is the event object
+described [here](event.html#Event). If `pick` is set to `true` in the
+options, then the second parameter of the callback may be an
+[O3D](o3d.html) that is the target of the mouse event. If no target
+exists for the mouse event then a falsy value will be provided. The
+following callbacks are:
+
 * onClick - (*function*, optional) Handles the onClick event.
 * onRightClick - (*function*, optional) Handles the onRightClick event.
 * onDragStart - (*function*, optional) Handles the onDragStart event.

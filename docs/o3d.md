@@ -45,6 +45,7 @@ The main constructor function for the Model class. Use this to create a new Mode
 ### Options:
 
 * dynamic - (*boolean*, optional) If true then the vertices and normals will always be updated in the Buffer Objects before rendering. Default's false.
+* pickable - (*boolean*, optional) If true the element can be selected with the mouse when using picking on the [Event](event.html) configuration. Default's true.
 * vertices - (*array*, optional) An array of floats that describe the vertices of the model.
 * normals - (*array*, optional) An array of floats that describe the normals of the model.
 * textures - (*array*, optional) An array of strings of texture ids.
@@ -233,6 +234,95 @@ Create a white Sphere of radius 2.
 {% highlight js %}
 var whiteSphere = new PhiloGL.O3D.Sphere({
   radius: 2,
+  colors: [1, 1, 1, 1]
+});
+{% endhighlight %}
+
+
+O3D Class: O3D.Cylinder {#O3D:Cylinder}
+----------------------------------------
+
+Creates a Cylinder model.
+
+### Extends
+
+O3D.Model
+
+
+O3D.Cylinder Method: constructor {#O3D:Cylinder:constructor}
+-------------------------------------------------------------
+
+The main constructor function for the Cylinder class. Use this to create a new Cylinder. 
+
+### Syntax:
+
+	var model = new PhiloGL.O3D.Cylinder(options);
+
+### Arguments:
+
+1. options - (*object*) An object containing as poperties:
+
+### Options:
+
+* nradial - (*number*, optional) The number of vertices for the disk. Default's 10.
+* nvertical - (*number*, optional) The number of vertices for the height. Default's 10.
+* radius - (*number*, optional) The radius of the cylinder. Default's 1.
+* topCap - (*boolean*, optional) Whether to put the cap on the top of the cylinder. Default's false.
+* bottomCap - (*boolean*, optional) Whether to put the cap on the bottom
+  part of the cylinder. Default's false.
+
+### Examples:
+
+Create a white Cylinder of radius 2 and height 3.
+
+{% highlight js %}
+var whiteCylinder = new PhiloGL.O3D.Cylinder({
+  radius: 2,
+  height: 3,
+  colors: [1, 1, 1, 1]
+});
+{% endhighlight %}
+
+
+O3D Class: O3D.Cone {#O3D:Cone}
+---------------------------------
+
+Creates a Cone model.
+
+### Extends
+
+O3D.Model
+
+
+O3D.Cone Method: constructor {#O3D:Cone:constructor}
+-----------------------------------------------------
+
+The main constructor function for the Cone class. Use this to create a new Cone. 
+
+### Syntax:
+
+	var model = new PhiloGL.O3D.Cone(options);
+
+### Arguments:
+
+1. options - (*object*) An object containing as poperties:
+
+### Options:
+
+* nradial - (*number*, optional) The number of vertices used to create the disk for a given height. Default's 10.
+* nvertical - (*number*, optional) The number of vertices for the height. Default's 10.
+* radius - (*number*, optional) The radius of the base of the cone. Default's 1.
+* cap - (*boolean*, optional) Whether to put the cap on the base of the cone. Default's false.
+
+### Examples:
+
+Create a white Cone of base radius 2 and height 3.
+
+{% highlight js %}
+var whiteCone = new PhiloGL.O3D.Cone({
+  radius: 2,
+  height: 3,
+  cap: true,
   colors: [1, 1, 1, 1]
 });
 {% endhighlight %}
