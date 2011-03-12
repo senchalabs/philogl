@@ -60,7 +60,7 @@
     Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a> - Imagery by <a href="http://svs.gsfc.nasa.gov/vis/a000000/a003800/a003817/">NASA</a>.
   </div>
   <script>
-    if (!PhiloGL.hasWebGL) {
+    if (!PhiloGL.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

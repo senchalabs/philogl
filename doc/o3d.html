@@ -127,6 +127,8 @@
 <ul>
 <li>dynamic - (<em>boolean</em>, optional) If true then the vertices and normals will always be updated in the Buffer Objects before rendering. Default&#8217;s false.</li>
 
+<li>pickable - (<em>boolean</em>, optional) If true the element can be selected with the mouse when using picking on the <a href='event.html'>Event</a> configuration. Default&#8217;s true.</li>
+
 <li>vertices - (<em>array</em>, optional) An array of floats that describe the vertices of the model.</li>
 
 <li>normals - (<em>array</em>, optional) An array of floats that describe the normals of the model.</li>
@@ -246,7 +248,7 @@
 </div>
 <h2 id='O3D:Cube'>O3D Class: O3D.Cube</h2>
 
-<p>Creates a Cube model. Inherits instance methods from O3D.Model.</p>
+<p>Creates a Cube model. Inherits methods from <a href='#O3D:Model'>O3D.Model</a>.</p>
 
 <h3 id='extends'>Extends</h3>
 
@@ -276,7 +278,7 @@
 </div>
 <h2 id='O3D:Sphere'>O3D Class: O3D.Sphere</h2>
 
-<p>Creates a Sphere model.</p>
+<p>Creates a Sphere model. Inherits methods from <a href='#O3D:Model'>O3D.Model</a>.</p>
 
 <h3 id='extends'>Extends</h3>
 
@@ -311,6 +313,97 @@
 <p>Create a white Sphere of radius 2.</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>whiteSphere</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Sphere</span><span class='p'>({</span>
   <span class='nx'>radius</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='O3D:Cylinder'>O3D Class: O3D.Cylinder</h2>
+
+<p>Creates a Cylinder model. Inherits methods from <a href='#O3D:Model'>O3D.Model</a>.</p>
+
+<h3 id='extends'>Extends</h3>
+
+<p>O3D.Model</p>
+
+<h2 id='O3D:Cylinder:constructor'>O3D.Cylinder Method: constructor</h2>
+
+<p>The main constructor function for the Cylinder class. Use this to create a new Cylinder.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var model = new PhiloGL.O3D.Cylinder(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing as poperties:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>nradial - (<em>number</em>, optional) The number of vertices for the disk. Default&#8217;s 10.</li>
+
+<li>nvertical - (<em>number</em>, optional) The number of vertices for the height. Default&#8217;s 10.</li>
+
+<li>radius - (<em>number</em>) The radius of the cylinder.</li>
+
+<li>topCap - (<em>boolean</em>, optional) Whether to put the cap on the top of the cylinder. Default&#8217;s false.</li>
+
+<li>bottomCap - (<em>boolean</em>, optional) Whether to put the cap on the bottom part of the cylinder. Default&#8217;s false.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a white Cylinder of radius 2 and height 3.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>whiteCylinder</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Cylinder</span><span class='p'>({</span>
+  <span class='nx'>radius</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>height</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+  <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='O3D:Cone'>O3D Class: O3D.Cone</h2>
+
+<p>Creates a Cone model. Inherits methods from <a href='#O3D:Model'>O3D.Model</a>.</p>
+
+<h3 id='extends'>Extends</h3>
+
+<p>O3D.Model</p>
+
+<h2 id='O3D:Cone:constructor'>O3D.Cone Method: constructor</h2>
+
+<p>The main constructor function for the Cone class. Use this to create a new Cone.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var model = new PhiloGL.O3D.Cone(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing as poperties:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>nradial - (<em>number</em>, optional) The number of vertices used to create the disk for a given height. Default&#8217;s 10.</li>
+
+<li>nvertical - (<em>number</em>, optional) The number of vertices for the height. Default&#8217;s 10.</li>
+
+<li>radius - (<em>number</em>) The radius of the base of the cone.</li>
+
+<li>cap - (<em>boolean</em>, optional) Whether to put the cap on the base of the cone. Default&#8217;s false.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a white Cone of base radius 2 and height 3.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>whiteCone</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Cone</span><span class='p'>({</span>
+  <span class='nx'>radius</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>height</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+  <span class='nx'>cap</span><span class='o'>:</span> <span class='kc'>true</span><span class='p'>,</span>
   <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
 <span class='p'>});</span>
 </code></pre>

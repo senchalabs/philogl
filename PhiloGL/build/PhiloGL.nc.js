@@ -142,7 +142,7 @@ this.PhiloGL = null;
 
       //get Events
       if (optEvents) {
-        PhiloGL.Events.create(canvas, $.extend(optEvents, {
+        PhiloGL.Events.create(app, $.extend(optEvents, {
           bind: app
         }));
       }
@@ -928,6 +928,11 @@ $.splat = (function() {
 
 (function() {
   
+  //returns an O3D object or false otherwise.
+  function toO3D(n) {
+    return n !== true? n : false;
+  }
+  
   //Returns an element position
   var getPos = function(elem) {
     var offset = getOffsets(elem);
@@ -1021,7 +1026,9 @@ $.splat = (function() {
     }
   };
 
-  var EventsProxy = function(domElem, opt) {
+  var EventsProxy = function(app, opt) {
+    var domElem = app.canvas;
+    this.scene = app.scene;
     this.domElem = domElem;
     this.pos = getPos(domElem);
     this.opt = this.callbacks = opt;
@@ -1078,6 +1085,7 @@ $.splat = (function() {
     
     eventInfo: function(type, e, win) {
       var domElem = this.domElem,
+          scene = this.scene,
           opt = this.opt,
           size = this.getSize(),
           relative = opt.relative,
@@ -1110,11 +1118,20 @@ $.splat = (function() {
           break;
       }
 
+      var cacheTarget;
+      
       $.extend(evt, {
         x: x,
         y: y,
+        cache: false,
+        //stop event propagation
         stop: function() {
           event.stop(ge);
+        },
+        //get the target element of the event
+        getTarget: function() {
+          if (cacheTarget) return cacheTarget;
+          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y) || true);
         }
       });
       //wrap native event
@@ -1139,14 +1156,14 @@ $.splat = (function() {
         if(e.isRightClick) {
           this.callbacks.onRightClick(e, this.hovered);
         } else {
-          this.callbacks.onClick(e, this.pressed);
+          this.callbacks.onClick(e, toO3D(this.pressed));
         }
       }
       if(this.pressed) {
         if(this.moved) {
-          this.callbacks.onDragEnd(e, this.pressed);
+          this.callbacks.onDragEnd(e, toO3D(this.pressed));
         } else {
-          this.callbacks.onDragCancel(e, this.pressed);
+          this.callbacks.onDragCancel(e, toO3D(this.pressed));
         }
         this.pressed = this.moved = false;
       }
@@ -1171,10 +1188,26 @@ $.splat = (function() {
     mousemove: function(e) {
       if(this.pressed) {
         this.moved = true;
-        this.callbacks.onDragMove(e, this.pressed);
+        this.callbacks.onDragMove(e, toO3D(this.pressed));
         return;
       }
-      this.callbacks.onMouseMove(e, false);
+      if(this.hovered) {
+        var target = toO3D(e.getTarget());
+        if(this.hovered != target) {
+          this.callbacks.onMouseLeave(e, this.hovered);
+          this.hovered = target;
+          if(target) {
+            this.callbacks.onMouseEnter(e, this.hovered);
+          }
+        } else {
+          this.callbacks.onMouseMove(e, this.hovered);
+        }
+      } else {
+        this.hovered = toO3D(e.getTarget());
+        if(this.hovered) {
+          this.callbacks.onMouseEnter(e, this.hovered);
+        }
+      }
     },
     
     mousewheel: function(e) {
@@ -1182,28 +1215,28 @@ $.splat = (function() {
     },
     
     mousedown: function(e) {
-      this.pressed = true;
-      this.callbacks.onDragStart(e, this.pressed);
+      this.pressed = e.getTarget();
+      this.callbacks.onDragStart(e, toO3D(this.pressed));
     },
     
     touchstart: function(e) {
-      this.touched = true;
-      this.callbacks.onTouchStart(e, this.touched);
+      this.touched = e.getTarget();
+      this.callbacks.onTouchStart(e, toO3D(this.touched));
     },
     
     touchmove: function(e) {
       if(this.touched) {
         this.touchMoved = true;
-        this.callbacks.onTouchMove(e, this.touched);
+        this.callbacks.onTouchMove(e, toO3D(this.touched));
       }
     },
     
     touchend: function(e) {
       if(this.touched) {
         if(this.touchMoved) {
-          this.callbacks.onTouchEnd(e, this.touched);
+          this.callbacks.onTouchEnd(e, toO3D(this.touched));
         } else {
-          this.callbacks.onTouchCancel(e, this.touched);
+          this.callbacks.onTouchCancel(e, toO3D(this.touched));
         }
         this.touched = this.touchMoved = false;
       }
@@ -1220,7 +1253,7 @@ $.splat = (function() {
     
   var Events = {};
 
-  Events.create = function(domElem, opt) {
+  Events.create = function(app, opt) {
     opt = $.merge({
       cachePosition: true,
       cacheSize: true,
@@ -1228,6 +1261,7 @@ $.splat = (function() {
       centerOrigin: true,
       disableContextMenu: true,
       bind: false,
+      picking: false,
       
       onClick: $.empty,
       onRightClick: $.empty,
@@ -1262,20 +1296,20 @@ $.splat = (function() {
       }
     }
 
-    new EventsProxy(domElem, opt);
+    new EventsProxy(app, opt);
   };
 
   Events.Keys = {
-	'enter': 13,
-	'up': 38,
-	'down': 40,
-	'left': 37,
-	'right': 39,
-	'esc': 27,
-	'space': 32,
-	'backspace': 8,
-	'tab': 9,
-	'delete': 46
+  	'enter': 13,
+  	'up': 38,
+  	'down': 40,
+  	'left': 37,
+  	'right': 39,
+  	'esc': 27,
+  	'space': 32,
+  	'backspace': 8,
+  	'tab': 9,
+  	'delete': 46
   };
 
   function keyOf(code) {
@@ -2107,13 +2141,20 @@ $.splat = (function() {
     } 
 
   };
-
-  //Test WebGL
-  try {
-    PhiloGL.hasWebGL = !!(window.WebGLRenderingContext);
-  } catch(e) {
-    PhiloGL.hasWebGL = false;
-  }
+  
+  //Feature test WebGL
+  (function() {
+    try {
+      var canvas = document.createElement('canvas');
+      PhiloGL.hasWebGL = function() {
+          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      };
+    } catch(e) {
+      PhiloGL.hasWebGL = function() {
+          return false;
+      };
+    }
+  })();
 
   PhiloGL.WebGL = WebGL;
   
@@ -2143,6 +2184,7 @@ $.splat = (function() {
   O3D.Model = function(opt) {
     this.$$family = 'model';
 
+    this.pickable = !!opt.pickable;
     this.vertices = flatten(opt.vertices);
     this.faces = flatten(opt.faces);
     this.normals = flatten(opt.normals);
@@ -2457,7 +2499,7 @@ $.splat = (function() {
     }
 });    
 */
-  //Now some primitives, Cube, Sphere
+  //Now some primitives, Cube, Sphere, Cone, Cylinder
   //Cube
   O3D.Cube = function(config) {
     O3D.Model.call(this, $.extend({
@@ -2576,6 +2618,9 @@ $.splat = (function() {
 
   O3D.Cube.prototype = Object.create(O3D.Model.prototype);
   
+  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
+  //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
+
   O3D.Sphere = function(opt) {
        var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
@@ -2644,7 +2689,106 @@ $.splat = (function() {
   };
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.TruncatedCone = function(config) {
+    var bottomRadius = config.bottomRadius || 0,
+        topRadius = config.topRadius || 0,
+        height = config.height || 1,
+        nradial = config.nradial || 10,
+        nvertical = config.nvertical || 10,
+        topCap = !!config.topCap,
+        bottomCap = !!config.bottomCap,
+        extra = (topCap? 2 : 0) + (bottomCap? 2 : 0),
+        numVertices = (nradial + 1) * (nvertical + 1 + extra),
+        vertices = [],
+        normals = [],
+        texCoords = [],
+        indices = [],
+        vertsAroundEdge = nradial + 1,
+        slant = Math.atan2(bottomRadius - topRadius, height),
+        math = Math,
+        msin = math.sin,
+        mcos = math.cos,
+        mpi = math.PI,
+        cosSlant = mcos(slant),
+        sinSlant = msin(slant),
+        start = topCap? -2 : 0,
+        end = nvertical + (bottomCap? 2 : 0);
 
+    for (var i = start; i <= end; i++) {
+      var v = i / nvertical,
+          y = height * v,
+          ringRadius;
+      
+      if (i < 0) {
+        y = 0;
+        v = 1;
+        ringRadius = bottomRadius;
+      } else if (i > nvertical) {
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        ringRadius = bottomRadius +
+          (topRadius - bottomRadius) * (i / nvertical);
+      }
+      if (i == -2 || i == nvertical + 2) {
+        ringRadius = 0;
+        v = 0;
+      }
+      y -= height / 2;
+      for (var j = 0; j < vertsAroundEdge; j++) {
+        var sin = msin(j * mpi * 2 / nradial);
+        var cos = mcos(j * mpi * 2 / nradial);
+        vertices.push(sin * ringRadius, y, cos * ringRadius);
+        normals.push(
+            (i < 0 || i > nvertical) ? 0 : (sin * cosSlant),
+            (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant),
+            (i < 0 || i > nvertical) ? 0 : (cos * cosSlant));
+        texCoords.push(j / nradial, v);
+      }
+    }
+
+    for (i = 0; i < nvertical + extra; i++) {
+      for (j = 0; j < nradial; j++) {
+        indices.push(vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 0) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                      
+                     vertsAroundEdge * (i + 0) + 0 + j,
+                     vertsAroundEdge * (i + 1) + 1 + j,
+                     vertsAroundEdge * (i + 1) + 0 + j);
+      }
+    }
+
+    O3D.Model.call(this, $.extend({
+      vertices: vertices,
+      normals: normals,
+      texCoords: texCoords,
+      indices: indices
+    }, config || {}));
+  };
+  
+  O3D.TruncatedCone.prototype = Object.create(O3D.Model.prototype);
+  
+  O3D.Cone = function(config) {
+    config.topRadius = 0;
+    config.topCap = !!config.cap;
+    config.bottomCap = !!config.cap;
+    config.bottomRadius = config.radius || 3;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cone.prototype = Object.create(O3D.TruncatedCone.prototype);
+
+  O3D.Cylinder = function(config) {
+    config.bottomRadius = config.radius;
+    config.topRadius = config.radius;
+    O3D.TruncatedCone.call(this, config);
+  };
+
+  O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
+  
   //Assign to namespace
   PhiloGL.O3D = O3D;
 })();
@@ -2749,6 +2893,9 @@ $.splat = (function() {
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
 
+    "uniform bool enablePicking;",
+    "uniform vec3 pickColor;",
+
     "uniform bool hasFog;",
     "uniform vec3 fogColor;",
 
@@ -2763,6 +2910,10 @@ $.splat = (function() {
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);",
       "}",
 
+      "if(enablePicking) {",
+        "gl_FragColor = vec4(pickColor, 1.0);",
+      "}",
+      
       /* handle fog */
       "if (hasFog) {",
         "float depth = gl_FragCoord.z / gl_FragCoord.w;",
@@ -2823,6 +2974,8 @@ $.splat = (function() {
     this.camera = camera;
     this.models = [];
     this.config = opt;
+
+    this.setupPicking();
   };
 
   Scene.prototype = {
@@ -2871,14 +3024,14 @@ $.splat = (function() {
           directional = light.directional,
           dcolor = directional.color,
           dir = directional.direction,
+          enable = light.enable,
           points = light.points && $.splat(light.points) || [];
       
       //Normalize lighting direction vector
-      Vec3.$unit(dir);
-      Vec3.$scale(dir, -1);
+      dir = Vec3.unit(dir).$scale(-1);
       
       //Set light uniforms. Ambient and directional lights.
-      program.setUniform('enableLights', light.enable);
+      program.setUniform('enableLights', enable);
       if (light.enable) {
         program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
         program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
@@ -2889,7 +3042,7 @@ $.splat = (function() {
       program.setUniform('enableSpecularHighlights', false);
       for (var i = 0, l = Scene.MAX_POINT_LIGHTS, pl = points.length; i < l; i++) {
         var index = i + 1;
-        if (i < pl) {
+        if (enable && i < pl) {
           var point = points[i],
               position = point.position,
               color = point.color || point.diffuse,
@@ -2928,23 +3081,30 @@ $.splat = (function() {
     },
 
     //Renders all objects in the scene.
-    render: function() {
+    render: function(opt) {
       var program = this.program,
-          camera = this.camera;
+          camera = this.camera,
+          options = $.merge({
+            onBeforeRender: $.empty,
+            onAfterRender: $.empty
+          }, opt || {});
+
       this.beforeRender();
-      this.models.forEach(function(elem) {
+      this.models.forEach(function(elem, i) {
         elem.onBeforeRender(program, camera);
+        options.onBeforeRender(elem, i);
         this.renderObject(elem);
+        options.onAfterRender(elem, i);
         elem.onAfterRender(program, camera);
       }, this);
     },
 
-    renderToTexture: function(name) {
+    renderToTexture: function(name, opt) {
       var program = this.program,
           texture = program.textures[name + '-texture'],
           texMemo = program.textureMemo[name + '-texture'];
       
-      this.render();
+      this.render(opt);
 
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
@@ -2981,8 +3141,90 @@ $.splat = (function() {
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+    },
+    
+    //setup picking framebuffer
+    setupPicking: function() {
+      var canvas = gl.canvas,
+          program = this.program;
+      //create framebuffer
+      program.setFrameBuffer('$picking', {
+        width: 1,
+        height: 1,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
+      });
+      program.setFrameBuffer('$picking', false);
+    },
+    
+    //returns an element at the given position
+    pick: function(x, y) {
+      var o3dHash = {},
+          program = this.program,
+          camera = this.camera,
+          config = this.config,
+          memoLightEnable = config.lights.enable,
+          memoFog = config.effects.fog,
+          width = gl.canvas.width,
+          height = gl.canvas.height,
+          hash = [],
+          now = $.time(),
+          last = this.last || 0,
+          pixel = new Uint8Array(1 * 1 * 4),
+          index = 0, backgroundColor;
+
+      //setup the scene for picking
+      config.lights.enable = false;
+      config.effects.fog = false;
+      
+      //enable picking and render to texture
+      program.setUniform('enablePicking', true);
+      program.setFrameBuffer('$picking', true);
+      
+      //render the scene to a texture
+      gl.disable(gl.BLEND);
+      gl.viewport(-x, y - height, width, height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      //read the background color so we don't step on it
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      backgroundColor = pixel[0] + pixel[1] * 256 + pixel[2] * 256 * 256;
+
+      //render to texture
+      this.renderToTexture('$picking', {
+        onBeforeRender: function(elem, i) {
+          if (i == backgroundColor) {
+            index = 1;
+          }
+          var suc = i + index;
+          hash[0] = suc % 256;
+          hash[1] = ((suc / 256) >> 0) % 256;
+          hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+          program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+          o3dHash[String(hash)] = elem;
+        }
+      });
+      
+      //grab the color of the pointed pixel in the texture
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
+
+      //restore all values
+      program.setFrameBuffer('$picking', false);
+      program.setUniform('enablePicking', false);
+      config.lights.enable = memoLightEnable;
+      config.effects.fog = memoFog;
+      
+      return elem && elem.pickable && elem;
     }
-  
   };
 
   Scene.id = $.time();

@@ -246,7 +246,7 @@
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done to render the inner scene in the laptop example on <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<p>Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done to render the inner scene in the laptop example on <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>function</span> <span class='nx'>drawInnerScene</span><span class='p'>()</span> <span class='p'>{</span>
   <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>);</span>
   
@@ -272,6 +272,40 @@
   <span class='nx'>innerScene</span><span class='p'>.</span><span class='nx'>renderToTexture</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>);</span>
   
   <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='kc'>false</span><span class='p'>);</span>
+<span class='p'>}</span>
+</code></pre>
+</div>
+<h2 id='Scene:pick'>Scene Method: pick</h2>
+
+<p>Returns an <a href='o3d.html'>O3D</a> object under the given <code>x</code> and <code>y</code> coordinates. The object must have <code>pickable</code> set to <code>true</code> (which is the default O3D constructor value).</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.pick(x, y);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ul>
+<li>x - (<em>number</em>) The <code>x</code> position. The upper left corner of the viewport is considered to be <code>(0, 0)</code>.</li>
+
+<li>y - (<em>number</em>) The <code>y</code> position. The upper left corner of the viewport is considered to be <code>(0, 0)</code>.</li>
+</ul>
+
+<h3 id='notes'>Notes:</h3>
+
+<ul>
+<li>You might want to check how picking is used in the <a href='event.html'>Event</a> options. There you can grab the target of the event in a simple way.</li>
+
+<li>Also, the picking method will disable blending. If you are using blending in your application (along with picking), you might want to turn blending <code>on</code> in the rendering loop to ensure it is always on.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Get an object at <code>(100, 100)</code> and change its color by altering a uniform value.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>model</span> <span class='o'>=</span> <span class='nx'>scene</span><span class='p'>.</span><span class='nx'>pick</span><span class='p'>(</span><span class='mi'>100</span><span class='p'>,</span> <span class='mi'>100</span><span class='p'>);</span>
+
+<span class='k'>if</span> <span class='p'>(</span><span class='nx'>model</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='nx'>model</span><span class='p'>.</span><span class='nx'>uniforms</span><span class='p'>.</span><span class='nx'>colorUfm</span> <span class='o'>=</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>];</span>
 <span class='p'>}</span>
 </code></pre>
 </div>

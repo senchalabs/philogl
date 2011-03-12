@@ -122,12 +122,12 @@
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>PhiloGL.Events.create(domElement, options);	</code></pre>
+<pre><code>PhiloGL.Events.create(app, options);	</code></pre>
 
 <h3 id='arguments'>Arguments:</h3>
 
 <ol>
-<li>domElement - (<em>element</em>) A domElement. Generally a canvas element.</li>
+<li>app - (<em>element</em>) A <a href='core.html#PhiloGL:constructor'>PhiloGL application</a>.</li>
 
 <li>options - (<em>object</em>) An object containing the following options:</li>
 </ol>
@@ -135,6 +135,8 @@
 <h3 id='options'>Options:</h3>
 
 <ul>
+<li>pick - (<em>boolean</em>, optional) Whether to use picking. If true, the second parameter for the callback functions will be an <a href='o3d.html'>O3D</a> target for the event (or a falsy value otherwise). Default&#8217;s false.</li>
+
 <li>cachePosition - (<em>boolean</em>, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default&#8217;s <code>true</code>.</li>
 
 <li>cacheSize - (<em>boolean</em>, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default&#8217;s <code>true</code>.</li>
@@ -146,7 +148,13 @@
 <li>disableContextMenu - (<em>boolean</em>, optional) Disable the context menu (generally shown when the canvas is right clicked). Default&#8217;s <code>true</code>.</li>
 
 <li>bind - (<em>mixed</em>, optional) bind the <em>thisArg</em> in the callbacks to the specified object.</li>
+</ul>
 
+<h3 id='callbacks'>Callbacks:</h3>
+
+<p>You can also provide callback functions for the events you need to handle. The first parameter of the callback is the event object described <a href='event.html#Event'>here</a>. If <code>pick</code> is set to <code>true</code> in the options, then the second parameter of the callback may be an <a href='o3d.html'>O3D</a> that is the target of the mouse event. If no target exists for the mouse event then a falsy value will be provided. The following callbacks are:</p>
+
+<ul>
 <li>onClick - (<em>function</em>, optional) Handles the onClick event.</li>
 
 <li>onRightClick - (<em>function</em>, optional) Handles the onRightClick event.</li>
@@ -182,16 +190,16 @@
 
 <h3 id='notes'>Notes:</h3>
 
-<p>Even though the <em>Events</em> object is accessible via the PhiloGL function the events are often set in the PhiloGL constructor. For more information about the PhiloGL constructor check the <a href='core.html'>Core</a> Script.</p>
+<p>Even though the <em>Events</em> object is accessible via the PhiloGL function the events should be set in the <a href='core.html#PhiloGL:constructor'>PhiloGL constructor</a>.</p>
 
 <h3 id='examples'>Examples:</h3>
 
 <p>Setting rotation and zoom to a moon object with drag and drop and mousewheel events.</p>
-<div class='highlight'><pre><code class='js'>    <span class='kd'>var</span> <span class='nx'>pos</span><span class='p'>,</span> <span class='nx'>camera</span><span class='p'>,</span> <span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>canvas</span><span class='p'>;</span>
+<div class='highlight'><pre><code class='js'>    <span class='kd'>var</span> <span class='nx'>pos</span><span class='p'>,</span> <span class='nx'>camera</span><span class='p'>,</span> <span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>app</span><span class='p'>;</span>
     
     <span class='c1'>//create and assign variables to objects...</span>
 
-    <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Events</span><span class='p'>.</span><span class='nx'>create</span><span class='p'>(</span><span class='nx'>canvas</span><span class='p'>,</span> <span class='p'>{</span>
+    <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Events</span><span class='p'>.</span><span class='nx'>create</span><span class='p'>(</span><span class='nx'>app</span><span class='p'>,</span> <span class='p'>{</span>
       <span class='nx'>onDragStart</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>e</span><span class='p'>)</span> <span class='p'>{</span>
         <span class='nx'>pos</span> <span class='o'>=</span> <span class='p'>{</span>
           <span class='nx'>x</span><span class='o'>:</span> <span class='nx'>e</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span>

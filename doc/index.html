@@ -88,15 +88,15 @@
 
 <h1 id='Core'>Script: Core</h1>
 
-<p>Provides the global <code>PhiloGL</code> function to create WebGL applications, the static <code>hasWebGL</code> property to detect if the browser is WebGL capable and the static <code>PhiloGL.unpack()</code> method for unpacking modules into the global namespace.</p>
+<p>Provides the global <code>PhiloGL</code> function to create WebGL applications, the static <code>PhiloGL.hasWebGL()</code> method to detect if the browser is WebGL capable and the static <code>PhiloGL.unpack()</code> method for unpacking modules into the global namespace.</p>
 
-<h2 id='PhiloGL:hasWebGL'>PhiloGL Static Property: hasWebGL</h2>
+<h2 id='PhiloGL:hasWebGL'>PhiloGL Static Method: hasWebGL</h2>
 
 <p>Returns true or false whether the browser supports WebGL or not.</p>
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>PhiloGL.hasWebGL;</code></pre>
+<pre><code>PhiloGL.hasWebGL();</code></pre>
 
 <h2 id='PhiloGL:unpack'>PhiloGL Static Method: unpack</h2>
 
@@ -196,6 +196,24 @@
 <li>specular - (<em>object</em>, optional) A r, g, b object with values in <span>0, 1</span> that sets the specular light color.</li>
 </ul>
 </li>
+
+<li>
+<p>effects - (<em>object</em>, optional) An object with scene effect options.</p>
+
+<ul>
+<li>
+<p>fog - (<em>object</em>, optional) An object with linear fog options explained below.</p>
+
+<ul>
+<li>near - (<em>number</em>, optional) The near fog factor. Default&#8217;s the <a href='camera.html'>Camera</a> near factor.</li>
+
+<li>far - (<em>number</em>) The far fog factor. Default&#8217;s the <a href='camera.html'>Camera</a> far factor.</li>
+
+<li>color - (<em>object</em>) An <code>{ r, g, b }</code> object with the fog color.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -255,37 +273,39 @@
 
 <li>bind - (<em>mixed</em>, optional) bind the <em>thisArg</em> in the callbacks to the specified object.</li>
 
-<li>onClick - (<em>function</em>, optional) Handles the onClick event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>pick - (<em>boolean</em>, optional) Whether to use picking. If true, the second parameter for the callback functions will be an <a href='o3d.html'>O3D</a> target for the event (or a falsy value otherwise). Default&#8217;s false.</li>
 
-<li>onRightClick - (<em>function</em>, optional) Handles the onRightClick event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onClick - (<em>function</em>, optional) Handles the onClick event.</li>
 
-<li>onDragStart - (<em>function</em>, optional) Handles the onDragStart event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onRightClick - (<em>function</em>, optional) Handles the onRightClick event.</li>
 
-<li>onDragMove - (<em>function</em>, optional) Handles the onDragMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onDragStart - (<em>function</em>, optional) Handles the onDragStart event.</li>
 
-<li>onDragEnd - (<em>function</em>, optional) Handles the onDragEnd event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onDragMove - (<em>function</em>, optional) Handles the onDragMove event.</li>
 
-<li>onDragCancel - (<em>function</em>, optional) Handles the onDragCancel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onDragEnd - (<em>function</em>, optional) Handles the onDragEnd event.</li>
 
-<li>onTouchStart - (<em>function</em>, optional) Handles the onTouchStart event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onDragCancel - (<em>function</em>, optional) Handles the onDragCancel event.</li>
 
-<li>onTouchMove - (<em>function</em>, optional) Handles the onTouchMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onTouchStart - (<em>function</em>, optional) Handles the onTouchStart event.</li>
 
-<li>onTouchEnd - (<em>function</em>, optional) Handles the onTouchEnd event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onTouchMove - (<em>function</em>, optional) Handles the onTouchMove event.</li>
 
-<li>onTouchCancel - (<em>function</em>, optional) Handles the onTouchCancel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onTouchEnd - (<em>function</em>, optional) Handles the onTouchEnd event.</li>
 
-<li>onMouseMove - (<em>function</em>, optional) Handles the onMouseMove event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onTouchCancel - (<em>function</em>, optional) Handles the onTouchCancel event.</li>
 
-<li>onMouseEnter - (<em>function</em>, optional) Handles the onMouseEnter event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onMouseMove - (<em>function</em>, optional) Handles the onMouseMove event.</li>
 
-<li>onMouseLeave - (<em>function</em>, optional) Handles the onMouseLeave event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onMouseEnter - (<em>function</em>, optional) Handles the onMouseEnter event.</li>
 
-<li>onMouseWheel - (<em>function</em>, optional) Handles the onMouseWheel event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onMouseLeave - (<em>function</em>, optional) Handles the onMouseLeave event.</li>
 
-<li>onKeyDown - (<em>function</em>, optional) Handles the onKeyDown event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onMouseWheel - (<em>function</em>, optional) Handles the onMouseWheel event.</li>
 
-<li>onKeyUp - (<em>function</em>, optional) Handles the onKeyUp event. For more information about the callback arguments check the <a href='event.html'>Event</a> documentation.</li>
+<li>onKeyDown - (<em>function</em>, optional) Handles the onKeyDown event.</li>
+
+<li>onKeyUp - (<em>function</em>, optional) Handles the onKeyUp event.</li>
 </ul>
 </li>
 
