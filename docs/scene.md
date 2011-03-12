@@ -46,11 +46,12 @@ Creates a new [Scene](scene.html) instance.
     * position - (*object*) A x, y, z object with the point light position.
     * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
     * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
-* effects - (*object*, optional) An object with scene effect options.
-  * fog - (*object*, optional) An object with linear fog options explained below.
-    * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
-    * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
-    * color - (*object*) An `{ r, g, b }` object with the fog color.
+  * effects - (*object*, optional) An object with scene effect options.
+    
+    * fog - (*object*, optional) An object with linear fog options explained below.
+      * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
+      * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
+      * color - (*object*) An `{ r, g, b }` object with the fog color.
 
 ### Examples:
 
