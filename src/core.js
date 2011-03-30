@@ -181,16 +181,18 @@ $.extend = function(to, from) {
 
 $.type = (function() {
   var oString = Object.prototype.toString,
-      re = /^\[object\s(.*)\]$/,
-      type = function(e) { return oString.call(e).match(re)[1].toLowerCase(); };
-  
+      type = function(e) {
+        var t = oString.call(e);
+        return t.substr(8, t.length - 9).toLowerCase();
+      };
+
   return function(elem) {
     var elemType = type(elem);
     if (elemType != 'object') {
       return elemType;
     }
     if (elem.$$family) return elem.$$family;
-    return (elem && elem.nodeName && elem.nodeType == 1)? 'element' : elemType;
+    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
   };
 })();
 
