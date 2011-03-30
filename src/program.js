@@ -48,10 +48,20 @@
   };
 
   //Returns a Magic Uniform Setter
-  var getUniformSetter = function(program, info) {
-    var loc = gl.getUniformLocation(program, info.name),
+  var getUniformSetter = function(program, info, isArray) {
+    var name = info.name,
+        loc = gl.getUniformLocation(program, name),
         type = info.type;
-    
+
+    if (info.size > 1 && isArray) {
+      switch(type) {
+        case gl.FLOAT:
+          return function(val) { gl.uniform1fv(loc, new Float32Array(val)); };
+        case gl.INT: case gl.BOOL:
+          return function(val) { gl.uniform1iv(loc, new Uint16Array(val)); };
+      }
+    }
+
     switch (type) {
       case gl.FLOAT:
         return function(val) { gl.uniform1f(loc, val); };
@@ -77,6 +87,7 @@
         return function(val) { gl.uniformMatrix4fv(loc, false, val.toFloat32Array()); };
     }
     throw "Unknown type: " + type;
+
   };
 
   //Program Class: Handles loading of programs and mapping of attributes and uniforms
@@ -105,7 +116,9 @@
     for (i = 0; i < len; i++) {
       info = gl.getActiveUniform(program, i);
       name = info.name;
-      uniforms[name] = getUniformSetter(program, info);
+      //if array name then clean the array brackets
+      name = name[name.length -1] == ']' ? name.substr(0, name.length -3) : name;
+      uniforms[name] = getUniformSetter(program, info, info.name != name);
     }
 
     this.program = program;
