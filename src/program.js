@@ -16,8 +16,9 @@
     gl.compileShader(shader);
     var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
     if (!compiled) {
+      var info = gl.getShaderInfoLog(shader);
       gl.deleteShader(shader);
-      throw "Error while compiling the shader " + gl.getShaderInfoLog(shader);
+      throw "Error while compiling the shader " + info;
       //return false;
     }
     return shader;
