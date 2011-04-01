@@ -94,7 +94,13 @@
           dcolor = directional.color,
           dir = directional.direction,
           enable = light.enable,
-          points = light.points && $.splat(light.points) || [];
+          points = light.points && $.splat(light.points) || [],
+          numberPoints = points.length,
+          pointLocations = [],
+          pointColors = [],
+          enableSpecular = [],
+          hasSpecular = false,
+          pointSpecularColors = [];
       
       //Normalize lighting direction vector
       dir = Vec3.unit(dir).$scale(-1);
@@ -108,25 +114,36 @@
       }
       
       //Set point lights
-      program.setUniform('enableSpecularHighlights', false);
-      for (var i = 0, l = Scene.MAX_POINT_LIGHTS, pl = points.length; i < l; i++) {
-        var index = i + 1;
-        if (enable && i < pl) {
-          var point = points[i],
-              position = point.position,
-              color = point.color || point.diffuse,
-              spec = point.specular;
-          program.setUniform('enablePoint' + index, true);
-          program.setUniform('pointLocation' + index, [position.x, position.y, position.z]);
-          program.setUniform('pointColor' + index, [color.r, color.g, color.b]);
-          //Add specular color and enableSpecularHighlights
-          if (spec) {
-            program.setUniform('enableSpecularHighlights', true);
-            program.setUniform('pointSpecularColor' + index, [spec.r, spec.g, spec.b]);
-          } 
+      program.setUniform('numberPoints', numberPoints);
+      for (var i = 0, l = numberPoints; i < l; i++) {
+        var point = points[i],
+            position = point.position,
+            color = point.color || point.diffuse,
+            spec = point.specular;
+        
+        pointLocations.push(position.x, position.y, position.z);
+        pointColors.push(color.r, color.g, color.b);
+        
+        //Add specular color
+        enableSpecular.push(spec);
+        if (spec) {
+          hasSpecular = true;
+          pointSpecularColors.push(spec.r, spec.g, spec.b);
         } else {
-          program.setUniform('enablePoint' + index, false);
+          pointSpecularColors.push(0, 0, 0);
         }
+      }
+      
+      program.setUniforms({
+        'pointLocation': pointLocations,
+        'pointColor': pointColors
+      });
+      
+      if (hasSpecular) {
+        program.setUniforms({
+          'enableSpecular': enableSpecular,
+          'pointSpecularColor': pointSpecularColors
+        });
       }
     },
 

@@ -12,6 +12,7 @@
       FragmentShaders = Shaders.Fragment;
 
   VertexShaders.Default = [
+    "#define LIGHT_MAX 50",
     
     "attribute vec3 position;",
     "attribute vec3 normal;",
@@ -28,17 +29,9 @@
     "uniform vec3 directionalColor;",
     "uniform vec3 lightingDirection;",
 
-    "uniform bool enablePoint1;",
-    "uniform vec3 pointLocation1;",
-    "uniform vec3 pointColor1;",
-
-    "uniform bool enablePoint2;",
-    "uniform vec3 pointLocation2;",
-    "uniform vec3 pointColor2;",
-    
-    "uniform bool enablePoint3;",
-    "uniform vec3 pointLocation3;",
-    "uniform vec3 pointColor3;",
+    "uniform vec3 pointLocation[LIGHT_MAX];",
+    "uniform vec3 pointColor[LIGHT_MAX];",
+    "uniform int numberPoints;",
    
     "varying vec4 vColor;",
     "varying vec2 vTexCoord;",
@@ -50,31 +43,18 @@
       "if(!enableLights) {",
         "lightWeighting = vec3(1.0, 1.0, 1.0);",
       "} else {",
-        "vec3 plightDirection;",
-        "vec3 pointWeight1 = vec3(0.0, 0.0, 0.0);",
-        "vec3 pointWeight2 = vec3(0.0, 0.0, 0.0);",
-        "vec3 pointWeight3 = vec3(0.0, 0.0, 0.0);",
-
+        "vec3 plightDirection = vec3(0.0, 0.0, 0.0);",
+        "vec3 pointWeight = vec3(0.0, 0.0, 0.0);",
         "vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);",
-        
         "float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);",
-
-        "if(enablePoint1) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight1 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor1;",
-        "}",
-        
-        "if(enablePoint2) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation2, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight2 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor2;",
-        "}",
-        
-        "if(enablePoint3) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation3, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight3 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor3;",
+        "for (int i = 0; i < LIGHT_MAX; i++) {",
+          "if (i < numberPoints) {",
+            "plightDirection += normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);",
+            "pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];",
+          "}",
         "}",
 
-        "lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight1 + pointWeight2 + pointWeight3;",
+        "lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;",
       "}",
       
       "vColor = color;",
