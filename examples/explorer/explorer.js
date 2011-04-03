@@ -72,7 +72,8 @@
         from: 'uris',
         path: './',
         vs: 'surface.vs.glsl',
-        fs: 'surface.fs.glsl'
+        fs: 'surface.fs.glsl',
+        noCache: true
       },
       camera: {
         position: {

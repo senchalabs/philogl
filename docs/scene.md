@@ -42,7 +42,7 @@ Creates a new [Scene](scene.html) instance.
   * directional - (*object*, optional) An object with properties:
     * direction - (*object*) An object with x, y, z coordinates to display the light direction.
     * color - (*object*) A r, g, b object with values in [0, 1] to select the color.
-  * points - (*mixed*, optional) An array of up to 3 point lights configuration objects containing as properties:
+  * points - (*mixed*, optional) An array of point lights configuration objects containing as properties:
     * position - (*object*) A x, y, z object with the point light position.
     * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
     * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
@@ -141,7 +141,14 @@ Renders all the objects added to the scene.
 
 ### Syntax:
 
-    scene.render();
+    scene.render(callback);
+
+### Arguments:
+
+1. callback - (*object*, optional) An object with
+   `onBeforeRender(object, index)` and
+   `onAfterRender(object, index)` methods to be called right before and
+right after rendering each element.
 
 
 Scene Method: renderToTexture {#Scene:renderToTexture}

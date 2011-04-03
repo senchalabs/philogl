@@ -21,10 +21,12 @@ Append in this object vertex shaders to be used with a [Scene](scene.html). We p
 default shader used in the library. You can find more scene compatible shaders [here](https://github.com/senchalabs/philogl/tree/master/shaders). 
 In order to get familiar with the attributes and uniforms used by the [Scene](scene.html) we provide the default vertex shader code:
 
+        #define LIGHT_MAX 50
+
         attribute vec3 position;
         attribute vec3 normal;
         attribute vec4 color;
-        attribute vec2 texCoord;
+        attribute vec2 texCoord1;
 
         uniform mat4 modelViewMatrix;
         uniform mat4 viewMatrix;
@@ -36,17 +38,9 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
         uniform vec3 directionalColor;
         uniform vec3 lightingDirection;
 
-        uniform bool enablePoint1;
-        uniform vec3 pointLocation1;
-        uniform vec3 pointColor1;
-
-        uniform bool enablePoint2;
-        uniform vec3 pointLocation2;
-        uniform vec3 pointColor2;
-
-        uniform bool enablePoint3;
-        uniform vec3 pointLocation3;
-        uniform vec3 pointColor3;
+        uniform vec3 pointLocation[LIGHT_MAX];
+        uniform vec3 pointColor[LIGHT_MAX];
+        uniform int numberPoints;
 
         varying vec4 vColor;
         varying vec2 vTexCoord;
@@ -59,37 +53,25 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
             lightWeighting = vec3(1.0, 1.0, 1.0);
           } else {
             vec3 plightDirection;
-            vec3 pointWeight1 = vec3(0.0, 0.0, 0.0);
-            vec3 pointWeight2 = vec3(0.0, 0.0, 0.0);
-            vec3 pointWeight3 = vec3(0.0, 0.0, 0.0);
-
+            vec3 pointWeight = vec3(0.0, 0.0, 0.0);
             vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
-            
             float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
-
-            if(enablePoint1) {
-              plightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - mvPosition.xyz);
-              pointWeight1 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor1;
-            }
-            
-            if(enablePoint2) {
-              plightDirection = normalize((viewMatrix * vec4(pointLocation2, 1.0)).xyz - mvPosition.xyz);
-              pointWeight2 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor2;,
-            }
-            
-            if(enablePoint3) {
-              plightDirection = normalize((viewMatrix * vec4(pointLocation3, 1.0)).xyz - mvPosition.xyz);
-              pointWeight3 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor3;
+            for (int i = 0; i < LIGHT_MAX; i++) {
+              if (i < numberPoints) {
+                plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);
+                pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];
+              } else {
+                break;
+              }
             }
 
-            lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight1 + pointWeight2 + pointWeight3;
+            lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
           }
           
           vColor = color;
-          vTexCoord = texCoord;
+          vTexCoord = texCoord1;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
-
 
 ### Syntax:
 
@@ -110,13 +92,16 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
         #ifdef GL_ES
         precision highp float;
         #endif
-        
+
         varying vec4 vColor;
         varying vec2 vTexCoord;
         varying vec3 lightWeighting;
-        
+
         uniform bool hasTexture1;
         uniform sampler2D sampler1;
+
+        uniform bool enablePicking;
+        uniform vec3 pickColor;
 
         uniform bool hasFog;
         uniform vec3 fogColor;
@@ -132,14 +117,19 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
             gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
           }
 
+          if(enablePicking) {
+            gl_FragColor = vec4(pickColor, 1.0);
+          }
+          
           /* handle fog */
           if (hasFog) {
             float depth = gl_FragCoord.z / gl_FragCoord.w;
             float fogFactor = smoothstep(fogNear, fogFar, depth);
             gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
           }  
-        
+
         }
+
 
 ### Syntax:
 

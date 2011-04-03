@@ -1780,7 +1780,7 @@ For more information about the `frustum` geometry look [here](http://en.wikipedi
 
 ### Syntax:
 
-	m.frustum(left, right, bottom, top, near, far);
+	  m.frustum(left, right, bottom, top, near, far);
     
     PhiloGL.Mat4.frustum(m, left, right, bottom, top, near, far);
 
@@ -1792,6 +1792,28 @@ For more information about the `frustum` geometry look [here](http://en.wikipedi
 4. top - (*number*) The top part of the frustum.
 5. near - (*number*) The nearest part of the frustum.
 6. far - (*number*) The furthest part of the frustum.
+
+
+Mat4 Method: ortho {#Mat4:ortho}
+-------------------------------------
+
+Creates an orthographic projection. Modifies the current matrix. 
+For more information about the `orthographic projection` geometry look [here](http://en.wikipedia.org/wiki/Orthographic_projection).
+
+### Syntax:
+
+	  m.ortho(left, right, bottom, top, near, far);
+    
+    PhiloGL.Mat4.ortho(m, left, right, bottom, top, near, far);
+
+### Arguments:
+
+1. left - (*number*) The left part of the orthographic projection.
+2. right - (*number*) The right part of the orthographic projection.
+3. bottom - (*number*) The bottom part of the orthographic projection.
+4. top - (*number*) The top part of the orthographic projection.
+5. near - (*number*) The nearest part of the orthographic projection.
+6. far - (*number*) The furthest part of the orthographic projection.
 
 
 Mat4 Method: perspective {#Mat4:perspective}
