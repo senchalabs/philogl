@@ -591,7 +591,9 @@
      return dest;
    
    },
-
+    //TODO(nico) breaking convention here... 
+    //because I don't think it's useful to add
+    //two methods for each of these.
    lookAt: function(dest, eye, center, up) {
      var z = Vec3.sub(eye, center);
      z.$unit();
@@ -627,6 +629,23 @@
          xmax = ymax * aspect;
      
      return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
+   },
+   
+   ortho: function(dest, left, right, bottom, top, near, far) {
+      var w = right - left,
+          h = top - bottom,
+          p = far - near,
+          x = (right + left) / w,
+          y = (top + bottom) / h,
+          z = (far + near) / p,
+          w2 =  2 / w,
+          h2 =  2 / h,
+          p2 = -2 / p;
+     
+     return Mat4.set(dest, w2, 0, 0, -x,
+                           0, h2, 0, -y,
+                           0, 0, p2, -z,
+                           0, 0,  0,  1);
    },
 
    toFloat32Array: function(dest) {
