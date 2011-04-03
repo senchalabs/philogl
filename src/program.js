@@ -166,8 +166,8 @@
 
     setUniforms: function(obj) {
       for (var name in obj) {
-        this.uniforms[name](obj[name]);
-        //this.setUniform(name, obj[name]);
+        //this.uniforms[name](obj[name]);
+        this.setUniform(name, obj[name]);
       }
       return this;
     },

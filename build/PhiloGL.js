@@ -1495,8 +1495,8 @@ $.splat = (function() {
 
     setUniforms: function(obj) {
       for (var name in obj) {
-        this.uniforms[name](obj[name]);
-        //this.setUniform(name, obj[name]);
+        //this.uniforms[name](obj[name]);
+        this.setUniform(name, obj[name]);
       }
       return this;
     },
@@ -2854,14 +2854,16 @@ $.splat = (function() {
       "if(!enableLights) {",
         "lightWeighting = vec3(1.0, 1.0, 1.0);",
       "} else {",
-        "vec3 plightDirection = vec3(0.0, 0.0, 0.0);",
+        "vec3 plightDirection;",
         "vec3 pointWeight = vec3(0.0, 0.0, 0.0);",
         "vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);",
         "float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);",
         "for (int i = 0; i < LIGHT_MAX; i++) {",
           "if (i < numberPoints) {",
-            "plightDirection += normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);",
+            "plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);",
             "pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];",
+          "} else {",
+            "break;",
           "}",
         "}",
 
@@ -3052,9 +3054,8 @@ $.splat = (function() {
         pointColors.push(color.r, color.g, color.b);
         
         //Add specular color
-        enableSpecular.push(spec);
+        enableSpecular.push(+!!spec);
         if (spec) {
-          hasSpecular = true;
           pointSpecularColors.push(spec.r, spec.g, spec.b);
         } else {
           pointSpecularColors.push(0, 0, 0);
@@ -3066,12 +3067,10 @@ $.splat = (function() {
         'pointColor': pointColors
       });
       
-      if (hasSpecular) {
-        program.setUniforms({
-          'enableSpecular': enableSpecular,
-          'pointSpecularColor': pointSpecularColors
-        });
-      }
+      program.setUniforms({
+        'enableSpecular': enableSpecular,
+        'pointSpecularColor': pointSpecularColors
+      });
     },
 
     //Setup effects like fog, etc.

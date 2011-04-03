@@ -23,9 +23,8 @@
   uniform bool enableLights;
   uniform vec3 ambientColor;
 
-  uniform bool enablePoint1;
-  uniform vec3 pointLocation1;
-  uniform vec3 pointColor1;
+  uniform vec3 pointLocation[1];
+  uniform vec3 pointColor[1];
 
   uniform sampler2D sampler1;
 
@@ -34,10 +33,10 @@
     if (!enableLights) {
       lightWeighting = vec3(1.0, 1.0, 1.0);
     } else {
-      vec3 lightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - vPosition.xyz);
+      vec3 lightDirection = normalize((viewMatrix * vec4(pointLocation[0], 1.0)).xyz - vPosition.xyz);
 
       float directionalLightWeighting = max(dot(normalize(vTransformedNormal.xyz), lightDirection), 0.0);
-      lightWeighting = ambientColor + pointColor1 * directionalLightWeighting;
+      lightWeighting = ambientColor + pointColor[0] * directionalLightWeighting;
     }
 
     vec4 fragmentColor;

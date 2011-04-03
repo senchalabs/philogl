@@ -99,7 +99,6 @@
           pointLocations = [],
           pointColors = [],
           enableSpecular = [],
-          hasSpecular = false,
           pointSpecularColors = [];
       
       //Normalize lighting direction vector
@@ -125,9 +124,8 @@
         pointColors.push(color.r, color.g, color.b);
         
         //Add specular color
-        enableSpecular.push(spec);
+        enableSpecular.push(+!!spec);
         if (spec) {
-          hasSpecular = true;
           pointSpecularColors.push(spec.r, spec.g, spec.b);
         } else {
           pointSpecularColors.push(0, 0, 0);
@@ -139,12 +137,10 @@
         'pointColor': pointColors
       });
       
-      if (hasSpecular) {
-        program.setUniforms({
-          'enableSpecular': enableSpecular,
-          'pointSpecularColor': pointSpecularColors
-        });
-      }
+      program.setUniforms({
+        'enableSpecular': enableSpecular,
+        'pointSpecularColor': pointSpecularColors
+      });
     },
 
     //Setup effects like fog, etc.
