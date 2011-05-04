@@ -45,6 +45,7 @@ The main constructor function for the Model class. Use this to create a new Mode
 ### Options:
 
 * dynamic - (*boolean*, optional) If true then the vertices and normals will always be updated in the Buffer Objects before rendering. Default's false.
+* display - (*boolean*, optional) If false the element won't be displayed in the scene. Default's true.
 * pickable - (*boolean*, optional) If true the element can be selected with the mouse when using picking on the [Event](event.html) configuration. Default's true.
 * vertices - (*array*, optional) An array of floats that describe the vertices of the model.
 * normals - (*array*, optional) An array of floats that describe the normals of the model.

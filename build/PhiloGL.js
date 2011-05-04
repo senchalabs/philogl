@@ -859,7 +859,9 @@ $.splat = (function() {
      return dest;
    
    },
-
+    //TODO(nico) breaking convention here... 
+    //because I don't think it's useful to add
+    //two methods for each of these.
    lookAt: function(dest, eye, center, up) {
      var z = Vec3.sub(eye, center);
      z.$unit();
@@ -895,6 +897,23 @@ $.splat = (function() {
          xmax = ymax * aspect;
      
      return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
+   },
+   
+   ortho: function(dest, left, right, bottom, top, near, far) {
+      var w = right - left,
+          h = top - bottom,
+          p = far - near,
+          x = (right + left) / w,
+          y = (top + bottom) / h,
+          z = (far + near) / p,
+          w2 =  2 / w,
+          h2 =  2 / h,
+          p2 = -2 / p;
+     
+     return Mat4.set(dest, w2, 0, 0, -x,
+                           0, h2, 0, -y,
+                           0, 0, p2, -z,
+                           0, 0,  0,  1);
    },
 
    toFloat32Array: function(dest) {
@@ -2212,6 +2231,7 @@ $.splat = (function() {
     this.uniforms = opt.uniforms || {};
     this.render = opt.render;
     this.drawType = opt.drawType;
+    this.display = 'display' in opt? opt.display : true;
     if (opt.texCoords) {
       this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
     }
@@ -3028,7 +3048,6 @@ $.splat = (function() {
           pointLocations = [],
           pointColors = [],
           enableSpecular = [],
-          hasSpecular = false,
           pointSpecularColors = [];
       
       //Normalize lighting direction vector
@@ -3103,11 +3122,13 @@ $.splat = (function() {
 
       this.beforeRender();
       this.models.forEach(function(elem, i) {
-        elem.onBeforeRender(program, camera);
-        options.onBeforeRender(elem, i);
-        this.renderObject(elem);
-        options.onAfterRender(elem, i);
-        elem.onAfterRender(program, camera);
+        if (elem.display) {
+          elem.onBeforeRender(program, camera);
+          options.onBeforeRender(elem, i);
+          this.renderObject(elem);
+          options.onAfterRender(elem, i);
+          elem.onAfterRender(program, camera);
+        }
       }, this);
     },
 

@@ -173,11 +173,13 @@
 
       this.beforeRender();
       this.models.forEach(function(elem, i) {
-        elem.onBeforeRender(program, camera);
-        options.onBeforeRender(elem, i);
-        this.renderObject(elem);
-        options.onAfterRender(elem, i);
-        elem.onAfterRender(program, camera);
+        if (elem.display) {
+          elem.onBeforeRender(program, camera);
+          options.onBeforeRender(elem, i);
+          this.renderObject(elem);
+          options.onAfterRender(elem, i);
+          elem.onAfterRender(program, camera);
+        }
       }, this);
     },
 

@@ -34,6 +34,7 @@
     this.uniforms = opt.uniforms || {};
     this.render = opt.render;
     this.drawType = opt.drawType;
+    this.display = 'display' in opt? opt.display : true;
     if (opt.texCoords) {
       this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
     }
