@@ -56,6 +56,8 @@ void main(void) {
 
         diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
         diffuseLight += diffuseLightWeighting * pointColor[i];
+      } else {
+        break;
       }
     }
     
