@@ -225,6 +225,12 @@
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+      
+      obj.unsetVertices(program);
+      obj.unsetColors(program);
+      obj.unsetNormals(program);
+      obj.unsetTexCoords(program);
+      obj.unsetIndices(program);
     },
     
     //setup picking framebuffer

@@ -82,6 +82,10 @@
         program.setBuffer('vertices-' + this.id);
       }
     },
+
+    unsetVertices: function(program) {
+      program.setBuffer('vertices-' + this.id, false);
+    },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
@@ -95,6 +99,10 @@
       } else {
         program.setBuffer('normals-' + this.id);
       }
+    },
+
+    unsetNormals: function(program) {
+      program.setBuffer('normals-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -112,7 +120,11 @@
       }
     },
 
-   setColors: function(program, force) {
+    unsetIndices: function(program) {
+      program.setBuffer('indices-' + this.id, false);
+    },
+
+    setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
@@ -126,8 +138,12 @@
       }
     },
 
+    unsetColors: function(program) {
+      program.setBuffer('colors-' + this.id, false);
+    },
+
     setTexCoords: function(program, force) {
-      if (!this.texCoords) return;
+      if (!this.texCoords) return; 
 
       var id = this.id;
 
@@ -161,9 +177,13 @@
       }
     },
 
+    unsetTexCoords: function(program) {
+      program.setBuffer('texCoords-' + this.id, false);
+    },
+
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      for (var i = 0, texs = this.textures, l = texs.length; i < PhiloGL.Scene.MAX_TEXTURES; i++) {
+      for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           program.setUniform('hasTexture' + (i + 1), true);
           program.setUniform('sampler' + (i + 1), i);

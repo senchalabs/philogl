@@ -1521,6 +1521,20 @@ $.splat = (function() {
     },
 
     setBuffer: function(name, opt) {
+      //unbind buffer - buffer must have been previously defined
+      if (opt === false || opt === null) {
+        opt = this.bufferMemo[name];
+        //reset buffer
+        opt && gl.bindBuffer(opt.bufferType, null);
+        //disable vertex attrib array if the buffer maps to an attribute.
+        var attributeName = opt && opt.attribute || name,
+            loc = this.attributes[attributeName];
+        if (loc !== undefined) {
+          gl.disableVertexAttribArray(loc);
+        }
+        return;
+      }
+      
       //set defaults
       opt = $.merge({
         bufferType: gl.ARRAY_BUFFER,
@@ -1547,9 +1561,9 @@ $.splat = (function() {
 
       if (!hasBuffer) {
         this.buffers[name] = buffer;
-        isAttribute && gl.enableVertexAttribArray(loc);
       }
       
+      isAttribute && gl.enableVertexAttribArray(loc);
       gl.bindBuffer(bufferType, buffer);
       
       if (hasValue) {
@@ -1559,8 +1573,13 @@ $.splat = (function() {
       isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       
       //set default options so we don't have to next time.
+      //set them under the buffer name and attribute name (if an
+      //attribute is defined)
       delete opt.value;
       this.bufferMemo[name] = opt;
+      if (isAttribute) {
+        this.bufferMemo[attributeName] = opt;
+      }
 
       return this;
     },
@@ -2279,6 +2298,10 @@ $.splat = (function() {
         program.setBuffer('vertices-' + this.id);
       }
     },
+
+    unsetVertices: function(program) {
+      program.setBuffer('vertices-' + this.id, false);
+    },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
@@ -2292,6 +2315,10 @@ $.splat = (function() {
       } else {
         program.setBuffer('normals-' + this.id);
       }
+    },
+
+    unsetNormals: function(program) {
+      program.setBuffer('normals-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -2309,7 +2336,11 @@ $.splat = (function() {
       }
     },
 
-   setColors: function(program, force) {
+    unsetIndices: function(program) {
+      program.setBuffer('indices-' + this.id, false);
+    },
+
+    setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
@@ -2323,8 +2354,17 @@ $.splat = (function() {
       }
     },
 
+    unsetColors: function(program) {
+      program.setBuffer('colors-' + this.id, false);
+    },
+
     setTexCoords: function(program, force) {
-      if (!this.texCoords) return;
+      if (!this.texCoords) {
+        for (var i = 0, l = PhiloGL.Scene.MAX_TEXTURES; i < l; i++) {
+          program.setBuffer('texCoord' + (i + 1), false);
+        }
+        return;
+      }
 
       var id = this.id;
 
@@ -2358,9 +2398,13 @@ $.splat = (function() {
       }
     },
 
+    unsetTexCoords: function(program) {
+      program.setBuffer('texCoords-' + this.id, false);
+    },
+
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      for (var i = 0, texs = this.textures, l = texs.length; i < PhiloGL.Scene.MAX_TEXTURES; i++) {
+      for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           program.setUniform('hasTexture' + (i + 1), true);
           program.setUniform('sampler' + (i + 1), i);
@@ -3174,6 +3218,12 @@ $.splat = (function() {
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+      
+      obj.unsetVertices(program);
+      obj.unsetColors(program);
+      obj.unsetNormals(program);
+      obj.unsetTexCoords(program);
+      obj.unsetIndices(program);
     },
     
     //setup picking framebuffer

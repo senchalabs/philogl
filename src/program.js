@@ -173,6 +173,20 @@
     },
 
     setBuffer: function(name, opt) {
+      //unbind buffer 
+      if (opt === false || opt === null) {
+        opt = this.bufferMemo[name];
+        //reset buffer
+        opt && gl.bindBuffer(opt.bufferType, null);
+        //disable vertex attrib array if the buffer maps to an attribute.
+        var attributeName = opt && opt.attribute || name,
+            loc = this.attributes[attributeName];
+        if (loc !== undefined) {
+          gl.disableVertexAttribArray(loc);
+        }
+        return;
+      }
+      
       //set defaults
       opt = $.merge({
         bufferType: gl.ARRAY_BUFFER,
@@ -199,9 +213,9 @@
 
       if (!hasBuffer) {
         this.buffers[name] = buffer;
-        isAttribute && gl.enableVertexAttribArray(loc);
       }
       
+      isAttribute && gl.enableVertexAttribArray(loc);
       gl.bindBuffer(bufferType, buffer);
       
       if (hasValue) {
@@ -211,8 +225,13 @@
       isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       
       //set default options so we don't have to next time.
+      //set them under the buffer name and attribute name (if an
+      //attribute is defined)
       delete opt.value;
       this.bufferMemo[name] = opt;
+      if (isAttribute) {
+        this.bufferMemo[attributeName] = opt;
+      }
 
       return this;
     },
