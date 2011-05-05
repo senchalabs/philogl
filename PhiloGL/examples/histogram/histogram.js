@@ -80,7 +80,8 @@
           from: 'uris',
           path: './',
           vs: 'histogram.vs.glsl',
-          fs: 'histogram.fs.glsl'
+          fs: 'histogram.fs.glsl',
+          noCache: true
         },
         camera: {
           position: {

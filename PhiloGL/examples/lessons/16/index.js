@@ -99,7 +99,8 @@ function webGLStart() {
         from: 'uris',
         path: '../../../shaders/',
         vs: 'render-tex.vs.glsl',
-        fs: 'render-tex.fs.glsl'
+        fs: 'render-tex.fs.glsl',
+        noCache: true
       },
       scene: {
         lights: {

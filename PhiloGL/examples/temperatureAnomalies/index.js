@@ -182,7 +182,8 @@ function init() {
         from: 'uris',
         path: './',
         vs: 'temp.vs.glsl',
-        fs: 'temp.fs.glsl'
+        fs: 'temp.fs.glsl',
+        noCache: true
       },
       camera: {
         position: {
