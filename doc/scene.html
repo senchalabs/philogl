@@ -134,7 +134,7 @@
 </li>
 
 <li>
-<p>points - (<em>mixed</em>, optional) An array of up to 3 point lights configuration objects containing as properties:</p>
+<p>points - (<em>mixed</em>, optional) An array of point lights configuration objects containing as properties:</p>
 
 <ul>
 <li>position - (<em>object</em>) A x, y, z object with the point light position.</li>
@@ -242,7 +242,13 @@
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>scene.render();</code></pre>
+<pre><code>scene.render(callback);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>callback - (<em>object</em>, optional) An object with <code>onBeforeRender(object, index)</code> and <code>onAfterRender(object, index)</code> methods to be called right before and right after rendering each element.</li>
+</ol>
 
 <h2 id='Scene:renderToTexture'>Scene Method: renderToTexture</h2>
 

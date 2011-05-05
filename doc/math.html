@@ -1668,7 +1668,7 @@ PhiloGL.Mat4.lookAt(m, eye, center, up);</code></pre>
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>m.frustum(left, right, bottom, top, near, far);
+<pre><code>  m.frustum(left, right, bottom, top, near, far);
 
 PhiloGL.Mat4.frustum(m, left, right, bottom, top, near, far);</code></pre>
 
@@ -1686,6 +1686,32 @@ PhiloGL.Mat4.frustum(m, left, right, bottom, top, near, far);</code></pre>
 <li>near - (<em>number</em>) The nearest part of the frustum.</li>
 
 <li>far - (<em>number</em>) The furthest part of the frustum.</li>
+</ol>
+
+<h2 id='Mat4:ortho'>Mat4 Method: ortho</h2>
+
+<p>Creates an orthographic projection. Modifies the current matrix. For more information about the <code>orthographic projection</code> geometry look <a href='http://en.wikipedia.org/wiki/Orthographic_projection'>here</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  m.ortho(left, right, bottom, top, near, far);
+
+PhiloGL.Mat4.ortho(m, left, right, bottom, top, near, far);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>left - (<em>number</em>) The left part of the orthographic projection.</li>
+
+<li>right - (<em>number</em>) The right part of the orthographic projection.</li>
+
+<li>bottom - (<em>number</em>) The bottom part of the orthographic projection.</li>
+
+<li>top - (<em>number</em>) The top part of the orthographic projection.</li>
+
+<li>near - (<em>number</em>) The nearest part of the orthographic projection.</li>
+
+<li>far - (<em>number</em>) The furthest part of the orthographic projection.</li>
 </ol>
 
 <h2 id='Mat4:perspective'>Mat4 Method: perspective</h2>

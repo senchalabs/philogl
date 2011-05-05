@@ -171,7 +171,7 @@ PhiloGL.unpack = function(global) {
 };
 
 //Version
-PhiloGL.version = '1.1.0';
+PhiloGL.version = '1.1.1';
 
 //Holds the 3D context
 var gl;
@@ -205,16 +205,18 @@ $.extend = function(to, from) {
 
 $.type = (function() {
   var oString = Object.prototype.toString,
-      re = /^\[object\s(.*)\]$/,
-      type = function(e) { return oString.call(e).match(re)[1].toLowerCase(); };
-  
+      type = function(e) {
+        var t = oString.call(e);
+        return t.substr(8, t.length - 9).toLowerCase();
+      };
+
   return function(elem) {
     var elemType = type(elem);
     if (elemType != 'object') {
       return elemType;
     }
     if (elem.$$family) return elem.$$family;
-    return (elem && elem.nodeName && elem.nodeType == 1)? 'element' : elemType;
+    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
   };
 })();
 
@@ -857,7 +859,9 @@ $.splat = (function() {
      return dest;
    
    },
-
+    //TODO(nico) breaking convention here... 
+    //because I don't think it's useful to add
+    //two methods for each of these.
    lookAt: function(dest, eye, center, up) {
      var z = Vec3.sub(eye, center);
      z.$unit();
@@ -893,6 +897,23 @@ $.splat = (function() {
          xmax = ymax * aspect;
      
      return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
+   },
+   
+   ortho: function(dest, left, right, bottom, top, near, far) {
+      var w = right - left,
+          h = top - bottom,
+          p = far - near,
+          x = (right + left) / w,
+          y = (top + bottom) / h,
+          z = (far + near) / p,
+          w2 =  2 / w,
+          h2 =  2 / h,
+          p2 = -2 / p;
+     
+     return Mat4.set(dest, w2, 0, 0, -x,
+                           0, h2, 0, -y,
+                           0, 0, p2, -z,
+                           0, 0,  0,  1);
    },
 
    toFloat32Array: function(dest) {
@@ -1343,8 +1364,9 @@ $.splat = (function() {
     gl.compileShader(shader);
     var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
     if (!compiled) {
+      var info = gl.getShaderInfoLog(shader);
       gl.deleteShader(shader);
-      throw "Error while compiling the shader " + gl.getShaderInfoLog(shader);
+      throw "Error while compiling the shader " + info;
       //return false;
     }
     return shader;
@@ -1375,10 +1397,20 @@ $.splat = (function() {
   };
 
   //Returns a Magic Uniform Setter
-  var getUniformSetter = function(program, info) {
-    var loc = gl.getUniformLocation(program, info.name),
+  var getUniformSetter = function(program, info, isArray) {
+    var name = info.name,
+        loc = gl.getUniformLocation(program, name),
         type = info.type;
-    
+
+    if (info.size > 1 && isArray) {
+      switch(type) {
+        case gl.FLOAT:
+          return function(val) { gl.uniform1fv(loc, new Float32Array(val)); };
+        case gl.INT: case gl.BOOL:
+          return function(val) { gl.uniform1iv(loc, new Uint16Array(val)); };
+      }
+    }
+
     switch (type) {
       case gl.FLOAT:
         return function(val) { gl.uniform1f(loc, val); };
@@ -1404,6 +1436,7 @@ $.splat = (function() {
         return function(val) { gl.uniformMatrix4fv(loc, false, val.toFloat32Array()); };
     }
     throw "Unknown type: " + type;
+
   };
 
   //Program Class: Handles loading of programs and mapping of attributes and uniforms
@@ -1432,7 +1465,9 @@ $.splat = (function() {
     for (i = 0; i < len; i++) {
       info = gl.getActiveUniform(program, i);
       name = info.name;
-      uniforms[name] = getUniformSetter(program, info);
+      //if array name then clean the array brackets
+      name = name[name.length -1] == ']' ? name.substr(0, name.length -3) : name;
+      uniforms[name] = getUniformSetter(program, info, info.name != name);
     }
 
     this.program = program;
@@ -1479,13 +1514,27 @@ $.splat = (function() {
 
     setUniforms: function(obj) {
       for (var name in obj) {
-        this.uniforms[name](obj[name]);
-        //this.setUniform(name, obj[name]);
+        //this.uniforms[name](obj[name]);
+        this.setUniform(name, obj[name]);
       }
       return this;
     },
 
     setBuffer: function(name, opt) {
+      //unbind buffer 
+      if (opt === false || opt === null) {
+        opt = this.bufferMemo[name];
+        //reset buffer
+        opt && gl.bindBuffer(opt.bufferType, null);
+        //disable vertex attrib array if the buffer maps to an attribute.
+        var attributeName = opt && opt.attribute || name,
+            loc = this.attributes[attributeName];
+        if (loc !== undefined) {
+          gl.disableVertexAttribArray(loc);
+        }
+        return;
+      }
+      
       //set defaults
       opt = $.merge({
         bufferType: gl.ARRAY_BUFFER,
@@ -1512,9 +1561,9 @@ $.splat = (function() {
 
       if (!hasBuffer) {
         this.buffers[name] = buffer;
-        isAttribute && gl.enableVertexAttribArray(loc);
       }
       
+      isAttribute && gl.enableVertexAttribArray(loc);
       gl.bindBuffer(bufferType, buffer);
       
       if (hasValue) {
@@ -1524,8 +1573,13 @@ $.splat = (function() {
       isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       
       //set default options so we don't have to next time.
+      //set them under the buffer name and attribute name (if an
+      //attribute is defined)
       delete opt.value;
       this.bufferMemo[name] = opt;
+      if (isAttribute) {
+        this.bufferMemo[attributeName] = opt;
+      }
 
       return this;
     },
@@ -2196,6 +2250,7 @@ $.splat = (function() {
     this.uniforms = opt.uniforms || {};
     this.render = opt.render;
     this.drawType = opt.drawType;
+    this.display = 'display' in opt? opt.display : true;
     if (opt.texCoords) {
       this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
     }
@@ -2243,6 +2298,10 @@ $.splat = (function() {
         program.setBuffer('vertices-' + this.id);
       }
     },
+
+    unsetVertices: function(program) {
+      program.setBuffer('vertices-' + this.id, false);
+    },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
@@ -2256,6 +2315,10 @@ $.splat = (function() {
       } else {
         program.setBuffer('normals-' + this.id);
       }
+    },
+
+    unsetNormals: function(program) {
+      program.setBuffer('normals-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -2273,7 +2336,11 @@ $.splat = (function() {
       }
     },
 
-   setColors: function(program, force) {
+    unsetIndices: function(program) {
+      program.setBuffer('indices-' + this.id, false);
+    },
+
+    setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
@@ -2287,8 +2354,12 @@ $.splat = (function() {
       }
     },
 
+    unsetColors: function(program) {
+      program.setBuffer('colors-' + this.id, false);
+    },
+
     setTexCoords: function(program, force) {
-      if (!this.texCoords) return;
+      if (!this.texCoords) return; 
 
       var id = this.id;
 
@@ -2322,9 +2393,13 @@ $.splat = (function() {
       }
     },
 
+    unsetTexCoords: function(program) {
+      program.setBuffer('texCoords-' + this.id, false);
+    },
+
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      for (var i = 0, texs = this.textures, l = texs.length; i < PhiloGL.Scene.MAX_TEXTURES; i++) {
+      for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           program.setUniform('hasTexture' + (i + 1), true);
           program.setUniform('sampler' + (i + 1), i);
@@ -2807,6 +2882,7 @@ $.splat = (function() {
       FragmentShaders = Shaders.Fragment;
 
   VertexShaders.Default = [
+    "#define LIGHT_MAX 50",
     
     "attribute vec3 position;",
     "attribute vec3 normal;",
@@ -2823,17 +2899,9 @@ $.splat = (function() {
     "uniform vec3 directionalColor;",
     "uniform vec3 lightingDirection;",
 
-    "uniform bool enablePoint1;",
-    "uniform vec3 pointLocation1;",
-    "uniform vec3 pointColor1;",
-
-    "uniform bool enablePoint2;",
-    "uniform vec3 pointLocation2;",
-    "uniform vec3 pointColor2;",
-    
-    "uniform bool enablePoint3;",
-    "uniform vec3 pointLocation3;",
-    "uniform vec3 pointColor3;",
+    "uniform vec3 pointLocation[LIGHT_MAX];",
+    "uniform vec3 pointColor[LIGHT_MAX];",
+    "uniform int numberPoints;",
    
     "varying vec4 vColor;",
     "varying vec2 vTexCoord;",
@@ -2846,30 +2914,19 @@ $.splat = (function() {
         "lightWeighting = vec3(1.0, 1.0, 1.0);",
       "} else {",
         "vec3 plightDirection;",
-        "vec3 pointWeight1 = vec3(0.0, 0.0, 0.0);",
-        "vec3 pointWeight2 = vec3(0.0, 0.0, 0.0);",
-        "vec3 pointWeight3 = vec3(0.0, 0.0, 0.0);",
-
+        "vec3 pointWeight = vec3(0.0, 0.0, 0.0);",
         "vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);",
-        
         "float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);",
-
-        "if(enablePoint1) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight1 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor1;",
-        "}",
-        
-        "if(enablePoint2) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation2, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight2 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor2;",
-        "}",
-        
-        "if(enablePoint3) {",
-          "plightDirection = normalize((viewMatrix * vec4(pointLocation3, 1.0)).xyz - mvPosition.xyz);",
-          "pointWeight3 = max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor3;",
+        "for (int i = 0; i < LIGHT_MAX; i++) {",
+          "if (i < numberPoints) {",
+            "plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);",
+            "pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];",
+          "} else {",
+            "break;",
+          "}",
         "}",
 
-        "lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight1 + pointWeight2 + pointWeight3;",
+        "lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;",
       "}",
       
       "vColor = color;",
@@ -3025,7 +3082,12 @@ $.splat = (function() {
           dcolor = directional.color,
           dir = directional.direction,
           enable = light.enable,
-          points = light.points && $.splat(light.points) || [];
+          points = light.points && $.splat(light.points) || [],
+          numberPoints = points.length,
+          pointLocations = [],
+          pointColors = [],
+          enableSpecular = [],
+          pointSpecularColors = [];
       
       //Normalize lighting direction vector
       dir = Vec3.unit(dir).$scale(-1);
@@ -3039,26 +3101,34 @@ $.splat = (function() {
       }
       
       //Set point lights
-      program.setUniform('enableSpecularHighlights', false);
-      for (var i = 0, l = Scene.MAX_POINT_LIGHTS, pl = points.length; i < l; i++) {
-        var index = i + 1;
-        if (enable && i < pl) {
-          var point = points[i],
-              position = point.position,
-              color = point.color || point.diffuse,
-              spec = point.specular;
-          program.setUniform('enablePoint' + index, true);
-          program.setUniform('pointLocation' + index, [position.x, position.y, position.z]);
-          program.setUniform('pointColor' + index, [color.r, color.g, color.b]);
-          //Add specular color and enableSpecularHighlights
-          if (spec) {
-            program.setUniform('enableSpecularHighlights', true);
-            program.setUniform('pointSpecularColor' + index, [spec.r, spec.g, spec.b]);
-          } 
+      program.setUniform('numberPoints', numberPoints);
+      for (var i = 0, l = numberPoints; i < l; i++) {
+        var point = points[i],
+            position = point.position,
+            color = point.color || point.diffuse,
+            spec = point.specular;
+        
+        pointLocations.push(position.x, position.y, position.z);
+        pointColors.push(color.r, color.g, color.b);
+        
+        //Add specular color
+        enableSpecular.push(+!!spec);
+        if (spec) {
+          pointSpecularColors.push(spec.r, spec.g, spec.b);
         } else {
-          program.setUniform('enablePoint' + index, false);
+          pointSpecularColors.push(0, 0, 0);
         }
       }
+      
+      program.setUniforms({
+        'pointLocation': pointLocations,
+        'pointColor': pointColors
+      });
+      
+      program.setUniforms({
+        'enableSpecular': enableSpecular,
+        'pointSpecularColor': pointSpecularColors
+      });
     },
 
     //Setup effects like fog, etc.
@@ -3091,11 +3161,13 @@ $.splat = (function() {
 
       this.beforeRender();
       this.models.forEach(function(elem, i) {
-        elem.onBeforeRender(program, camera);
-        options.onBeforeRender(elem, i);
-        this.renderObject(elem);
-        options.onAfterRender(elem, i);
-        elem.onAfterRender(program, camera);
+        if (elem.display) {
+          elem.onBeforeRender(program, camera);
+          options.onBeforeRender(elem, i);
+          this.renderObject(elem);
+          options.onAfterRender(elem, i);
+          elem.onAfterRender(program, camera);
+        }
       }, this);
     },
 
@@ -3141,6 +3213,12 @@ $.splat = (function() {
           gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
         }
       }
+      
+      obj.unsetVertices(program);
+      obj.unsetColors(program);
+      obj.unsetNormals(program);
+      obj.unsetTexCoords(program);
+      obj.unsetIndices(program);
     },
     
     //setup picking framebuffer
