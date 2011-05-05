@@ -44,9 +44,11 @@
       }
 
       //add a get by name param
-      gl.get = function(name) {
-        return typeof name == 'string'? gl[name] : name;
-      };
+      if (gl) {
+        gl.get = function(name) {
+          return typeof name == 'string'? gl[name] : name;
+        };
+      }
 
       return gl;
     } 
