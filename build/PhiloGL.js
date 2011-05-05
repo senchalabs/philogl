@@ -171,7 +171,7 @@ PhiloGL.unpack = function(global) {
 };
 
 //Version
-PhiloGL.version = '1.1.0';
+PhiloGL.version = '1.1.1';
 
 //Holds the 3D context
 var gl;
@@ -1521,7 +1521,7 @@ $.splat = (function() {
     },
 
     setBuffer: function(name, opt) {
-      //unbind buffer - buffer must have been previously defined
+      //unbind buffer 
       if (opt === false || opt === null) {
         opt = this.bufferMemo[name];
         //reset buffer
@@ -2359,12 +2359,7 @@ $.splat = (function() {
     },
 
     setTexCoords: function(program, force) {
-      if (!this.texCoords) {
-        for (var i = 0, l = PhiloGL.Scene.MAX_TEXTURES; i < l; i++) {
-          program.setBuffer('texCoord' + (i + 1), false);
-        }
-        return;
-      }
+      if (!this.texCoords) return; 
 
       var id = this.id;
 
