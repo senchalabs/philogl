@@ -669,9 +669,318 @@
    })(method);
   }
 
+  //Quaternion class
+  var Quat = function(x, y, z, w) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+    this.w = w || 0;
+  };
+
+  generics = {
+    
+    clone: function(dest) {
+      return new Quat(dest.x, dest.y, dest.z, dest.w);
+    },
+
+    neg: function(dest) {
+      return new Quat(-dest.x, -dest.y, -dest.z, -dest.w);
+    },
+
+    $neg: function(dest) {
+      dest.x = -dest.x;
+      dest.y = -dest.y;
+      dest.z = -dest.z;
+      dest.w = -dest.w;
+      
+      return dest;
+    },
+
+    add: function(dest, q) {
+      return new Quat(dest.x + q.x,
+                      dest.y + q.y,
+                      dest.z + q.z,
+                      dest.w + q.w);
+    },
+
+    $add: function(dest, q) {
+      dest.x += q.x;
+      dest.y += q.y;
+      dest.z += q.z;
+      dest.w += q.w;
+      
+      return dest;
+    },
+
+    sub: function(dest, q) {
+      return new Quat(dest.x - q.x,
+                      dest.y - q.y,
+                      dest.z - q.z,
+                      dest.w - q.w);
+    },
+
+    $sub: function(dest, q) {
+      dest.x -= q.x;
+      dest.y -= q.y;
+      dest.z -= q.z;
+      dest.w -= q.w;
+      
+      return dest;
+    },
+
+    scale: function(dest, s) {
+      return new Quat(dest.x * s,
+                      dest.y * s,
+                      dest.z * s,
+                      dest.w * s);
+    },
+
+    $scale: function(dest, s) {
+      dest.x *= s;
+      dest.y *= s;
+      dest.z *= s;
+      dest.w *= s;
+      
+      return dest;
+    },
+
+    mulQuat: function(dest, q) {
+      var aX = dest.x,
+          aY = dest.y,
+          aZ = dest.z,
+          aW = dest.w,
+          bX = q.x,
+          bY = q.y,
+          bZ = q.z,
+          bW = q.w;
+
+      return new Quat(aW * bX + aX * bW + aY * bZ - aZ * bY,
+                      aW * bY + aY * bW + aZ * bX - aX * bZ,
+                      aW * bZ + aZ * bW + aX * bY - aY * bX,
+                      aW * bW - aX * bX - aY * bY - aZ * bZ);
+    },
+
+    $mulQuat: function(dest, q) {
+      var aX = dest.x,
+          aY = dest.y,
+          aZ = dest.z,
+          aW = dest.w,
+          bX = q.x,
+          bY = q.y,
+          bZ = q.z,
+          bW = q.w;
+
+      dest.a = aW * bX + aX * bW + aY * bZ - aZ * bY;
+      dest.b = aW * bY + aY * bW + aZ * bX - aX * bZ;
+      dest.c = aW * bZ + aZ * bW + aX * bY - aY * bX;
+      dest.d = aW * bW - aX * bX - aY * bY - aZ * bZ;
+
+      return dest;
+    },
+
+    div: function(dest, q) {
+      var aX = dest.x,
+          aY = dest.y,
+          aZ = dest.z,
+          aW = dest.w,
+          bX = q.x,
+          bY = q.y,
+          bZ = q.z,
+          bW = q.w;
+
+      var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
+      
+      return new Quat((aX * bW - aW * bX - aY * bZ + aZ * bY) * d,
+                      (aX * bZ - aW * bY + aY * bW - aZ * bX) * d,
+                      (aY * bX + aZ * bW - aW * bZ - aX * bY) * d,
+                      (aW * bW + aX * bX + aY * bY + aZ * bZ) * d);
+    },
+
+    $div: function(dest, q) {
+      var aX = dest.x,
+          aY = dest.y,
+          aZ = dest.z,
+          aW = dest.w,
+          bX = q.x,
+          bY = q.y,
+          bZ = q.z,
+          bW = q.w;
+
+      var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
+      
+      dest.a = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
+      dest.b = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
+      dest.c = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
+      dest.d = (aW * bW + aX * bX + aY * bY + aZ * bZ) * d;
+
+      return dest;
+    },
+
+    invert: function(dest) {
+      var q0 = dest.x,
+          q1 = dest.y,
+          q2 = dest.z,
+          q3 = dest.w;
+
+      var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+      
+      return new Quat(-q0 * d, -q1 * d, -q2 * d, q3 * d);
+    },
+
+    $invert: function(dest) {
+      var q0 = dest.x,
+          q1 = dest.y,
+          q2 = dest.z,
+          q3 = dest.w;
+
+      var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+
+      dest.a = -q0 * d;
+      dest.b = -q1 * d;
+      dest.c = -q2 * d;
+      dest.d =  q3 * d;
+      
+      return dest;
+    },
+
+    norm: function(dest) {
+      var a = dest.x,
+          b = dest.y,
+          c = dest.z,
+          d = dest.w;
+
+      return sqrt(a * a + b * b + c * c + d * d);
+    },
+
+    normSq: function(dest) {
+      var a = dest.x,
+          b = dest.y,
+          c = dest.z,
+          d = dest.w;
+
+      return a * a + b * b + c * c + d * d;
+    },
+
+    unit: function(dest) {
+      return Quat.scale(dest, 1 / Quat.norm(dest));
+    },
+
+    $unit: function(dest) {
+      return Quat.$scale(dest, 1 / Quat.norm(dest));
+    },
+
+    conjugate: function(dest) {
+      return new Quat(-dest.x,
+                      -dest.y,
+                      -dest.z,
+                       dest.w);
+    },
+
+    $conjugate: function(dest) {
+      dest.x = -dest.x;
+      dest.y = -dest.y;
+      dest.z = -dest.z;
+      
+      return dest;
+    }
+  };
+  //add generics and instance methods
+  proto = Quat.prototype = {};
+  for (method in generics) {
+    Quat[method] = generics[method];
+    proto[method] = (function (m) {
+      return function() {
+        var args = slice.call(arguments);
+        
+        args.unshift(this);
+        return Quat[m].apply(Quat, args);
+      };
+   })(method);
+  }
   
+  //Add static methods
+  Vec3.fromQuat = function(q) {
+    return new Vec3(q.x, q.y, q.z);
+  };
+
+  Quat.fromVec3 = function(v, r) {
+    return new Quat(v.x, v.y, v.z, r || 0);
+  };
+
+  Quat.fromMat4 = function(m) {
+    var u;
+    var v;
+    var w;
+
+    // Choose u, v, and w such that u is the index of the biggest diagonal entry
+    // of m, and u v w is an even permutation of 0 1 and 2.
+    if (m.n11 > m.n22 && m.n11 > m.n33) {
+      u = 0;
+      v = 1;
+      w = 2;
+    } else if (m.n22 > m.n11 && m.n22 > m.n33]) {
+      u = 1;
+      v = 2;
+      w = 0;
+    } else {
+      u = 2;
+      v = 0;
+      w = 1;
+    }
+
+    var r = sqrt(1 + m['n' + u + '' + u] - m['n' + v + '' + v] - m['n' + w + '' + w]);
+    var q = new Quat,
+        props = ['x', 'y', 'z'];
+    
+    q[props[u]] = 0.5 * r;
+    q[props[v]] = 0.5 * (m['n' + v + '' + u] + m['n' + u + '' + v]) / r;
+    q[props[w]] = 0.5 * (m['n' + u + '' + w] + m['n' + w + '' + u]) / r;
+    q.w =         0.5 * (m['n' + v + '' + w] - m['n' + w + '' + v]) / r;
+
+    return q;
+  };
+  
+  Quat.fromXRotation = function(angle) {
+    return new Quat(sin(angle / 2), 0, 0, cos(angle / 2));
+  };
+
+  Quat.fromYRotation = function(angle) {
+    return new Quat(0, sin(angle / 2), 0, cos(angle / 2));
+  };
+
+  Quat.fromZRotation = function(angle) {
+    return new Quat(0, 0, sin(angle / 2), cos(angle / 2));
+  };
+
+  Quat.fromAxisRotation = function(vec, angle) {
+    var x = vec.x,
+        y = vec.y,
+        z = vec.z,
+        d = 1 / sqrt(x * x + y * y + z * z),
+        s = sin(angle / 2),
+        c = cos(angle / 2);
+
+    return new Quat(s * x * d,
+                    s * y * d,
+                    s * z * d,
+                    c);
+  };
+  
+  Mat4.fromQuat = function(q) {
+    var a = q.w,
+        b = q.x,
+        c = q.y,
+        d = q.z;
+    
+    return new Mat4(a * a + b * b - c * c - d * d, 2 * b * c - 2 * a * d, 2 * b * d + 2 * a * c, 0,
+                    2 * b * c + 2 * a * d, a * a - b * b + c * c - d * d, 2 * c * d - 2 * a * b, 0,
+                    2 * b * d - 2 * a * c, 2 * c * d + 2 * a * b, a * a - b * b - c * c + d * d, 0,
+                    0,                     0,                     0,                             1);
+  };
+
   PhiloGL.Vec3 = Vec3;
   PhiloGL.Mat4 = Mat4;
+  PhiloGL.Quat = Quat;
 
 })();
 
