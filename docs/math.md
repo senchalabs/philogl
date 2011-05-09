@@ -1847,3 +1847,617 @@ Converts the matrix in a [Float32Array](https://developer.mozilla.org/en/JavaScr
     
     PhiloGL.Mat4.toFloat32Array(m);
 
+
+Class: Quat {#Quat}
+===========================
+
+A class to handle Quaternions. More information on quternions can be
+found [here](http://en.wikipedia.org/wiki/Quaternion). The quaternion
+will be represented by an instance with `x`, `y`, `z`, `w` components
+that make a quaterion like: `xi + yj + zk + w`.
+
+
+Quat Method: constructor {#Quat:constructor}
+----------------------------------------------------
+
+Creates a new `Quat` instance.
+
+### Syntax:
+
+	var q = new PhiloGL.Quat(x, y, z, w);
+
+### Arguments:
+
+1. x - (*number*, optional) The x component. If not provided is 0.
+2. y - (*number*, optional) The y component. If not provided is 0.
+3. z - (*number*, optional) The z component. If not provided is 0.
+4. w - (*number*, optional) The non-imaginary component. If not provided
+   is 0.
+
+### Examples:
+
+Create a (0, 0, 0, 0) quaternion.
+
+{% highlight js %}
+  var q = new PhiloGL.Quat();
+{% endhighlight %}
+
+Create a (1, 2, 3, 4) quaternion.
+
+{% highlight js %}
+  var q = new PhiloGL.Quat(1, 2, 3, 4);
+{% endhighlight %}
+
+
+Quat Method: setQuat {#Quat:setQuat}
+------------------------------------
+
+Set `x`, `y`, `z`, `w` coordinates of one `Quat` into another `Quat`.
+
+### Syntax:
+
+	  q1.setQuat(q2);
+
+    PhiloGL.Quat.setQuat(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two quaternions and assign one quaternions components to the other one.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.setQuat(q2); //v1 now contains (x=4, y=5, z=6, w=7)
+{% endhighlight %}
+
+Set an object's `x`, `y`, `z`, `w` components to another object.
+
+{% highlight js %}
+  var q1 = {},
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.setQuat(q1, q2); //q1 now has (x=4, y=5, z=6, w=7)
+{% endhighlight %}
+
+
+Quat Method: set {#Quat:set}
+-------------------------------
+
+Set `x`, `y`, `z`, `w` coordinates.
+
+### Syntax:
+
+	  q1.set(x, y, z, w);
+
+    PhiloGL.Quat.set(q1, x, y, z, w);
+
+### Arguments:
+
+1. x - (*number*) The x coordinate.
+2. y - (*number*) The y coordinate.
+3. z - (*number*) The z coordinate.
+4. w - (*number*) The w coordinate.
+
+### Examples:
+
+Create two quaternions and assign one quaternions components to the other one.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.set(q2.x, q2.y, q2.z, q2.w); //q1 now contains (x=4, y=5, z=6, w=7)
+{% endhighlight %}
+
+Set an object's `x`, `y`, `z`, `w` components to another object.
+
+{% highlight js %}
+  var q1 = {},
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.set(q1, q2.x, q2.y, q2.z, q2.w); //q1 now has (x=4, y=5, z=6, w=7)
+{% endhighlight %}
+
+
+Quat Method: add {#Quat:add}
+-----------------------------
+
+Adds the `x`, `y`, `z` components of two `Quat` objects. Creates a new `Quat` instance and does not modify the original objects.
+
+### Syntax:
+
+	  q1.add(q2);
+
+    PhiloGL.Quat.add(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two quaternions and add them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.add(q2); //q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.
+{% endhighlight %}
+
+Create two `x`, `y`, `z`, `w` objects and add them.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      },
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.add(q1, q2); //q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.
+{% endhighlight %}
+
+
+Quat Method: $add {#Quat:$add}
+------------------------------------
+
+Adds the `x`, `y`, `z`, `w` components of two `Quat` objects. Modifies the original object.
+
+### Syntax:
+
+	  q1.$add(q2);
+
+    PhiloGL.Quat.$add(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two quaternions and add them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.$add(q2); //q1 is now Quat(5, 7, 9, 11).
+{% endhighlight %}
+
+Create two `x`, `y`, `z`, `w` objects and add them.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      },
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.$add(q1, q2); //q1 is now { x: 5, y: 7, z: 9, w: 11 }.
+{% endhighlight %}
+
+
+Quat Method: sub {#Quat:sub}
+------------------------------------
+
+Substracts the `x`, `y`, `z`, `w` components of two `Quat` objects. Creates a new `Quat` instance and does not modify the original objects.
+
+### Syntax:
+
+	  q1.sub(q2);
+
+    PhiloGL.Quat.sub(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two quaternions and substract them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.sub(q2); //q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.
+{% endhighlight %}
+
+Create two `x`, `y`, `z`, `w` objects and substract them.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      },
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.sub(q1, q2); //q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.
+{% endhighlight %}
+
+
+Quat Method: $sub {#Quat:$sub}
+------------------------------------
+
+Substracts the `x`, `y`, `z`, `w` components of two `Quat` objects. Modifies the original object.
+
+### Syntax:
+
+	  q1.$sub(q2);
+
+    PhiloGL.Quat.$sub(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two quaternions and substract them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4),
+      q2 = new PhiloGL.Quat(4, 5, 6, 7);
+
+  q1.$sub(q2); //q1 is now Quat(-3, -3, -3, -3).
+{% endhighlight %}
+
+Create two `x`, `y`, `z`, `w` objects and add them.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      },
+      q2 = {
+        x: 4,
+        y: 5,
+        z: 6,
+        w: 7
+      };
+
+  PhiloGL.Quat.$sub(q1, q2); //q1 is now { x: -3, y: -3, z: -3, w: -3 }.
+{% endhighlight %}
+
+
+Quat Method: scale {#Quat:scale}
+------------------------------------
+
+Scales the Quat quaternion by a real number. Creates a new Quat with the scaled components.
+
+### Syntax:
+
+	  q1.scale(s);
+
+    PhiloGL.Quat.scale(q1, s);
+
+### Arguments:
+
+1. s - (*number*) A real number to scale the Quat.
+
+### Examples:
+
+Create a quaternion and scale it by 2.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.scale(2); //q1 is unchanged but a new Quat(2, 4, 6, 8) is created.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and scale it by 2.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.scale(q1, 2); //q1 is still the same but a new Quat(2, 4, 6, 8) was created.
+{% endhighlight %}
+
+
+Quat Method: $scale {#Quat:$scale}
+------------------------------------
+
+Scales the Quat quaternion by a real number. Changes the original object.
+
+### Syntax:
+
+	  q1.$scale(s);
+
+    PhiloGL.Quat.$scale(q1, s);
+
+### Arguments:
+
+1. s - (*number*) A real number to scale the Quat.
+
+### Examples:
+
+Create a quaternion and scale it by 2.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.$scale(2); //q1 is now Quat(2, 4, 6, 8).
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and scale it by 2.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.$scale(q1, 2); //q1 is now { x: 2, y: 4, z: 6, w: 8 }.
+{% endhighlight %}
+
+
+Quat Method: neg {#Quat:neg}
+------------------------------------
+
+Negates a `Quat`. Returns a new instance.
+
+### Syntax:
+
+	  q1.neg();
+
+    PhiloGL.Quat.neg(q1);
+
+### Examples:
+
+Create a quaternion and negate it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.neg(); //q1 is unchanged but a new Quat(-1, -2, -3, -4) is created.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and negate it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.neg(q1); //q1 is still the same but a new Quat(-1, -2, -3, -4).
+{% endhighlight %}
+
+
+Quat Method: $neg {#Quat:$neg}
+------------------------------------
+
+Negates a `Quat`. Changes the original object.
+
+### Syntax:
+
+	  q1.$neg();
+
+    PhiloGL.Quat.$neg(q1);
+
+### Examples:
+
+Create a quaternion and negate it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.$neg(); //q1 is now Quat(-1, -2, -3, -4).
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and negate it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.neg(q1); //q1 is now { x: -1, y: -2, z: -3, w: -4 }.
+{% endhighlight %}
+
+
+Quat Method: unit {#Quat:unit}
+------------------------------------
+
+Creates a unit quaternion from the coordinates of `Quat`. The original
+object is not modified.
+
+### Syntax:
+
+	  q1.unit();
+
+    PhiloGL.Quat.unit(q1);
+
+### Examples:
+
+Create a quaternion and make a unit quaternion from it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.unit(); //q1 is unchanged but a new unit quaternion Quat is created.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and make a unit quaternion from it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.unit(q1); //q1 is still the same but a new Quat that is a unit quaternion is created.
+{% endhighlight %}
+
+
+Quat Method: $unit {#Quat:$unit}
+------------------------------------
+
+Creates a unit quaternion from the `Quat` coordinates. Changes the original object.
+
+### Syntax:
+
+	  q1.$unit();
+
+    PhiloGL.Quat.$unit(q1);
+
+### Examples:
+
+Create a quaternion and make a unit quaternion from it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.$unit(); //q1 is now a unit quaternion.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and make a unit quaternion from it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.$unit(q1); //q1 is now a unit quaternion object.
+{% endhighlight %}
+
+
+Quat Method: norm {#Quat:norm}
+------------------------------------
+
+Calculates the norm of `Quat`.
+
+### Syntax:
+
+	  q1.norm();
+
+    PhiloGL.Quat.norm(q1);
+
+### Examples:
+
+Create a quaternion and calculate its norm.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  vi.norm(); //returns the real valued norm.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and calculate its norm.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  //A real number with the norm is returned.
+  var ans = PhiloGL.Quat.norm(q1);
+{% endhighlight %}
+
+
+Quat Method: normSq {#Quat:normSq}
+------------------------------------
+
+Calculates the squared norm of `Quat`.
+
+### Syntax:
+
+	  q1.normSq();
+
+    PhiloGL.Quat.normSq(q1);
+
+### Examples:
+
+Create a quaternion and calculate its squared norm.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  vi.normSq(); //returns the real valued norm.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and calculate its squared norm.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  //A real number with the squared norm is returned.
+  var ans = PhiloGL.Quat.normSq(q1);
+{% endhighlight %}
+
+
+Quat Method: clone {#Quat:clone}
+------------------------------------
+
+Clones a quaternion.
+
+### Syntax:
+
+	  q1.clone();
+
+    PhiloGL.Quat.clone(q1);
+
+

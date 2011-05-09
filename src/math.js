@@ -678,6 +678,24 @@
   };
 
   generics = {
+
+    setQuat: function(dest, q) {
+      dest.x = q.x;
+      dest.y = q.y;
+      dest.z = q.z;
+      dest.w = q.w;
+
+      return dest;
+    },
+
+    set: function(dest, x, y, z, w) {
+      dest.x = x || 0;
+      dest.y = y || 0;
+      dest.z = z || 0;
+      dest.w = w || 0;
+
+      return dest;
+    },
     
     clone: function(dest) {
       return new Quat(dest.x, dest.y, dest.z, dest.w);
