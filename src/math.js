@@ -796,7 +796,7 @@
       return dest;
     },
 
-    div: function(dest, q) {
+    divQuat: function(dest, q) {
       var aX = dest.x,
           aY = dest.y,
           aZ = dest.z,
@@ -814,7 +814,7 @@
                       (aW * bW + aX * bX + aY * bY + aZ * bZ) * d);
     },
 
-    $div: function(dest, q) {
+    $divQuat: function(dest, q) {
       var aX = dest.x,
           aY = dest.y,
           aZ = dest.z,

@@ -2158,6 +2158,116 @@ Create two `x`, `y`, `z`, `w` objects and add them.
 {% endhighlight %}
 
 
+Quat Method: mulQuat {#Quat:mulQuat}
+-------------------------------------
+
+Multiplies two quaternions returning a new `Quat` instance with the result. 
+The original object is not modified.
+
+### Syntax:
+
+	  q1.mulQuat(q2);
+
+    PhiloGL.Quat.mulQuat(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two Quaternions and multiply them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 0, 0, 0),
+      q2 = new PhiloGL.Quat(1, 0, 0, 0);
+
+  q1.mulQuat(q2); //q1 is unchanged but a new Quat(-1, 0, 0, 0) is created.
+{% endhighlight %}
+
+
+Quat Method: $mulQuat {#Quat:$mulQuat}
+---------------------------------------
+
+Multiplies two quaternions returning and modifies the receiver with the result. 
+
+### Syntax:
+
+	  q1.$mulQuat(q2);
+
+    PhiloGL.Quat.$mulQuat(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two Quaternions and multiply them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 0, 0, 0),
+      q2 = new PhiloGL.Quat(1, 0, 0, 0);
+
+  q1.$mulQuat(q2); //q1 is now Quat(-1, 0, 0, 0).
+{% endhighlight %}
+
+
+Quat Method: divQuat {#Quat:divQuat}
+-------------------------------------
+
+Divides two quaternions returning a new `Quat` instance with the result. 
+The original object is not modified.
+
+### Syntax:
+
+	  q1.divQuat(q2);
+
+    PhiloGL.Quat.divQuat(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two Quaternions and divide them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 0, 0, 0),
+      q2 = new PhiloGL.Quat(1, 0, 0, 0);
+
+  q1.divQuat(q2); //q1 is unchanged but a new Quat(1, 0, 0, 0) is created.
+{% endhighlight %}
+
+
+Quat Method: $divQuat {#Quat:$divQuat}
+---------------------------------------
+
+Divides two quaternions returning and modifies the receiver with the result. 
+
+### Syntax:
+
+	  q1.$divQuat(q2);
+
+    PhiloGL.Quat.$divQuat(q1, q2);
+
+### Arguments:
+
+1. q2 - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create two Quaternions and divide them.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 0, 0, 0),
+      q2 = new PhiloGL.Quat(1, 0, 0, 0);
+
+  q1.$divQuat(q2); //q1 is now Quat(1, 0, 0, 0).
+{% endhighlight %}
+
+
 Quat Method: scale {#Quat:scale}
 ------------------------------------
 
