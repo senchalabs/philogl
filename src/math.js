@@ -936,7 +936,7 @@
       u = 0;
       v = 1;
       w = 2;
-    } else if (m.n22 > m.n11 && m.n22 > m.n33]) {
+    } else if (m.n22 > m.n11 && m.n22 > m.n33) {
       u = 1;
       v = 2;
       w = 0;
