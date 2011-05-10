@@ -24,7 +24,7 @@ Returns true or false whether the browser supports WebGL or not.
 PhiloGL Static Method: unpack {#PhiloGL:unpack}
 -------------------------------------------------
 
-Unpacks [Vec3](math.html), [Mat4](math.html), [Camera](camera.html), [Program](program.html), [WebGL](webgl.html), [O3D](o3d.html), 
+Unpacks [Vec3](math.html), [Mat4](math.html), [Quat](math.html), [Camera](camera.html), [Program](program.html), [WebGL](webgl.html), [O3D](o3d.html), 
 [Scene](scene.html), [Shaders](shaders.html), [IO](io.html), [Events](event.html), [WorkerGroup](workers.html), [Fx](fx.html) 
 modules and classes so they can be accessed by the global scope and not through PhiloGL.*moduleName*.
 
