@@ -42,6 +42,29 @@ Class: Vec3 {#Vec3}
 A class to handle three dimensional vectors.
 
 
+Vec3 Static Method: fromQuat {#Vec3:fromQuat}
+-----------------------------------------------
+
+Create a new `Vec3` instance from the `x`, `y`, `z` coordinates of a [Quat](#Quat).
+
+### Syntax:
+
+    PhiloGL.Vec3.fromQuat(q);
+
+### Arguments:
+
+1. q - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create a vector from a Quaternion.
+
+{% highlight js %}
+  var q = new PhiloGL.Quat(1, 2, 3, 4),
+      v = PhiloGL.Vec3.fromQuat(q); //Vec3(1, 2, 3)
+{% endhighlight %}
+
+
 Vec3 Method: constructor {#Vec3:constructor}
 ----------------------------------------------------
 
@@ -947,6 +970,30 @@ Class: Mat4 {#Mat4}
 ===========================
 
 A class to handle four by four matrices.
+
+
+Mat4 Static Method: fromQuat {#Mat4:fromQuat}
+-----------------------------------------------
+
+Create a new `Mat4` instance from a [Quat](#Quat) instance. The
+Quaternion must be a unit quaternion.
+
+### Syntax:
+
+    PhiloGL.Mat4.fromQuat(q);
+
+### Arguments:
+
+1. q - (*object*) A `Quat` instance.
+
+### Examples:
+
+Create a matrix from a Quaternion.
+
+{% highlight js %}
+  var q = new PhiloGL.Quat(1, 2, 3, 4).$unit(),
+      m = PhiloGL.Mat4.fromQuat(q); //a new Mat4 instance
+{% endhighlight %}
 
 
 Mat4 Method: constructor {#Mat4:constructor}
@@ -1855,6 +1902,147 @@ A class to handle Quaternions. More information on quternions can be
 found [here](http://en.wikipedia.org/wiki/Quaternion). The quaternion
 will be represented by an instance with `x`, `y`, `z`, `w` components
 that make a quaterion like: `xi + yj + zk + w`.
+
+
+Quat Static Method: fromVec3 {#Quat:fromVec3}
+-----------------------------------------------
+
+Create a new `Quat` instance from the `x`, `y`, `z` coordinates of a [Vec3](#Vec3) and a real component.
+
+### Syntax:
+
+    PhiloGL.Quat.fromVec3(v[, r]);
+
+### Arguments:
+
+1. v - (*object*) A `Vec3` instance.
+2. r - (*number*, optional) The real component. Default's `0`.
+
+### Examples:
+
+Create a Quaternion from a Vec3.
+
+{% highlight js %}
+  var v = new PhiloGL.Vec3(1, 2, 3),
+      q = PhiloGL.Quat.fromVec3(v, 7); //Quat(1, 2, 3, 7)
+{% endhighlight %}
+
+
+Quat Static Method: fromMat4 {#Quat:fromMat4}
+-----------------------------------------------
+
+Create a new `Quat` instance from a [Mat4](#Mat4). The `Mat4` instance
+must be an orthogonal matrix.
+
+### Syntax:
+
+    PhiloGL.Quat.fromMat4(m);
+
+### Arguments:
+
+1. m - (*object*) A `Mat4` instance.
+
+### Examples:
+
+Create a Quaternion from a `Mat4`.
+
+{% highlight js %}
+  var m = new PhiloGL.Mat4(),
+      q = PhiloGL.Quat.fromMat4(m); //Quat
+{% endhighlight %}
+
+
+Quat Static Method: fromXRotation {#Quat:fromXRotation}
+--------------------------------------------------------
+
+Create a new `Quat` instance from a rotation around the x-axis in
+radians.
+
+### Syntax:
+
+    PhiloGL.Quat.fromXRotation(angle);
+
+### Arguments:
+
+1. angle - (*number*) The angle in radians.
+
+### Examples:
+
+Create a Quaternion from an x-axis rotation.
+
+{% highlight js %}
+  var q = PhiloGL.Quat.fromXRotation(Math.PI); //Quat(1, 0, 0, 0)
+{% endhighlight %}
+
+
+Quat Static Method: fromYRotation {#Quat:fromYRotation}
+--------------------------------------------------------
+
+Create a new `Quat` instance from a rotation around the y-axis in
+radians.
+
+### Syntax:
+
+    PhiloGL.Quat.fromYRotation(angle);
+
+### Arguments:
+
+1. angle - (*number*) The angle in radians.
+
+### Examples:
+
+Create a Quaternion from an y-axis rotation.
+
+{% highlight js %}
+  var q = PhiloGL.Quat.fromYRotation(Math.PI); //Quat(0, 1, 0, 0)
+{% endhighlight %}
+
+
+Quat Static Method: fromZRotation {#Quat:fromZRotation}
+--------------------------------------------------------
+
+Create a new `Quat` instance from a rotation around the z-axis in
+radians.
+
+### Syntax:
+
+    PhiloGL.Quat.fromZRotation(angle);
+
+### Arguments:
+
+1. angle - (*number*) The angle in radians.
+
+### Examples:
+
+Create a Quaternion from an z-axis rotation.
+
+{% highlight js %}
+  var q = PhiloGL.Quat.fromZRotation(Math.PI); //Quat(0, 0, 1, 0)
+{% endhighlight %}
+
+
+Quat Static Method: fromAxisRotation {#Quat:fromAxisRotation}
+--------------------------------------------------------------
+
+Create a new `Quat` instance from a rotation around an axis.
+
+### Syntax:
+
+    PhiloGL.Quat.fromAxisRotation(v, angle);
+
+### Arguments:
+
+1. v - (*object*) A `Vec3`-like object.
+2. angle - (*number*) The angle in radians.
+
+### Examples:
+
+Create a Quaternion from an z-axis rotation.
+
+{% highlight js %}
+  var v = new PhiloGL.Vec3(0, 0, 1),
+      q = PhiloGL.Quat.fromAxisRotation(v, Math.PI); //Quat(0, 0, 1, 0)
+{% endhighlight %}
 
 
 Quat Method: constructor {#Quat:constructor}
