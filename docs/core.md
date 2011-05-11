@@ -56,6 +56,7 @@ and also options for handling [Events](event.html), loading textures via [IO](io
   * path - (*string*, optional) Sets a link path appended as prefix to the `vs` and `fs` string properties.
   * vs - (*string*) The name, id, source or path to the Vertex Shader.
   * fs - (*string*) The name, id, source or path to the Fragment Shader.
+  * noCache - (*boolean*, optional) If true, files will be reloaded and not taken from the cache. Useful on development phase. Default's `false`.
 * camera - (*object*, optional) An object with options for creating a [Camera](camera.html). These options are:
   * fov - (*number*) Field of View. Default's `45`.
   * near - (*number*) Near distance. Default's `0.1`.

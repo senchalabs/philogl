@@ -2534,6 +2534,76 @@ Create an `x`, `y`, `z`, `w` object and scale it by 2.
 {% endhighlight %}
 
 
+Quat Method: conjugate {#Quat:conjugate}
+-----------------------------------------
+
+Conjugates a `Quat`. Returns a new instance.
+
+### Syntax:
+
+	  q1.conjugate();
+
+    PhiloGL.Quat.conjugate(q1);
+
+### Examples:
+
+Create a quaternion and conjugate it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.conjugate(); //q1 is unchanged but a new Quat(-1, -2, -3, 4) is created.
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and conjugate it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.conjugate(q1); //q1 is still the same but a new Quat(-1, -2, -3, 4).
+{% endhighlight %}
+
+
+Quat Method: $conjugate {#Quat:$conjugate}
+-------------------------------------------
+
+conjugates a `Quat`. Changes the original object.
+
+### Syntax:
+
+	  q1.$conjugate();
+
+    PhiloGL.Quat.$conjugate(q1);
+
+### Examples:
+
+Create a quaternion and conjugate it.
+
+{% highlight js %}
+  var q1 = new PhiloGL.Quat(1, 2, 3, 4);
+
+  q1.$conjugate(); //q1 is now Quat(-1, -2, -3, 4).
+{% endhighlight %}
+
+Create an `x`, `y`, `z`, `w` object and conjugate it.
+
+{% highlight js %}
+  var q1 = {
+        x: 1,
+        y: 2,
+        z: 3,
+        w: 4
+      };
+
+  PhiloGL.Quat.conjugate(q1); //q1 is now { x: -1, y: -2, z: -3, w: 4 }.
+{% endhighlight %}
+
+
 Quat Method: neg {#Quat:neg}
 ------------------------------------
 
