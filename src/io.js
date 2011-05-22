@@ -210,7 +210,15 @@
             }
           }, opt);
         });
-        program.setTextures(textures);
+        //handle the case of multiple programs
+        if ($.type(program) == 'object') {
+          for (var p in program) {
+            program[p].setTextures(textures);
+          }
+        } else {
+          program.setTextures(textures);
+        }
+        
         opt.onComplete();
       }
     });

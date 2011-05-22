@@ -4,7 +4,7 @@
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+      Mat4 = PhiloGL.Mat4,
       cos = Math.cos,
       sin = Math.sin,
       pi = Math.PI,
@@ -40,6 +40,9 @@
     }
     this.onBeforeRender = opt.onBeforeRender || $.empty;
     this.onAfterRender = opt.onAfterRender || $.empty;
+    if (opt.program) {
+      this.program = opt.program;
+    }
 
     this.position = new Vec3;
     this.rotation = new Vec3;
@@ -496,17 +499,22 @@
            texCoords = [],
            indices = [];
 
+      //Add a callback for when a vertex is created
+      opt.onAddVertex = opt.onAddVertex || $.empty;
+
+      //radius to be a function instead of fixed number
       if (typeof radius == 'number') {
         var value = radius;
         radius = function(n1, n2, n3, u, v) {
           return value;
         };
       }
+
       //Create vertices, normals and texCoords
-      for (var y = 0; y <= nlong; y++) {
-        for (var x = 0; x <= nlat; x++) {
-          var u = x / nlat,
-              v = y / nlong,
+      for (var x = 0; x <= nlong; x++) {
+        for (var y = 1; y <= nlat; y++) {
+          var u = x / nlong,
+              v = y / nlat,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
@@ -516,29 +524,48 @@
               ux = cosTheta * sinPhi,
               uy = cosPhi,
               uz = sinTheta * sinPhi,
-              r = radius(ux, uy, uz, u, v);
+              r = radius(ux, uy, uz, u, v),
+              vx = r * ux,
+              vy = r * uy,
+              vz = r * uz;
 
-          vertices.push(r * ux, r * uy, r * uz);
+          vertices.push(vx, vy, vz);
           normals.push(ux, uy, uz);
-          texCoords.push(u, v);
+          texCoords.push(v, u);
+          
+          //callback
+          opt.onAddVertex({
+            rho: r,
+            theta: theta,
+            phi: phi,
+            lat: x,
+            lon: y,
+            x: vx,
+            y: vy,
+            z: vz,
+            nx: ux,
+            ny: uy,
+            nz: uz,
+            u: u,
+            v: v
+          });
         }
       }
-
       //Create indices
       var numVertsAround = nlat + 1;
-      for (x = 0; x < nlat; x++) {
-        for (y = 0; y < nlong; y++) {
+      for (x = 0; x < nlong; x++) {
+        for (y = 0; y < nlat; y++) {
           
-          indices.push(y * numVertsAround + x,
-                      y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x);
+          indices.push(x * numVertsAround + y,
+                      x * numVertsAround + y + 1,
+                      (x + 1) * numVertsAround + y);
 
-          indices.push((y + 1) * numVertsAround + x,
-                       y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x + 1);
+          indices.push((x + 1) * numVertsAround + y,
+                       x * numVertsAround + y + 1,
+                       (x + 1) * numVertsAround + y + 1);
         }
       }
-
+      
       O3D.Model.call(this, $.extend({
         vertices: vertices,
         indices: indices,
@@ -648,6 +675,59 @@
 
   O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
   
+
+  O3D.PlaneXZ = function(config) {
+    var width = config.width,
+        height = config.height || 0,
+        subdivisionsWidth = config.nwidth || 1,
+        depth = config.depth,
+        subdivisionsDepth = config.ndepth || 1,
+        numVertices = (subdivisionsWidth + 1) * (subdivisionsDepth + 1),
+        positions = [],
+        normals = [],
+        texCoords = [];
+
+  for (var z = 0; z <= subdivisionsDepth; z++) {
+    for (var x = 0; x <= subdivisionsWidth; x++) {
+      var u = x / subdivisionsWidth,
+          v = z / subdivisionsDepth;
+      
+      positions.push(width * u - width * 0.5,
+                     height,
+                     depth * v - depth * 0.5);
+      normals.push(0, 1, 0);
+      texCoords.push(u, v);
+    }
+  }
+
+  var numVertsAcross = subdivisionsWidth + 1,
+      indices = [];
+
+  for (z = 0; z < subdivisionsDepth; z++) {
+    for (x = 0; x < subdivisionsWidth; x++) {
+      // Make triangle 1 of quad.
+      indices.push((z + 0) * numVertsAcross + x,
+                   (z + 1) * numVertsAcross + x,
+                   (z + 0) * numVertsAcross + x + 1);
+
+      // Make triangle 2 of quad.
+      indices.push((z + 1) * numVertsAcross + x,
+                   (z + 1) * numVertsAcross + x + 1,
+                   (z + 0) * numVertsAcross + x + 1);
+    }
+  }
+
+  O3D.Model.call(this, $.extend({
+    vertices: positions,
+    normals: normals,
+    texCoords: texCoords,
+    indices: indices
+  }, config));
+
+};
+
+O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+
   //Assign to namespace
   PhiloGL.O3D = O3D;
 })();

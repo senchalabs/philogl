@@ -49,8 +49,7 @@ this.PhiloGL = null;
         optCamera = opt.camera,
         optEvents = opt.events,
         optTextures = opt.textures,
-        optProgram = opt.program,
-        pfrom = optProgram.from,
+        optProgram = $.splat(opt.program),
         optScene = opt.scene;
     
     //get Context
@@ -69,31 +68,48 @@ this.PhiloGL = null;
       'uris': 'fromShaderURIs'
     };
 
-    for (var p in popt) {
-      if (pfrom == p) {
-        program = PhiloGL.Program[popt[p]]($.extend({
-          onSuccess: function(p) {
-            loadProgramDeps(gl, p, function(app) {
-              opt.onLoad(app); 
-            });
-          },
-          onError: function(e) {
-            opt.onError(e);
-          }
-        }, optProgram));
-        break;
+    var programLength = optProgram.length,
+        programCallback = (function() {
+          var count = programLength,
+              programs = {},
+              error = false;
+          return {
+            onSuccess: function(p, popt) {
+              programs[popt.id || (programLength - count)] = p;
+              count--;
+              if (count == 0 && !error) {
+                loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
+                  opt.onLoad(app);
+                });
+              }
+            },
+            onError: function(p) {
+              count--;
+              opt.onError(opt.id);
+              error = true;
+            }
+          };
+        })();
+    
+    optProgram.forEach(function(optProgram, i) {
+      var pfrom = optProgram.from;
+      for (var p in popt) {
+        if (pfrom == p) {
+          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          break;
+        }
       }
-    }
+      if (program) {
+        programCallback.onSuccess(program, optProgram);
+      }
+    });
 
-    if (program) {
-      loadProgramDeps(gl, program, function(app) {
-        opt.onLoad(app);
-      });
-    }
 
     function loadProgramDeps(gl, program, callback) {
-      //Use program
-      program.use();
+      if ($.type(program) != 'object') {
+        //Use program
+        program.use();
+      }
       
       //get Camera
       var canvas = gl.canvas,

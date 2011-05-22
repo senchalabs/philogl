@@ -145,16 +145,14 @@
     '$$family': 'program',
 
     setState: function(program) {
-      $.extend(program, {
-        buffers: this.buffers,
-        bufferMemo: this.bufferMemo,
-        renderBuffers: this.renderBuffers,
-        renderBufferMemo: this.renderBufferMemo,
-        frameBuffers: this.frameBuffers,
-        frameBufferMemo: this.frameBufferMemo,
-        textures: this.textures,
-        textureMemo: this.textureMemo
-      });
+      $.extend(program.buffers, this.buffers);
+      $.extend(program.bufferMemo, this.bufferMemo);
+      $.extend(program.renderBuffers, this.renderBuffers);
+      $.extend(program.renderBufferMemo, this.renderBufferMemo);
+      $.extend(program.frameBuffers, this.frameBuffers);
+      $.extend(program.frameBufferMemo, this.frameBufferMemo);
+      $.extend(program.textures, this.textures);
+      $.extend(program.textureMemo, this.textureMemo);
       return this;
     },
     
@@ -517,7 +515,7 @@
             opt.onError(arg);
           },
           onSuccess: function(fs) {
-            opt.onSuccess(Program.fromShaderSources(vs, fs));  
+            opt.onSuccess(Program.fromShaderSources(vs, fs), opt);  
           }
         }).send();
       }

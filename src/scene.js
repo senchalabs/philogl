@@ -39,7 +39,13 @@
       }
     }, opt || {});
     
-    this.program = program;
+    //If multiple programs then store as a programMap
+    if ($.type(program) != 'object') {
+      this.program = program;
+    } else {
+      this.programMap = program;
+    }
+
     this.camera = camera;
     this.models = [];
     this.config = opt;
@@ -60,8 +66,21 @@
       }
     },
 
+    getProgram: function(obj) {
+      if (!this.programMap) return this.program;
+      
+      if (obj && obj.program) {
+        var program = this.programMap[obj.program];
+        if (program != this.program) {
+          this.program = program;
+          program.use();
+        }
+      }
+      return this.program;
+    },
+
     defineBuffers: function(obj) {
-      var program = this.program;
+      var program = this.getProgram(obj);
       
       obj.setVertices(program, true);
       obj.setColors(program, true);
@@ -71,21 +90,20 @@
       obj.setIndices(program, true);
     },
 
-    beforeRender: function() {
-      this.setupLighting();
-      this.setupEffects();
+    beforeRender: function(program) {
+      //Setup lighting and scene effects like fog, etc.
+      this.setupLighting(program);
+      this.setupEffects(program);
       //Set Camera view and projection matrix
-      var camera = this.camera,
-          program = this.program;
+      var camera = this.camera;
       program.setUniform('projectionMatrix', camera.projection);
       program.setUniform('viewMatrix', camera.modelView);
     },
 
     //Setup the lighting system: ambient, directional, point lights.
-    setupLighting: function() {
+    setupLighting: function(program) {
       //Setup Lighting
       var abs = Math.abs,
-          program = this.program,
           camera = this.camera,
           cpos = camera.position,
           light = this.config.lights,
@@ -106,11 +124,12 @@
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
-      if (light.enable) {
-        program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
-        program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
-        program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
-      }
+
+      if (!enable) return;
+
+      program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
+      program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
+      program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
       
       //Set point lights
       program.setUniform('numberPoints', numberPoints);
@@ -144,9 +163,8 @@
     },
 
     //Setup effects like fog, etc.
-    setupEffects: function() {
-      var program = this.program,
-          config = this.config.effects,
+    setupEffects: function(program) {
+      var config = this.config.effects,
           fog = config.fog,
           color = fog.color || { r: 0.5, g: 0.5, b: 0.5 };
 
@@ -163,20 +181,28 @@
     },
 
     //Renders all objects in the scene.
-    render: function(opt) {
-      var program = this.program,
+    render: function(opt, renderProgram) {
+      var multiplePrograms = !renderProgram && !!this.programMap,
           camera = this.camera,
           options = $.merge({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
           }, opt || {});
 
-      this.beforeRender();
+      //If we're just using one program then
+      //execute the beforeRender method once.
+      !multiplePrograms && this.beforeRender(renderProgram || this.program);
+      
+      //Go through each model and render it.
       this.models.forEach(function(elem, i) {
         if (elem.display) {
+          var program = renderProgram || this.getProgram(elem);
+          //Setup the beforeRender method for each object
+          //when there are multiple programs to be used.
+          multiplePrograms && this.beforeRender(program);
           elem.onBeforeRender(program, camera);
           options.onBeforeRender(elem, i);
-          this.renderObject(elem);
+          this.renderObject(elem, program);
           options.onAfterRender(elem, i);
           elem.onAfterRender(program, camera);
         }
@@ -184,20 +210,21 @@
     },
 
     renderToTexture: function(name, opt) {
-      var program = this.program,
+      opt = opt || {};
+      var program = opt.textureProgram || this.program,
           texture = program.textures[name + '-texture'],
           texMemo = program.textureMemo[name + '-texture'];
       
-      this.render(opt);
+      this.render(opt, opt.renderProgram);
 
+      //program.use();
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
       gl.bindTexture(texMemo.textureType, null);
     },
 
-    renderObject: function(obj) {
-      var program = this.program,
-          camera = this.camera,
+    renderObject: function(obj, program) {
+      var camera = this.camera,
           view = new Mat4;
 
       obj.setUniforms(program);
@@ -222,7 +249,7 @@
         if (obj.indices) {
           gl.drawElements((obj.drawType !== undefined)? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
         } else {
-          gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
+          gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.vertices.length / 3);
         }
       }
       
@@ -235,8 +262,8 @@
     
     //setup picking framebuffer
     setupPicking: function() {
-      var canvas = gl.canvas,
-          program = this.program;
+      //create picking program
+      var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
       program.setFrameBuffer('$picking', {
         width: 1,
@@ -254,12 +281,14 @@
         bindToRenderBuffer: true
       });
       program.setFrameBuffer('$picking', false);
+      this.pickingProgram = program;
     },
     
     //returns an element at the given position
     pick: function(x, y) {
       var o3dHash = {},
           program = this.program,
+          pickingProgram = this.pickingProgram,
           camera = this.camera,
           config = this.config,
           memoLightEnable = config.lights.enable,
@@ -277,8 +306,9 @@
       config.effects.fog = false;
       
       //enable picking and render to texture
-      program.setUniform('enablePicking', true);
-      program.setFrameBuffer('$picking', true);
+      pickingProgram.use();
+      pickingProgram.setUniform('enablePicking', true);
+      pickingProgram.setFrameBuffer('$picking', true);
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
@@ -290,6 +320,8 @@
 
       //render to texture
       this.renderToTexture('$picking', {
+        renderProgram: pickingProgram,
+        textureProgram: pickingProgram,
         onBeforeRender: function(elem, i) {
           if (i == backgroundColor) {
             index = 1;
@@ -308,10 +340,13 @@
       var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
       //restore all values
-      program.setFrameBuffer('$picking', false);
-      program.setUniform('enablePicking', false);
+      pickingProgram.setFrameBuffer('$picking', false);
+      pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
+      
+      //If there was another program then set to reuse that program.
+      if (program) program.use();
       
       return elem && elem.pickable && elem;
     }
@@ -320,7 +355,7 @@
   Scene.id = $.time();
   
   Scene.MAX_TEXTURES = 3;
-  Scene.MAX_POINT_LIGHTS = 3;
+  Scene.MAX_POINT_LIGHTS = 50;
 
   PhiloGL.Scene = Scene;
 

@@ -73,8 +73,7 @@ this.PhiloGL = null;
         optCamera = opt.camera,
         optEvents = opt.events,
         optTextures = opt.textures,
-        optProgram = opt.program,
-        pfrom = optProgram.from,
+        optProgram = $.splat(opt.program),
         optScene = opt.scene;
     
     //get Context
@@ -93,31 +92,48 @@ this.PhiloGL = null;
       'uris': 'fromShaderURIs'
     };
 
-    for (var p in popt) {
-      if (pfrom == p) {
-        program = PhiloGL.Program[popt[p]]($.extend({
-          onSuccess: function(p) {
-            loadProgramDeps(gl, p, function(app) {
-              opt.onLoad(app); 
-            });
-          },
-          onError: function(e) {
-            opt.onError(e);
-          }
-        }, optProgram));
-        break;
+    var programLength = optProgram.length,
+        programCallback = (function() {
+          var count = programLength,
+              programs = {},
+              error = false;
+          return {
+            onSuccess: function(p, popt) {
+              programs[popt.id || (programLength - count)] = p;
+              count--;
+              if (count == 0 && !error) {
+                loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
+                  opt.onLoad(app);
+                });
+              }
+            },
+            onError: function(p) {
+              count--;
+              opt.onError(opt.id);
+              error = true;
+            }
+          };
+        })();
+    
+    optProgram.forEach(function(optProgram, i) {
+      var pfrom = optProgram.from;
+      for (var p in popt) {
+        if (pfrom == p) {
+          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          break;
+        }
       }
-    }
+      if (program) {
+        programCallback.onSuccess(program, optProgram);
+      }
+    });
 
-    if (program) {
-      loadProgramDeps(gl, program, function(app) {
-        opt.onLoad(app);
-      });
-    }
 
     function loadProgramDeps(gl, program, callback) {
-      //Use program
-      program.use();
+      if ($.type(program) != 'object') {
+        //Use program
+        program.use();
+      }
       
       //get Camera
       var canvas = gl.canvas,
@@ -165,7 +181,7 @@ this.PhiloGL = null;
 
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(global) {
-  ['Vec3', 'Mat4', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
+  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
       window[module] = PhiloGL[module];
   });
 };
@@ -1064,7 +1080,7 @@ $.splat = (function() {
       return dest;
     },
 
-    div: function(dest, q) {
+    divQuat: function(dest, q) {
       var aX = dest.x,
           aY = dest.y,
           aZ = dest.z,
@@ -1082,7 +1098,7 @@ $.splat = (function() {
                       (aW * bW + aX * bX + aY * bY + aZ * bZ) * d);
     },
 
-    $div: function(dest, q) {
+    $divQuat: function(dest, q) {
       var aX = dest.x,
           aY = dest.y,
           aZ = dest.z,
@@ -1820,16 +1836,14 @@ $.splat = (function() {
     '$$family': 'program',
 
     setState: function(program) {
-      $.extend(program, {
-        buffers: this.buffers,
-        bufferMemo: this.bufferMemo,
-        renderBuffers: this.renderBuffers,
-        renderBufferMemo: this.renderBufferMemo,
-        frameBuffers: this.frameBuffers,
-        frameBufferMemo: this.frameBufferMemo,
-        textures: this.textures,
-        textureMemo: this.textureMemo
-      });
+      $.extend(program.buffers, this.buffers);
+      $.extend(program.bufferMemo, this.bufferMemo);
+      $.extend(program.renderBuffers, this.renderBuffers);
+      $.extend(program.renderBufferMemo, this.renderBufferMemo);
+      $.extend(program.frameBuffers, this.frameBuffers);
+      $.extend(program.frameBufferMemo, this.frameBufferMemo);
+      $.extend(program.textures, this.textures);
+      $.extend(program.textureMemo, this.textureMemo);
       return this;
     },
     
@@ -2192,7 +2206,7 @@ $.splat = (function() {
             opt.onError(arg);
           },
           onSuccess: function(fs) {
-            opt.onSuccess(Program.fromShaderSources(vs, fs));  
+            opt.onSuccess(Program.fromShaderSources(vs, fs), opt);  
           }
         }).send();
       }
@@ -2415,7 +2429,15 @@ $.splat = (function() {
             }
           }, opt);
         });
-        program.setTextures(textures);
+        //handle the case of multiple programs
+        if ($.type(program) == 'object') {
+          for (var p in program) {
+            program[p].setTextures(textures);
+          }
+        } else {
+          program.setTextures(textures);
+        }
+        
         opt.onComplete();
       }
     });
@@ -2549,7 +2571,7 @@ $.splat = (function() {
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+      Mat4 = PhiloGL.Mat4,
       cos = Math.cos,
       sin = Math.sin,
       pi = Math.PI,
@@ -2585,6 +2607,9 @@ $.splat = (function() {
     }
     this.onBeforeRender = opt.onBeforeRender || $.empty;
     this.onAfterRender = opt.onAfterRender || $.empty;
+    if (opt.program) {
+      this.program = opt.program;
+    }
 
     this.position = new Vec3;
     this.rotation = new Vec3;
@@ -3041,17 +3066,22 @@ $.splat = (function() {
            texCoords = [],
            indices = [];
 
+      //Add a callback for when a vertex is created
+      opt.onAddVertex = opt.onAddVertex || $.empty;
+
+      //radius to be a function instead of fixed number
       if (typeof radius == 'number') {
         var value = radius;
         radius = function(n1, n2, n3, u, v) {
           return value;
         };
       }
+
       //Create vertices, normals and texCoords
-      for (var y = 0; y <= nlong; y++) {
-        for (var x = 0; x <= nlat; x++) {
-          var u = x / nlat,
-              v = y / nlong,
+      for (var x = 0; x <= nlong; x++) {
+        for (var y = 0; y <= nlat; y++) {
+          var u = x / nlong,
+              v = y / nlat,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
@@ -3061,29 +3091,117 @@ $.splat = (function() {
               ux = cosTheta * sinPhi,
               uy = cosPhi,
               uz = sinTheta * sinPhi,
-              r = radius(ux, uy, uz, u, v);
+              r = radius(ux, uy, uz, u, v),
+              vx = r * ux,
+              vy = r * uy,
+              vz = r * uz;
 
-          vertices.push(r * ux, r * uy, r * uz);
+          vertices.push(vx, vy, vz);
           normals.push(ux, uy, uz);
-          texCoords.push(u, v);
+          texCoords.push(v, u);
+          
+          //callback
+          opt.onAddVertex({
+            rho: r,
+            theta: theta,
+            phi: phi,
+            lat: x,
+            lon: y,
+            x: vx,
+            y: vy,
+            z: vz,
+            nx: ux,
+            ny: uy,
+            nz: uz,
+            u: u,
+            v: v
+          });
         }
       }
-
       //Create indices
       var numVertsAround = nlat + 1;
-      for (x = 0; x < nlat; x++) {
-        for (y = 0; y < nlong; y++) {
+      for (x = 0; x < nlong; x++) {
+        for (y = 0; y < nlat; y++) {
           
-          indices.push(y * numVertsAround + x,
-                      y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x);
+          indices.push(x * numVertsAround + y,
+                      x * numVertsAround + y + 1,
+                      (x + 1) * numVertsAround + y);
 
-          indices.push((y + 1) * numVertsAround + x,
-                       y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x + 1);
+          indices.push((x + 1) * numVertsAround + y,
+                       x * numVertsAround + y + 1,
+                       (x + 1) * numVertsAround + y + 1);
         }
       }
 
+      /*
+      
+      //create top vertex
+      var topIndex = vertices.length / 3,
+          x = 0,
+          y = radius(0, 1, 0, 0, 0),
+          z = 0;
+
+      vertices.push(x, y, z);
+      normals.push(0, 1, 0);
+      texCoords.push(0, 0);
+          
+      //callback
+      opt.onAddVertex({
+        rho: y,
+        theta: 0,
+        phi: 0,
+        lat: 0,
+        lon: 0,
+        x: x,
+        y: y,
+        z: z,
+        nx: 0,
+        ny: 1,
+        nz: 0,
+        u: 0,
+        v: 0
+      });
+
+      //TODO(nico): verify that this is fine.
+      //create top indices
+      for (x = 0; x <= nlong; x++) {
+        indices.push(topIndex, x * numVertsAround, ((x + 1) % nlong) * numVertsAround);
+      }
+      
+      //create bottom vertex
+      var bottomIndex = topIndex + 1,
+          x = 0,
+          y = radius(0, -1, 0, 0, 0),
+          z = 0;
+
+      vertices.push(x, -y, z);
+      normals.push(0, -1, 0);
+      texCoords.push(0, 0);
+          
+      //callback
+      opt.onAddVertex({
+        rho: y,
+        theta: Math.PI * 2,
+        phi: Math.PI,
+        lat: nlat,
+        lon: nlong,
+        x: x,
+        y: -y,
+        z: z,
+        nx: 0,
+        ny: -1,
+        nz: 0,
+        u: 1,
+        v: 1
+      });
+
+      //TODO(nico): verify that this is fine.
+      //create top indices
+      for (x = 0; x <= nlong; x++) {
+        indices.push(bottomIndex, x * numVertsAround + numVertsAround - 1, ((x + 1) % nlong) * numVertsAround + numVertsAround - 1);
+      }
+
+      */
       O3D.Model.call(this, $.extend({
         vertices: vertices,
         indices: indices,
@@ -3193,6 +3311,59 @@ $.splat = (function() {
 
   O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
   
+
+  O3D.PlaneXZ = function(config) {
+    var width = config.width,
+        height = config.height || 0,
+        subdivisionsWidth = config.nwidth || 1,
+        depth = config.depth,
+        subdivisionsDepth = config.ndepth || 1,
+        numVertices = (subdivisionsWidth + 1) * (subdivisionsDepth + 1),
+        positions = [],
+        normals = [],
+        texCoords = [];
+
+  for (var z = 0; z <= subdivisionsDepth; z++) {
+    for (var x = 0; x <= subdivisionsWidth; x++) {
+      var u = x / subdivisionsWidth,
+          v = z / subdivisionsDepth;
+      
+      positions.push(width * u - width * 0.5,
+                     height,
+                     depth * v - depth * 0.5);
+      normals.push(0, 1, 0);
+      texCoords.push(u, v);
+    }
+  }
+
+  var numVertsAcross = subdivisionsWidth + 1,
+      indices = [];
+
+  for (z = 0; z < subdivisionsDepth; z++) {
+    for (x = 0; x < subdivisionsWidth; x++) {
+      // Make triangle 1 of quad.
+      indices.push((z + 0) * numVertsAcross + x,
+                   (z + 1) * numVertsAcross + x,
+                   (z + 0) * numVertsAcross + x + 1);
+
+      // Make triangle 2 of quad.
+      indices.push((z + 1) * numVertsAcross + x,
+                   (z + 1) * numVertsAcross + x + 1,
+                   (z + 0) * numVertsAcross + x + 1);
+    }
+  }
+
+  O3D.Model.call(this, $.extend({
+    vertices: positions,
+    normals: normals,
+    texCoords: texCoords,
+    indices: indices
+  }, config));
+
+};
+
+O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+
   //Assign to namespace
   PhiloGL.O3D = O3D;
 })();
@@ -3356,7 +3527,13 @@ $.splat = (function() {
       }
     }, opt || {});
     
-    this.program = program;
+    //If multiple programs then store as a programMap
+    if ($.type(program) != 'object') {
+      this.program = program;
+    } else {
+      this.programMap = program;
+    }
+
     this.camera = camera;
     this.models = [];
     this.config = opt;
@@ -3377,8 +3554,21 @@ $.splat = (function() {
       }
     },
 
+    getProgram: function(obj) {
+      if (!this.programMap) return this.program;
+      
+      if (obj && obj.program) {
+        var program = this.programMap[obj.program];
+        if (program != this.program) {
+          this.program = program;
+          program.use();
+        }
+      }
+      return this.program;
+    },
+
     defineBuffers: function(obj) {
-      var program = this.program;
+      var program = this.getProgram(obj);
       
       obj.setVertices(program, true);
       obj.setColors(program, true);
@@ -3388,21 +3578,20 @@ $.splat = (function() {
       obj.setIndices(program, true);
     },
 
-    beforeRender: function() {
-      this.setupLighting();
-      this.setupEffects();
+    beforeRender: function(program) {
+      //Setup lighting and scene effects like fog, etc.
+      this.setupLighting(program);
+      this.setupEffects(program);
       //Set Camera view and projection matrix
-      var camera = this.camera,
-          program = this.program;
+      var camera = this.camera;
       program.setUniform('projectionMatrix', camera.projection);
       program.setUniform('viewMatrix', camera.modelView);
     },
 
     //Setup the lighting system: ambient, directional, point lights.
-    setupLighting: function() {
+    setupLighting: function(program) {
       //Setup Lighting
       var abs = Math.abs,
-          program = this.program,
           camera = this.camera,
           cpos = camera.position,
           light = this.config.lights,
@@ -3423,11 +3612,12 @@ $.splat = (function() {
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
-      if (light.enable) {
-        program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
-        program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
-        program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
-      }
+
+      if (!enable) return;
+
+      program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
+      program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
+      program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
       
       //Set point lights
       program.setUniform('numberPoints', numberPoints);
@@ -3461,9 +3651,8 @@ $.splat = (function() {
     },
 
     //Setup effects like fog, etc.
-    setupEffects: function() {
-      var program = this.program,
-          config = this.config.effects,
+    setupEffects: function(program) {
+      var config = this.config.effects,
           fog = config.fog,
           color = fog.color || { r: 0.5, g: 0.5, b: 0.5 };
 
@@ -3480,20 +3669,28 @@ $.splat = (function() {
     },
 
     //Renders all objects in the scene.
-    render: function(opt) {
-      var program = this.program,
+    render: function(opt, renderProgram) {
+      var multiplePrograms = !renderProgram && !!this.programMap,
           camera = this.camera,
           options = $.merge({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
           }, opt || {});
 
-      this.beforeRender();
+      //If we're just using one program then
+      //execute the beforeRender method once.
+      !multiplePrograms && this.beforeRender(renderProgram || this.program);
+      
+      //Go through each model and render it.
       this.models.forEach(function(elem, i) {
         if (elem.display) {
+          var program = renderProgram || this.getProgram(elem);
+          //Setup the beforeRender method for each object
+          //when there are multiple programs to be used.
+          multiplePrograms && this.beforeRender(program);
           elem.onBeforeRender(program, camera);
           options.onBeforeRender(elem, i);
-          this.renderObject(elem);
+          this.renderObject(elem, program);
           options.onAfterRender(elem, i);
           elem.onAfterRender(program, camera);
         }
@@ -3501,20 +3698,21 @@ $.splat = (function() {
     },
 
     renderToTexture: function(name, opt) {
-      var program = this.program,
+      opt = opt || {};
+      var program = opt.textureProgram || this.program,
           texture = program.textures[name + '-texture'],
           texMemo = program.textureMemo[name + '-texture'];
       
-      this.render(opt);
+      this.render(opt, opt.renderProgram);
 
+      //program.use();
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
       gl.bindTexture(texMemo.textureType, null);
     },
 
-    renderObject: function(obj) {
-      var program = this.program,
-          camera = this.camera,
+    renderObject: function(obj, program) {
+      var camera = this.camera,
           view = new Mat4;
 
       obj.setUniforms(program);
@@ -3539,7 +3737,7 @@ $.splat = (function() {
         if (obj.indices) {
           gl.drawElements((obj.drawType !== undefined)? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
         } else {
-          gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.toFloat32Array('vertices').length / 3);
+          gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.vertices.length / 3);
         }
       }
       
@@ -3552,8 +3750,8 @@ $.splat = (function() {
     
     //setup picking framebuffer
     setupPicking: function() {
-      var canvas = gl.canvas,
-          program = this.program;
+      //create picking program
+      var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
       program.setFrameBuffer('$picking', {
         width: 1,
@@ -3571,12 +3769,14 @@ $.splat = (function() {
         bindToRenderBuffer: true
       });
       program.setFrameBuffer('$picking', false);
+      this.pickingProgram = program;
     },
     
     //returns an element at the given position
     pick: function(x, y) {
       var o3dHash = {},
           program = this.program,
+          pickingProgram = this.pickingProgram,
           camera = this.camera,
           config = this.config,
           memoLightEnable = config.lights.enable,
@@ -3594,8 +3794,9 @@ $.splat = (function() {
       config.effects.fog = false;
       
       //enable picking and render to texture
-      program.setUniform('enablePicking', true);
-      program.setFrameBuffer('$picking', true);
+      pickingProgram.use();
+      pickingProgram.setUniform('enablePicking', true);
+      pickingProgram.setFrameBuffer('$picking', true);
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
@@ -3607,6 +3808,8 @@ $.splat = (function() {
 
       //render to texture
       this.renderToTexture('$picking', {
+        renderProgram: pickingProgram,
+        textureProgram: pickingProgram,
         onBeforeRender: function(elem, i) {
           if (i == backgroundColor) {
             index = 1;
@@ -3625,10 +3828,13 @@ $.splat = (function() {
       var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
       //restore all values
-      program.setFrameBuffer('$picking', false);
-      program.setUniform('enablePicking', false);
+      pickingProgram.setFrameBuffer('$picking', false);
+      pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
+      
+      //If there was another program then set to reuse that program.
+      if (program) program.use();
       
       return elem && elem.pickable && elem;
     }
@@ -3637,7 +3843,7 @@ $.splat = (function() {
   Scene.id = $.time();
   
   Scene.MAX_TEXTURES = 3;
-  Scene.MAX_POINT_LIGHTS = 3;
+  Scene.MAX_POINT_LIGHTS = 50;
 
   PhiloGL.Scene = Scene;
 
