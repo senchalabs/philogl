@@ -1,6 +1,7 @@
 path = '../src/'
 
 files = [
+  'app.js',
   'core.js',
   'math.js',
   'event.js',

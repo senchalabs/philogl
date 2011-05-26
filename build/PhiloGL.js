@@ -3079,7 +3079,7 @@ $.splat = (function() {
 
       //Create vertices, normals and texCoords
       for (var x = 0; x <= nlong; x++) {
-        for (var y = 0; y <= nlat; y++) {
+        for (var y = 1; y <= nlat; y++) {
           var u = x / nlong,
               v = y / nlat,
               theta = longRange * u,
@@ -3132,76 +3132,7 @@ $.splat = (function() {
                        (x + 1) * numVertsAround + y + 1);
         }
       }
-
-      /*
       
-      //create top vertex
-      var topIndex = vertices.length / 3,
-          x = 0,
-          y = radius(0, 1, 0, 0, 0),
-          z = 0;
-
-      vertices.push(x, y, z);
-      normals.push(0, 1, 0);
-      texCoords.push(0, 0);
-          
-      //callback
-      opt.onAddVertex({
-        rho: y,
-        theta: 0,
-        phi: 0,
-        lat: 0,
-        lon: 0,
-        x: x,
-        y: y,
-        z: z,
-        nx: 0,
-        ny: 1,
-        nz: 0,
-        u: 0,
-        v: 0
-      });
-
-      //TODO(nico): verify that this is fine.
-      //create top indices
-      for (x = 0; x <= nlong; x++) {
-        indices.push(topIndex, x * numVertsAround, ((x + 1) % nlong) * numVertsAround);
-      }
-      
-      //create bottom vertex
-      var bottomIndex = topIndex + 1,
-          x = 0,
-          y = radius(0, -1, 0, 0, 0),
-          z = 0;
-
-      vertices.push(x, -y, z);
-      normals.push(0, -1, 0);
-      texCoords.push(0, 0);
-          
-      //callback
-      opt.onAddVertex({
-        rho: y,
-        theta: Math.PI * 2,
-        phi: Math.PI,
-        lat: nlat,
-        lon: nlong,
-        x: x,
-        y: -y,
-        z: z,
-        nx: 0,
-        ny: -1,
-        nz: 0,
-        u: 1,
-        v: 1
-      });
-
-      //TODO(nico): verify that this is fine.
-      //create top indices
-      for (x = 0; x <= nlong; x++) {
-        indices.push(bottomIndex, x * numVertsAround + numVertsAround - 1, ((x + 1) % nlong) * numVertsAround + numVertsAround - 1);
-      }
-
-      */
       O3D.Model.call(this, $.extend({
         vertices: vertices,
         indices: indices,
@@ -3211,6 +3142,184 @@ $.splat = (function() {
   };
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
+
+  //Code based on http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
+  O3D.IcoSphere = function(opt) {
+    var iterations = opt.iterations || 0,
+        vertices = [],
+        normals = [],
+        indices = [],
+        texCoords = [],
+        sqrt = Math.sqrt,
+        acos = Math.acos,
+        atan2 = Math.atan2,
+        pi = Math.PI,
+        pi2 = pi * 2;
+    
+    //Add a callback for when a vertex is created
+    opt.onAddVertex = opt.onAddVertex || $.empty;
+
+    // and Icosahedron vertices
+    var t = (1 + sqrt(5)) / 2,
+        len = sqrt(1 + t * t);
+
+    vertices.push(-1 / len,  t / len,  0,
+                   1 / len,  t / len,  0,
+                  -1 / len, -t / len,  0,
+                   1 / len, -t / len,  0,
+
+                   0, -1 / len,  t / len,
+                   0,  1 / len,  t / len,
+                   0, -1 / len, -t / len,
+                   0,  1 / len, -t / len,
+
+                   t / len,  0, -1 / len,
+                   t / len,  0,  1 / len,
+                  -t / len,  0, -1 / len,
+                  -t / len,  0,  1 / len);
+
+    
+      indices.push(0, 11, 5,
+                 0, 5, 1,
+                 0, 1, 7,
+                 0, 7, 10,
+                 0, 10, 11,
+
+                 1, 5, 9,
+                 5, 11, 4,
+                 11, 10, 2,
+                 10, 7, 6,
+                 7, 1, 8,
+
+                 3, 9, 4,
+                 3, 4, 2,
+                 3, 2, 6,
+                 3, 6, 8,
+                 3, 8, 9,
+
+                 4, 9, 5,
+                 2, 4, 11,
+                 6, 2, 10,
+                 8, 6, 7,
+                 9, 8, 1);
+
+    var getMiddlePoint = (function() {
+      var pointMemo = {};
+      
+      return function(i1, i2) {
+        i1 *= 3;
+        i2 *= 3;
+        var mini = i1 < i2 ? i1 : i2,
+            maxi = i1 > i2 ? i1 : i2,
+            key = mini + '|' + maxi;
+
+        if (key in pointMemo) {
+          return pointMemo[key];
+        }
+
+        var x1 = vertices[i1    ],
+            y1 = vertices[i1 + 1],
+            z1 = vertices[i1 + 2],
+            x2 = vertices[i2    ],
+            y2 = vertices[i2 + 1],
+            z2 = vertices[i2 + 2],
+            xm = (x1 + x2) / 2,
+            ym = (y1 + y2) / 2,
+            zm = (z1 + z2) / 2,
+            len = sqrt(xm * xm + ym * ym + zm * zm);
+
+        xm /= len;
+        ym /= len;
+        zm /= len;
+
+        vertices.push(xm, ym, zm);
+
+        return (pointMemo[key] = (vertices.length / 3 - 1));
+      };
+    })();
+
+    for (var i = 0; i < iterations; i++) {
+      var indices2 = [];
+      for (var j = 0, l = indices.length; j < l; j += 3) {
+        var a = getMiddlePoint(indices[j    ], indices[j + 1]),
+            b = getMiddlePoint(indices[j + 1], indices[j + 2]),
+            c = getMiddlePoint(indices[j + 2], indices[j    ]);
+
+        indices2.push(indices[j], a, c,
+                      indices[j + 1], b, a,
+                      indices[j + 2], c, b,
+                      a, b, c);
+      }
+      indices = indices2;
+    }
+
+    //Calculate texCoords and normals
+    for (var i = 0, l = indices.length; i < l; i += 3) {
+      var i1 = indices[i    ],
+          i2 = indices[i + 1],
+          i3 = indices[i + 2],
+          in1 = i1 * 3,
+          in2 = i2 * 3,
+          in3 = i3 * 3,
+          iu1 = i1 * 2,
+          iu2 = i2 * 2,
+          iu3 = i3 * 2,
+          x1 = vertices[in1    ],
+          y1 = vertices[in1 + 1],
+          z1 = vertices[in1 + 2],
+          theta1 = acos(z1 / sqrt(x1 * x1 + y1 * y1 + z1 * z1)),
+          phi1 = atan2(y1, x1),
+          v1 = theta1 / pi,
+          u1 = 1 - phi1 / pi2,
+          x2 = vertices[in2    ],
+          y2 = vertices[in2 + 1],
+          z2 = vertices[in2 + 2],
+          theta2 = acos(z2 / sqrt(x2 * x2 + y2 * y2 + z2 * z2)),
+          phi2 = atan2(y2, x2),
+          v2 = theta2 / pi,
+          u2 = 1 - phi2 / pi2,
+          x3 = vertices[in3    ],
+          y3 = vertices[in3 + 1],
+          z3 = vertices[in3 + 2],
+          theta3 = acos(z3 / sqrt(x3 * x3 + y3 * y3 + z3 * z3)),
+          phi3 = atan2(y3, x3),
+          v3 = theta3 / pi,
+          u3 = 1 - phi3 / pi2,
+          vec1 = {
+            x: x3 - x2,
+            y: y3 - y2,
+            z: z3 - z2
+          },
+          vec2 = {
+            x: x1 - x2,
+            y: y1 - y2,
+            z: z1 - z2
+          },
+          normal = Vec3.cross(vec1, vec2).$unit();
+
+      normals[in1    ] = normals[in2    ] = normals[in3    ] = normal.x;
+      normals[in1 + 1] = normals[in2 + 1] = normals[in3 + 1] = normal.y;
+      normals[in1 + 2] = normals[in2 + 2] = normals[in3 + 2] = normal.z;
+      
+      texCoords[iu1    ] = u1;
+      texCoords[iu1 + 1] = v1;
+      
+      texCoords[iu2    ] = u2;
+      texCoords[iu2 + 1] = v2;
+      
+      texCoords[iu3    ] = u3;
+      texCoords[iu3 + 1] = v3;
+    }
+
+    O3D.Model.call(this, $.extend({
+      vertices: vertices,
+      indices: indices,
+      normals: normals,
+      texCoords: texCoords
+    }, opt || {}));
+  };
+
+  O3D.IcoSphere.prototype = Object.create(O3D.Model.prototype);
   
   O3D.TruncatedCone = function(config) {
     var bottomRadius = config.bottomRadius || 0,

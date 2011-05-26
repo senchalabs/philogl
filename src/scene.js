@@ -49,8 +49,6 @@
     this.camera = camera;
     this.models = [];
     this.config = opt;
-
-    this.setupPicking();
   };
 
   Scene.prototype = {
@@ -286,6 +284,10 @@
     
     //returns an element at the given position
     pick: function(x, y) {
+      if (!this.pickingProgram) {
+        this.setupPicking();
+      }
+
       var o3dHash = {},
           program = this.program,
           pickingProgram = this.pickingProgram,
@@ -296,8 +298,6 @@
           width = gl.canvas.width,
           height = gl.canvas.height,
           hash = [],
-          now = $.time(),
-          last = this.last || 0,
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, backgroundColor;
 
