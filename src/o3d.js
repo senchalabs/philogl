@@ -20,8 +20,7 @@
 
   //Model abstract O3D Class
   O3D.Model = function(opt) {
-    this.$$family = 'model';
-
+    this.id = opt.id || $.uid();
     this.pickable = !!opt.pickable;
     this.vertices = flatten(opt.vertices);
     this.faces = flatten(opt.faces);
@@ -32,6 +31,7 @@
     this.indices = flatten(opt.indices);
     this.shininess = opt.shininess || 0;
     this.uniforms = opt.uniforms || {};
+    this.attributes = opt.attributes || {};
     this.render = opt.render;
     this.drawType = opt.drawType;
     this.display = 'display' in opt? opt.display : true;
@@ -67,7 +67,30 @@
     setUniforms: function(program) {
       program.setUniforms(this.uniforms);
     },
+
+    setAttributes: function(program) {
+      var attribues = this.attributes;
+      for (var name in attributes) {
+        var descriptor = attributes[name],
+            bufferId = this.id + '-' + name;
+        if (!Object.keys(descriptor).length) {
+          program.setBuffer(bufferId, true);
+        } else {
+          descriptor.attribute = name;
+          program.setBuffer(bufferId, descriptor);
+          delete descriptor.value;
+        }
+      }
+    },
     
+    unsetAttributes: function(program) {
+      var attribues = this.attributes;
+      for (var name in attributes) {
+        var bufferId = this.id + '-' + name;
+        program.setBuffer(bufferId, false);
+      }
+    },
+
     setShininess: function(program) {
       program.setUniform('shininess', this.shininess || 0);
     },
@@ -200,7 +223,8 @@
 
 
   O3D.Model.prototype = {
-    
+    $$family: 'model',
+
     update: function() {
       var matrix = this.matrix,
           pos = this.position,
@@ -865,47 +889,51 @@
         normals = [],
         texCoords = [];
 
-  for (var z = 0; z <= subdivisionsDepth; z++) {
-    for (var x = 0; x <= subdivisionsWidth; x++) {
-      var u = x / subdivisionsWidth,
-          v = z / subdivisionsDepth;
-      
-      positions.push(width * u - width * 0.5,
-                     height,
-                     depth * v - depth * 0.5);
-      normals.push(0, 1, 0);
-      texCoords.push(u, v);
+    for (var z = 0; z <= subdivisionsDepth; z++) {
+      for (var x = 0; x <= subdivisionsWidth; x++) {
+        var u = x / subdivisionsWidth,
+            v = z / subdivisionsDepth;
+        
+        positions.push(width * u - width * 0.5,
+                       height,
+                       depth * v - depth * 0.5);
+        normals.push(0, 1, 0);
+        texCoords.push(u, v);
+      }
     }
-  }
 
-  var numVertsAcross = subdivisionsWidth + 1,
-      indices = [];
+    var numVertsAcross = subdivisionsWidth + 1,
+        indices = [];
 
-  for (z = 0; z < subdivisionsDepth; z++) {
-    for (x = 0; x < subdivisionsWidth; x++) {
-      // Make triangle 1 of quad.
-      indices.push((z + 0) * numVertsAcross + x,
-                   (z + 1) * numVertsAcross + x,
-                   (z + 0) * numVertsAcross + x + 1);
+    for (z = 0; z < subdivisionsDepth; z++) {
+      for (x = 0; x < subdivisionsWidth; x++) {
+        // Make triangle 1 of quad.
+        indices.push((z + 0) * numVertsAcross + x,
+                     (z + 1) * numVertsAcross + x,
+                     (z + 0) * numVertsAcross + x + 1);
 
-      // Make triangle 2 of quad.
-      indices.push((z + 1) * numVertsAcross + x,
-                   (z + 1) * numVertsAcross + x + 1,
-                   (z + 0) * numVertsAcross + x + 1);
+        // Make triangle 2 of quad.
+        indices.push((z + 1) * numVertsAcross + x,
+                     (z + 1) * numVertsAcross + x + 1,
+                     (z + 0) * numVertsAcross + x + 1);
+      }
     }
-  }
 
-  O3D.Model.call(this, $.extend({
-    vertices: positions,
-    normals: normals,
-    texCoords: texCoords,
-    indices: indices
-  }, config));
+    O3D.Model.call(this, $.extend({
+      vertices: positions,
+      normals: normals,
+      texCoords: texCoords,
+      indices: indices
+    }, config));
 
-};
+  };
 
-O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+  O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+
+  //unique id
+  O3D.id = $.time();
 
   //Assign to namespace
   PhiloGL.O3D = O3D;
+
 })();

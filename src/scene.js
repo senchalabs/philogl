@@ -39,13 +39,7 @@
       }
     }, opt || {});
     
-    //If multiple programs then store as a programMap
-    if ($.type(program) != 'object') {
-      this.program = program;
-    } else {
-      this.programMap = program;
-    }
-
+    this.program = opt.program ? program[opt.program] : program;
     this.camera = camera;
     this.models = [];
     this.config = opt;
@@ -57,22 +51,27 @@
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
         //Generate unique id for model
-        model.id = model.id || Scene.id++;
+        model.id = model.id || $.uid();
         models.push(model);
         //Create and load Buffers
         this.defineBuffers(model);
       }
     },
 
+    remove: function(model) {
+      var models = this.models,
+          indexOf = models.indexOf(model);
+
+      if (indexOf > -1) {
+        models.splice(indexOf, 1);
+      }
+    },
+
     getProgram: function(obj) {
-      if (!this.programMap) return this.program;
-      
       if (obj && obj.program) {
-        var program = this.programMap[obj.program];
-        if (program != this.program) {
-          this.program = program;
-          program.use();
-        }
+        var program = this.program[obj.program];
+        program.use();
+        return program;
       }
       return this.program;
     },
@@ -179,9 +178,12 @@
     },
 
     //Renders all objects in the scene.
-    render: function(opt, renderProgram) {
-      var multiplePrograms = !renderProgram && !!this.programMap,
-          camera = this.camera,
+    render: function(opt) {
+      var camera = this.camera,
+          program = this.program,
+          renderProgram = opt.renderProgram,
+          pType = $.type(program),
+          multiplePrograms = !renderProgram && pType == 'object',
           options = $.merge({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
@@ -189,7 +191,7 @@
 
       //If we're just using one program then
       //execute the beforeRender method once.
-      !multiplePrograms && this.beforeRender(renderProgram || this.program);
+      !multiplePrograms && this.beforeRender(renderProgram || program);
       
       //Go through each model and render it.
       this.models.forEach(function(elem, i) {
@@ -209,13 +211,11 @@
 
     renderToTexture: function(name, opt) {
       opt = opt || {};
-      var program = opt.textureProgram || this.program,
-          texture = program.textures[name + '-texture'],
-          texMemo = program.textureMemo[name + '-texture'];
+      var texture = app.textures[name + '-texture'],
+          texMemo = app.textureMemo[name + '-texture'];
       
-      this.render(opt, opt.renderProgram);
+      this.render(opt);
 
-      //program.use();
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
       gl.bindTexture(texMemo.textureType, null);
@@ -226,6 +226,7 @@
           view = new Mat4;
 
       obj.setUniforms(program);
+      obj.setAttributes(program);
       obj.setShininess(program);
       obj.setVertices(program);
       obj.setColors(program);
@@ -251,6 +252,7 @@
         }
       }
       
+      obj.unsetAttributes(program);
       obj.unsetVertices(program);
       obj.unsetColors(program);
       obj.unsetNormals(program);
@@ -289,7 +291,7 @@
       }
 
       var o3dHash = {},
-          program = this.program,
+          program = app.usedProgram,
           pickingProgram = this.pickingProgram,
           camera = this.camera,
           config = this.config,
@@ -321,7 +323,6 @@
       //render to texture
       this.renderToTexture('$picking', {
         renderProgram: pickingProgram,
-        textureProgram: pickingProgram,
         onBeforeRender: function(elem, i) {
           if (i == backgroundColor) {
             index = 1;
@@ -339,7 +340,7 @@
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
-      //restore all values
+      //restore all values and unbind buffers
       pickingProgram.setFrameBuffer('$picking', false);
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
@@ -351,8 +352,6 @@
       return elem && elem.pickable && elem;
     }
   };
-
-  Scene.id = $.time();
   
   Scene.MAX_TEXTURES = 3;
   Scene.MAX_POINT_LIGHTS = 50;

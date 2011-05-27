@@ -52,7 +52,7 @@ this.PhiloGL = null;
         optProgram = $.splat(opt.program),
         optScene = opt.scene;
     
-    //get Context
+    //get Context global to all framework
     gl = PhiloGL.WebGL.getContext(canvasId, optContext);
 
     if (!gl) {
@@ -106,7 +106,7 @@ this.PhiloGL = null;
 
 
     function loadProgramDeps(gl, program, callback) {
-      if ($.type(program) != 'object') {
+      if (program.$$family == 'program') {
         //Use program
         program.use();
       }
@@ -122,15 +122,14 @@ this.PhiloGL = null;
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
       
-      //make app object
-      var app = {
-        '$$family': 'app',
+      //make app instance global to all framework
+      app = new PhiloGL.App({
         gl: gl,
         canvas: canvas,
         program: program,
         scene: scene,
         camera: camera
-      };
+      });
 
       //get Events
       if (optEvents) {
@@ -156,18 +155,18 @@ this.PhiloGL = null;
 
 
 //Unpacks the submodules to the global space.
-PhiloGL.unpack = function(global) {
+PhiloGL.unpack = function(branch) {
+  branch = branch || window || global;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
-      window[module] = PhiloGL[module];
+      branch[module] = PhiloGL[module];
   });
 };
 
 //Version
 PhiloGL.version = '1.1.1';
 
-//Holds the 3D context
-var gl;
-
+//Holds the 3D context, holds the application
+var gl, app;
 
 //Utility functions
 function $(d) {

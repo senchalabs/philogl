@@ -22,6 +22,308 @@ THE SOFTWARE.
 
 */
 (function() { 
+//app.js
+//creates a singleton application that stores buffer state and has access to scenes, programs, cameras, etc.
+(function() {
+  function App(options) {
+    //copy program, scene, camera, etc.
+    for (var prop in options) {
+      this[prop] = options[prop];
+    }
+    //handle buffers
+    this.buffers = {};
+    this.bufferMemo = {};
+    //handle framebuffers
+    this.frameBuffers = {};
+    this.frameBufferMemo = {};
+    //handle renderbuffers
+    this.renderBuffers = {};
+    this.renderBufferMemo = {};
+    //handle textures
+    this.textures = {};
+    this.textureMemo = {};
+  }
+
+  App.prototype = {
+    $$family: 'application',
+
+    setBuffer: function(program, name, opt) {
+      //unbind buffer 
+      if (opt === false || opt === null) {
+        opt = this.bufferMemo[name];
+        //reset buffer
+        opt && gl.bindBuffer(opt.bufferType, null);
+        //disable vertex attrib array if the buffer maps to an attribute.
+        var attributeName = opt && opt.attribute || name,
+            loc = program.attributes[attributeName];
+        if (loc !== undefined) {
+          gl.disableVertexAttribArray(loc);
+        }
+        return;
+      }
+      
+      //set defaults
+      opt = $.merge({
+        bufferType: gl.ARRAY_BUFFER,
+        size: 1,
+        dataType: gl.FLOAT,
+        stride: 0,
+        offset: 0,
+        drawType: gl.STATIC_DRAW
+      }, this.bufferMemo[name] || {}, opt || {});
+
+      var attributeName = opt.attribute || name,
+          bufferType = opt.bufferType,
+          hasBuffer = name in this.buffers,
+          buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
+          hasValue = 'value' in opt,
+          value = opt.value,
+          size = opt.size,
+          dataType = opt.dataType,
+          stride = opt.stride,
+          offset = opt.offset,
+          drawType = opt.drawType,
+          loc = program.attributes[attributeName],
+          isAttribute = loc !== undefined;
+
+      if (!hasBuffer) {
+        this.buffers[name] = buffer;
+      }
+      
+      isAttribute && gl.enableVertexAttribArray(loc);
+      gl.bindBuffer(bufferType, buffer);
+      
+      if (hasValue) {
+        gl.bufferData(bufferType, value, drawType);
+      }
+      
+      isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+      
+      //set default options so we don't have to next time.
+      //set them under the buffer name and attribute name (if an
+      //attribute is defined)
+      delete opt.value;
+      this.bufferMemo[name] = opt;
+      if (isAttribute) {
+        this.bufferMemo[attributeName] = opt;
+      }
+
+      return this;
+    },
+
+    setBuffers: function(program, obj) {
+      for (var name in obj) {
+        this.setBuffer(program, name, obj[name]);
+      }
+      return this;
+    },
+
+    setFrameBuffer: function(name, opt) {
+      //bind/unbind framebuffer
+      if (typeof opt != 'object') {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, opt? this.frameBuffers[name] : null);
+        return;
+      }
+      //get options
+      opt = $.merge({
+        width: 0,
+        height: 0,
+        //All texture params
+        bindToTexture: false,
+        textureOptions: {
+          attachment: gl.COLOR_ATTACHMENT0
+        },
+        //All render buffer params
+        bindToRenderBuffer: false,
+        renderBufferOptions: {
+          attachment: gl.DEPTH_ATTACHMENT
+        }
+      }, this.frameBufferMemo[name] || {}, opt || {});
+      
+      var bindToTexture = opt.bindToTexture,
+          bindToRenderBuffer = opt.bindToRenderBuffer,
+          hasBuffer = name in this.frameBuffers,
+          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer(gl.FRAMEBUFFER);
+
+      gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+
+      if (!hasBuffer) {
+        this.frameBuffers[name] = frameBuffer;
+      }
+      
+      if (bindToTexture) {
+        var texBindOpt = $.merge({
+              data: {
+                width: opt.width,
+                height: opt.height
+              }
+            }, $.type(bindToTexture) == 'object'? bindToTexture : {}),
+            texName = name + '-texture',
+            texOpt = opt.textureOptions;
+            
+        this.setTexture(texName, texBindOpt);
+        
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
+      }
+
+      if (bindToRenderBuffer) {
+        var rbBindOpt = $.merge({
+              width: opt.width,
+              height: opt.height
+            }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
+            rbName = name + '-renderbuffer',
+            rbOpt = opt.renderBufferOptions;
+        
+        this.setRenderBuffer(rbName, rbBindOpt);
+
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, rbOpt.attachment, gl.RENDERBUFFER, this.renderBuffers[rbName]);
+      }
+
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+      this.frameBufferMemo[name] = opt;
+
+      return this;
+    },
+
+    setFrameBuffers: function(obj) {
+      for (var name in obj) {
+        this.setFrameBuffer(name, obj[name]);
+      }
+      return this;
+    },
+
+    setRenderBuffer: function(name, opt) {
+      if (typeof opt != 'object') {
+        gl.bindRenderbuffer(gl.RENDERBUFFER, opt? this.renderBufferMemo[name] : null);
+        return;
+      }
+
+      opt = $.merge({
+        storageType: gl.DEPTH_COMPONENT16,
+        width: 0,
+        height: 0
+      }, this.renderBufferMemo[name] || {}, opt || {});
+
+      var hasBuffer = name in this.renderBuffers,
+          renderBuffer = hasBuffer? this.renderBuffers[name] : gl.createRenderbuffer(gl.RENDERBUFFER);
+
+      if (!hasBuffer) {
+        this.renderBuffers[name] = renderBuffer;
+      }
+      
+      gl.bindRenderbuffer(gl.RENDERBUFFER, renderBuffer);
+
+      gl.renderbufferStorage(gl.RENDERBUFFER, opt.storageType, opt.width, opt.height);
+
+      this.renderBufferMemo[name] = opt;
+
+      return this;
+    },
+
+    setRenderBuffers: function(obj) {
+      for (var name in obj) {
+        this.setRenderBuffer(name, obj[name]);
+      }
+      return this;
+    },
+
+    setTexture: function(name, opt) {
+      //bind texture
+      if (!opt || typeof opt != 'object') {
+        gl.activeTexture(opt || gl.TEXTURE0);
+        gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
+        return;
+      }
+      //get defaults
+      opt = $.merge({
+        textureType: gl.TEXTURE_2D,
+        pixelStore: [{
+          name: gl.UNPACK_FLIP_Y_WEBGL,
+          value: true
+        }],
+        parameters: [{
+          name: gl.TEXTURE_MAG_FILTER,
+          value: gl.NEAREST
+        }, {
+          name: gl.TEXTURE_MIN_FILTER,
+          value: gl.NEAREST
+        }],
+        data: {
+          format: gl.RGBA,
+          value: false,
+          
+          width: 0,
+          height: 0,
+          border: 0
+        }
+
+      }, this.textureMemo[name] || {}, opt || {});
+
+      var textureType = ('textureType' in opt)? opt.textureType : gl.TEXTURE_2D,
+          hasTexture = name in this.textures,
+          texture = hasTexture? this.textures[name] : gl.createTexture(),
+          pixelStore = opt.pixelStore,
+          parameters = opt.parameters,
+          data = opt.data,
+          hasValue = !!opt.data.value;
+
+      //save texture
+      if (!hasTexture) {
+        this.textures[name] = texture;
+      }
+      gl.bindTexture(textureType, texture);
+      if (!hasTexture) {
+        //set texture properties
+        pixelStore.forEach(function(opt) {
+          opt.name = typeof opt.name == 'string'? gl[opt.name] : opt.name;
+          gl.pixelStorei(opt.name, opt.value);
+        });
+      }
+      //load texture
+      if (hasValue) {
+        gl.texImage2D(textureType, 0, data.format, data.format, gl.UNSIGNED_BYTE, data.value);
+      } else if (data.width || data.height) {
+        gl.texImage2D(textureType, 0, data.format, data.width, data.height, data.border, data.format, gl.UNSIGNED_BYTE, null);
+      }
+      //set texture parameters
+      if (!hasTexture) {
+        parameters.forEach(function(opt) {
+          opt.name = gl.get(opt.name);
+          opt.value = gl.get(opt.value);
+          gl.texParameteri(textureType, opt.name, opt.value);
+          if (opt.generateMipmap) {
+            gl.generateMipmap(textureType);
+          }
+        });
+      }
+      //set default options so we don't have to next time.
+      delete opt.data;
+      this.textureMemo[name] = opt;
+      
+      return this;
+    },
+
+    setTextures: function(obj) {
+      for (var name in obj) {
+        this.setTexture(name, obj[name]);
+      }
+      return this;
+    },
+
+    use: function(program) {
+      gl.useProgram(program);
+      //remember last used program.
+      this.usedProgram = program;
+      return this;
+    }
+  };
+
+  PhiloGL.App = App;
+})();
+
 //core.js
 //Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
@@ -76,7 +378,7 @@ this.PhiloGL = null;
         optProgram = $.splat(opt.program),
         optScene = opt.scene;
     
-    //get Context
+    //get Context global to all framework
     gl = PhiloGL.WebGL.getContext(canvasId, optContext);
 
     if (!gl) {
@@ -130,7 +432,7 @@ this.PhiloGL = null;
 
 
     function loadProgramDeps(gl, program, callback) {
-      if ($.type(program) != 'object') {
+      if (program.$$family == 'program') {
         //Use program
         program.use();
       }
@@ -146,15 +448,14 @@ this.PhiloGL = null;
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
       
-      //make app object
-      var app = {
-        '$$family': 'app',
+      //make app instance global to all framework
+      app = new PhiloGL.App({
         gl: gl,
         canvas: canvas,
         program: program,
         scene: scene,
         camera: camera
-      };
+      });
 
       //get Events
       if (optEvents) {
@@ -180,18 +481,18 @@ this.PhiloGL = null;
 
 
 //Unpacks the submodules to the global space.
-PhiloGL.unpack = function(global) {
+PhiloGL.unpack = function(branch) {
+  branch = branch || window || global;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
-      window[module] = PhiloGL[module];
+      branch[module] = PhiloGL[module];
   });
 };
 
 //Version
 PhiloGL.version = '1.1.1';
 
-//Holds the 3D context
-var gl;
-
+//Holds the 3D context, holds the application
+var gl, app;
 
 //Utility functions
 function $(d) {
@@ -1787,12 +2088,8 @@ $.splat = (function() {
     var program = createProgram(gl, vertexShader, fragmentShader);
     if (!program) return false;
     
-    var buffers = {},
-        frameBuffers = {},
-        renderBuffers = {},
-        attributes = {},
-        uniforms = {},
-        textures = {};
+    var attributes = {},
+        uniforms = {};
   
     //fill attribute locations
     var len = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
@@ -1817,36 +2114,12 @@ $.splat = (function() {
     //handle attributes and uniforms
     this.attributes = attributes;
     this.uniforms = uniforms;
-    //handle buffers
-    this.buffers = buffers;
-    this.bufferMemo = {};
-    //handle framebuffers
-    this.frameBuffers = frameBuffers;
-    this.frameBufferMemo = {};
-    //handle framebuffers
-    this.renderBuffers = renderBuffers;
-    this.renderBufferMemo = {};
-    //handle textures
-    this.textures = textures;
-    this.textureMemo = {};
   };
 
   Program.prototype = {
     
-    '$$family': 'program',
+    $$family: 'program',
 
-    setState: function(program) {
-      $.extend(program.buffers, this.buffers);
-      $.extend(program.bufferMemo, this.bufferMemo);
-      $.extend(program.renderBuffers, this.renderBuffers);
-      $.extend(program.renderBufferMemo, this.renderBufferMemo);
-      $.extend(program.frameBuffers, this.frameBuffers);
-      $.extend(program.frameBufferMemo, this.frameBufferMemo);
-      $.extend(program.textures, this.textures);
-      $.extend(program.textureMemo, this.textureMemo);
-      return this;
-    },
-    
     setUniform: function(name, val) {
       if (this.uniforms[name])
         this.uniforms[name](val);
@@ -1859,280 +2132,23 @@ $.splat = (function() {
         this.setUniform(name, obj[name]);
       }
       return this;
-    },
-
-    setBuffer: function(name, opt) {
-      //unbind buffer 
-      if (opt === false || opt === null) {
-        opt = this.bufferMemo[name];
-        //reset buffer
-        opt && gl.bindBuffer(opt.bufferType, null);
-        //disable vertex attrib array if the buffer maps to an attribute.
-        var attributeName = opt && opt.attribute || name,
-            loc = this.attributes[attributeName];
-        if (loc !== undefined) {
-          gl.disableVertexAttribArray(loc);
-        }
-        return;
-      }
-      
-      //set defaults
-      opt = $.merge({
-        bufferType: gl.ARRAY_BUFFER,
-        size: 1,
-        dataType: gl.FLOAT,
-        stride: 0,
-        offset: 0,
-        drawType: gl.STATIC_DRAW
-      }, this.bufferMemo[name] || {}, opt || {});
-
-      var attributeName = opt.attribute || name,
-          bufferType = opt.bufferType,
-          hasBuffer = name in this.buffers,
-          buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
-          hasValue = 'value' in opt,
-          value = opt.value,
-          size = opt.size,
-          dataType = opt.dataType,
-          stride = opt.stride,
-          offset = opt.offset,
-          drawType = opt.drawType,
-          loc = this.attributes[attributeName],
-          isAttribute = loc !== undefined;
-
-      if (!hasBuffer) {
-        this.buffers[name] = buffer;
-      }
-      
-      isAttribute && gl.enableVertexAttribArray(loc);
-      gl.bindBuffer(bufferType, buffer);
-      
-      if (hasValue) {
-        gl.bufferData(bufferType, value, drawType);
-      }
-      
-      isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
-      
-      //set default options so we don't have to next time.
-      //set them under the buffer name and attribute name (if an
-      //attribute is defined)
-      delete opt.value;
-      this.bufferMemo[name] = opt;
-      if (isAttribute) {
-        this.bufferMemo[attributeName] = opt;
-      }
-
-      return this;
-    },
-
-    setBuffers: function(obj) {
-      for (var name in obj) {
-        this.setBuffer(name, obj[name]);
-      }
-      return this;
-    },
-
-    setFrameBuffer: function(name, opt) {
-      //bind/unbind framebuffer
-      if (typeof opt != 'object') {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, opt? this.frameBuffers[name] : null);
-        return;
-      }
-      //get options
-      opt = $.merge({
-        width: 0,
-        height: 0,
-        //All texture params
-        bindToTexture: false,
-        textureOptions: {
-          attachment: gl.COLOR_ATTACHMENT0
-        },
-        //All render buffer params
-        bindToRenderBuffer: false,
-        renderBufferOptions: {
-          attachment: gl.DEPTH_ATTACHMENT
-        }
-      }, this.frameBufferMemo[name] || {}, opt || {});
-      
-      var bindToTexture = opt.bindToTexture,
-          bindToRenderBuffer = opt.bindToRenderBuffer,
-          hasBuffer = name in this.frameBuffers,
-          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer(gl.FRAMEBUFFER);
-
-      gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-
-      if (!hasBuffer) {
-        this.frameBuffers[name] = frameBuffer;
-      }
-      
-      if (bindToTexture) {
-        var texBindOpt = $.merge({
-              data: {
-                width: opt.width,
-                height: opt.height
-              }
-            }, $.type(bindToTexture) == 'object'? bindToTexture : {}),
-            texName = name + '-texture',
-            texOpt = opt.textureOptions;
-            
-        this.setTexture(texName, texBindOpt);
-        
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
-      }
-
-      if (bindToRenderBuffer) {
-        var rbBindOpt = $.merge({
-              width: opt.width,
-              height: opt.height
-            }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
-            rbName = name + '-renderbuffer',
-            rbOpt = opt.renderBufferOptions;
-        
-        this.setRenderBuffer(rbName, rbBindOpt);
-
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, rbOpt.attachment, gl.RENDERBUFFER, this.renderBuffers[rbName]);
-      }
-
-      gl.bindTexture(gl.TEXTURE_2D, null);
-      gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-      this.frameBufferMemo[name] = opt;
-
-      return this;
-    },
-
-    setFrameBuffers: function(obj) {
-      for (var name in obj) {
-        this.setFrameBuffer(name, obj[name]);
-      }
-      return this;
-    },
-
-    setRenderBuffer: function(name, opt) {
-      if (typeof opt != 'object') {
-        gl.bindRenderbuffer(gl.RENDERBUFFER, opt? this.renderBufferMemo[name] : null);
-        return;
-      }
-
-      opt = $.merge({
-        storageType: gl.DEPTH_COMPONENT16,
-        width: 0,
-        height: 0
-      }, this.renderBufferMemo[name] || {}, opt || {});
-
-      var hasBuffer = name in this.renderBuffers,
-          renderBuffer = hasBuffer? this.renderBuffers[name] : gl.createRenderbuffer(gl.RENDERBUFFER);
-
-      if (!hasBuffer) {
-        this.renderBuffers[name] = renderBuffer;
-      }
-      
-      gl.bindRenderbuffer(gl.RENDERBUFFER, renderBuffer);
-
-      gl.renderbufferStorage(gl.RENDERBUFFER, opt.storageType, opt.width, opt.height);
-
-      this.renderBufferMemo[name] = opt;
-
-      return this;
-    },
-
-    setRenderBuffers: function(obj) {
-      for (var name in obj) {
-        this.setRenderBuffer(name, obj[name]);
-      }
-      return this;
-    },
-
-    setTexture: function(name, opt) {
-      //bind texture
-      if (!opt || typeof opt != 'object') {
-        gl.activeTexture(opt || gl.TEXTURE0);
-        gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
-        return;
-      }
-      //get defaults
-      opt = $.merge({
-        textureType: gl.TEXTURE_2D,
-        pixelStore: [{
-          name: gl.UNPACK_FLIP_Y_WEBGL,
-          value: true
-        }],
-        parameters: [{
-          name: gl.TEXTURE_MAG_FILTER,
-          value: gl.NEAREST
-        }, {
-          name: gl.TEXTURE_MIN_FILTER,
-          value: gl.NEAREST
-        }],
-        data: {
-          format: gl.RGBA,
-          value: false,
-          
-          width: 0,
-          height: 0,
-          border: 0
-        }
-
-      }, this.textureMemo[name] || {}, opt || {});
-
-      var textureType = ('textureType' in opt)? opt.textureType : gl.TEXTURE_2D,
-          hasTexture = name in this.textures,
-          texture = hasTexture? this.textures[name] : gl.createTexture(),
-          pixelStore = opt.pixelStore,
-          parameters = opt.parameters,
-          data = opt.data,
-          hasValue = !!opt.data.value;
-
-      //save texture
-      if (!hasTexture) {
-        this.textures[name] = texture;
-      }
-      gl.bindTexture(textureType, texture);
-      if (!hasTexture) {
-        //set texture properties
-        pixelStore.forEach(function(opt) {
-          opt.name = typeof opt.name == 'string'? gl[opt.name] : opt.name;
-          gl.pixelStorei(opt.name, opt.value);
-        });
-      }
-      //load texture
-      if (hasValue) {
-        gl.texImage2D(textureType, 0, data.format, data.format, gl.UNSIGNED_BYTE, data.value);
-      } else if (data.width || data.height) {
-        gl.texImage2D(textureType, 0, data.format, data.width, data.height, data.border, data.format, gl.UNSIGNED_BYTE, null);
-      }
-      //set texture parameters
-      if (!hasTexture) {
-        parameters.forEach(function(opt) {
-          opt.name = gl.get(opt.name);
-          opt.value = gl.get(opt.value);
-          gl.texParameteri(textureType, opt.name, opt.value);
-          if (opt.generateMipmap) {
-            gl.generateMipmap(textureType);
-          }
-        });
-      }
-      //set default options so we don't have to next time.
-      delete opt.data;
-      this.textureMemo[name] = opt;
-      
-      return this;
-    },
-
-    setTextures: function(obj) {
-      for (var name in obj) {
-        this.setTexture(name, obj[name]);
-      }
-      return this;
-    },
-
-    use: function() {
-      gl.useProgram(this.program);
-      return this;
     }
-  
   };
+
+  ['setBuffer', 'setBuffers', 'use'].forEach(function(name) {
+    Program.prototype[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(this);
+      return app[name].apply(app, args);
+    };
+  });
+
+  ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
+   'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
+    Program.prototype[name] = function() {
+      return app[name].apply(app, arguments);
+    };
+  });
 
   //Get options in object or arguments
   function getOptions() {
@@ -2587,8 +2603,7 @@ $.splat = (function() {
 
   //Model abstract O3D Class
   O3D.Model = function(opt) {
-    this.$$family = 'model';
-
+    this.id = opt.id || $.uid();
     this.pickable = !!opt.pickable;
     this.vertices = flatten(opt.vertices);
     this.faces = flatten(opt.faces);
@@ -2599,6 +2614,7 @@ $.splat = (function() {
     this.indices = flatten(opt.indices);
     this.shininess = opt.shininess || 0;
     this.uniforms = opt.uniforms || {};
+    this.attributes = opt.attributes || {};
     this.render = opt.render;
     this.drawType = opt.drawType;
     this.display = 'display' in opt? opt.display : true;
@@ -2634,7 +2650,30 @@ $.splat = (function() {
     setUniforms: function(program) {
       program.setUniforms(this.uniforms);
     },
+
+    setAttributes: function(program) {
+      var attribues = this.attributes;
+      for (var name in attributes) {
+        var descriptor = attributes[name],
+            bufferId = this.id + '-' + name;
+        if (!Object.keys(descriptor).length) {
+          program.setBuffer(bufferId, true);
+        } else {
+          descriptor.attribute = name;
+          program.setBuffer(bufferId, descriptor);
+          delete descriptor.value;
+        }
+      }
+    },
     
+    unsetAttributes: function(program) {
+      var attribues = this.attributes;
+      for (var name in attributes) {
+        var bufferId = this.id + '-' + name;
+        program.setBuffer(bufferId, false);
+      }
+    },
+
     setShininess: function(program) {
       program.setUniform('shininess', this.shininess || 0);
     },
@@ -2767,7 +2806,8 @@ $.splat = (function() {
 
 
   O3D.Model.prototype = {
-    
+    $$family: 'model',
+
     update: function() {
       var matrix = this.matrix,
           pos = this.position,
@@ -3432,49 +3472,53 @@ $.splat = (function() {
         normals = [],
         texCoords = [];
 
-  for (var z = 0; z <= subdivisionsDepth; z++) {
-    for (var x = 0; x <= subdivisionsWidth; x++) {
-      var u = x / subdivisionsWidth,
-          v = z / subdivisionsDepth;
-      
-      positions.push(width * u - width * 0.5,
-                     height,
-                     depth * v - depth * 0.5);
-      normals.push(0, 1, 0);
-      texCoords.push(u, v);
+    for (var z = 0; z <= subdivisionsDepth; z++) {
+      for (var x = 0; x <= subdivisionsWidth; x++) {
+        var u = x / subdivisionsWidth,
+            v = z / subdivisionsDepth;
+        
+        positions.push(width * u - width * 0.5,
+                       height,
+                       depth * v - depth * 0.5);
+        normals.push(0, 1, 0);
+        texCoords.push(u, v);
+      }
     }
-  }
 
-  var numVertsAcross = subdivisionsWidth + 1,
-      indices = [];
+    var numVertsAcross = subdivisionsWidth + 1,
+        indices = [];
 
-  for (z = 0; z < subdivisionsDepth; z++) {
-    for (x = 0; x < subdivisionsWidth; x++) {
-      // Make triangle 1 of quad.
-      indices.push((z + 0) * numVertsAcross + x,
-                   (z + 1) * numVertsAcross + x,
-                   (z + 0) * numVertsAcross + x + 1);
+    for (z = 0; z < subdivisionsDepth; z++) {
+      for (x = 0; x < subdivisionsWidth; x++) {
+        // Make triangle 1 of quad.
+        indices.push((z + 0) * numVertsAcross + x,
+                     (z + 1) * numVertsAcross + x,
+                     (z + 0) * numVertsAcross + x + 1);
 
-      // Make triangle 2 of quad.
-      indices.push((z + 1) * numVertsAcross + x,
-                   (z + 1) * numVertsAcross + x + 1,
-                   (z + 0) * numVertsAcross + x + 1);
+        // Make triangle 2 of quad.
+        indices.push((z + 1) * numVertsAcross + x,
+                     (z + 1) * numVertsAcross + x + 1,
+                     (z + 0) * numVertsAcross + x + 1);
+      }
     }
-  }
 
-  O3D.Model.call(this, $.extend({
-    vertices: positions,
-    normals: normals,
-    texCoords: texCoords,
-    indices: indices
-  }, config));
+    O3D.Model.call(this, $.extend({
+      vertices: positions,
+      normals: normals,
+      texCoords: texCoords,
+      indices: indices
+    }, config));
 
-};
+  };
 
-O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+  O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+
+  //unique id
+  O3D.id = $.time();
 
   //Assign to namespace
   PhiloGL.O3D = O3D;
+
 })();
 
 //shaders.js
@@ -3636,18 +3680,10 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
       }
     }, opt || {});
     
-    //If multiple programs then store as a programMap
-    if ($.type(program) != 'object') {
-      this.program = program;
-    } else {
-      this.programMap = program;
-    }
-
+    this.program = opt.program ? program[opt.program] : program;
     this.camera = camera;
     this.models = [];
     this.config = opt;
-
-    this.setupPicking();
   };
 
   Scene.prototype = {
@@ -3656,22 +3692,27 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
         //Generate unique id for model
-        model.id = model.id || Scene.id++;
+        model.id = model.id || $.uid();
         models.push(model);
         //Create and load Buffers
         this.defineBuffers(model);
       }
     },
 
+    remove: function(model) {
+      var models = this.models,
+          indexOf = models.indexOf(model);
+
+      if (indexOf > -1) {
+        models.splice(indexOf, 1);
+      }
+    },
+
     getProgram: function(obj) {
-      if (!this.programMap) return this.program;
-      
       if (obj && obj.program) {
-        var program = this.programMap[obj.program];
-        if (program != this.program) {
-          this.program = program;
-          program.use();
-        }
+        var program = this.program[obj.program];
+        program.use();
+        return program;
       }
       return this.program;
     },
@@ -3778,9 +3819,12 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
     },
 
     //Renders all objects in the scene.
-    render: function(opt, renderProgram) {
-      var multiplePrograms = !renderProgram && !!this.programMap,
-          camera = this.camera,
+    render: function(opt) {
+      var camera = this.camera,
+          program = this.program,
+          renderProgram = opt.renderProgram,
+          pType = $.type(program),
+          multiplePrograms = !renderProgram && pType == 'object',
           options = $.merge({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
@@ -3788,7 +3832,7 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
 
       //If we're just using one program then
       //execute the beforeRender method once.
-      !multiplePrograms && this.beforeRender(renderProgram || this.program);
+      !multiplePrograms && this.beforeRender(renderProgram || program);
       
       //Go through each model and render it.
       this.models.forEach(function(elem, i) {
@@ -3808,13 +3852,11 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
 
     renderToTexture: function(name, opt) {
       opt = opt || {};
-      var program = opt.textureProgram || this.program,
-          texture = program.textures[name + '-texture'],
-          texMemo = program.textureMemo[name + '-texture'];
+      var texture = app.textures[name + '-texture'],
+          texMemo = app.textureMemo[name + '-texture'];
       
-      this.render(opt, opt.renderProgram);
+      this.render(opt);
 
-      //program.use();
       gl.bindTexture(texMemo.textureType, texture);
       gl.generateMipmap(texMemo.textureType);
       gl.bindTexture(texMemo.textureType, null);
@@ -3825,6 +3867,7 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
           view = new Mat4;
 
       obj.setUniforms(program);
+      obj.setAttributes(program);
       obj.setShininess(program);
       obj.setVertices(program);
       obj.setColors(program);
@@ -3850,6 +3893,7 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
         }
       }
       
+      obj.unsetAttributes(program);
       obj.unsetVertices(program);
       obj.unsetColors(program);
       obj.unsetNormals(program);
@@ -3883,8 +3927,12 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
     
     //returns an element at the given position
     pick: function(x, y) {
+      if (!this.pickingProgram) {
+        this.setupPicking();
+      }
+
       var o3dHash = {},
-          program = this.program,
+          program = app.usedProgram,
           pickingProgram = this.pickingProgram,
           camera = this.camera,
           config = this.config,
@@ -3893,8 +3941,6 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
           width = gl.canvas.width,
           height = gl.canvas.height,
           hash = [],
-          now = $.time(),
-          last = this.last || 0,
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, backgroundColor;
 
@@ -3918,7 +3964,6 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
       //render to texture
       this.renderToTexture('$picking', {
         renderProgram: pickingProgram,
-        textureProgram: pickingProgram,
         onBeforeRender: function(elem, i) {
           if (i == backgroundColor) {
             index = 1;
@@ -3936,7 +3981,7 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
-      //restore all values
+      //restore all values and unbind buffers
       pickingProgram.setFrameBuffer('$picking', false);
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
@@ -3948,8 +3993,6 @@ O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
       return elem && elem.pickable && elem;
     }
   };
-
-  Scene.id = $.time();
   
   Scene.MAX_TEXTURES = 3;
   Scene.MAX_POINT_LIGHTS = 50;

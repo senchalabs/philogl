@@ -296,4 +296,6 @@
       return this;
     }
   };
+
+  PhiloGL.App = App;
 })();
