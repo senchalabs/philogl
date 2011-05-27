@@ -224,7 +224,7 @@
       onError: function(arg) {
         opt.onError(arg);
       },
-      onSuccess: function(vs) {        
+      onSuccess: function(vs) {
         new XHR({
           url: fragmentShaderURI,
           noCache: opt.noCache,
