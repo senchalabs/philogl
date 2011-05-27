@@ -147,14 +147,16 @@
     Program.prototype[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       args.unshift(this);
-      return app[name].apply(app, args);
+      app[name].apply(app, args);
+      return this;
     };
   });
 
   ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
-      return app[name].apply(app, arguments);
+      app[name].apply(app, arguments);
+      return this;
     };
   });
 

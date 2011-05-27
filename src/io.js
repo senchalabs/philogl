@@ -191,7 +191,7 @@
   };
 
   //Load multiple textures from images
-  var Textures = function(program, opt) {
+  var Textures = function(opt) {
     opt = $.merge({
       src: [],
       noCache: false,
@@ -210,15 +210,7 @@
             }
           }, opt);
         });
-        //handle the case of multiple programs
-        if ($.type(program) == 'object') {
-          for (var p in program) {
-            program[p].setTextures(textures);
-          }
-        } else {
-          program.setTextures(textures);
-        }
-        
+        app.setTextures(textures);
         opt.onComplete();
       }
     });

@@ -69,7 +69,7 @@
     },
 
     setAttributes: function(program) {
-      var attribues = this.attributes;
+      var attributes = this.attributes;
       for (var name in attributes) {
         var descriptor = attributes[name],
             bufferId = this.id + '-' + name;
@@ -84,7 +84,7 @@
     },
     
     unsetAttributes: function(program) {
-      var attribues = this.attributes;
+      var attributes = this.attributes;
       for (var name in attributes) {
         var bufferId = this.id + '-' + name;
         program.setBuffer(bufferId, false);
@@ -523,22 +523,17 @@
            texCoords = [],
            indices = [];
 
-      //Add a callback for when a vertex is created
-      opt.onAddVertex = opt.onAddVertex || $.empty;
-
-      //radius to be a function instead of fixed number
       if (typeof radius == 'number') {
         var value = radius;
         radius = function(n1, n2, n3, u, v) {
           return value;
         };
       }
-
       //Create vertices, normals and texCoords
-      for (var x = 0; x <= nlong; x++) {
-        for (var y = 1; y <= nlat; y++) {
-          var u = x / nlong,
-              v = y / nlat,
+      for (var y = 0; y <= nlong; y++) {
+        for (var x = 0; x <= nlat; x++) {
+          var u = x / nlat,
+              v = y / nlong,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
@@ -548,48 +543,29 @@
               ux = cosTheta * sinPhi,
               uy = cosPhi,
               uz = sinTheta * sinPhi,
-              r = radius(ux, uy, uz, u, v),
-              vx = r * ux,
-              vy = r * uy,
-              vz = r * uz;
+              r = radius(ux, uy, uz, u, v);
 
-          vertices.push(vx, vy, vz);
+          vertices.push(r * ux, r * uy, r * uz);
           normals.push(ux, uy, uz);
-          texCoords.push(v, u);
-          
-          //callback
-          opt.onAddVertex({
-            rho: r,
-            theta: theta,
-            phi: phi,
-            lat: x,
-            lon: y,
-            x: vx,
-            y: vy,
-            z: vz,
-            nx: ux,
-            ny: uy,
-            nz: uz,
-            u: u,
-            v: v
-          });
+          texCoords.push(u, v);
         }
       }
+
       //Create indices
       var numVertsAround = nlat + 1;
-      for (x = 0; x < nlong; x++) {
-        for (y = 0; y < nlat; y++) {
+      for (x = 0; x < nlat; x++) {
+        for (y = 0; y < nlong; y++) {
           
-          indices.push(x * numVertsAround + y,
-                      x * numVertsAround + y + 1,
-                      (x + 1) * numVertsAround + y);
+          indices.push(y * numVertsAround + x,
+                      y * numVertsAround + x + 1,
+                      (y + 1) * numVertsAround + x);
 
-          indices.push((x + 1) * numVertsAround + y,
-                       x * numVertsAround + y + 1,
-                       (x + 1) * numVertsAround + y + 1);
+          indices.push((y + 1) * numVertsAround + x,
+                       y * numVertsAround + x + 1,
+                      (y + 1) * numVertsAround + x + 1);
         }
       }
-      
+
       O3D.Model.call(this, $.extend({
         vertices: vertices,
         indices: indices,

@@ -290,7 +290,7 @@
     },
 
     use: function(program) {
-      gl.useProgram(program);
+      gl.useProgram(program.program);
       //remember last used program.
       this.usedProgram = program;
       return this;

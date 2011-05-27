@@ -106,11 +106,6 @@ this.PhiloGL = null;
 
 
     function loadProgramDeps(gl, program, callback) {
-      if (program.$$family == 'program') {
-        //Use program
-        program.use();
-      }
-      
       //get Camera
       var canvas = gl.canvas,
           camera = new PhiloGL.Camera(optCamera.fov, 
@@ -131,6 +126,11 @@ this.PhiloGL = null;
         camera: camera
       });
 
+      //Use program
+      if (program.$$family == 'program') {
+        program.use();
+      }
+      
       //get Events
       if (optEvents) {
         PhiloGL.Events.create(app, $.extend(optEvents, {
@@ -140,7 +140,7 @@ this.PhiloGL = null;
 
       //load Textures
       if (optTextures.src.length) {
-        new PhiloGL.IO.Textures(program, $.extend(optTextures, {
+        new PhiloGL.IO.Textures($.extend(optTextures, {
           onComplete: function() {
             callback(app);
           }

@@ -22,6 +22,265 @@ THE SOFTWARE.
 
 */
 (function() { 
+//core.js
+//Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
+
+//Global
+this.PhiloGL = null;
+
+//Creates a single application object asynchronously
+//with a gl context, a camera, a program, a scene, and an event system.
+(function () {
+  PhiloGL = function(canvasId, opt) {
+    opt = $.merge({
+      context: {
+        /* 
+         debug: true 
+        */
+      },
+      camera: {
+        fov: 45,
+        near: 0.1,
+        far: 500
+      },
+      program: {
+        from: 'defaults', //(defaults|ids|sources|uris)
+        vs: 'Default',
+        fs: 'Default'
+      },
+      scene: {
+        /*
+         All the scene.js options:
+         lights: { ... }
+        */
+      },
+      textures: {
+        src: []
+      },
+      events: {
+        /*
+         All the events.js options:
+         onClick: fn,
+         onTouchStart: fn...
+        */
+      },
+      onLoad: $.empty,
+      onError: $.empty
+
+    }, opt || {});
+    
+    var optContext = opt.context,
+        optCamera = opt.camera,
+        optEvents = opt.events,
+        optTextures = opt.textures,
+        optProgram = $.splat(opt.program),
+        optScene = opt.scene;
+    
+    //get Context global to all framework
+    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+
+    if (!gl) {
+        opt.onError();
+        return null;
+    }
+
+    //get Program
+    var popt = {
+      'defaults': 'fromDefaultShaders',
+      'ids': 'fromShaderIds',
+      'sources': 'fromShaderSources',
+      'uris': 'fromShaderURIs'
+    };
+
+    var programLength = optProgram.length,
+        programCallback = (function() {
+          var count = programLength,
+              programs = {},
+              error = false;
+          return {
+            onSuccess: function(p, popt) {
+              programs[popt.id || (programLength - count)] = p;
+              count--;
+              if (count == 0 && !error) {
+                loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
+                  opt.onLoad(app);
+                });
+              }
+            },
+            onError: function(p) {
+              count--;
+              opt.onError(opt.id);
+              error = true;
+            }
+          };
+        })();
+    
+    optProgram.forEach(function(optProgram, i) {
+      var pfrom = optProgram.from;
+      for (var p in popt) {
+        if (pfrom == p) {
+          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          break;
+        }
+      }
+      if (program) {
+        programCallback.onSuccess(program, optProgram);
+      }
+    });
+
+
+    function loadProgramDeps(gl, program, callback) {
+      //get Camera
+      var canvas = gl.canvas,
+          camera = new PhiloGL.Camera(optCamera.fov, 
+                                      canvas.width / canvas.height, 
+                                      optCamera.near, 
+                                      optCamera.far, optCamera);
+      camera.update();
+      
+      //get Scene
+      var scene = new PhiloGL.Scene(program, camera, optScene);
+      
+      //make app instance global to all framework
+      app = new PhiloGL.App({
+        gl: gl,
+        canvas: canvas,
+        program: program,
+        scene: scene,
+        camera: camera
+      });
+
+      //Use program
+      if (program.$$family == 'program') {
+        program.use();
+      }
+      
+      //get Events
+      if (optEvents) {
+        PhiloGL.Events.create(app, $.extend(optEvents, {
+          bind: app
+        }));
+      }
+
+      //load Textures
+      if (optTextures.src.length) {
+        new PhiloGL.IO.Textures($.extend(optTextures, {
+          onComplete: function() {
+            callback(app);
+          }
+        }));
+      } else {
+        callback(app);
+      }
+    }
+  };
+
+})();
+
+
+//Unpacks the submodules to the global space.
+PhiloGL.unpack = function(branch) {
+  branch = branch || window || global;
+  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
+      branch[module] = PhiloGL[module];
+  });
+};
+
+//Version
+PhiloGL.version = '1.1.1';
+
+//Holds the 3D context, holds the application
+var gl, app;
+
+//Utility functions
+function $(d) {
+  return document.getElementById(d);
+}
+
+$.empty = function() {};
+
+$.time = Date.now || function() {
+  return +new Date;
+};
+
+$.uid = (function() {
+  var t = $.time();
+  
+  return function() {
+    return t++;
+  };
+})();
+
+$.extend = function(to, from) {
+  for (var p in from) {
+    to[p] = from[p];
+  }
+  return to;
+};
+
+$.type = (function() {
+  var oString = Object.prototype.toString,
+      type = function(e) {
+        var t = oString.call(e);
+        return t.substr(8, t.length - 9).toLowerCase();
+      };
+
+  return function(elem) {
+    var elemType = type(elem);
+    if (elemType != 'object') {
+      return elemType;
+    }
+    if (elem.$$family) return elem.$$family;
+    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
+  };
+})();
+
+(function() {
+  function detach(elem) {
+    var type = $.type(elem), ans;
+    if (type == 'object') {
+      ans = {};
+      for (var p in elem) {
+        ans[p] = detach(elem[p]);
+      }
+      return ans;
+    } else if (type == 'array') {
+      ans = [];
+      for (var i = 0, l = elem.length; i < l; i++) {
+        ans[i] = detach(elem[i]);
+      }
+      return ans;
+    } else {
+      return elem;
+    }
+  }
+
+  $.merge = function() {
+    var mix = {};
+    for (var i = 0, l = arguments.length; i < l; i++){
+        var object = arguments[i];
+        if ($.type(object) != 'object') continue;
+        for (var key in object){
+            var op = object[key], mp = mix[key];
+            if (mp && $.type(op) == 'object' && $.type(mp) == 'object') {
+              mix[key] = $.merge(mp, op);
+            } else{
+              mix[key] = detach(op);
+            }
+        }
+    }
+    return mix;
+  };
+})();
+
+$.splat = (function() {
+  var isArray = Array.isArray;
+  return function(a) {
+    return isArray(a) && a || [a];
+  };
+})();
+
+
 //app.js
 //creates a singleton application that stores buffer state and has access to scenes, programs, cameras, etc.
 (function() {
@@ -314,7 +573,7 @@ THE SOFTWARE.
     },
 
     use: function(program) {
-      gl.useProgram(program);
+      gl.useProgram(program.program);
       //remember last used program.
       this.usedProgram = program;
       return this;
@@ -323,265 +582,6 @@ THE SOFTWARE.
 
   PhiloGL.App = App;
 })();
-
-//core.js
-//Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
-
-//Global
-this.PhiloGL = null;
-
-//Creates a single application object asynchronously
-//with a gl context, a camera, a program, a scene, and an event system.
-(function () {
-  PhiloGL = function(canvasId, opt) {
-    opt = $.merge({
-      context: {
-        /* 
-         debug: true 
-        */
-      },
-      camera: {
-        fov: 45,
-        near: 0.1,
-        far: 500
-      },
-      program: {
-        from: 'defaults', //(defaults|ids|sources|uris)
-        vs: 'Default',
-        fs: 'Default'
-      },
-      scene: {
-        /*
-         All the scene.js options:
-         lights: { ... }
-        */
-      },
-      textures: {
-        src: []
-      },
-      events: {
-        /*
-         All the events.js options:
-         onClick: fn,
-         onTouchStart: fn...
-        */
-      },
-      onLoad: $.empty,
-      onError: $.empty
-
-    }, opt || {});
-    
-    var optContext = opt.context,
-        optCamera = opt.camera,
-        optEvents = opt.events,
-        optTextures = opt.textures,
-        optProgram = $.splat(opt.program),
-        optScene = opt.scene;
-    
-    //get Context global to all framework
-    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
-
-    if (!gl) {
-        opt.onError();
-        return null;
-    }
-
-    //get Program
-    var popt = {
-      'defaults': 'fromDefaultShaders',
-      'ids': 'fromShaderIds',
-      'sources': 'fromShaderSources',
-      'uris': 'fromShaderURIs'
-    };
-
-    var programLength = optProgram.length,
-        programCallback = (function() {
-          var count = programLength,
-              programs = {},
-              error = false;
-          return {
-            onSuccess: function(p, popt) {
-              programs[popt.id || (programLength - count)] = p;
-              count--;
-              if (count == 0 && !error) {
-                loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
-                  opt.onLoad(app);
-                });
-              }
-            },
-            onError: function(p) {
-              count--;
-              opt.onError(opt.id);
-              error = true;
-            }
-          };
-        })();
-    
-    optProgram.forEach(function(optProgram, i) {
-      var pfrom = optProgram.from;
-      for (var p in popt) {
-        if (pfrom == p) {
-          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
-          break;
-        }
-      }
-      if (program) {
-        programCallback.onSuccess(program, optProgram);
-      }
-    });
-
-
-    function loadProgramDeps(gl, program, callback) {
-      if (program.$$family == 'program') {
-        //Use program
-        program.use();
-      }
-      
-      //get Camera
-      var canvas = gl.canvas,
-          camera = new PhiloGL.Camera(optCamera.fov, 
-                                      canvas.width / canvas.height, 
-                                      optCamera.near, 
-                                      optCamera.far, optCamera);
-      camera.update();
-      
-      //get Scene
-      var scene = new PhiloGL.Scene(program, camera, optScene);
-      
-      //make app instance global to all framework
-      app = new PhiloGL.App({
-        gl: gl,
-        canvas: canvas,
-        program: program,
-        scene: scene,
-        camera: camera
-      });
-
-      //get Events
-      if (optEvents) {
-        PhiloGL.Events.create(app, $.extend(optEvents, {
-          bind: app
-        }));
-      }
-
-      //load Textures
-      if (optTextures.src.length) {
-        new PhiloGL.IO.Textures(program, $.extend(optTextures, {
-          onComplete: function() {
-            callback(app);
-          }
-        }));
-      } else {
-        callback(app);
-      }
-    }
-  };
-
-})();
-
-
-//Unpacks the submodules to the global space.
-PhiloGL.unpack = function(branch) {
-  branch = branch || window || global;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
-      branch[module] = PhiloGL[module];
-  });
-};
-
-//Version
-PhiloGL.version = '1.1.1';
-
-//Holds the 3D context, holds the application
-var gl, app;
-
-//Utility functions
-function $(d) {
-  return document.getElementById(d);
-}
-
-$.empty = function() {};
-
-$.time = Date.now || function() {
-  return +new Date;
-};
-
-$.uid = (function() {
-  var t = $.time();
-  
-  return function() {
-    return t++;
-  };
-})();
-
-$.extend = function(to, from) {
-  for (var p in from) {
-    to[p] = from[p];
-  }
-  return to;
-};
-
-$.type = (function() {
-  var oString = Object.prototype.toString,
-      type = function(e) {
-        var t = oString.call(e);
-        return t.substr(8, t.length - 9).toLowerCase();
-      };
-
-  return function(elem) {
-    var elemType = type(elem);
-    if (elemType != 'object') {
-      return elemType;
-    }
-    if (elem.$$family) return elem.$$family;
-    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
-  };
-})();
-
-(function() {
-  function detach(elem) {
-    var type = $.type(elem), ans;
-    if (type == 'object') {
-      ans = {};
-      for (var p in elem) {
-        ans[p] = detach(elem[p]);
-      }
-      return ans;
-    } else if (type == 'array') {
-      ans = [];
-      for (var i = 0, l = elem.length; i < l; i++) {
-        ans[i] = detach(elem[i]);
-      }
-      return ans;
-    } else {
-      return elem;
-    }
-  }
-
-  $.merge = function() {
-    var mix = {};
-    for (var i = 0, l = arguments.length; i < l; i++){
-        var object = arguments[i];
-        if ($.type(object) != 'object') continue;
-        for (var key in object){
-            var op = object[key], mp = mix[key];
-            if (mp && $.type(op) == 'object' && $.type(mp) == 'object') {
-              mix[key] = $.merge(mp, op);
-            } else{
-              mix[key] = detach(op);
-            }
-        }
-    }
-    return mix;
-  };
-})();
-
-$.splat = (function() {
-  var isArray = Array.isArray;
-  return function(a) {
-    return isArray(a) && a || [a];
-  };
-})();
-
 
 //math.js
 //Vec3 and Mat4 classes
@@ -2139,14 +2139,16 @@ $.splat = (function() {
     Program.prototype[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       args.unshift(this);
-      return app[name].apply(app, args);
+      app[name].apply(app, args);
+      return this;
     };
   });
 
   ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
-      return app[name].apply(app, arguments);
+      app[name].apply(app, arguments);
+      return this;
     };
   });
 
@@ -2426,7 +2428,7 @@ $.splat = (function() {
   };
 
   //Load multiple textures from images
-  var Textures = function(program, opt) {
+  var Textures = function(opt) {
     opt = $.merge({
       src: [],
       noCache: false,
@@ -2445,15 +2447,7 @@ $.splat = (function() {
             }
           }, opt);
         });
-        //handle the case of multiple programs
-        if ($.type(program) == 'object') {
-          for (var p in program) {
-            program[p].setTextures(textures);
-          }
-        } else {
-          program.setTextures(textures);
-        }
-        
+        app.setTextures(textures);
         opt.onComplete();
       }
     });
@@ -2652,7 +2646,7 @@ $.splat = (function() {
     },
 
     setAttributes: function(program) {
-      var attribues = this.attributes;
+      var attributes = this.attributes;
       for (var name in attributes) {
         var descriptor = attributes[name],
             bufferId = this.id + '-' + name;
@@ -2667,7 +2661,7 @@ $.splat = (function() {
     },
     
     unsetAttributes: function(program) {
-      var attribues = this.attributes;
+      var attributes = this.attributes;
       for (var name in attributes) {
         var bufferId = this.id + '-' + name;
         program.setBuffer(bufferId, false);
@@ -3106,22 +3100,17 @@ $.splat = (function() {
            texCoords = [],
            indices = [];
 
-      //Add a callback for when a vertex is created
-      opt.onAddVertex = opt.onAddVertex || $.empty;
-
-      //radius to be a function instead of fixed number
       if (typeof radius == 'number') {
         var value = radius;
         radius = function(n1, n2, n3, u, v) {
           return value;
         };
       }
-
       //Create vertices, normals and texCoords
-      for (var x = 0; x <= nlong; x++) {
-        for (var y = 1; y <= nlat; y++) {
-          var u = x / nlong,
-              v = y / nlat,
+      for (var y = 0; y <= nlong; y++) {
+        for (var x = 0; x <= nlat; x++) {
+          var u = x / nlat,
+              v = y / nlong,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
@@ -3131,48 +3120,29 @@ $.splat = (function() {
               ux = cosTheta * sinPhi,
               uy = cosPhi,
               uz = sinTheta * sinPhi,
-              r = radius(ux, uy, uz, u, v),
-              vx = r * ux,
-              vy = r * uy,
-              vz = r * uz;
+              r = radius(ux, uy, uz, u, v);
 
-          vertices.push(vx, vy, vz);
+          vertices.push(r * ux, r * uy, r * uz);
           normals.push(ux, uy, uz);
-          texCoords.push(v, u);
-          
-          //callback
-          opt.onAddVertex({
-            rho: r,
-            theta: theta,
-            phi: phi,
-            lat: x,
-            lon: y,
-            x: vx,
-            y: vy,
-            z: vz,
-            nx: ux,
-            ny: uy,
-            nz: uz,
-            u: u,
-            v: v
-          });
+          texCoords.push(u, v);
         }
       }
+
       //Create indices
       var numVertsAround = nlat + 1;
-      for (x = 0; x < nlong; x++) {
-        for (y = 0; y < nlat; y++) {
+      for (x = 0; x < nlat; x++) {
+        for (y = 0; y < nlong; y++) {
           
-          indices.push(x * numVertsAround + y,
-                      x * numVertsAround + y + 1,
-                      (x + 1) * numVertsAround + y);
+          indices.push(y * numVertsAround + x,
+                      y * numVertsAround + x + 1,
+                      (y + 1) * numVertsAround + x);
 
-          indices.push((x + 1) * numVertsAround + y,
-                       x * numVertsAround + y + 1,
-                       (x + 1) * numVertsAround + y + 1);
+          indices.push((y + 1) * numVertsAround + x,
+                       y * numVertsAround + x + 1,
+                      (y + 1) * numVertsAround + x + 1);
         }
       }
-      
+
       O3D.Model.call(this, $.extend({
         vertices: vertices,
         indices: indices,
@@ -3709,12 +3679,13 @@ $.splat = (function() {
     },
 
     getProgram: function(obj) {
-      if (obj && obj.program) {
-        var program = this.program[obj.program];
+      var program = this.program;
+      if (program.$$family != 'program' && obj && obj.program) {
+        program = program[obj.program];
         program.use();
         return program;
       }
-      return this.program;
+      return program;
     },
 
     defineBuffers: function(obj) {
@@ -3820,6 +3791,7 @@ $.splat = (function() {
 
     //Renders all objects in the scene.
     render: function(opt) {
+      opt = opt || {};
       var camera = this.camera,
           program = this.program,
           renderProgram = opt.renderProgram,

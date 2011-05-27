@@ -68,12 +68,13 @@
     },
 
     getProgram: function(obj) {
-      if (obj && obj.program) {
-        var program = this.program[obj.program];
+      var program = this.program;
+      if (program.$$family != 'program' && obj && obj.program) {
+        program = program[obj.program];
         program.use();
         return program;
       }
-      return this.program;
+      return program;
     },
 
     defineBuffers: function(obj) {
@@ -179,6 +180,7 @@
 
     //Renders all objects in the scene.
     render: function(opt) {
+      opt = opt || {};
       var camera = this.camera,
           program = this.program,
           renderProgram = opt.renderProgram,

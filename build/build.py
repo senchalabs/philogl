@@ -1,8 +1,8 @@
 path = '../src/'
 
 files = [
-  'app.js',
   'core.js',
+  'app.js',
   'math.js',
   'event.js',
   'program.js',

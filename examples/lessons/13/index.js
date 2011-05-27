@@ -89,9 +89,6 @@ function webGLStart() {
           rho = 6,
           theta = 0;
       
-      //Copy original program properties (like buffer config, texture config) into the new program 
-      vertexProgram.setState(fragmentProgram);
-
       //Basic gl setup
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.clearDepth(1.0);
