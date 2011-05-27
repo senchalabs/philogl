@@ -2525,7 +2525,7 @@ $.splat = (function() {
                 try {
                   var ans = v.apply(ctx, arguments);
                 } catch (e) {
-                  throw k + " " + e;                  
+                  throw k + " " + e;
                 }
                 var errorStack = [], error;
                 while((error = ctx.getError()) !== ctx.NO_ERROR) {
@@ -3793,7 +3793,6 @@ $.splat = (function() {
     render: function(opt) {
       opt = opt || {};
       var camera = this.camera,
-          program = this.program,
           renderProgram = opt.renderProgram,
           pType = $.type(program),
           multiplePrograms = !renderProgram && pType == 'object',
@@ -3878,7 +3877,7 @@ $.splat = (function() {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
-      program.setFrameBuffer('$picking', {
+      app.setFrameBuffer('$picking', {
         width: 1,
         height: 1,
         bindToTexture: {
@@ -3893,7 +3892,7 @@ $.splat = (function() {
         },
         bindToRenderBuffer: true
       });
-      program.setFrameBuffer('$picking', false);
+      app.setFrameBuffer('$picking', false);
       this.pickingProgram = program;
     },
     
@@ -3922,8 +3921,8 @@ $.splat = (function() {
       
       //enable picking and render to texture
       pickingProgram.use();
+      app.setFrameBuffer('$picking', true);
       pickingProgram.setUniform('enablePicking', true);
-      pickingProgram.setFrameBuffer('$picking', true);
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
@@ -3944,7 +3943,7 @@ $.splat = (function() {
           hash[0] = suc % 256;
           hash[1] = ((suc / 256) >> 0) % 256;
           hash[2] = ((suc / (256 * 256)) >> 0) % 256;
-          program.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+          pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
           o3dHash[String(hash)] = elem;
         }
       });
@@ -3954,7 +3953,7 @@ $.splat = (function() {
       var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
 
       //restore all values and unbind buffers
-      pickingProgram.setFrameBuffer('$picking', false);
+      app.setFrameBuffer('$picking', false);
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;

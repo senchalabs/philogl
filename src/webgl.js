@@ -23,7 +23,7 @@
                 try {
                   var ans = v.apply(ctx, arguments);
                 } catch (e) {
-                  throw k + " " + e;                  
+                  throw k + " " + e;
                 }
                 var errorStack = [], error;
                 while((error = ctx.getError()) !== ctx.NO_ERROR) {
