@@ -180,7 +180,7 @@ this.PhiloGL = null;
 
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(branch) {
-  branch = branch || window || global;
+  branch = branch || window || self;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
@@ -3691,6 +3691,7 @@ $.splat = (function() {
     defineBuffers: function(obj) {
       var program = this.getProgram(obj);
       
+      obj.setAttributes(program, true);
       obj.setVertices(program, true);
       obj.setColors(program, true);
       obj.setNormals(program, true);
@@ -3793,6 +3794,7 @@ $.splat = (function() {
     render: function(opt) {
       opt = opt || {};
       var camera = this.camera,
+          program = this.program,
           renderProgram = opt.renderProgram,
           pType = $.type(program),
           multiplePrograms = !renderProgram && pType == 'object',

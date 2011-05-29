@@ -8,7 +8,9 @@
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body onload="init();">
-    <div id="loading"> </div>
+    <div id="loading-panel">
+      <span id="perc-loaded"></span>
+    </div>
   
     <div id="fallback" class="fallback"></div>
 
@@ -21,9 +23,16 @@
           the world. Work based on <a href="#">Myriahedral Projections</a> by
           <a href="#">Jack van Wijk</a></div>
       </div>
+      
+      <canvas id="map-canvas" width="1024" height="512"></canvas>
 
-
-        <canvas id="map-canvas" width="512" height="512"></canvas>
+      <ul>
+        <li><a id="tetra-link" href="#">Tetrahedron</a></li>
+        <li><a id="hexa-link" href="#">Hexahedron</a></li>
+        <li><a id="octa-link" href="#">Octahedron</a></li>
+        <li><a id="dode-link" href="#">Dodecahedron</a></li>
+        <li><a id="ico-link" href="#">Icosahedron</a></li>
+      </ul>
 
     </div>
   </div>

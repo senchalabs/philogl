@@ -44,7 +44,7 @@ uniform float alphaAngle;
 
 void main(void) {
   vec3 lightWeighting;
-  if (!enableLights || renderType == 0) {
+  if (false && !enableLights || renderType == 0) {
     lightWeighting = vec3(1.0, 1.0, 1.0);
   } else {
     vec3 lightDirection;
@@ -81,7 +81,7 @@ void main(void) {
     lightWeighting = ambientColor + diffuseLight + specularLight;
   }
 
-  vec4 fragmentColor = vec4(0.2, 0.2, 0.2, 1.0);
+  vec4 fragmentColor = vColor;//vec4(0.2, 0.2, 0.2, 1.0);
   if (renderType != 0 && (hasTexture1 || hasTexture2 || hasTexture3)) {
     //atmospheric
     if (hasTexture1) {

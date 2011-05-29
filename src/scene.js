@@ -80,6 +80,7 @@
     defineBuffers: function(obj) {
       var program = this.getProgram(obj);
       
+      obj.setAttributes(program, true);
       obj.setVertices(program, true);
       obj.setColors(program, true);
       obj.setNormals(program, true);
@@ -182,6 +183,7 @@
     render: function(opt) {
       opt = opt || {};
       var camera = this.camera,
+          program = this.program,
           renderProgram = opt.renderProgram,
           pType = $.type(program),
           multiplePrograms = !renderProgram && pType == 'object',

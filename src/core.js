@@ -156,7 +156,7 @@ this.PhiloGL = null;
 
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(branch) {
-  branch = branch || window || global;
+  branch = branch || window || self;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
