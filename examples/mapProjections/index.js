@@ -25,6 +25,18 @@ modelWorker.onmessage = function(e) {
   var data = e.data,
       type = typeof data;
 
+  if (data.length == 6) {
+    console.log('wPhi phi phi0 wLambda lambda lambda0');
+    console.log(data);
+    return;
+  }
+
+  if (data.length == 4) {
+    console.log('maxPhi', 'minPhi', 'maxLambda', 'minLambda');
+    console.log(data);
+    return;
+  }
+
   if (type == 'number') {
     percLoaded.innerHTML = data + '%';
   } else {

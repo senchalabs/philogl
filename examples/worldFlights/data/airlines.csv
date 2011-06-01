@@ -1,0 +1,598 @@
+"airline","country","number_of_flights"
+"Ryanair","Ireland",2186
+"United Airlines","United States",2126
+"Delta Air Lines","United States",2031
+"Continental Airlines","United States",1491
+"US Airways","United States",1377
+"American Airlines","United States",1244
+"Air China","China",1022
+"Lufthansa","Germany",1021
+"China Eastern Airlines","China",1006
+"China Southern Airlines","China",994
+"Southwest Airlines","United States",954
+"easyJet","United Kingdom",804
+"Alitalia","Italy",767
+"Air Berlin","Germany",734
+"Air France","France",730
+"Air Canada","Canada",684
+"Iberia Airlines","Spain",610
+"TAM Brazilian Airlines","Brazil",579
+"British Airways","United Kingdom",471
+"All Nippon Airways","Japan",446
+"Scandinavian Airlines System","Sweden",446
+"Turkish Airlines","Turkey",445
+"Alaska Airlines","ALASKA",429
+"Saudi Arabian Airlines","Saudi Arabia",408
+"Hainan Airlines","China",404
+"Air India Limited","India",404
+"Wizz Air","Bulgaria",382
+"Jet Airways","India",370
+"WestJet","Canada",366
+"Qantas","Australia",351
+"Norwegian Air Shuttle","Norway",350
+"AirTran Airways","United States",348
+"City Connexion Airlines","Burundi",347
+"Thomsonfly","United Kingdom",345
+"KLM Royal Dutch Airlines","Netherlands",339
+"Swiss International Air Lines","Switzerland",319
+"Aeroflot Russian Airlines","Russia",314
+"Xiamen Airlines","China",310
+"Japan Airlines","Japan",310
+"Malaysia Airlines","Malaysia",308
+"JetBlue Airways","United States",300
+"Allegiant Air","United States",298
+"Shenzhen Airlines","China",290
+"Sichuan Airlines","China",284
+"Pakistan International Airlines","Pakistan",284
+"Flybe","United Kingdom",283
+"Hellas Jet","Greece",277
+"AeroMéxico","Mexico",277
+"bmi","United Kingdom",271
+"Royal Air Maroc","Morocco",261
+"Spanair","Spain",259
+"Condor Flugdienst","Germany",257
+"Korean Air","Republic of Korea",248
+"Austrian Airlines","Austria",243
+"Kingfisher Airlines","India",237
+"Shanghai Airlines","China",236
+"Asiana Airlines","Republic of Korea",234
+"Germanwings","Germany",228
+"Frontier Airlines","United States",223
+"LAN Airlines","Chile",222
+"TAP Portugal","Portugal",220
+"Shandong Airlines","China",220
+"Emirates Airline","United Arab Emirates",219
+"Thai Airways International","Thailand",217
+"Pacific Blue","New Zealand",214
+"Transavia France","France",213
+"Aer Lingus","Ireland",208
+"Ethiopian Airlines","Ethiopia",207
+"Air Europa","Spain",203
+"S7 Airlines","Russia",200
+"Lion Mentari Airlines","Indonesia",200
+"Air New Zealand","New Zealand",198
+"Thomas Cook Airlines","Belgium",195
+"Singapore Airlines","Singapore",193
+"TRIP Linhas A","Brazil",192
+"Air Foyle","United Kingdom",192
+"Qatar Airways","Qatar",192
+"TUIfly","Germany",189
+"Brussels Airlines","Belgium",187
+"Air Algerie","Algeria",183
+"Formosa Airlines","Taiwan",183
+"South African Airways","South Africa",182
+"Widerøe","Norway",177
+"Cathay Pacific","Hong Kong SAR of China",175
+"Vietnam Airlines","Vietnam",174
+"Pulkovo Aviation Enterprise","Russia",174
+"Pegasus Airlines","Turkey",174
+"Egyptair","Egypt",172
+"Iran Air","Iran",171
+"Jetstar Airways","Australia",164
+"AirAsia","Malaysia",162
+"LOT Polish Airlines","Poland",160
+"Avianca - Aerovias Nacionales de Colombia","AVIANCA",156
+"Aerosvit Airlines","Ukraine",156
+"Copa Airlines","Panama",156
+"Philippine Airlines","Philippines",154
+"Jet2.com","United Kingdom",152
+"Transavia Holland","Netherlands",151
+"Etihad Airways","United Arab Emirates",147
+"Uzbekistan Airways","Uzbekistan",146
+"Iran Aseman Airlines","Iran",145
+"Cebu Pacific","Philippines",144
+"Tunisair","Tunisia",140
+"Finnair","Finland",139
+"Garuda Indonesia","Indonesia",138
+"IndiGo Airlines","India",138
+"Transaero Airlines","Russia",137
+"Kenya Airways","Kenya",135
+"Aerolineas Argentinas","Argentina",134
+"Grupo TACA","Costa Rica",132
+"Czech Airlines","Czech Republic",131
+"Meridiana","Italy",130
+"Air Baltic","Latvia",129
+"Spirit Airlines","United States",126
+"Air Madagascar","Madagascar",124
+"China Airlines","Taiwan",121
+"SunExpress","Turkey",120
+"Royal Jordanian","Jordan",119
+"Great Lakes Airlines","United States",118
+"Birmingham European","United Kingdom",118
+"Malév","Hungary",112
+"Olympic Airlines","Greece",109
+"Ukraine International Airlines","Ukraine",106
+"Japan Air System","Japan",104
+"Air Paradise International","Indonesia",104
+"Yemenia","Yemen",104
+"Air India Express","India",103
+"Air Astana","Kazakhstan",102
+"Oman Air","Oman",101
+"Spicejet","India",99
+"SATENA","Colombia",97
+"Volaris","Mexico",96
+"Gulf Air Bahrain","Bahrain",94
+"Air Tahiti","French Polynesia",93
+"Libyan Arab Airlines","Libya",93
+"Air Vanuatu","Vanuatu",92
+"SriLankan Airlines","Sri Lanka",92
+"bmibaby","United Kingdom",92
+"Air Bourbon","Reunion",90
+"Luxair","Luxembourg",90
+"Aegean Airlines","Greece",90
+"EVA Air","Taiwan",89
+"Croatia Airlines","Croatia",88
+"Tarom","Romania",88
+"Air Niugini","Papua New Guinea",87
+"Air Arabia","United Arab Emirates",87
+"Syrian Arab Airlines","Syrian Arab Republic",87
+"Ural Airlines","Russia",85
+"Cimber Air","Denmark",84
+"Vladivostok Air","Russia",84
+"Air Sahara","India",84
+"China Northwest Airlines","China",83
+"El Al Israel Airlines","Israel",83
+"Regional Express","Australia",82
+"Nas Air","Saudi Arabia",81
+"Blue1","Finland",81
+"UTair-Express","Russia",80
+"First Air","Canada",80
+"Leeward Islands Air Transport","Antigua and Barbuda",79
+"Antinea Airlines","Algeria",78
+"China SSS","China",78
+"Aigle Azur","France",76
+"Cargo Plus Aviation","United Arab Emirates",76
+"Niki","Austria",76
+"Bering Air","United States",75
+"LACSA","Costa Rica",74
+"Kuwait Airways","Kuwait",73
+"SilkAir","Singapore",73
+"SATA International","Portugal",73
+"Cape Air","United States",72
+"Armavia","Armenia",72
+"Comair","South Africa",71
+"Virgin Atlantic Airways","United Kingdom",70
+"Air Malta","Malta",70
+"Flyhy Cargo Airlines","Thailand",69
+"Mahan Air","Iran",69
+"TAAG Angola Airlines","Angola",68
+"Air Greenland","Denmark",67
+"Thai AirAsia","Thailand",66
+"Air Pacific","Fiji",65
+"Jat Airways","Serbia",65
+"Myanma Airways","Myanmar",64
+"Oceanair","Brazil",64
+"Dragonair","DRAGON",63
+"Aircompany Yakutia","Russia",63
+"Solomon Airlines","Solomon Islands",63
+"Carpatair","Romania",62
+"Empresa Ecuatoriana De Aviacion","Ecuador",62
+"Wind Jet","Italy",61
+"Sky Airline","Chile",61
+"Cubana de Aviación","Cuba",61
+"Hawaiian Airlines","United States",61
+"Bangkok Airways","Thailand",61
+"Fly Dubai","United Arab Emirates",60
+"Aerosur","Bolivia",60
+"Aires"," S.A.",60
+"Bahamasair","Bahamas",60
+"Air Transat","Canada",59
+"Air Mauritius","Mauritius",59
+"Potomac Air","United States",58
+"Belavia Belarusian Airlines","Belarus",58
+"Fly540","Kenya",58
+"Arkefly","Netherlands",58
+"Azerbaijan Airlines","Azerbaijan",57
+"China United","China",56
+"Middle East Airlines","Lebanon",56
+"Bulgaria Air","Bulgaria",56
+"Aeroflot-Nord","Russia",55
+"Scat Air","Kazakhstan",55
+"Air Arabia Maroc","Morocco",54
+"Go Air","India",54
+"Iraqi Airways","Iraq",54
+"Cyprus Airways","Cyprus",54
+"Adria Airways","Slovenia",53
+"Afriqiyah Airways","Libya",52
+"Sun Country Airlines","United States",52
+"Indonesia AirAsia","Indonesia",52
+"Biman Bangladesh Airlines","Bangladesh",52
+"Airlines PNG","Papua New Guinea",51
+"Aero Condor Peru","Peru",51
+"Air Bangladesh","Bangladesh",50
+"Air Macau","Macao",48
+"Firefly","Malaysia",48
+"Uni Air","Taiwan",48
+"TransAsia Airways","Taiwan",48
+"Air Mozambique","Mozambique",47
+"Aeromar","Mexico",46
+"Sriwijaya Air","Indonesia",46
+"Eastern Airways","United Kingdom",45
+"Pan American Airways","United States",44
+"Mandarin Airlines","Taiwan",44
+"Balkan Bulgarian Airlines","",44
+"Canadian North","Canada",44
+"Zest Air","Philippines",44
+"Bearskin Lake Air Service","Canada",43
+"Abu Dhabi Amiri Flight","United Arab Emirates",43
+"Tiger Airways","Singapore",42
+"Peninsula Airways","United States",42
+"Airbus France","France",42
+"Tiger Airways Australia","Australia",42
+"Virgin America","United States",42
+"Air Austral","France",42
+"Shaheen Air International","Pakistan",41
+"Tropic Air","Belize",40
+"TACV","Portugal",40
+"Aeroflot-Don","Russia",40
+"Karat","Russia",40
+"Jet4You","Morocco",40
+"Skymark Airlines","Japan",40
+"Virgin Nigeria Airways","Nigeria",40
+"WebJet Linhas A","Brazil",38
+"BRA-Transportes Aereos","Brazil",38
+"Lao Airlines","Lao Peoples Democratic Republic",38
+"Express One International","United States",38
+"USA3000 Airlines","United States",38
+"Air One","Italy",38
+"Airlines Of Tasmania","Australia",38
+"Jetstar Asia Airways","Singapore",38
+"Corsairfly","France",37
+"Royal Brunei Airlines","Brunei",36
+"Aer Arann","Ireland",36
+"Star Peru (2I)","Peru",36
+"Mandala Airlines","Indonesia",36
+"Horizon Airlines","Australia",36
+"Air Moldova","Moldova",36
+"Hong Kong Express Airways","Hong Kong SAR of China",36
+"Caribbean Airlines","Trinidad and Tobago",36
+"Airnorth","Australia",36
+"CAL Cargo Air Lines","Israel",35
+"Conviasa","Venezuela",34
+"City Airline","Sweden",34
+"Nok Air","Thailand",34
+"NHT Lineas Aereas","Brazil",34
+"Astral Aviation","Kenya",33
+"Canadian Western Airlines","Canada",33
+"Avianova (Russia)","Russia",33
+"SATA Air Acores","Portugal",32
+"Skyways Express","Sweden",32
+"SeaPort Airlines","United States",32
+"Yuzhmashavia","Ukraine",32
+"Air Caraïbes","France",32
+"Aserca Airlines","Venezuela",32
+"Ciel Canadien","Canada",31
+"Icelandair","Iceland",31
+"Aerocondor","Portugal",30
+"AirAsia X","Malaysia",30
+"National Airlines","United States",30
+"Kuban Airlines","Russia",30
+"Yangtze River Express","China",30
+"Pacific Wings","United States",30
+"Air Italy","Italy",30
+"Corse-Mediterranee","France",30
+"Jazeera Airways","Kuwait",30
+"Amaszonas","Bolivia",29
+"Precision Air","Tanzania",29
+"Estonian Air","Estonia",28
+"Air Burkina","Burkina Faso",28
+"PLUNA","Uruguay",28
+"Air Midwest","United States",28
+"Airlinair","France",28
+"Pacific Coastal Airline","Canada",28
+"Georgian Airways","Georgia",27
+"Logan Air","United Kingdom",27
+"Sudan Airways","Sudan",27
+"Air Namibia","Namibia",27
+"Cayman Airways","Cayman Islands",27
+"Kam Air","Afghanistan",27
+"International Business Air","Sweden",26
+"Metro Batavia","Indonesia",26
+"Finncomm Airlines","Finland",26
+"Kish Air","Iran",26
+"Montenegro Airlines","Montenegro",26
+"Air Philippines","Philippines",26
+"Porter Airlines","Canada",26
+"Caucasus Airlines","Georgia",26
+"Binter Canarias","Spain",26
+"Japan Transocean Air","Japan",25
+"Tajik Air","Tajikistan",24
+"Flybaboo","Switzerland",24
+"Air Caledonie International","France",24
+"Air Botswana","Botswana",24
+"Malmö Aviation","Sweden",24
+"Sat Airlines","Kazakhstan",24
+"Salzburg arrows","Austria",24
+"Caspian Airlines","Iran",24
+"Blue Panorama Airlines","Italy",24
+"Gazpromavia","Russia",24
+"ZABAIKAL AIRLINES","Russia",24
+"Rwandair Express","Rwanda",23
+"Southern Winds Airlines","Argentina",23
+"Nepal Airlines","Nepal",23
+"Sky Express","Russia",22
+"Trans Pas Air","United States",22
+"Ibex Airlines","Japan",22
+"Travel Service","Czech Republic",22
+"Druk Air","Bhutan",22
+"AirBridge Cargo","Russia",22
+"United Airways","Bangladesh",22
+"Air Bagan","Myanmar",22
+"Domodedovo Airlines","Russia",22
+"Big Sky Airlines","United States",21
+"V Australia Airlines","Australia",21
+"TAM Mercosur","Paraguay",21
+"Tatarstan Airlines","Russia",20
+"El-Buraq Air Transport","Libya",20
+"Aereonautica militare","Italy",20
+"Aurigny Air Services","United Kingdom",20
+"Twin Jet","France",20
+"Moskovia Airlines","Russia",20
+"Halcyonair","Cape Verde",20
+"XL Airways France","France",20
+"Ariana Afghan Airlines","Afghanistan",20
+"TAME","Ecuador",20
+"Euro Exec Express","Sweden",20
+"PMTair","Cambodia",20
+"Jeju Air","Republic of Korea",20
+"Hokkaido International Airlines","Japan",20
+"Consorcio Aviaxsa","Mexico",20
+"Air Bosna","Bosnia and Herzegovina",20
+"Salmon Air","United States",19
+"Air Seychelles","Seychelles",19
+"Air Iceland","Iceland",19
+"Sun D'Or","Israel",19
+"Air Mandalay","Burma",19
+"Air Guinee Express","Guinea",19
+"Pal airlines","Chile",19
+"Elysian Airlines","Cameroon",18
+"Viking Hellas","Greece",18
+"Astrakhan Airlines","Russia",18
+"Island Air (WP)","United States",18
+"MDLR Airlines","India",18
+"Air Mekong","Vietnam",18
+"Arkia Israel Airlines","Israel",18
+"Dominicana de Aviaci","Dominican Republic",18
+"Strategic Airlines","Australia",18
+"Ostfriesische Lufttransport","Germany",18
+"Air Busan","Republic of Korea",18
+"Atlasjet","Turkey",18
+"Midwest Airlines (Egypt)","Egypt",18
+"Belair Airlines","Switzerland",17
+"Gabon Airlines","Gabon",17
+"Iberworld","Spain",17
+"Interair South Africa","South Africa",16
+"Centavia","Serbia",16
+"Orient Thai Airlines","Thailand",16
+"Fuji Dream Airlines","Japan",16
+"Air Jamaica","Jamaica",16
+"Northwestern Air","Canada",16
+"Skynet Airlines","Ireland",16
+"Mesa Airlines","United States",16
+"Maya Island Air","Belize",16
+"Virgin Pacific","Fiji",16
+"Santa Barbara Airlines","Venezuela",16
+"Islas Airways","Spain",16
+"Cirrus Airlines","Germany",16
+"Skynet Asia Airways","Japan",15
+"Hello","Switzerland",15
+"Kenmore Air","United States",15
+"Euroline","Georgia",15
+"Shuttle America","United States",15
+"Aeropelican Air Services","Australia",14
+"Turkmenistan Airlines","Turkmenistan",14
+"Intersky","Austria",14
+"Israir","Israel",14
+"Nasair","Eritrea",14
+"Kavminvodyavia","Russia",14
+"South East Asian Airlines","Philippines",14
+"Air Finland","Finland",14
+"Martinair","Netherlands",14
+"Sharp Airlines","Australia",14
+"Yeti Airways","Nepal",14
+"ALAK","Russia",14
+"Astraeus","United Kingdom",14
+"Maxair","Sweden",14
+"ADC Airlines","Nigeria",14
+"Fly Air","Turkey",13
+"L","Argentina",13
+"Tuninter","Tunisia",13
+"Tassili Airlines","Algeria",13
+"Surinam Airways","Suriname",13
+"Maldivian","Maldives",13
+"Amerijet International","United States",13
+"Merpati Nusantara Airlines","Indonesia",13
+"Northern Dene Airways","Canada",13
+"Air North Charter - Canada","Canada",13
+"Samara Airlines","Russia",12
+"Comores Airlines","Comoros",12
+"Pacific Airlines","Vietnam",12
+"Omni Air International","United States",12
+"Air Malawi","Malawi",12
+"Helvetic Airways","Switzerland",12
+"Air Antilles Express","Guadeloupe",12
+"Windward Islands Airways","Netherlands Antilles",12
+"Air Rarotonga","Cook Islands",12
+"Slovak Airlines","Slovakia",12
+"Voronezhskie Airlanes","Russia",12
+"SmartLynx Airlines","Latvia",12
+"Air Madrid","Spain",12
+"Aero Services Executive","France",12
+"MasAir","Mexico",12
+"Avient Aviation","Zimbabwe",12
+"Nauru Air Corporation","Nauru",12
+"Aerolane","Ecuador",12
+"Pacific East Asia Cargo Airlines","Philippines",12
+"Aerolineas Galapagos (Aerogal)","Ecuador",11
+"FlyLal","Lithuania",11
+"Air Salone","Sierra Leone",11
+"Aeroper","Peru",10
+"Atlantic Airways","Faroe Islands",10
+"Islena De Inversiones","Honduras",10
+"Tiara Air","Aruba",10
+"Aero Flight","Germany",10
+"Mango","South Africa",10
+"NordStar Airlines","Russia",10
+"North Coast Aviation","Papua New Guinea",10
+"Royal Phnom Penh Airways","Cambodia",10
+"Proflight Commuter Services","Zambia",10
+"Skybus Airlines","United States",10
+"Caribbean Star Airlines","Antigua and Barbuda",10
+"Catovair","Mauritius",10
+"Canadian National Airways","Canada",10
+"Peruvian Airlines","Peru",10
+"1-2-go","Thailand",10
+"Orenburg Airlines","Russia",10
+"Joy Air","China",10
+"MIAT Mongolian Airlines","Mongolia",10
+"JobAir","Czech Republic",10
+"Sierra National Airlines","Sierra Leone",10
+"Air Tahiti Nui","France",10
+"Berjaya Air","Malaysia",10
+"Itek Air","Kyrgyzstan",10
+"Aero 2000","Argentina",10
+"Falcon Aviation","Sweden",10
+"Camair-co","Cameroon",9
+"LAI - Linea Aerea IAACA","Venezuela",9
+"Fly Colombia ( Interliging Flights )","Colombia",9
+"Omskavia Airline","Russia",8
+"Hawkair","Canada",8
+"Kogalymavia Air Company","Russia",8
+"Air Tindi","Canadian Territories",8
+"Nationwide Airlines","South Africa",8
+"Servicios de Transportes A","Argentina",8
+"Skagway Air Service","United States",8
+"Oceanic Airlines","Guinea",8
+"Air Tanzania","Tanzania",8
+"Ukrainian Cargo Airways","Ukraine",8
+"Air Europe","Italy",8
+"Changan Airlines","China",8
+"Alaska Seaplane Service","United States",8
+"Valuair","Singapore",8
+"Air Koryo","Democratic People's Republic of Korea",8
+"Air Choice One","United States",8
+"Daallo Airlines","Djibouti",8
+"Air Hamburg (AHO)","Germany",8
+"Astair","Russian Federation",7
+"LAN Peru","Peru",6
+"Republic Express Airlines","Indonesia",6
+"Eastar Jet","South Korea",6
+"Cambodia Angkor Air (K6)","Cambodia",6
+"Nordic Regional","Sweden",6
+"Albanian Airlines","Albania",6
+"Turan Air","Azerbaijan",6
+"VIP Ecuador","Ecuador",6
+"East African","Uganda",6
+"AlMasria Universal Airlines","Egypt",6
+"Saratov Aviation Division","Russia",6
+"SOCHI AIR","Russia",6
+"ATA Airlines","United States",6
+"Seaborne Airlines","United States",6
+"Aviaexpress","Hungary",6
+"Dalavia","Russia",6
+"Harbor Airlines","United States",6
+"Motor Sich","Ukraine",6
+"Air Saint Pierre","France",6
+"Freedom Air","United States",6
+"Hex'Air","France",5
+"Teamline Air","Austria",5
+"Rico Linhas A","Brazil",5
+"Safi Airlines","Afghanistan",4
+"Cosmic Air","Nepal",4
+"China United Airlines","China",4
+"Pace Airlines","United States",4
+"Golden Air","Sweden",4
+"Aero Lanka","Sri Lanka",4
+"Avialeasing Aviation Company","Uzbekistan",4
+"Asian Spirit","Philippines",4
+"Bemidji Airlines","United States",4
+"SGA Airlines","Thailand",4
+"Krylo Airlines","Russia",4
+"Air Ivoire","Ivory Coast",4
+"Flightline","United Kingdom",4
+"Atlantis European Airways","Armenia",4
+"Moldavian Airlines","Moldova",4
+"Gryphon Airlines","United States",4
+"PAN Air","Spain",4
+"Ghana International Airlines","Ghana",4
+"Primaris Airlines","United States",4
+"British International Helicopters","United Kingdom",4
+"Héli Sécurité Helicopter Airlines","France",4
+"Ada Air","Albania",4
+"ABSA - Aerolinhas Brasileiras","Brazil",4
+"Welcome Air","Austria",4
+"RACSA","Guatemala",4
+"40-Mile Air","United States",4
+"Chicago Express","United States",4
+"Viaggio Air","Bulgaria",4
+"Star Flyer","Japan",4
+"Air Alps Aviation","Austria",4
+"Mountain Air Company","Sierra Leone",3
+"Abaet","Brazil",3
+"UM Airlines","Ukraine",3
+"Air Zimbabwe","Zimbabwe",3
+"Aero-Service","Republic of the Congo",3
+"Isles of Scilly Skybus","United Kingdom",2
+"Helijet","Canada",2
+"Access Air","United States",2
+"Texas Wings","United States",2
+"JAL Express","Japan",2
+"Nouvel Air Tunisie","Tunisia",2
+"Alpi Eagles","Italy",2
+"Island Airlines","United States",2
+"Lagun Air","Spain",2
+"Linea Aerea de Servicio Ejecutivo Regional","Venezuela",2
+"Aero Airlines","Estonia",2
+"Reem Air","Kyrgyzstan",2
+"Danube Wings (V5)","Slovakia",2
+"Pinnacle Airlines","United States",2
+"New England Airlines","United States",2
+"Trans World Airlines","United States",2
+"Lufttransport","Norway",2
+"Euromanx Airways","Austria",2
+"ATRAN Cargo Airlines","Russian Federation",2
+"Air Dolomiti","Italy",2
+"Interstate Airline","Netherlands",2
+"Excel Airways","United Kingdom",2
+"Sibaviatrans","Russia",2
+"TransHolding System","Brazil",2
+"Eagle Air","Uganda",2
+"Transportes Aéreos Nacionales de Selva","Peru",2
+"Air Sinai","Egypt",2
+"STP Airways","Sao Tome and Principe",2
+"British Mediterranean Airways","United Kingdom",2
+"Pamir Airways","Afghanistan",2
+"Mastertop Linhas Aereas","Brazil",2
+"AVCOM","Russia",2
+"Askari Aviation","Pakistan",2
+"Aeroline GmbH","Germany",2
+"DAT Danish Air Transport","Denmark",2
+"Spirit of Manila Airlines","Philippines",2
+"Air Luxor","Portugal",2
+"Barents AirLink","Sweden",2
+"Dagestan Airlines","Russia",2
+"Alidaunia","Italy",2
+"Superior Aviation","United States",2
+"Air Wales","United Kingdom",1
+"Polynesian Airlines","Samoa",1
+"Eurowings","Germany",1
