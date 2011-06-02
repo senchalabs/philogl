@@ -2598,29 +2598,40 @@ $.splat = (function() {
   //Model abstract O3D Class
   O3D.Model = function(opt) {
     this.id = opt.id || $.uid();
+    //picking options
     this.pickable = !!opt.pickable;
+    if (opt.pickingColors) {
+      this.pickingColors = flatten(opt.pickingColors);
+    }
+
     this.vertices = flatten(opt.vertices);
-    this.faces = flatten(opt.faces);
     this.normals = flatten(opt.normals);
     this.textures = opt.textures && $.splat(opt.textures);
-    this.centroids = flatten(opt.centroids);
     this.colors = flatten(opt.colors);
     this.indices = flatten(opt.indices);
     this.shininess = opt.shininess || 0;
-    this.uniforms = opt.uniforms || {};
-    this.attributes = opt.attributes || {};
-    this.render = opt.render;
-    this.drawType = opt.drawType;
-    this.display = 'display' in opt? opt.display : true;
     if (opt.texCoords) {
       this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
     }
+
+    //extra uniforms
+    this.uniforms = opt.uniforms || {};
+    //extra attribute descriptors
+    this.attributes = opt.attributes || {};
+    //override the render method
+    this.render = opt.render;
+    //whether to render as triangles, lines, points, etc.
+    this.drawType = opt.drawType;
+    //whether to display the object at all
+    this.display = 'display' in opt? opt.display : true;
+    //before and after render callbacks
     this.onBeforeRender = opt.onBeforeRender || $.empty;
     this.onAfterRender = opt.onAfterRender || $.empty;
+    //set a custom program per o3d
     if (opt.program) {
       this.program = opt.program;
     }
-
+    //model position, rotation, scale and all in all matrix
     this.position = new Vec3;
     this.rotation = new Vec3;
     this.scale = new Vec3(1, 1, 1);
@@ -2832,6 +2843,15 @@ $.splat = (function() {
             colorsCopy = colors.slice();
         while (--times) {
           colors.push.apply(colors, colorsCopy);
+        }
+      }
+      
+      if (this.pickingColors && this.pickingColors.length < lv) {
+        var times = lv / this.pickingColors.length,
+            pickingColors = this.pickingColors,
+            pickingColorsCopy = pickingColors.slice();
+        while (--times) {
+          pickingColors.push.apply(pickingColors, pickingColorsCopy);
         }
       }
     },

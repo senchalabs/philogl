@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PhiloGL - World Flights</title>
+    <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" media="all" type="text/css" href="style.css" />
+    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+  </head>
+  <body>
+    <div id="log-panel">
+      <span id="log-message"></span>
+    </div>
+  
+    <div id="fallback" class="fallback"></div>
+
+    <div id="container">
+      
+      <div id="title">
+        <h1>World Flights</h1>
+        
+        <div class="description">Visualize different map projections of
+          the world.</div>
+      </div>
+      <div class="canvas-container">
+        <canvas id="map-canvas" width="1024" height="512"></canvas>
+        <div class="list">
+          <ul id="airline-list"></ul>
+        </div>
+      </div>
+      <canvas id="flight-canvas" width="1024" height="1024"></canvas>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> -
+    Author: <a href="http://blog.thejit.org/">Nicolas Garcia
+      Belmonte</a>.
+  </div>
+  <script>
+    if (!PhiloGL.hasWebGL()) {
+      document.body.className = 'no-webgl';
+      document.getElementById('fallback').innerHTML = ''
+        +  '<div style="margin:10px;">'
+        +   'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        +  '</div>'
+        +   '<iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/NzDA2Rj3_uE" frameborder="0" allowfullscreen></iframe>';
+    }
+  </script>
+</body>
+</html>
