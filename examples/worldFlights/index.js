@@ -241,6 +241,7 @@ function createApp() {
       }
     },
     events: {
+//      picking: true,
       onDragStart: function(e) {
         pos = {
           x: e.x,
@@ -252,8 +253,10 @@ function createApp() {
             sign = Math.abs(z) / z;
 
         models.earth.rotation.y += -(pos.x - e.x) / 100;
-        models.earth.rotation.x += sign * (pos.y - e.y) / 100;
+        models.cities.rotation.y += -(pos.x - e.x) / 100;
         models.earth.update();
+        models.cities.update();
+        //console.log(models.cities.rotation.y);
 
         pos.x = e.x;
         pos.y = e.y;
@@ -272,10 +275,10 @@ function createApp() {
         var camera = this.camera,
             position = camera.position;
         position.z += e.wheel;
-        if (position.z > -6) {
+        if (false && position.z > -6) {
           position.z = -6;
         }
-        if (position.z < -13) {
+        if (false && position.z < -13) {
           position.z = -13;
         }
         camera.update();
@@ -312,7 +315,7 @@ function createApp() {
       models.plane = new O3D.PlaneXZ({
         width: width / 100,
         nwidth: 5,
-        height: -2.6,
+        height: -1.6,
         depth: height / 100,
         ndepth: 5,
         textures: 'shadow-texture',
@@ -386,6 +389,9 @@ function createApp() {
         gl.clear(clearOpt);
         //Update position
         if (!app.dragging && theta == 0) {
+          models.cities.rotation.set(0, 0,  0);
+          models.cities.update();
+          
           models.earth.rotation.set(Math.PI, 0,  0);
           models.earth.update();
         } 

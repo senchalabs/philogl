@@ -2738,6 +2738,24 @@ $.splat = (function() {
       program.setBuffer('indices-' + this.id, false);
     },
 
+    setPickingColors: function(program, force) {
+      if (!this.pickingColors) return;
+
+      if (force || this.dynamic) {
+        program.setBuffer('pickingColors-' + this.id, {
+          attribute: 'pickingColor',
+          value: this.toFloat32Array('pickingColors'),
+          size: 4
+        });
+      } else {
+        program.setBuffer('pickingColors-' + this.id);
+      }
+    },
+
+    unsetPickingColors: function(program) {
+      program.setBuffer('pickingColors-' + this.id, false);
+    },
+    
     setColors: function(program, force) {
       if (!this.colors) return;
 
@@ -3127,10 +3145,10 @@ $.splat = (function() {
         };
       }
       //Create vertices, normals and texCoords
-      for (var y = 0; y <= nlong; y++) {
-        for (var x = 0; x <= nlat; x++) {
-          var u = x / nlat,
-              v = y / nlong,
+      for (var y = 0; y <= nlat; y++) {
+        for (var x = 0; x <= nlong; x++) {
+          var u = x / nlong,
+              v = y / nlat,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
@@ -3864,6 +3882,7 @@ $.splat = (function() {
       obj.setShininess(program);
       obj.setVertices(program);
       obj.setColors(program);
+      obj.setPickingColors(program);
       obj.setNormals(program);
       obj.setTextures(program);
       obj.setTexCoords(program);
@@ -3889,6 +3908,7 @@ $.splat = (function() {
       obj.unsetAttributes(program);
       obj.unsetVertices(program);
       obj.unsetColors(program);
+      obj.unsetPickingColors(program);
       obj.unsetNormals(program);
       obj.unsetTexCoords(program);
       obj.unsetIndices(program);
@@ -3925,6 +3945,7 @@ $.splat = (function() {
       }
 
       var o3dHash = {},
+          o3dList = [],
           program = app.usedProgram,
           pickingProgram = this.pickingProgram,
           camera = this.camera,
@@ -3961,18 +3982,39 @@ $.splat = (function() {
           if (i == backgroundColor) {
             index = 1;
           }
-          var suc = i + index;
-          hash[0] = suc % 256;
-          hash[1] = ((suc / 256) >> 0) % 256;
-          hash[2] = ((suc / (256 * 256)) >> 0) % 256;
-          pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
-          o3dHash[String(hash)] = elem;
+          var suc = i + index,
+              hasPickingColors = !!elem.pickingColors;
+
+          pickingProgram.setUniform('hasPickingColors', hasPickingColors);
+
+          if (!hasPickingColors) {
+            hash[0] = suc % 256;
+            hash[1] = ((suc / 256) >> 0) % 256;
+            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+            pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+            o3dHash[hash.join()] = elem;
+          } else {
+            o3dList.push(elem);
+          }
         }
       });
       
       //grab the color of the pointed pixel in the texture
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
-      var elem = o3dHash[String([pixel[0], pixel[1], pixel[2]])];
+      var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
+          elem = o3dHash[stringColor],
+          indexOf;
+
+      if (!elem) {
+        for (var i = 0, l = o3dList.length; i < l; i++) {
+          elem = o3dList[i];
+          indexOf = elem.pickingColors.join().indexOf(stringColor);
+          if (indexOf > -1) {
+            elem.$pickingIndex = indexOf;
+            break;
+          }
+        }
+      }
 
       //restore all values and unbind buffers
       app.setFrameBuffer('$picking', false);

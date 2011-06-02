@@ -26,9 +26,9 @@ function createCitiesLayer(cities) {
   for (var prop in cities) {
     var city = cities[prop],
         //lat
-        theta = (+city[2] + 90) / 180 * pi,
+        theta = pi2 - (+city[3] + 180) / 360 * pi2,
         //long
-        phi = (+city[3] + 90) / 180 * pi2,
+        phi = pi - (+city[2] + 90) / 180 * pi,
         sinTheta = sin(theta),
         cosTheta = cos(theta),
         sinPhi = sin(phi),
@@ -43,9 +43,9 @@ function createCitiesLayer(cities) {
         sphere = new O3D.Sphere({
           nlat: 5,
           nlong: 5,
-          radius: 1 / 10,
+          radius: 1 / 130,
           pickingColors: [r, g, b, 1],
-          colors: [0.9, 0.1, 0.1, 1]
+          colors: [ 1, 0.2,  0.2, 1]
         }),
         tvertices = sphere.vertices.map(function(v, i) { return coords[i % 3] + v; });
 
@@ -56,7 +56,7 @@ function createCitiesLayer(cities) {
     indices.push.apply(indices, sphere.indices.map(function(index) { return index + vertexCount; }));
     cityIndex[prop] = index++;
 
-    vertexCount += tvertices.length;
+    vertexCount += tvertices.length / 3;
   }
 
   return {

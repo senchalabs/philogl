@@ -568,10 +568,10 @@
         };
       }
       //Create vertices, normals and texCoords
-      for (var y = 0; y <= nlong; y++) {
-        for (var x = 0; x <= nlat; x++) {
-          var u = x / nlat,
-              v = y / nlong,
+      for (var y = 0; y <= nlat; y++) {
+        for (var x = 0; x <= nlong; x++) {
+          var u = x / nlong,
+              v = y / nlat,
               theta = longRange * u,
               phi = latRange * v,
               sinTheta = sin(theta),
