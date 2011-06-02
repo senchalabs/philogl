@@ -20,6 +20,7 @@
 
   //Model abstract O3D Class
   O3D.Model = function(opt) {
+    opt = opt || {};
     this.id = opt.id || $.uid();
     //picking options
     this.pickable = !!opt.pickable;

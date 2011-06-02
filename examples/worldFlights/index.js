@@ -44,6 +44,7 @@ citiesWorker.onmessage = function(e) {
     //Add a custom picking method
     pick: {
       value: function(pixel) {
+        //calcula the element index in the array by hashing the color values
         if (pixel[0] == 0 && (pixel[1] != 0 || pixel[2] != 0)) {
           var index = pixel[2] + pixel[1] * 256;
           return index;
@@ -52,6 +53,7 @@ citiesWorker.onmessage = function(e) {
       }
     }
   }));
+
   createApp();
 };
 
@@ -119,28 +121,15 @@ new IO.XHR({
 var airlineManager = {
   width: 1024,
   height: 1024,
-  airlines: {},
-  canvasUpdated: false,
-  lineStyles: {},
-
-  setupCanvas: function(canvas) {
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.ctx = canvas.getContext('2d');
-    
-    //set canvas styles
-    var ctx = this.ctx,
-        styles = this.lineStyles;
-    for (var name in styles) {
-      ctx[name] = styles[name];
+  airlines: new O3D.Model({
+    uniforms: {
+      colorUfm: [0.2, 0.3, 0.8, 1]
     }
-  },
+  }),
 
   add: function(airline) {
     var routes = data.airlineRoutes[airline],
         airlines = this.airlines,
-        width = this.width,
-        height = this.height,
         lines = [];
     
     if (airlines[airline]) {
@@ -194,6 +183,47 @@ var airlineManager = {
       }
     }
     this.canvasUpdated = true;
+  },
+
+  createRoute: function(route, index) {
+    var theta1 = pi2 - (+city[3] + 180) / 360 * pi2,
+        phi1 = pi - (+city[2] + 90) / 180 * pi,
+        sinTheta1 = sin(theta1),
+        cosTheta1 = cos(theta1),
+        sinPhi1 = sin(phi1),
+        cosPhi1 = cos(phi1),
+        p1 = new Vec3(cosTheta1 * sinPhi1, cosPhi1, sinTheta1 * sinPhi1),
+        theta2 = pi2 - (+city[5] + 180) / 360 * pi2,
+        phi2 = pi - (+city[4] + 90) / 180 * pi,
+        sinTheta2 = sin(theta2),
+        cosTheta2 = cos(theta2),
+        sinPhi2 = sin(phi2),
+        cosPhi2 = cos(phi2),
+        p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
+        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.001),
+        pArray = [],
+        pIndices = [],
+        t = 0,
+        count = 0,
+        samplings = 5,
+        offset = index * samplings,
+        deltat = 1 / samplings,
+        pt, offset;
+
+    while(samplings--) {
+      pt = p1.scale((1 - t) * (1 - t)).$add(p2.scale(2 * (1 - t) * t)).$add(p3.scale(t * t));
+      pArray.push(pt.x, pt.y, pt.z);
+      if (t != 0) {
+        pIndices.push(count, count + 1);
+        count++;
+      }
+      t += deltat;
+    }
+
+    return {
+      vertices: pArray,
+      indices: pIndices.map(function(i) { return i + offset; });
+    };
   }
 };
 
