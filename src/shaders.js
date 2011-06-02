@@ -17,6 +17,7 @@
     "attribute vec3 position;",
     "attribute vec3 normal;",
     "attribute vec4 color;",
+    "attribute vec4 pickingColor;",
     "attribute vec2 texCoord1;",
     
     "uniform mat4 modelViewMatrix;",
@@ -34,6 +35,7 @@
     "uniform int numberPoints;",
    
     "varying vec4 vColor;",
+    "varying vec4 vPickingColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
     
@@ -60,6 +62,7 @@
       "}",
       
       "vColor = color;",
+      "vPickingColor = pickingColor;",
       "vTexCoord = texCoord1;",
       "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
     "}"
@@ -74,6 +77,7 @@
     "#endif",
     
     "varying vec4 vColor;",
+    "varying vec4 vPickingColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
     
@@ -81,6 +85,7 @@
     "uniform sampler2D sampler1;",
 
     "uniform bool enablePicking;",
+    "uniform bool hasPickingColors;",
     "uniform vec3 pickColor;",
 
     "uniform bool hasFog;",
@@ -98,7 +103,11 @@
       "}",
 
       "if(enablePicking) {",
-        "gl_FragColor = vec4(pickColor, 1.0);",
+        "if(hasPickingColors) {",
+          "gl_FragColor = vPickingColor;",
+        "} else {",
+          "gl_FragColor = vec4(pickColor, 1.0);",
+        "}",
       "}",
       
       /* handle fog */

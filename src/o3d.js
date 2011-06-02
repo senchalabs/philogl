@@ -23,6 +23,7 @@
     this.id = opt.id || $.uid();
     //picking options
     this.pickable = !!opt.pickable;
+    this.pick = opt.pick || function() { return false; };
     if (opt.pickingColors) {
       this.pickingColors = flatten(opt.pickingColors);
     }

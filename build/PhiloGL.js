@@ -2600,6 +2600,7 @@ $.splat = (function() {
     this.id = opt.id || $.uid();
     //picking options
     this.pickable = !!opt.pickable;
+    this.pick = opt.pick || function() { return false; };
     if (opt.pickingColors) {
       this.pickingColors = flatten(opt.pickingColors);
     }
@@ -3548,6 +3549,7 @@ $.splat = (function() {
     "attribute vec3 position;",
     "attribute vec3 normal;",
     "attribute vec4 color;",
+    "attribute vec4 pickingColor;",
     "attribute vec2 texCoord1;",
     
     "uniform mat4 modelViewMatrix;",
@@ -3565,6 +3567,7 @@ $.splat = (function() {
     "uniform int numberPoints;",
    
     "varying vec4 vColor;",
+    "varying vec4 vPickingColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
     
@@ -3591,6 +3594,7 @@ $.splat = (function() {
       "}",
       
       "vColor = color;",
+      "vPickingColor = pickingColor;",
       "vTexCoord = texCoord1;",
       "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
     "}"
@@ -3605,6 +3609,7 @@ $.splat = (function() {
     "#endif",
     
     "varying vec4 vColor;",
+    "varying vec4 vPickingColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
     
@@ -3612,6 +3617,7 @@ $.splat = (function() {
     "uniform sampler2D sampler1;",
 
     "uniform bool enablePicking;",
+    "uniform bool hasPickingColors;",
     "uniform vec3 pickColor;",
 
     "uniform bool hasFog;",
@@ -3629,7 +3635,11 @@ $.splat = (function() {
       "}",
 
       "if(enablePicking) {",
-        "gl_FragColor = vec4(pickColor, 1.0);",
+        "if(hasPickingColors) {",
+          "gl_FragColor = vPickingColor;",
+        "} else {",
+          "gl_FragColor = vec4(pickColor, 1.0);",
+        "}",
       "}",
       
       /* handle fog */
@@ -3732,6 +3742,7 @@ $.splat = (function() {
       obj.setAttributes(program, true);
       obj.setVertices(program, true);
       obj.setColors(program, true);
+      obj.setPickingColors(program, true);
       obj.setNormals(program, true);
       //obj.setTextures(program, true);
       obj.setTexCoords(program, true);
@@ -4003,15 +4014,16 @@ $.splat = (function() {
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
-          indexOf;
+          pick;
 
       if (!elem) {
         for (var i = 0, l = o3dList.length; i < l; i++) {
           elem = o3dList[i];
-          indexOf = elem.pickingColors.join().indexOf(stringColor);
-          if (indexOf > -1) {
-            elem.$pickingIndex = indexOf;
-            break;
+          pick = elem.pick(pixel);
+          if (pick !== false) {
+            elem.$pickingIndex = pick;
+          } else {
+            elem = false;
           }
         }
       }

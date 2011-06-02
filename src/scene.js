@@ -83,6 +83,7 @@
       obj.setAttributes(program, true);
       obj.setVertices(program, true);
       obj.setColors(program, true);
+      obj.setPickingColors(program, true);
       obj.setNormals(program, true);
       //obj.setTextures(program, true);
       obj.setTexCoords(program, true);
@@ -354,15 +355,16 @@
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
-          indexOf;
+          pick;
 
       if (!elem) {
         for (var i = 0, l = o3dList.length; i < l; i++) {
           elem = o3dList[i];
-          indexOf = elem.pickingColors.join().indexOf(stringColor);
-          if (indexOf > -1) {
-            elem.$pickingIndex = indexOf;
-            break;
+          pick = elem.pick(pixel);
+          if (pick !== false) {
+            elem.$pickingIndex = pick;
+          } else {
+            elem = false;
           }
         }
       }

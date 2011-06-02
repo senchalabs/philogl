@@ -15,7 +15,7 @@ function createCitiesLayer(cities) {
       sin = Math.sin,
       cos = Math.cos,
       index = 0,
-      cityIndex = {},
+      cityIndex = [],
       vertices = [],
       normals = [],
       colors = [],
@@ -44,8 +44,8 @@ function createCitiesLayer(cities) {
           nlat: 5,
           nlong: 5,
           radius: 1 / 130,
-          pickingColors: [r, g, b, 1],
-          colors: [ 1, 0.2,  0.2, 1]
+          pickingColors: [0, g / 255, b / 255, 1],
+          colors:  [1, 0.2,  0.2, 1]
         }),
         tvertices = sphere.vertices.map(function(v, i) { return coords[i % 3] + v; });
 
@@ -54,7 +54,7 @@ function createCitiesLayer(cities) {
     colors.push.apply(colors, sphere.colors);
     pickingColors.push.apply(pickingColors, sphere.pickingColors);
     indices.push.apply(indices, sphere.indices.map(function(index) { return index + vertexCount; }));
-    cityIndex[prop] = index++;
+    cityIndex[index++] = prop;
 
     vertexCount += tvertices.length / 3;
   }
@@ -66,7 +66,7 @@ function createCitiesLayer(cities) {
     indices: indices,
     colors: colors,
     pickingColors: pickingColors,
-    cityIndex: cityIndex,
+    citiesIndex: cityIndex,
     program: 'cities'
   };
 }

@@ -40,7 +40,18 @@ models.earth = new O3D.Sphere({
 citiesWorker.onmessage = function(e) {
   var modelInfo = e.data;
   data.citiesIndex = modelInfo.citiesIndex;
-  models.cities = new O3D.Model(modelInfo);
+  models.cities = new O3D.Model(Object.create(modelInfo, {
+    //Add a custom picking method
+    pick: {
+      value: function(pixel) {
+        if (pixel[0] == 0 && (pixel[1] != 0 || pixel[2] != 0)) {
+          var index = pixel[2] + pixel[1] * 256;
+          return index;
+        }
+        return false;
+      }
+    }
+  }));
   createApp();
 };
 
@@ -241,7 +252,7 @@ function createApp() {
       }
     },
     events: {
-//      picking: true,
+      picking: true,
       onDragStart: function(e) {
         pos = {
           x: e.x,
@@ -262,7 +273,9 @@ function createApp() {
         pos.y = e.y;
       },
       onMouseEnter: function(e, model) {
-        console.log(arguments);
+        if (model) {
+          console.log(data.citiesIndex[model.$pickingIndex]);
+        }
       },
       onMouseLeave: function(e, model) {
         console.log(arguments);
@@ -311,6 +324,11 @@ function createApp() {
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
           theta = 0;
                   
+      gl.clearColor(1, 1, 1, 1);
+      gl.clearDepth(1);
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      
       //Create plane
       models.plane = new O3D.PlaneXZ({
         width: width / 100,
@@ -337,12 +355,6 @@ function createApp() {
         to: -8
       });
      
-      gl.viewport(0, 0, width, height);
-      gl.clearColor(1, 1, 1, 1);
-      gl.clearDepth(1);
-      gl.enable(gl.DEPTH_TEST);
-      gl.depthFunc(gl.LEQUAL);
-        
       //create framebuffer
       app.setFrameBuffer('shadow', {
         width: width,
@@ -367,15 +379,17 @@ function createApp() {
 
       shadowScene.add(models.earth);
       
+      drawShadow();
       draw();
 
       function draw() {
+        gl.viewport(0, 0, width, height);
         fx.step();
-        drawShadow();
         drawEarth();
       }
 
       function drawShadow() {
+        gl.viewport(0, 0, width, height);
         program.earth.use();
         app.setFrameBuffer('shadow', true);
         gl.clear(clearOpt);
