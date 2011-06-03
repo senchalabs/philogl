@@ -7,9 +7,6 @@ document.onreadystatechange = function() {
     logPanel = $('log-panel');
     logMessage = $('log-message');
     airlineList = $('airline-list');
-    flightCanvas = $('flight-canvas');
-
-    airlineManager.setupCanvas(flightCanvas);
   }
 };
 
@@ -24,7 +21,7 @@ var $ = function(id) { return document.getElementById(id); },
     citiesWorker = new Worker('cities.js'),
     data = { citiesRoutes: {}, airlinesRoutes: {} },
     models = {},
-    logPanel, logMessage, airlineList, flightCanvas, pos;
+    logPanel, logMessage, airlineList, pos;
 
 //Create earth
 models.earth = new O3D.Sphere({
@@ -34,6 +31,21 @@ models.earth = new O3D.Sphere({
   shininess: 32,
   textures: ['img/earth1.jpg', 'img/clouds.jpg'],
   program: 'earth'
+});
+
+//Create airline routes model
+models.airlines = new O3D.Model({
+  program: 'layer',
+  uniforms: {
+    colorUfm: [1, 1, 0.8, 1]
+  },
+  render: function(gl, program, camera) {
+    if (this.indices && this.indices.length) {
+      gl.lineWidth(1);
+      gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+      this.dynamic = false;
+    }
+  }
 });
 
 //Create cities layer model and create PhiloGL app.
@@ -119,99 +131,82 @@ new IO.XHR({
 //Takes care of adding and removing routes
 //for the selected airlines
 var airlineManager = {
-  width: 1024,
-  height: 1024,
-  airlines: new O3D.Model({
-    uniforms: {
-      colorUfm: [0.2, 0.3, 0.8, 1]
-    }
-  }),
+  airlineNames: [],
 
   add: function(airline) {
-    var routes = data.airlineRoutes[airline],
-        airlines = this.airlines,
-        lines = [];
-    
-    if (airlines[airline]) {
-      airlines[airline].active = true;
-      lines = airlines[airline].lines;
-    } else {
-      //create lines from routes
-      for (var i = 0, l = routes.length; i < l; i++) {
-        var route = routes[i],
-            city1 = data.cities[route[0] + '^' + route[1]],
-            lat1 = (city1[2] + 90) / 180 * width,
-            lon1 = (city1[3] + 90) / 180 * height,
-            city2 = data.cities[route[2] + '^' + route[3]],
-            lat2 = (city2[2] + 90) / 180 * width,
-            lon2 = (city2[3] + 90) / 180 * height;
+    var airlineNames = this.airlineNames,
+        routes = data.airlinesRoutes[airline],
+        airlines = models.airlines,
+        vertices = airlines.vertices || [],
+        indices = airlines.indices || [],
+        offset = vertices.length / 3,
+        samplings = 5;
 
-        lines.push(lat1, lon1, lat2, lon2);
-      }
-      //add cache
-      airlines[airline] = {
-        active: true,
-        lines: lines
-      };
+    for (var i = 0, l = routes.length; i < l; i++) {
+      var ans = this.createRoute(routes[i], i * samplings + offset);
+      vertices.push.apply(vertices, ans.vertices);
+      indices.push.apply(indices, ans.indices);
     }
-    //draw
-    for (i = 0, l = lines.length; i < l; i++) {
-      var line = lines[i];
-      ctx.moveTo(line[0], line[1]);
-      ctx.lineTo(line[2], line[3]);
-    }
-    this.canvasUpdated = true;
+    
+    airlines.vertices = vertices;
+    airlines.indices = indices;
+    airlines.dynamic = true;
+    airlineNames.push(airline);
   },
   
   remove: function(airline) {
-    var airlines = this.airlines,
-        ctx = this.ctx,
-        width = this.width,
-        height = this.height;
+    var airlines = models.airlines,
+        routes = data.airlinesRoutes[airline],
+        nroutes = routes.length,
+        vertices = airlines.vertices,
+        indices = airlines.indices,
+        airlineNames = this.airlineNames,
+        index = airlineNames.indexOf(airline),
+        samplings = 5;
 
-    airlines[airline].active = false;
-    ctx.clearRect(0, 0, width, height);
-    for (var name in airlines) {
-      var airline = airlines[name];
-      if (airline.active) {
-        var lines = airline.lines;
-        for (var i = 0, l = lines.length; i < l; i++) {
-          var line = lines[i];
-          ctx.moveTo(line[0], line[1]);
-          ctx.lineTo(line[2], line[3]);
-        }
-      }
+    airlineNames.splice(index, 1);
+    airlines.vertices.splice(index * samplings * 3, nroutes * samplings * 3);
+    airlines.indices.splice(index * (samplings - 1) * 2, nroutes * (samplings - 1) * 2);
+
+    for (var i = index, l = indices.length; i < l; i++) {
+      indices[i] -= (samplings * nroutes);
     }
-    this.canvasUpdated = true;
+    airlines.dynamic = true;
   },
 
-  createRoute: function(route, index) {
-    var theta1 = pi2 - (+city[3] + 180) / 360 * pi2,
-        phi1 = pi - (+city[2] + 90) / 180 * pi,
+  createRoute: function(route, offset) {
+    var pi = Math.PI,
+        pi2 = pi * 2,
+        sin = Math.sin,
+        cos = Math.cos,
+        city1 = data.cities[route[1] + '^' + route[0]],
+        city2 = data.cities[route[3] + '^' + route[2]],
+        city = [city1[2], city1[3], city2[2], city2[3]],
+        theta1 = pi2 - (+city[1] + 180) / 360 * pi2,
+        phi1 = pi - (+city[0] + 90) / 180 * pi,
         sinTheta1 = sin(theta1),
         cosTheta1 = cos(theta1),
         sinPhi1 = sin(phi1),
         cosPhi1 = cos(phi1),
         p1 = new Vec3(cosTheta1 * sinPhi1, cosPhi1, sinTheta1 * sinPhi1),
-        theta2 = pi2 - (+city[5] + 180) / 360 * pi2,
-        phi2 = pi - (+city[4] + 90) / 180 * pi,
+        theta2 = pi2 - (+city[3] + 180) / 360 * pi2,
+        phi2 = pi - (+city[2] + 90) / 180 * pi,
         sinTheta2 = sin(theta2),
         cosTheta2 = cos(theta2),
         sinPhi2 = sin(phi2),
         cosPhi2 = cos(phi2),
         p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
-        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.001),
+        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.3),
         pArray = [],
         pIndices = [],
         t = 0,
         count = 0,
         samplings = 5,
-        offset = index * samplings,
         deltat = 1 / samplings,
         pt, offset;
 
     while(samplings--) {
-      pt = p1.scale((1 - t) * (1 - t)).$add(p2.scale(2 * (1 - t) * t)).$add(p3.scale(t * t));
+      pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
       pArray.push(pt.x, pt.y, pt.z);
       if (t != 0) {
         pIndices.push(count, count + 1);
@@ -222,7 +217,7 @@ var airlineManager = {
 
     return {
       vertices: pArray,
-      indices: pIndices.map(function(i) { return i + offset; });
+      indices: pIndices.map(function(i) { return i + offset; })
     };
   }
 };
@@ -232,19 +227,23 @@ function createApp() {
   //Create application
   PhiloGL('map-canvas', {
     program: [{
-      id: 'cities',
-      from: 'defaults'
+      id: 'layer',
+      from: 'uris',
+      path: 'shaders/',
+      vs: 'layer.vs.glsl',
+      fs: 'layer.fs.glsl',
+      noCache: true
     },{
       id: 'earth',
       from: 'uris',
-      path: './',
+      path: 'shaders/',
       vs: 'earth.vs.glsl',
       fs: 'earth.fs.glsl',
       noCache: true
     }, {
       id: 'plane',
       from: 'uris',
-      path: './',
+      path: 'shaders/',
       vs: 'plane.vs.glsl',
       fs: 'plane.fs.glsl',
       noCache: true
@@ -295,8 +294,10 @@ function createApp() {
 
         models.earth.rotation.y += -(pos.x - e.x) / 100;
         models.cities.rotation.y += -(pos.x - e.x) / 100;
+        models.airlines.rotation.y += -(pos.x - e.x) / 100;
         models.earth.update();
         models.cities.update();
+        models.airlines.update();
         //console.log(models.cities.rotation.y);
 
         pos.x = e.x;
@@ -353,7 +354,7 @@ function createApp() {
           shadowScene = new Scene(program.earth, camera),
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT,
           theta = 0;
-                  
+       
       gl.clearColor(1, 1, 1, 1);
       gl.clearDepth(1);
       gl.enable(gl.DEPTH_TEST);
@@ -403,23 +404,23 @@ function createApp() {
       });    
 
       //Add objects to the scenes
-      scene.add(models.earth, 
+      scene.add(models.earth,
                 models.cities,
+                models.airlines,
                 models.plane);
 
       shadowScene.add(models.earth);
       
-      drawShadow();
       draw();
 
       function draw() {
         gl.viewport(0, 0, width, height);
         fx.step();
+        drawShadow();
         drawEarth();
       }
 
       function drawShadow() {
-        gl.viewport(0, 0, width, height);
         program.earth.use();
         app.setFrameBuffer('shadow', true);
         gl.clear(clearOpt);
@@ -433,7 +434,7 @@ function createApp() {
         gl.clear(clearOpt);
         //Update position
         if (!app.dragging && theta == 0) {
-          models.cities.rotation.set(0, 0,  0);
+          models.cities.rotation.set(0, 0, 0);
           models.cities.update();
           
           models.earth.rotation.set(Math.PI, 0,  0);
