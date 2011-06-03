@@ -7,6 +7,7 @@ document.onreadystatechange = function() {
     logPanel = $('log-panel');
     logMessage = $('log-message');
     airlineList = $('airline-list');
+    $('map-canvas').height = window.innerHeight - 45;
   }
 };
 
@@ -41,7 +42,7 @@ models.airlines = new O3D.Model({
   },
   render: function(gl, program, camera) {
     if (this.indices && this.indices.length) {
-      gl.lineWidth(1);
+      gl.lineWidth(1.3);
       gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
       this.dynamic = false;
     }
@@ -62,6 +63,12 @@ citiesWorker.onmessage = function(e) {
           return index;
         }
         return false;
+      }
+    },
+
+    render: {
+      value: function(gl, program, camera) {
+        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
       }
     }
   }));
@@ -140,7 +147,7 @@ var airlineManager = {
         vertices = airlines.vertices || [],
         indices = airlines.indices || [],
         offset = vertices.length / 3,
-        samplings = 5;
+        samplings = 10;
 
     for (var i = 0, l = routes.length; i < l; i++) {
       var ans = this.createRoute(routes[i], i * samplings + offset);
@@ -162,7 +169,7 @@ var airlineManager = {
         indices = airlines.indices,
         airlineNames = this.airlineNames,
         index = airlineNames.indexOf(airline),
-        samplings = 5;
+        samplings = 10;
 
     airlineNames.splice(index, 1);
     airlines.vertices.splice(index * samplings * 3, nroutes * samplings * 3);
@@ -201,7 +208,7 @@ var airlineManager = {
         pIndices = [],
         t = 0,
         count = 0,
-        samplings = 5,
+        samplings = 10,
         deltat = 1 / samplings,
         pt, offset;
 
@@ -285,21 +292,24 @@ function createApp() {
       onDragStart: function(e) {
         pos = {
           x: e.x,
-          y: e.y
+          y: e.y,
+          acumy: 0
         };
       },
       onDragMove: function(e) {
         var z = this.camera.position.z,
-            sign = Math.abs(z) / z;
+            sign = Math.abs(z) / z,
+            earth = models.earth,
+            cities = models.cities,
+            airlines = models.airlines;
 
-        models.earth.rotation.y += -(pos.x - e.x) / 100;
-        models.cities.rotation.y += -(pos.x - e.x) / 100;
-        models.airlines.rotation.y += -(pos.x - e.x) / 100;
-        models.earth.update();
-        models.cities.update();
-        models.airlines.update();
-        //console.log(models.cities.rotation.y);
-
+        earth.rotation.y += -(pos.x - e.x) / 100;
+        cities.rotation.y += -(pos.x - e.x) / 100;
+        airlines.rotation.y += -(pos.x - e.x) / 100;
+        earth.update();
+        cities.update();
+        airlines.update();
+        
         pos.x = e.x;
         pos.y = e.y;
       },
@@ -319,6 +329,7 @@ function createApp() {
         var camera = this.camera,
             position = camera.position;
         position.z += e.wheel;
+        console.log(position.z);
         if (false && position.z > -6) {
           position.z = -6;
         }
@@ -364,17 +375,20 @@ function createApp() {
       models.plane = new O3D.PlaneXZ({
         width: width / 100,
         nwidth: 5,
-        height: -1.6,
+        height: -1.8,
         depth: height / 100,
         ndepth: 5,
         textures: 'shadow-texture',
         program: 'plane'
       });
 
+      models.plane.position.set(0, 0, 2);
+      models.plane.update();
+
       //Create animation object for transitioning temp maps.
       var fx = new Fx({
         transition: Fx.Transition.Cubic.easeInOut,
-        duration: 4000,
+        duration: 2000,
         onCompute: function(delta) {
           camera.position.z = Fx.compute(this.opt.from, this.opt.to, delta);
           camera.update();
@@ -383,13 +397,13 @@ function createApp() {
 
       fx.start({
         from: -2,
-        to: -8
+        to: -3.1
       });
      
       //create framebuffer
       app.setFrameBuffer('shadow', {
-        width: width,
-        height: height,
+        width: 1024,
+        height: 1024,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
