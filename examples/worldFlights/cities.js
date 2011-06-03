@@ -40,7 +40,7 @@ function createCitiesLayer(cities) {
         sphere = new O3D.Sphere({
           nlat: 5,
           nlong: 5,
-          radius: 1 / 130,
+          radius: 1 / 200,
           pickingColors: [0, g / 255, b / 255, 1]
         }),
         tvertices = sphere.vertices.map(function(v, i) { return coords[i % 3] + v; });
@@ -63,7 +63,7 @@ function createCitiesLayer(cities) {
     citiesIndex: cityIndex,
     program: 'layer',
     uniforms: {
-      colorUfm: [0.8, 0.4, 0.4, 1]
+      colorUfm: [1, 0.1, 0.1, 1]
     }
   };
 }

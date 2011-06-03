@@ -7,6 +7,6 @@ varying vec2 vTexCoord;
 varying vec3 lightWeighting;
 
 void main(){
-  gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
+  gl_FragColor = vColor;
 }
 

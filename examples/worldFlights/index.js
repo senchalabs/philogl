@@ -30,7 +30,7 @@ models.earth = new O3D.Sphere({
   nlong: 50,
   radius: 1,
   shininess: 32,
-  textures: ['img/earth1.jpg', 'img/clouds.jpg'],
+  textures: ['img/earth-specular.gif'],// 'img/clouds.jpg'],
   program: 'earth'
 });
 
@@ -38,11 +38,11 @@ models.earth = new O3D.Sphere({
 models.airlines = new O3D.Model({
   program: 'layer',
   uniforms: {
-    colorUfm: [1, 1, 0.8, 1]
+    colorUfm: [0.5, 0.5, 0.8, 1]
   },
   render: function(gl, program, camera) {
     if (this.indices && this.indices.length) {
-      gl.lineWidth(1.3);
+      gl.lineWidth(2);
       gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
       this.dynamic = false;
     }
@@ -147,7 +147,7 @@ var airlineManager = {
         vertices = airlines.vertices || [],
         indices = airlines.indices || [],
         offset = vertices.length / 3,
-        samplings = 10;
+        samplings = 50;
 
     for (var i = 0, l = routes.length; i < l; i++) {
       var ans = this.createRoute(routes[i], i * samplings + offset);
@@ -169,7 +169,7 @@ var airlineManager = {
         indices = airlines.indices,
         airlineNames = this.airlineNames,
         index = airlineNames.indexOf(airline),
-        samplings = 10;
+        samplings = 50;
 
     airlineNames.splice(index, 1);
     airlines.vertices.splice(index * samplings * 3, nroutes * samplings * 3);
@@ -208,7 +208,7 @@ var airlineManager = {
         pIndices = [],
         t = 0,
         count = 0,
-        samplings = 10,
+        samplings = 50,
         deltat = 1 / samplings,
         pt, offset;
 
@@ -340,7 +340,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/earth1.jpg', 'img/clouds.jpg'],
+      src: ['img/earth-specular.gif', 'img/clouds.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -387,8 +387,8 @@ function createApp() {
 
       //Create animation object for transitioning temp maps.
       var fx = new Fx({
-        transition: Fx.Transition.Cubic.easeInOut,
-        duration: 2000,
+        transition: Fx.Transition.Quart.easeInOut,
+        duration: 1500,
         onCompute: function(delta) {
           camera.position.z = Fx.compute(this.opt.from, this.opt.to, delta);
           camera.update();
@@ -396,8 +396,8 @@ function createApp() {
       });
 
       fx.start({
-        from: -2,
-        to: -3.1
+        from: -10,
+        to: -5.4
       });
      
       //create framebuffer

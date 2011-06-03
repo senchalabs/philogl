@@ -27,25 +27,6 @@ varying vec3 lightWeighting;
 void main(void) {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   
-  if(!enableLights) {
-    lightWeighting = vec3(1.0, 1.0, 1.0);
-  } else {
-    vec3 plightDirection;
-    vec3 pointWeight = vec3(0.0, 0.0, 0.0);
-    vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
-    float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
-    for (int i = 0; i < LIGHT_MAX; i++) {
-      if (i < numberPoints) {
-        plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);
-        pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];
-      } else {
-        break;
-      }
-    }
-
-    lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
-  }
-  
   vColor = colorUfm;
   vTexCoord = texCoord1;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
