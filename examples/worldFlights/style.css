@@ -1,12 +1,22 @@
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  font-family: Verdana;
   margin: 0;
   padding: 0;
+  font-size: 0.9em;
+}
+
+h1 {
+  font-family: 'Crimson Text', Verdana;
+}
+
+div#title {
+
 }
 
 #container {
   margin: auto;
+  width: 1100px;
 }
 
 body.no-webgl #container {
@@ -21,6 +31,33 @@ body.no-webgl div.fallback {
   display: block;
 }
 
+div.tooltip {
+  position: absolute;
+  color: white;
+  padding: 5px;
+  background-color: #111;
+  /*
+  border-radius: 0.5em;
+  border: 1px solid #ccc;
+  background-color: -webkit-linear-gradient(#111, #666, #666);
+  background-color: -moz-linear-gradient(top, #111, #666, #666);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -o-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  */
+  font-size: 0.8em;
+  opacity: 0;
+}
+
+div.tooltip.show {
+  opacity: 1;
+}
+
+div.tooltip.hide {
+  opacity: 0;
+}
+
 #log-panel {
   margin: 0;
   position: fixed;
@@ -28,9 +65,10 @@ body.no-webgl div.fallback {
   right: 0;
   padding: 5px;
   color: white;
-  background: red;
+  background-color: red;
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: 0.6em;
+  z-index: 4000;
 }
 
 
@@ -46,7 +84,7 @@ body.no-webgl div.fallback {
 img.legend {
   margin: 9px auto;
   width: 190px;
-  background: #444;
+  background-color: #444;
 }
 
 h1 {
@@ -65,83 +103,25 @@ h1 {
   height: 575px;
 }
 
-#controls {
-  position: absolute;
-  width: 200px;
-  top:0;
-  right:0;
-  overflow: hidden;
-}
-
-#controls .title {
-  color: #ccc;
-  -webkit-box-shadow: #333 0 0 5px;
-  -o-box-shadow: #333 0 0 5px;
-  -moz-box-shadow: #333 0 0 5px;
-  box-shadow: #333 0 0 5px;
-  background-color: #000;
-}
-
-#controls ul {
-  margin:0;
-  padding:0;
-}
-
-#controls ul li {
-  position: relative;
-  display: block;
-  list-style-type: none;
-  background-color: white;
-  cursor: pointer;
-}
-
-#controls ul li:hover {
-  background-color:  #E0ECFF;
-}
-
-#controls ul li.selected {
-  background-color: rgb(255, 241, 168);
-}
-
-#controls ul li.selected:hover {
- background-color: rgb(255, 241, 168);
-}
-
-#controls ul li .square {
-  width: 15px;
-  height: 15px;
-  margin: 4px;
-  position: absolute;
-  top:0;
-  left:6px;
-  border: 1px solid #555;
-}
-
-#controls img {
-  -webkit-box-shadow: #333 0 0 3px;
-  -o-box-shadow: #333 0 0 3px;
-  -moz-box-shadow: #333 0 0 3px;
-  box-shadow: #333 0 0 3px;  
-}
-
-#controls .title {
-  font-size: 16px;
-  margin: 5px 0;
-}
-
 .canvas-container {
   margin: auto;
+  background-color: rgb(50, 50, 50);
+  box-shadow: 0 0 5px #000;
 }
 
 .canvas-container canvas, 
-.canvas-container ul {
+.canvas-container .list-container {
   float: left;
+}
+
+.list-container {
+  height: 512px;
+  overflow: hidden;
 }
 
 ul#airline-list {
   font-size: 0.8em;
   list-style: none;
-  margin: 0;
   padding: 0;
 }
 
@@ -149,9 +129,11 @@ ul#airline-list li {
   list-style: none;
   display: block;
   text-align: left;
+  color: white;
 }
 
 canvas {
+  background-color: rgb(0.1, 0.1, 0.1);
 }
 
 .footer {

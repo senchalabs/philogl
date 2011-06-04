@@ -9,14 +9,10 @@ varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
 varying vec2 vTexCoord3;
 varying vec4 vColor;
-varying vec4 vTransformedNormal;
 varying vec4 vPosition;
 
 uniform bool hasTexture1;
 uniform sampler2D sampler1;
-
-uniform float width;
-uniform float height;
 
 void main(void) {
   vec4 fragmentColor = vec4(0.0, 0.0, 0.0, 0.0);
@@ -27,9 +23,9 @@ void main(void) {
     //fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s, vTexCoord1.t));
     
     for (int i = - BLUR_LIMIT; i < BLUR_LIMIT; i++) {
-      dx = float(i) / width;
+      dx = float(i) / 1024.0;
       for (int j = - BLUR_LIMIT; j < BLUR_LIMIT; j++) {
-        dy = float(j) / height;
+        dy = float(j) / 1024.0;
         fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s + dx, vTexCoord1.t + dy)) / BLUR_LIMIT_SQ;
       }
     }

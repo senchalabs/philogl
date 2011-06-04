@@ -19,7 +19,7 @@ def cities():
       if i > 0:
         split_line = line.replace('"', '').split(',')
         try:
-          ans[split_line[0] + '^' + split_line[1]] = split_line
+          ans[split_line[0].lower() + '^' + split_line[1].lower()] = split_line
         except:
           pass
   
@@ -40,13 +40,13 @@ def routes():
           airline_routes.append(split_line[1:])
           airlines[split_line[0]] = airline_routes
           #populate places
-          source_city, source_country = split_line[1], split_line[2]
+          source_city, source_country = split_line[2], split_line[3]
           key = source_city + '^' + source_country
           place_routes = places.get(key, [])
           place_routes.append(split_line)
           places[key] = place_routes
     
-          destination_city, destination_country = split_line[3], split_line[4]
+          destination_city, destination_country = split_line[4], split_line[5]
           key = destination_city + '^' + destination_country
           place_routes = places.get(key, [])
           place_routes.append(split_line)
@@ -55,11 +55,11 @@ def routes():
           pass
   
   for k, v in airlines.iteritems():
-    with open('airline_' + k.replace(' ', '_') + '.json', 'w') as fout:
+    with open('airlines/' + k + '.json', 'w') as fout:
       fout.write(json.dumps(v, encoding='latin-1'))
   
   for k, v in places.iteritems():
-    with open('place_' + k.replace('/', '-').replace(' ', '_') + '.json', 'w') as fout:
+    with open('places/' + k.replace('/', '-').replace(' ', '_') + '.json', 'w') as fout:
       fout.write(json.dumps(v, encoding='latin-1'))
 
 if __name__ == '__main__':

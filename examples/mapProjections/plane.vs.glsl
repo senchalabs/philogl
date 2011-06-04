@@ -12,14 +12,12 @@ uniform mat4 normalMatrix;
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
 varying vec2 vTexCoord3;
-varying vec4 vTransformedNormal;
 varying vec4 vPosition;
 varying vec4 vColor;
 
 
 void main(void) {
   vPosition = modelViewMatrix * vec4(position, 1.0);
-  vTransformedNormal = normalMatrix * vec4(normal, 1.0);
   vTexCoord1 = texCoord1;
   vTexCoord2 = texCoord2;
   vTexCoord3 = texCoord3;

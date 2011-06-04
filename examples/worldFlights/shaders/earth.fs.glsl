@@ -38,13 +38,11 @@ uniform sampler2D sampler3;
 
 uniform mat4 viewMatrix;
 
-uniform int renderType;
-uniform float cloudOffset;
-uniform float alphaAngle;
+uniform float renderType;
 
 void main(void) {
   vec3 lightWeighting;
-  if (false && !enableLights || renderType == 0) {
+  if (!enableLights || renderType >= 0.0) {
     lightWeighting = vec3(1.0, 1.0, 1.0);
   } else {
     vec3 lightDirection;
@@ -81,19 +79,9 @@ void main(void) {
     lightWeighting = ambientColor + diffuseLight + specularLight;
   }
 
-  vec4 fragmentColor = vColor;//vec4(0.2, 0.2, 0.2, 1.0);
-  if (renderType != 0 && (hasTexture1 || hasTexture2 || hasTexture3)) {
-    //atmospheric
-    if (hasTexture1) {
-      fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s, vTexCoord1.t));
-    }
-    //clouds
-    if (hasTexture2) {
-      fragmentColor += vec4(texture2D(sampler2, vec2(vTexCoord1.s + cloudOffset, vTexCoord1.t)).rgb, 1.0);
-    }
-    if (hasTexture3) {
-      fragmentColor += texture2D(sampler3, vec2(vTexCoord3.s, vTexCoord3.t));
-    }
+  vec4 fragmentColor = vec4(renderType, renderType, renderType, 1.0);
+  if (renderType < 0.0 && hasTexture1) {
+    fragmentColor = texture2D(sampler1, vec2(vTexCoord1.s, vTexCoord1.t));
   }
   gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, 1.0);
 }

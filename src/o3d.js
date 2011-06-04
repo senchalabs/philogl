@@ -894,35 +894,56 @@
   O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
   
 
-  O3D.PlaneXZ = function(config) {
-    var width = config.width,
-        height = config.height || 0,
-        subdivisionsWidth = config.nwidth || 1,
-        depth = config.depth,
-        subdivisionsDepth = config.ndepth || 1,
-        numVertices = (subdivisionsWidth + 1) * (subdivisionsDepth + 1),
+  O3D.Plane = function(config) {
+    var type = config.type,
+        coords = type.split(','),
+        c1len = config[coords[0] + 'len'], //width
+        c2len = config[coords[1] + 'len'], //height
+        subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
+        subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
+        offset = config.offset
+        numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = [],
         normals = [],
         texCoords = [];
 
-    for (var z = 0; z <= subdivisionsDepth; z++) {
-      for (var x = 0; x <= subdivisionsWidth; x++) {
-        var u = x / subdivisionsWidth,
-            v = z / subdivisionsDepth;
+    for (var z = 0; z <= subdivisions2; z++) {
+      for (var x = 0; x <= subdivisions1; x++) {
+        var u = x / subdivisions1,
+            v = z / subdivisions2;
         
-        positions.push(width * u - width * 0.5,
-                       height,
-                       depth * v - depth * 0.5);
-        normals.push(0, 1, 0);
         texCoords.push(u, v);
+        
+        switch (type) {
+          case 'x,y':
+            positions.push(c1len * u - c1len * 0.5,
+                           c2len * v - c2len * 0.5,
+                           offset);
+            normals.push(0, 0, 1);
+          break;
+
+          case 'x,z':
+            positions.push(c1len * u - c1len * 0.5,
+                           offset,
+                           c2len * v - c2len * 0.5);
+            normals.push(0, 1, 0);
+          break;
+
+          case 'y,z':
+            positions.push(offset,
+                           c1len * u - c1len * 0.5,
+                           c2len * v - c2len * 0.5);
+            normals.push(1, 0, 0);
+          break;
+        }
       }
     }
 
-    var numVertsAcross = subdivisionsWidth + 1,
+    var numVertsAcross = subdivisions1 + 1,
         indices = [];
 
-    for (z = 0; z < subdivisionsDepth; z++) {
-      for (x = 0; x < subdivisionsWidth; x++) {
+    for (z = 0; z < subdivisions2; z++) {
+      for (x = 0; x < subdivisions1; x++) {
         // Make triangle 1 of quad.
         indices.push((z + 0) * numVertsAcross + x,
                      (z + 1) * numVertsAcross + x,
@@ -944,7 +965,7 @@
 
   };
 
-  O3D.PlaneXZ.prototype = Object.create(O3D.Model.prototype);
+  O3D.Plane.prototype = Object.create(O3D.Model.prototype);
 
   //unique id
   O3D.id = $.time();

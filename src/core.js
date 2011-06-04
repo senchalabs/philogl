@@ -56,7 +56,7 @@ this.PhiloGL = null;
     gl = PhiloGL.WebGL.getContext(canvasId, optContext);
 
     if (!gl) {
-        opt.onError();
+        opt.onError("The WebGL context couldn't been initialized");
         return null;
     }
 

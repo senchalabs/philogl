@@ -14,8 +14,10 @@
         target = opt.target,
         up = opt.up;
 
+    this.fov = fov;
     this.near = near;
     this.far = far;
+    this.aspect = aspect;
     this.position = pos && new Vec3(pos.x, pos.y, pos.z) || new Vec3;
     this.target = target && new Vec3(target.x, target.y, target.z) || new Vec3;
     this.up = up && new Vec3(up.x, up.y, up.z) || new Vec3(0, 1, 0);
