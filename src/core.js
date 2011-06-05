@@ -118,7 +118,7 @@ this.PhiloGL = null;
       var scene = new PhiloGL.Scene(program, camera, optScene);
       
       //make app instance global to all framework
-      app = new PhiloGL.App({
+      app = new PhiloGL.WebGLApplication({
         gl: gl,
         canvas: canvas,
         program: program,

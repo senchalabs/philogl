@@ -1,7 +1,7 @@
 //app.js
 //creates a singleton application that stores buffer state and has access to scenes, programs, cameras, etc.
 (function() {
-  function App(options) {
+  function WebGLApplication(options) {
     //copy program, scene, camera, etc.
     for (var prop in options) {
       this[prop] = options[prop];
@@ -20,7 +20,7 @@
     this.textureMemo = {};
   }
 
-  App.prototype = {
+  WebGLApplication.prototype = {
     $$family: 'application',
 
     setBuffer: function(program, name, opt) {
@@ -297,5 +297,5 @@
     }
   };
 
-  PhiloGL.App = App;
+  PhiloGL.WebGLApplication = WebGLApplication;
 })();
