@@ -13,13 +13,9 @@ using buffers, textures, setting uniforms and more.
 
 ### Properties:
 
-A program instance has multiple public properties.
+A program instance has as public properties:
 
 * program - (*object*) The native WebGL program instance.
-* buffers - (*object*) An object with buffer string id as key, buffer object as value.
-* frameBuffers - (*object*) An object with framebuffer string id as key, framebuffer object as value.
-* renderBuffers - (*object*) An object with renderbuffer string id as key, renderbuffer object as value.
-* textures - (*object*) An object with texture string id as key, texture object as value.
 
 ### Notes:
 
@@ -241,24 +237,6 @@ var program = PhiloGL.Program.fromDefaultShaders('Default', 'Blend');
 For more information about the default shader code `Default` included in the Framework take a look at the [Shaders](shaders.html) script.
 
 
-Program Method: setState {#Program:setState}
------------------------------------------------
-
-Copies the current state of a Program into another program. The state is the current buffer, texture configuration etc.
-
-### Syntax:
-
-	program.setState(anotherProgram);
-
-### Arguments:
-
-1. anotherProgram - (*object*) Another Program instance.
-
-### Examples:
-
-See [lesson 13](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/13/) for a useful example of `setState`.
-
-
 Program Method: setUniform {#Program:setUniform}
 --------------------------------------------------
 
@@ -320,47 +298,6 @@ Also, for all properties set to a buffer, these properties are remembered so the
 ### Syntax:
 
 	program.setBuffer(name, options);
-
-### Arguments:
-
-1. name - (*string*) The name (unique id) of the buffer. If no `attribute` value is set in `options` then the buffer name will be used as attribute name.
-2. options - (*object*) An object with options/data described below:
-
-### Options:
-
-* attribute - (*string*, optional) The name of the attribute to generate attribute calls to. If this parameter is not specified then the attribute name will 
-be the buffer name.
-* bufferType - (*enum*, optional) The type of the buffer. Possible options are `gl.ELEMENT_ARRAY_BUFFER`, `gl.ARRAY_BUFFER`. Default's `gl.ARRAY_BUFFER`.
-* size - (*numer*, optional) The size of the components in the buffer. Default's 1.
-* dataType - (*enum*, optional) The type of the data being stored in the buffer. Default's `gl.FLOAT`.
-* stride - (*number*, optional) The `stride` parameter when calling `gl.vertexAttribPointer`. Default's 0.
-* offset - (*number*, optional) The `offset` parameter when calling `gl.vertexAttribPointer`. Default's 0.
-* drawType - (*enum*, optional) The type of draw used when setting the `gl.bufferData`. Default's `gl.STATIC_DRAW`.
-
-### Examples:
-
-Set buffer values for the vertices of a triangle. 
-The context of this example can be seen [here](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/).
-
-{% highlight js %}
-program.setBuffer('triangle', {
-  attribute: 'aVertexPosition',
-  value: new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]),
-  size: 3
-});
-{% endhighlight %}
-
-
-Program Method: setBuffer {#Program:setBuffer}
---------------------------------------------------
-
-This method is useful to set properties (and data) to a buffer and/or attributes. If the buffer does not exist it will be created. 
-Also, for all properties set to a buffer, these properties are remembered so they're optional for later calls. If the buffer was already created,
-calling `setBuffer` without any options will just bind that buffer.
-
-### Syntax:
-
-	program.setBuffer(name[, options]);
 
 ### Arguments:
 
@@ -478,7 +415,7 @@ program.setFrameBuffer('monitor', {
 
 
 Program Method: setFrameBuffers {#Program:setFrameBuffers}
---------------------------------------------------
+-----------------------------------------------------------
 
 For each `key, value` of the object passed in it executes `setFrameBuffer(key, value)`.
 
@@ -492,7 +429,7 @@ For each `key, value` of the object passed in it executes `setFrameBuffer(key, v
 
 
 Program Method: setRenderBuffer {#Program:setRenderBuffer}
----------------------------------------------------------
+-----------------------------------------------------------
 
 Creates or binds/unbinds a renderbuffer. If the renderbuffer already exists and the second parameter is a boolean it'll bind or unbind the renderbuffer.
  Also, for all properties set to a buffer, these properties are remembered so they're optional for later calls.
@@ -638,7 +575,7 @@ img.src = 'path/to/image.png';
 
 
 Program Method: use {#Program:use}
--------------------------------------------------------------
+-----------------------------------
 
 Calls `gl.useProgram(this.program)`. To set the current program as active.
 

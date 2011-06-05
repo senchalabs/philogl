@@ -36,8 +36,12 @@ modules and classes so they can be accessed by the global scope and not through 
 PhiloGL Method: constructor {#PhiloGL:constructor}
 ----------------------------------------------------
 
-Creates a PhiloGL application. The PhiloGL application provides a [WebGL](webgl.html) context, a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), 
-and also options for handling [Events](event.html), loading textures via [IO](io.html) and more.
+Creates a [PhiloGL application](app.html). The PhiloGL application provides a [WebGL](webgl.html) context, 
+a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), and also options for handling [Events](event.html), 
+loading textures via [IO](io.html) and more. For more information about
+the application you may take a look at the [App](app.html) class. This
+section describes the configuration options you can pass in to create
+the WebGL application.
 
 ### Syntax:
 
@@ -48,21 +52,36 @@ and also options for handling [Events](event.html), loading textures via [IO](io
 1. canvasId  - (*string*) The *id* of the canvas element.
 5. options - (*object*) An object containing the following options:
 
+### Returns:
+
+A [WebGLApplication](app.html).
+
 ### Options:
 
-* context - (*object*, optional) An object to pass in options for when the [WebGL context]() is created. For now the only option supported is `debug: true`.
+#### General WebGLRenderingContext options:
+
+* context - (*object*, optional) An object to pass in options for when the WebGL context is created. For now the only option supported is `debug: true`.
+
+#### Program management:
+
 * program - (*object*, optional) An object that contains options for creating a [Program](program.html). The options for program are:
   * from - (*string*) Possible options are `defaults`, `ids`, `sources`, `uris`.
   * path - (*string*, optional) Sets a link path appended as prefix to the `vs` and `fs` string properties.
   * vs - (*string*) The name, id, source or path to the Vertex Shader.
   * fs - (*string*) The name, id, source or path to the Fragment Shader.
   * noCache - (*boolean*, optional) If true, files will be reloaded and not taken from the cache. Useful on development phase. Default's `false`.
+
+#### Camera management:
+
 * camera - (*object*, optional) An object with options for creating a [Camera](camera.html). These options are:
   * fov - (*number*) Field of View. Default's `45`.
   * near - (*number*) Near distance. Default's `0.1`.
   * far - (*number*) Far distance. Default's `500`.
   * position - (*object*) The position of the camera. Default's `{ x: 0, y: 0, z: 0 }`.
   * target - (*object*) The target position to where the camera will look at. Default's `{ x: 0, y: 0, z: 0 }`.
+
+#### Scene management:
+
 * scene - (*object*, optional) [Scene](scene.html) creation options. These options are:
 
   * lights - (*object*, optional) An object for managing lights. The options for lighting are:
@@ -81,6 +100,9 @@ and also options for handling [Events](event.html), loading textures via [IO](io
         * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
         * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
         * color - (*object*) An `{ r, g, b }` object with the fog color.
+
+#### Texture management:
+
 * textures - (*object*, optional) An object to load textures with the [IO](io.html) module. See also [Program.setTexture](). The object has as properties:
   * src - (*array*) An array of strings containing the path of the images to be loaded.
   * textureType - (*string*, optional) The type of the texture. Default's `TEXTURE_2D`.
@@ -92,6 +114,9 @@ and also options for handling [Events](event.html), loading textures via [IO](io
     * width - (*number*, optional) The width of the texture. Used when no image is provided. Default's 0.
     * height - (*number*, optional) The height of the texture. Used when no image is provided. Default's 0.
     * border - (*number*, optional) The borde of the texture. Default's 0.
+
+#### Event handling:
+
 * events - (*object*, optional) An object with callbacks and configuration for event handling. For more information about the event callbacks check the [Event](event.html) documentation. These options are:
   * cachePosition - (*boolean*, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default's `true`.
   * cacheSize - (*boolean*, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default's `true`.
@@ -116,10 +141,13 @@ and also options for handling [Events](event.html), loading textures via [IO](io
   * onMouseWheel - (*function*, optional) Handles the onMouseWheel event.
   * onKeyDown - (*function*, optional) Handles the onKeyDown event.
   * onKeyUp - (*function*, optional) Handles the onKeyUp event.
+
+#### Loading callbacks:
+
 * onError - (*function*, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.
-* onLoad - (*function*) A function called when the application is successfully created. An app is created if the context is loaded, the program is compiled 
+* onLoad - (*function*) A function called when the application is successfully created. An [app instance](app.html) is created if the context is loaded, the program is compiled 
 and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly 
-loaded and set and the camera is created. The first parameter of the callback function is an app object that has a properties:
+loaded and set and the camera is created. The first parameter of the callback function is an [app instance](app.html) that has as some of the properties:
   * gl - (*object*) The WebGL context.
   * camera - (*object*) The [Camera](camera.html) instance.
   * scene - (*object*) The [Scene](scene.html) instance.

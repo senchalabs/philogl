@@ -1405,6 +1405,7 @@ Create a `Mat4` matrix and transpose it.
   m.transpose(); //the result is a new Identity matrix
 {% endhighlight %}
 
+
 Mat4 Method: $transpose {#Mat4:$transpose}
 -------------------------------------
 
@@ -1653,6 +1654,7 @@ Another way of doing it with generics:
   PhiloGL.Mat4.$translate(m, 10, 0, 0); //the result is in m
 {% endhighlight %}
 
+
 Mat4 Method: scale {#Mat4:scale}
 -------------------------------------------
 
@@ -1750,6 +1752,7 @@ Create a `Mat4` matrix and invert it.
 
   m.invert(); //the result is a new matrix
 {% endhighlight %}
+
 
 Mat4 Method: $invert {#Mat4:$invert}
 -------------------------------------
@@ -1893,6 +1896,18 @@ Converts the matrix in a [Float32Array](https://developer.mozilla.org/en/JavaScr
 	m.toFloat32Array();
     
     PhiloGL.Mat4.toFloat32Array(m);
+
+
+Mat4 Method: clone {#Mat4:clone}
+------------------------------------
+
+Clones a matrix.
+
+### Syntax:
+
+	m.clone();
+
+    PhiloGL.Mat4.clone(m);
 
 
 Class: Quat {#Quat}

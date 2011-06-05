@@ -1,5 +1,5 @@
 //math.js
-//Vec3 and Mat4 classes
+//Vec3, Mat4 and Quat classes
 
 (function() {
   var sqrt = Math.sqrt, 
@@ -221,6 +221,13 @@
       dest.n31 = dest.n32 = dest.n34 = 0;
       dest.n41 = dest.n42 = dest.n43 = 0;
       return dest;
+    },
+
+    clone: function(dest) {
+      return new Mat4(dest.n11, dest.n12, dest.n13, dest.n14,
+                      dest.n21, dest.n22, dest.n23, dest.n24,
+                      dest.n31, dest.n32, dest.n33, dest.n34,
+                      dest.n41, dest.n42, dest.n43, dest.n44);
     },
 
     set: function(dest, n11, n12, n13, n14,

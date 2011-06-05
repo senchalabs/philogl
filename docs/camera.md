@@ -9,6 +9,16 @@ Class: Camera {#Camera}
 
 Provides the Camera object with information about the camera position, target position and projection matrix information.
 
+### Properties:
+
+You can access most of the constructor properties from a camera
+instance:
+
+* fov  - (*number*) The angle (in degrees) for the field of view.
+* aspect  - (*number*) The aspect ratio of the screen.
+* near - (*number*) The closest distance that can be captured by the camera.
+* far - (*number*) The longest distance that can be captured by the camera.
+
 
 Camera Method: constructor {#Camera:constructor}
 ----------------------------------------------------

@@ -134,6 +134,32 @@ scene.add(moon, box);
 {% endhighlight %}
 
 
+Scene Method: remove {#Scene:remove}
+-------------------------------------
+
+Removes an [O3D](o3d.html) object from the Scene.
+
+### Syntax:
+
+    scene.remove(model);
+
+### Arguments:
+
+model - (*object*) The model to be removed.
+
+### Examples:
+
+Add a moon and a box models to the scene. Then remove them.
+
+{% highlight js %}
+//Add objects to the scene
+scene.add(moon, box);
+
+//Remove the moon
+scene.remove(moon);
+{% endhighlight %}
+
+
 Scene Method: render {#Scene:render}
 --------------------------------------
 
@@ -206,6 +232,27 @@ Scene Method: pick {#Scene:pick}
 Returns an [O3D](o3d.html) object under the given `x` and `y`
 coordinates. The object must have `pickable` set to `true` (which is
 the default O3D constructor value).
+
+### About the picking algorithm
+
+The picking algorithm used in PhiloGL is a color picking
+algorithm. Each model is assigned a different color and the scene is 
+rendered to a texture. Then, the pixel pointed by the mouse
+position is retrieved from the texture and the color of that pixel is 
+used to identify the model.
+
+### Customizing the picking algorithm
+
+Sometimes we want to know more than just which object has been picked. For
+example, we would want to know which face of that object has been
+picked. In that case the [O3D](o3d.html) constructor options
+`pickingColors` and `pick` are useful. By defining your own set of per
+vertex colors and a method that given a pixel returns special
+information on what part of the object has been retrieved, then it is
+possible to have finer grain picking. For more information about how to 
+use this you can take a look at the Air Flights example or go to the
+[Google group of the framework](http://groups.google.com/group/philogl)
+and ask for more info.
 
 ### Syntax:
 

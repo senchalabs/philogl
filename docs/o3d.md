@@ -44,19 +44,25 @@ The main constructor function for the Model class. Use this to create a new Mode
 
 ### Options:
 
+* id - (*string*, optional) An id for the model. If not provided, a random unique identifier will be created.
 * dynamic - (*boolean*, optional) If true then the vertices and normals will always be updated in the Buffer Objects before rendering. Default's false.
 * display - (*boolean*, optional) If false the element won't be displayed in the scene. Default's true.
-* pickable - (*boolean*, optional) If true the element can be selected with the mouse when using picking on the [Event](event.html) configuration. Default's true.
 * vertices - (*array*, optional) An array of floats that describe the vertices of the model.
 * normals - (*array*, optional) An array of floats that describe the normals of the model.
 * textures - (*array*, optional) An array of strings of texture ids.
+* texCoords - (*mixed*, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and 
 * colors - (*array*, optional) An array of colors in RGBA. If just one color is specified that color will be used for all faces.
 * indices - (*array*, optional) An array of numbers describing the vertex indices for each face.
 * shininess - (*number*, optional) A number between [0.1, 200] describing how shiny an object is.
+* attributes - (*object*, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more 
+about attribute descriptors you can find a description of them in [program.setBuffer](program.html#Program:setBuffer). 
 * uniforms - (*object*, optional) An object with uniform names and values to be set before rendering the model.
-* render - (*function*, optional) A function to be called for rendering the object instead of the default [Scene](scene.html) rendering methods.
+* program - (*string*, optional) A string with the id of the program to be used when rendering this model.
 * drawType - (*string*, optional) A string describing the drawType. Some options are `TRIANGLES`, `TRIANGLE_STRIP`, `POINTS`, `LINES`. Default's `TRIANGLES`.
-* texCoords - (*mixed*, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and 
+* render - (*function*, optional) A function to be called for rendering the object instead of the default [Scene](scene.html) rendering method.
+* pickable - (*boolean*, optional) If true the element can be selected with the mouse when using picking on the [Event](event.html) configuration. Default's false.
+* pickingColors - (*array*, optional) A custom set of colors to render the object to texture when performing the color picking algorithm.
+* pick - (*function*, optional) A custom pick function called with the retrieved pixel color from the picking texture.
 array of floats as values (to handle multiple textures).
 * onBeforeRender - (*function*, optional) Called before rendering an object. The first two formal parameters are the program and the camera respectively.
 * onAfterRender - (*function*, optional) Called after rendering an object. The first two formal parameters are the program and the camera respectively.
@@ -93,6 +99,45 @@ var pyramid = new PhiloGL.O3D.Model({
              [1, 0, 0, 1],
              [0, 0, 1, 1],
              [0, 1, 0, 1]]
+  });
+{% endhighlight %}
+
+
+Create a pyramid model and add some extra buffer information and uniform
+color to be set before rendering to model.
+
+{% highlight js %}
+
+var fromVertices =  [ 0,  1,  0,
+                     -1, -1,  1,
+                      1, -1,  1,
+                      0,  1,  0,
+                      1, -1,  1,
+                      1, -1, -1,
+                      0,  1,  0,
+                      1, -1, -1,
+                     -1, -1, -1,
+                      0,  1,  0,
+                     -1, -1, -1,
+                     -1, -1,  1];
+
+var toVertices = fromVertices.map(function(value) { return value * 2; });
+
+var pyramid = new PhiloGL.O3D.Model({
+    vertices: fromVertices,
+
+    uniforms: {
+        colorUfm: [0.3, 0.2, 0.7, 1]
+    },
+
+    attributes: {
+        endPosition: {
+          //default is type: gl.FLOAT
+          attribute: 'endPosition',
+          size: 3,
+          value: new Float32Array(toVertices)
+        }
+    }
   });
 {% endhighlight %}
 
@@ -238,6 +283,97 @@ var whiteSphere = new PhiloGL.O3D.Sphere({
   colors: [1, 1, 1, 1]
 });
 {% endhighlight %}
+
+
+O3D Class: O3D.IcoSphere {#O3D:IcoSphere}
+-----------------------------------------
+
+Creates a Sphere model by subdividing an Icosahedron. Inherits methods from [O3D.Model](#O3D:Model).
+
+### Extends
+
+O3D.Model
+
+
+O3D.IcoSphere Method: constructor {#O3D:IcoSphere:constructor}
+---------------------------------------------------------------
+
+The main constructor function for the IcoSphere class. Use this to create a new IcoSphere. 
+
+### Syntax:
+
+	var model = new PhiloGL.O3D.IcoSphere(options);
+
+### Arguments:
+
+1. options - (*object*) An object containing as poperties:
+
+### Options:
+
+* iterations - (*number*, optional) The number of iterations used to subdivide the Icosahedron. Default's 0.
+
+### Examples:
+
+Create a white IcoSphere of radius 1.
+
+{% highlight js %}
+var whiteSphere = new PhiloGL.O3D.IcoSphere({
+  iterations: 1,
+  colors: [1, 1, 1, 1]
+});
+{% endhighlight %}
+
+
+O3D Class: O3D.Plane {#O3D:Plane}
+----------------------------------
+
+Creates a plane. Inherits methods from [O3D.Model](#O3D:Model).
+
+### Extends
+
+O3D.Model
+
+
+O3D.Plane Method: constructor {#O3D:Plane:constructor}
+---------------------------------------------------------
+
+The main constructor function for the Plane class. Use this to create a new Plane. 
+
+### Syntax:
+
+	var model = new PhiloGL.O3D.Plane(options);
+
+### Arguments:
+
+1. options - (*object*) An object containing as poperties:
+
+### Options:
+
+* type - (*string*) Whether is a XY, YZ or XZ plane. Possible values are `x,y`, `x,z`, `y,z`.
+* xlen - (*number*) The length along the x-axis. Only used in `x,z` or `x,y` planes.
+* ylen - (*number*) The length along the y-axis. Only used in `y,z` or `x,y` planes.
+* zlen - (*number*) The length along the z-axis. Only used in `x,z` or `y,z` planes.
+* nx - (*number*) The number of subdivisions along the x-axis. Only used in `x,z` or `x,y` planes.
+* ny - (*number*) The number of subdivisions along the y-axis. Only used in `y,z` or `x,y` planes.
+* nz - (*number*) The number of subdivisions along the z-axis. Only used in `x,z` or `y,z` planes.
+* offset - (*number*) For XZ planes, the offset along the y-axis. For XY planes, the offset along the z-axis. For YZ planes, the offset along the x-axis.
+
+### Examples:
+
+Create a white XZ plane.
+
+{% highlight js %}
+var whitePlane = new PhiloGL.O3D.Plane({
+  type: 'x,z',
+  xlen: 10,
+  zlen: 20,
+  nx: 5,
+  nz: 5,
+  offset: 0,
+  colors: [1, 1, 1, 1]
+});
+{% endhighlight %}
+
 
 
 O3D Class: O3D.Cylinder {#O3D:Cylinder}
