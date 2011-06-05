@@ -8,25 +8,26 @@
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body>
-    <div id="log-panel">
+    <div id="log-panel" style="display:none;">
       <span id="log-message"></span>
     </div>
   
     <div id="fallback" class="fallback"></div>
-
-    <div id="container">
-      
+    
+    <div id="container">      
       <div id="title">
         <h1>World Flights</h1>
-        
         <div class="description">Visualize major airlines flight routes</div>
       </div>
+
       <div class="canvas-container">
         <canvas id="map-canvas" width="800" height="500"></canvas>
-        <div class="list-wrapper">
+        <div id="list-wrapper" class="list-wrapper" style="display:none;">
+          <input type="text" id="search" placeholder="Search for an Airline" />
           <div class="list-container">
-            <ul id="airline-list" style="display: none;"></ul>
+            <ul id="airline-list"></ul>
           </div>
+          <div class="mask"> </div>
         </div>
         <div style="clear:both;"></div>
       </div>

@@ -8,6 +8,38 @@ document.onreadystatechange = function() {
     logMessage = $('log-message');
     airlineList = $('airline-list');
     tooltip = $('tooltip');
+
+    //Add search handler
+    $('search').addEventListener('keyup', (function() {
+      var timer = null,
+          parentNode = airlineList.parentNode,
+          lis = airlineList.getElementsByTagName('li'),
+          previousText = '';
+
+      function search(value) {
+        parentNode.removeChild(airlineList);
+        for (var i = 0, l = lis.length; i < l; i++) {
+          var li = lis[i],
+              text = li.textContent || li.innerText;
+          li.style.display = text.trim().toLowerCase().indexOf(value) > -1 ? '' : 'none';
+        }
+        parentNode.appendChild(airlineList);
+      }
+
+      return function(e) {
+        timer = clearTimeout(timer);
+        var trimmed = this.value.trim();
+        if (trimmed != previousText) {
+          timer = setTimeout(function() { 
+            search(trimmed.toLowerCase()); 
+            previousText = trimmed;
+          }, 300);
+        }
+      };
+
+    })(), true);
+    
+    //load dataset
     loadData();
   }
 };
@@ -83,31 +115,36 @@ models.airlines.update();
 //Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
   var modelInfo = e.data;
-  data.citiesIndex = modelInfo.citiesIndex;
-  models.cities = new O3D.Model(Object.create(modelInfo, {
-    //Add a custom picking method
-    pick: {
-      value: function(pixel) {
-        //calculates the element index in the array by hashing the color values
-        if (pixel[0] == 0 && (pixel[1] != 0 || pixel[2] != 0)) {
-          var index = pixel[2] + pixel[1] * 256;
-          return index;
+
+  if (typeof modelInfo == 'number') {
+      Log.write('Building models ' + modelInfo + '%');
+  } else {
+    data.citiesIndex = modelInfo.citiesIndex;
+    models.cities = new O3D.Model(Object.create(modelInfo, {
+      //Add a custom picking method
+      pick: {
+        value: function(pixel) {
+          //calculates the element index in the array by hashing the color values
+          if (pixel[0] == 0 && (pixel[1] != 0 || pixel[2] != 0)) {
+            var index = pixel[2] + pixel[1] * 256;
+            return index;
+          }
+          return false;
         }
-        return false;
-      }
-    },
+      },
 
-    render: {
-      value: function(gl, program, camera) {
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+      render: {
+        value: function(gl, program, camera) {
+          gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        }
       }
-    }
-  }));
-  models.cities.rotation.set(-0.3, 0, 0);
-  models.cities.update();
+    }));
+    models.cities.rotation.set(-0.3, 0, 0);
+    models.cities.update();
 
-  Log.write('Loading assets...');
-  createApp();
+    Log.write('Loading assets...');
+    createApp();
+  }
 };
 
 function loadData() {
@@ -174,7 +211,7 @@ function loadData() {
       }, false);
     },
     onError: function() {
-      logMessage.innerHTML = 'There was an error while fetching airlines data.';
+      Log.write('There was an error while fetching airlines data.', true);
     }
   }).send();
 }
@@ -482,7 +519,7 @@ function createApp() {
       
       //Select first airline
       $$('#airline-list li input')[0].click();
-      $('airline-list').style.display = '';
+      $('list-wrapper').style.display = '';
 
       function draw() {
         gl.clearColor(0.1, 0.1, 0.1, 1);

@@ -95,12 +95,6 @@ div.tooltip.hide {
 /*  border: 1px solid #ccc;*/
 }
 
-img.legend {
-  margin: 9px auto;
-  width: 190px;
-  background-color: #444;
-}
-
 h1 {
   text-shadow: rgba(255, 255, 255, 0.2) 0 0 3px;
   margin: 5px;
@@ -118,6 +112,26 @@ h1 {
 .canvas-container canvas, 
 .canvas-container .list-wrapper {
   float: left;
+}
+
+.list-wrapper {
+  position: relative;
+}
+
+.mask {
+  position: absolute;
+  bottom: 0;
+  width: 185px;
+  height: 30px;
+  
+  background: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
+  background: -moz-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
+  background: -o-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
+  background: linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
+}
+
+input#search {
+  width: 180px;
 }
 
 .list-wrapper, 

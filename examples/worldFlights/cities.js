@@ -20,7 +20,8 @@ function createCitiesLayer(cities) {
       normals = [],
       pickingColors = [],
       indices = [],
-      vertexCount = 0;
+      vertexCount = 0,
+      step = Object.keys(cities).length / 5 >> 0;
 
   for (var prop in cities) {
     var city = cities[prop],
@@ -52,6 +53,10 @@ function createCitiesLayer(cities) {
     cityIndex[index++] = prop;
 
     vertexCount += tvertices.length / 3;
+
+    if (!(index % step)) {
+      postMessage(Math.round(index / step * 20));
+    }
   }
 
   return {
