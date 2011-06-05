@@ -9,11 +9,11 @@ html, body {
 }
 
 h1 {
-  font-family: 'Crimson Text', Verdana;
+  font-family: Arial;
 }
 
 div#title {
-
+  margin: 20px;
 }
 
 div.description {
