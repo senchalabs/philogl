@@ -64,7 +64,8 @@ A [WebGLApplication](app.html).
 
 #### Program management:
 
-* program - (*object*, optional) An object that contains options for creating a [Program](program.html). The options for program are:
+* program - (*mixed*, optional) An object that contains options for creating a [Program](program.html). Can also be an array of program objects, provided that each object contains an id. The options for program are:
+  * id - (*string*) Used when creating multiple programs. The id of the program to create.
   * from - (*string*) Possible options are `defaults`, `ids`, `sources`, `uris`.
   * path - (*string*, optional) Sets a link path appended as prefix to the `vs` and `fs` string properties.
   * vs - (*string*) The name, id, source or path to the Vertex Shader.
