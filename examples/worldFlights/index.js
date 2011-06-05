@@ -3,11 +3,12 @@ PhiloGL.unpack();
 
 //Get handles when document is ready
 document.onreadystatechange = function() {
-  if (document.readyState == 'complete') {
+  if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
     logPanel = $('log-panel');
     logMessage = $('log-message');
     airlineList = $('airline-list');
     tooltip = $('tooltip');
+    loadData();
   }
 };
 
@@ -19,6 +20,37 @@ var $ = function(id) { return document.getElementById(id); },
     models = {},
     logPanel, logMessage, airlineList, pos, tooltip, mapCanvas;
 
+//Log singleton
+var Log = {
+  elem: null,
+  timer: null,
+  
+  getElem: function() {
+    if (!this.elem) {
+      return (this.elem = $('log-message'));
+    }
+    return this.elem;
+  },
+  
+  write: function(text, hide) {
+    if (this.timer) {
+      this.timer = clearTimeout(this.timer);
+    }
+    
+    var elem = this.getElem(),
+        style = elem.parentNode.style;
+
+    elem.innerHTML = text;
+    style.display = '';
+
+    if (hide) {
+      this.timer = setTimeout(function() {
+        style.display = 'none';
+      }, 2000);
+    }
+  }
+};
+
 //Create earth
 models.earth = new O3D.Sphere({
   nlat: 50,
@@ -28,7 +60,7 @@ models.earth = new O3D.Sphere({
   textures: ['img/earth3-specular.gif'],
   program: 'earth'
 });
-models.earth.rotation.set(Math.PI, 0,  0);
+models.earth.rotation.set(Math.PI - 0.3, 0,  0);
 models.earth.update();
 
 //Create airline routes model
@@ -45,6 +77,8 @@ models.airlines = new O3D.Model({
     }
   }
 });
+models.airlines.rotation.set(-0.3, 0, 0);
+models.airlines.update();
 
 //Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
@@ -69,69 +103,81 @@ citiesWorker.onmessage = function(e) {
       }
     }
   }));
+  models.cities.rotation.set(-0.3, 0, 0);
+  models.cities.update();
 
+  Log.write('Loading assets...');
   createApp();
 };
 
-//Request cities data
-new IO.XHR({
-  url: 'data/cities.json',
-  onSuccess: function(json) {
-    data.cities = JSON.parse(json);
-    citiesWorker.postMessage(data.cities);
-  },
-  onError: function() {
-    logMessage.innerHTML = 'There was an error while fetching cities data.';
-  }
-}).send();
-
-//Request airline data
-new IO.XHR({
-  url: 'data/airlines.json',
-  onSuccess: function(json) {
-    var airlines = data.airlines = JSON.parse(json),
-        html = [];
-    //assuming the data will be available after the document is ready...
-    for (var i = 0, l = airlines.length; i < l; i++) {
-      var airlineId = airlines[i][0],
-          airlineName = airlines[i][1];
-      html.push('<label><input type=\'checkbox\' id=\'checkbox-' + airlineId + '\' /> ' + airlineName + '</label>');
+function loadData() {
+  Log.write('Loading data...');
+  //Request cities data
+  new IO.XHR({
+    url: 'data/cities.json',
+    onSuccess: function(json) {
+      data.cities = JSON.parse(json);
+      citiesWorker.postMessage(data.cities);
+      Log.write('Building models...');
+    },
+    onProgress: function(e) {
+      Log.write('Loading airports data, please wait...' + (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
+    },
+    onError: function() {
+      Log.write('There was an error while fetching cities data.', true);
     }
-    //append all elements
-    airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
-    //when an airline is selected show all paths for that airline
-    airlineList.addEventListener('change', function(e) {
-      var target = e.target,
-          airlineId = target.id.split('-')[1];
-      
-      function callback() {
-        if (target.checked) {
-          airlineManager.add(airlineId);
-        } else {
-          airlineManager.remove(airlineId);
-        }
-      }
+  }).send();
 
-      if (data.airlinesRoutes[airlineId]) {
-        callback();
-      } else {
-        new IO.XHR({
-          url: 'data/airlines/' + airlineId.replace(' ', '_') + '.json',
-          onSuccess: function(json) {
-            data.airlinesRoutes[airlineId] = JSON.parse(json);
-            callback();
-          },
-          onError: function() {
-            logMessage.innerHTML = 'There was an error while fetching data for airline: ' + airlineId;
-          }
-        }).send();
+  //Request airline data
+  new IO.XHR({
+    url: 'data/airlines.json',
+    onSuccess: function(json) {
+      var airlines = data.airlines = JSON.parse(json),
+          html = [];
+      //assuming the data will be available after the document is ready...
+      for (var i = 0, l = airlines.length; i < l; i++) {
+        var airlineId = airlines[i][0],
+            airlineName = airlines[i][1];
+        html.push('<label for=\'checkbox-' + airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' + airlineId + '\' /> ' + airlineName + '</label>');
       }
-    }, false);
-  },
-  onError: function() {
-    logMessage.innerHTML = 'There was an error while fetching airlines data.';
-  }
-}).send();
+      //append all elements
+      airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
+      //when an airline is selected show all paths for that airline
+      airlineList.addEventListener('change', function(e) {
+        var target = e.target,
+            airlineId = target.id.split('-')[1];
+        
+        function callback() {
+          if (target.checked) {
+            airlineManager.add(airlineId);
+          } else {
+            airlineManager.remove(airlineId);
+          }
+        }
+
+        if (data.airlinesRoutes[airlineId]) {
+          callback();
+        } else {
+          Log.write('Fetching data for airline...');
+          new IO.XHR({
+            url: 'data/airlines/' + airlineId.replace(' ', '_') + '.json',
+            onSuccess: function(json) {
+              data.airlinesRoutes[airlineId] = JSON.parse(json);
+              callback();
+              Log.write('Done.', true);
+            },
+            onError: function() {
+              Log.write('There was an error while fetching data for airline: ' + airlineId, true);
+            }
+          }).send();
+        }
+      }, false);
+    },
+    onError: function() {
+      logMessage.innerHTML = 'There was an error while fetching airlines data.';
+    }
+  }).send();
+}
 
 //Takes care of adding and removing routes
 //for the selected airlines
@@ -169,11 +215,15 @@ var airlineManager = {
         index = airlineIds.indexOf(airline),
         samplings = 10;
 
-    airlineIds.splice(index, 1);
-    airlines.vertices.splice(index * samplings * 3, nroutes * samplings * 3);
-    airlines.indices.splice(index * (samplings - 1) * 2, nroutes * (samplings - 1) * 2);
+    for (var i = 0, nacum = 0; i < index; i++) {
+      nacum += data.airlinesRoutes[airlineIds[i]].length;
+    }
 
-    for (var i = index, l = indices.length; i < l; i++) {
+    airlineIds.splice(index, 1);
+    vertices.splice(samplings * 3 * nacum, nroutes * samplings * 3);
+    indices.splice((samplings - 1) * 2 * nacum, nroutes * (samplings - 1) * 2);
+
+    for (var i = (samplings - 1) * 2 * nacum, l = indices.length; i < l; i++) {
       indices[i] -= (samplings * nroutes);
     }
     airlines.dynamic = true;
@@ -185,8 +235,8 @@ var airlineManager = {
         pi2 = pi * 2,
         sin = Math.sin,
         cos = Math.cos,
-        city1 = data.cities[route[2].toLowerCase() + '^' + route[1].toLowerCase()],
-        city2 = data.cities[route[4].toLowerCase() + '^' + route[3].toLowerCase()],
+        city1 = data.cities[route[2] + '^' + route[1]],
+        city2 = data.cities[route[4] + '^' + route[3]],
         city = [city1[2], city1[3], city2[2], city2[3]],
         theta1 = pi2 - (+city[1] + 180) / 360 * pi2,
         phi1 = pi - (+city[0] + 90) / 180 * pi,
@@ -202,7 +252,7 @@ var airlineManager = {
         sinPhi2 = sin(phi2),
         cosPhi2 = cos(phi2),
         p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
-        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.3),
+        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.5),
         pArray = [],
         pIndices = [],
         t = 0,
@@ -248,15 +298,7 @@ function createApp() {
       vs: 'earth.vs.glsl',
       fs: 'earth.fs.glsl',
       noCache: true
-    }, /*{
-      //to render the shadow
-      id: 'plane',
-      from: 'uris',
-      path: 'shaders/',
-      vs: 'plane.vs.glsl',
-      fs: 'plane.fs.glsl',
-      noCache: true
-    }, */{
+    }, {
       //for glow post-processing
       id: 'glow',
       from: 'uris',
@@ -298,7 +340,6 @@ function createApp() {
       }
     },
     events: {
-      picking: false,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
@@ -346,39 +387,6 @@ function createApp() {
       },
       onDragEnd: function(e) {
         pos.ycache += (pos.y - e.y) / 300;
-      },
-      onMouseEnter: function(e, model) {
-        if (model) {
-          clearTimeout(this.timer);
-          var style = tooltip.style,
-              name = data.citiesIndex[model.$pickingIndex].split('^'),
-              textName = name[1] + ', ' + name[0];
-
-          style.top = (e.y + 10) + 'px';
-          style.left = (e.x + 5) + 'px';
-          tooltip.className = 'tooltip show';
-
-          tooltip.innerHTML = textName;
-        }
-      },
-      onMouseLeave: function(e, model) {
-        this.timer = setTimeout(function() {
-          tooltip.className = 'tooltip hide';
-        }, 500);
-      },
-      onMouseWheel: function(e) {
-        e.stop();
-        var camera = this.renderCamera,
-            position = camera.position;
-        position.z += e.wheel;
-        console.log(position.z);
-        if (false && position.z > -6) {
-          position.z = -6;
-        }
-        if (false && position.z < -13) {
-          position.z = -13;
-        }
-        camera.update();
       }
     },
     textures: {
@@ -393,10 +401,11 @@ function createApp() {
       }]
     },
     onError: function() {
-      console.log(arguments);
-      alert("There was an error creating the app.");
+      Log.write("There was an error creating the app.", true);
     },
     onLoad: function(app) {
+      Log.write('Done.', true);
+
       //Unpack app properties
       var gl = app.gl,
           scene = app.scene,
@@ -413,7 +422,6 @@ function createApp() {
           }),
           renderScene = new Scene(program, renderCamera),
           glowScene = new Scene(program, camera, scene.config),
-          shadowScene = new Scene(program.earth, camera),
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
 
       renderCamera.update();
@@ -423,21 +431,6 @@ function createApp() {
       gl.clearDepth(1);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
-      
-      // Create planes
-      // models.bottomPlane = new O3D.Plane({
-      //   type: 'x,z',
-      //   xlen: width / 100,
-      //   zlen: height / 100,
-      //   nx: 5,
-      //   nz: 5,
-      //   offset: -1.8,
-      //   textures: 'shadow-texture',
-      //   program: 'plane'
-      // });
-
-      // models.bottomPlane.position.set(0, 0, 2);
-      // models.bottomPlane.update();
       
       models.frontPlane = new O3D.Plane({
         type: 'x,y',
@@ -468,7 +461,6 @@ function createApp() {
       };
 
       app.setFrameBuffers({
-//        shadow: framebufferOptions,
         glow: framebufferOptions,
         render:framebufferOptions
       });
@@ -479,17 +471,18 @@ function createApp() {
                 models.airlines);
 
       //rendered on-screen scene
-      renderScene.add(models.frontPlane/*,models.bottomPlane*/);
+      renderScene.add(models.frontPlane);
 
       //post processing glow scene
       glowScene.add(models.earth,
                     models.cities,
                     models.airlines);
-
-      //globe shadow scene
-      //shadowScene.add(models.earth);
      
       draw();
+      
+      //Select first airline
+      $$('#airline-list li input')[0].click();
+      $('airline-list').style.display = '';
 
       function draw() {
         gl.clearColor(0.1, 0.1, 0.1, 1);
@@ -517,14 +510,6 @@ function createApp() {
         earthProg.setUniform('renderType', -1);
         scene.renderToTexture('render');
         app.setFrameBuffer('render', false);
-        
-        //render shadow into a texture
-        // app.setFrameBuffer('shadow', true);
-        // gl.clear(clearOpt);
-        // earthProg.use();
-        // earthProg.setUniform('renderType', 0.2);
-        // shadowScene.renderToTexture('shadow');
-        // app.setFrameBuffer('shadow', false);
       }
 
       //Draw to screen

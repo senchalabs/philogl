@@ -37,19 +37,19 @@ def routes():
           #populate airline
           split_line = line.replace('"', '').split(',')
           airline_routes = airlines.get(split_line[0], [])
-          airline_routes.append(split_line[1:])
+          airline_routes.append([n.lower() for n in split_line[1:]])
           airlines[split_line[0]] = airline_routes
           #populate places
-          source_city, source_country = split_line[2], split_line[3]
+          source_city, source_country = split_line[2].lower(), split_line[3].lower()
           key = source_city + '^' + source_country
           place_routes = places.get(key, [])
-          place_routes.append(split_line)
+          place_routes.append([n.lower() for n in split_line])
           places[key] = place_routes
     
-          destination_city, destination_country = split_line[4], split_line[5]
+          destination_city, destination_country = split_line[4].lower(), split_line[5].lower()
           key = destination_city + '^' + destination_country
           place_routes = places.get(key, [])
-          place_routes.append(split_line)
+          place_routes.append([n.lower() for n in split_line])
           places[key] = place_routes
         except:
           pass

@@ -4,6 +4,8 @@ html, body {
   margin: 0;
   padding: 0;
   font-size: 0.9em;
+  background-color: rgb(50, 50, 50);
+  color: white;
 }
 
 h1 {
@@ -12,6 +14,18 @@ h1 {
 
 div#title {
 
+}
+
+div.description {
+  font-size: 0.9em;
+}
+
+a:link, a:visited {
+  color: #23A4FF;
+}
+
+a:hover, a:active {
+  color: #6EC3FF;
 }
 
 #container {
@@ -88,35 +102,37 @@ img.legend {
 }
 
 h1 {
-  text-shadow: rgba(0, 0, 0, 0.2) 0 0 3px;
+  text-shadow: rgba(255, 255, 255, 0.2) 0 0 3px;
   margin: 5px;
 }
 
 #map {
-  /*
-  -webkit-box-shadow: #333 0 0 10px;
-  -o-box-shadow: #333 0 0 10px;
-  -moz-box-shadow: #333 0 0 10px;
-  box-shadow: #333 0 0 10px;
-  */
   position: relative;
   height: 575px;
 }
 
 .canvas-container {
   margin: auto;
-  background-color: rgb(50, 50, 50);
-  box-shadow: 0 0 5px #000;
 }
 
 .canvas-container canvas, 
-.canvas-container .list-container {
+.canvas-container .list-wrapper {
   float: left;
 }
 
+.list-wrapper, 
 .list-container {
   height: 512px;
+}
+
+.list-container {
+  overflow: auto;
+  width: 200px;
+}
+
+.list-wrapper {
   overflow: hidden;
+  width: 185px;
 }
 
 ul#airline-list {
@@ -138,7 +154,7 @@ canvas {
 
 .footer {
   margin: 4px;
-  font-size: 13px;
+  font-size: 0.8em;
 }
 
 #loading {
