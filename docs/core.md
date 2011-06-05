@@ -36,10 +36,10 @@ modules and classes so they can be accessed by the global scope and not through 
 PhiloGL Method: constructor {#PhiloGL:constructor}
 ----------------------------------------------------
 
-Creates a [PhiloGL application](app.html). The PhiloGL application provides a [WebGL](webgl.html) context, 
+Creates a [PhiloGL application](webgl.html#WebGL:Application). The PhiloGL application provides a [WebGL](webgl.html) context, 
 a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), and also options for handling [Events](event.html), 
 loading textures via [IO](io.html) and more. For more information about
-the application you may take a look at the [App](app.html) class. This
+the application you may take a look at the [App](webgl.html#WebGL:Application) class. This
 section describes the configuration options you can pass in to create
 the WebGL application.
 
@@ -52,11 +52,9 @@ the WebGL application.
 1. canvasId  - (*string*) The *id* of the canvas element.
 5. options - (*object*) An object containing the following options:
 
-### Returns:
-
-A [WebGLApplication](app.html).
 
 ### Options:
+
 
 #### General WebGLRenderingContext options:
 
@@ -66,7 +64,7 @@ A [WebGLApplication](app.html).
 
 * program - (*mixed*, optional) An object that contains options for creating a [Program](program.html). Can also be an array of program objects, provided that each object contains an id. The options for program are:
   * id - (*string*) Used when creating multiple programs. The id of the program to create.
-  * from - (*string*) Possible options are `defaults`, `ids`, `sources`, `uris`.
+  * from - (*string*) Possible options are `defaults`, `ids`, `sources`, `uris`. This will create a program [from default shaders](program.html#Program:fromDefaultShaders), [from script ids](program.html#Program:fromShaderIds), [from string sources](program.html#Program:fromShaderSources) and [from urls](program.html#Program:fromShaderURIs) respectively.
   * path - (*string*, optional) Sets a link path appended as prefix to the `vs` and `fs` string properties.
   * vs - (*string*) The name, id, source or path to the Vertex Shader.
   * fs - (*string*) The name, id, source or path to the Fragment Shader.
@@ -146,13 +144,15 @@ A [WebGLApplication](app.html).
 #### Loading callbacks:
 
 * onError - (*function*, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.
-* onLoad - (*function*) A function called when the application is successfully created. An [app instance](app.html) is created if the context is loaded, the program is compiled 
+* onLoad - (*function*) A function called when the application is successfully created. An [app instance](webgl.html#WebGL:Application) is created if the context is loaded, the program is compiled 
 and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly 
-loaded and set and the camera is created. The first parameter of the callback function is an [app instance](app.html) that has as some of the properties:
+loaded and set and the camera is created. The first parameter of the callback function is an [app instance](webgl.html#WebGL:Application) that has as some of the properties:
   * gl - (*object*) The WebGL context.
   * camera - (*object*) The [Camera](camera.html) instance.
   * scene - (*object*) The [Scene](scene.html) instance.
-  * program - (*object*) The [Program](program.html) instance.
+  * program - (*object*) The [Program](program.html) instance, or an
+    object containing program ids as keys and [Program](program.html)
+instances as values.
 
 
 

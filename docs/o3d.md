@@ -104,7 +104,7 @@ var pyramid = new PhiloGL.O3D.Model({
 
 
 Create a pyramid model and add some extra buffer information and uniform
-color to be set before rendering to model.
+color to be set before rendering the model.
 
 {% highlight js %}
 

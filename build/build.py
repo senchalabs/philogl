@@ -2,13 +2,12 @@ path = '../src/'
 
 files = [
   'core.js',
-  'app.js',
+  'webgl.js',
   'math.js',
   'event.js',
   'program.js',
   'io.js',
   'camera.js',
-  'webgl.js',
   'o3d.js',
   'shaders.js',
   'scene.js',
