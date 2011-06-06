@@ -8,4 +8,4 @@ shaders export-ignore
 TODO export-ignore
 src export-ignore
 docs export-ignore
-tests export-ignore
+ests export-ignore
