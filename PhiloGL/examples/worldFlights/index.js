@@ -59,7 +59,7 @@ var Log = {
   
   getElem: function() {
     if (!this.elem) {
-      return (this.elem = $('log-message'));
+      return (this.elem = [$('log-message'), $('loading-text')]);
     }
     return this.elem;
   },
@@ -70,9 +70,10 @@ var Log = {
     }
     
     var elem = this.getElem(),
-        style = elem.parentNode.style;
+        style = elem[0].parentNode.style;
 
-    elem.innerHTML = text;
+    elem[0].innerHTML = text;
+    elem[1].innerHTML = text;
     style.display = '';
 
     if (hide) {
@@ -158,7 +159,7 @@ function loadData() {
       Log.write('Building models...');
     },
     onProgress: function(e) {
-      Log.write('Loading airports data, please wait...' + (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
+      Log.write('Loading airports data, please wait...' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : ''));
     },
     onError: function() {
       Log.write('There was an error while fetching cities data.', true);
@@ -516,7 +517,10 @@ function createApp() {
                     models.airlines);
      
       draw();
-      
+     
+     //Remove central log panel 
+      var loadingText = $('loading-text');
+      loadingText.parentNode.removeChild(loadingText);
       //Select first airline
       $$('#airline-list li input')[0].click();
       $('list-wrapper').style.display = '';
