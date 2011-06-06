@@ -142,7 +142,7 @@ this.PhiloGL = null;
       var scene = new PhiloGL.Scene(program, camera, optScene);
       
       //make app instance global to all framework
-      app = new PhiloGL.App({
+      app = new PhiloGL.WebGL.Application({
         gl: gl,
         canvas: canvas,
         program: program,
@@ -281,10 +281,64 @@ $.splat = (function() {
 })();
 
 
-//app.js
-//creates a singleton application that stores buffer state and has access to scenes, programs, cameras, etc.
-(function() {
-  function App(options) {
+//webgl.js
+//Checks if WebGL is enabled and creates a context for using WebGL.
+
+(function () {
+
+  var WebGL = {
+    
+    getContext: function(canvas, opt) {
+      var canvas = typeof canvas == 'string'? $(canvas) : canvas, ctx;
+      ctx = canvas.getContext('experimental-webgl', opt);
+      if (!ctx) {
+        ctx = canvas.getContext('webgl', opt);
+      }
+      //Set as debug handler
+      if (ctx && opt && opt.debug) {
+        gl = {};
+        for (var m in ctx) {
+          var f = ctx[m];
+          if (typeof f == 'function') {
+            gl[m] = (function(k, v) {
+              return function() {
+                console.log(k, Array.prototype.join.call(arguments), Array.prototype.slice.call(arguments));
+                try {
+                  var ans = v.apply(ctx, arguments);
+                } catch (e) {
+                  throw k + " " + e;
+                }
+                var errorStack = [], error;
+                while((error = ctx.getError()) !== ctx.NO_ERROR) {
+                  errorStack.push(error);
+                }
+                if (errorStack.length) {
+                  throw errorStack.join();
+                }
+                return ans;
+              };
+            })(m, f);
+          } else {
+            gl[m] = f;
+          }
+        }
+      } else {
+        gl = ctx;
+      }
+
+      //add a get by name param
+      if (gl) {
+        gl.get = function(name) {
+          return typeof name == 'string'? gl[name] : name;
+        };
+      }
+
+      return gl;
+    } 
+
+  };
+   
+  function Application(options) {
     //copy program, scene, camera, etc.
     for (var prop in options) {
       this[prop] = options[prop];
@@ -303,7 +357,7 @@ $.splat = (function() {
     this.textureMemo = {};
   }
 
-  App.prototype = {
+  Application.prototype = {
     $$family: 'application',
 
     setBuffer: function(program, name, opt) {
@@ -580,11 +634,28 @@ $.splat = (function() {
     }
   };
 
-  PhiloGL.App = App;
+  WebGL.Application = Application;
+ 
+  //Feature test WebGL
+  (function() {
+    try {
+      var canvas = document.createElement('canvas');
+      PhiloGL.hasWebGL = function() {
+          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      };
+    } catch(e) {
+      PhiloGL.hasWebGL = function() {
+          return false;
+      };
+    }
+  })();
+
+  PhiloGL.WebGL = WebGL;
+  
 })();
 
 //math.js
-//Vec3 and Mat4 classes
+//Vec3, Mat4 and Quat classes
 
 (function() {
   var sqrt = Math.sqrt, 
@@ -806,6 +877,13 @@ $.splat = (function() {
       dest.n31 = dest.n32 = dest.n34 = 0;
       dest.n41 = dest.n42 = dest.n43 = 0;
       return dest;
+    },
+
+    clone: function(dest) {
+      return new Mat4(dest.n11, dest.n12, dest.n13, dest.n14,
+                      dest.n21, dest.n22, dest.n23, dest.n24,
+                      dest.n31, dest.n32, dest.n33, dest.n34,
+                      dest.n41, dest.n42, dest.n43, dest.n44);
     },
 
     set: function(dest, n11, n12, n13, n14,
@@ -2500,81 +2578,6 @@ $.splat = (function() {
 
   PhiloGL.Camera = Camera;
 
-})();
-
-//webgl.js
-//Checks if WebGL is enabled and creates a context for using WebGL.
-
-(function () {
-
-  var WebGL = {
-    
-    getContext: function(canvas, opt) {
-      var canvas = typeof canvas == 'string'? $(canvas) : canvas, ctx;
-      ctx = canvas.getContext('experimental-webgl', opt);
-      if (!ctx) {
-        ctx = canvas.getContext('webgl', opt);
-      }
-      //Set as debug handler
-      if (ctx && opt && opt.debug) {
-        gl = {};
-        for (var m in ctx) {
-          var f = ctx[m];
-          if (typeof f == 'function') {
-            gl[m] = (function(k, v) {
-              return function() {
-                console.log(k, Array.prototype.join.call(arguments), Array.prototype.slice.call(arguments));
-                try {
-                  var ans = v.apply(ctx, arguments);
-                } catch (e) {
-                  throw k + " " + e;
-                }
-                var errorStack = [], error;
-                while((error = ctx.getError()) !== ctx.NO_ERROR) {
-                  errorStack.push(error);
-                }
-                if (errorStack.length) {
-                  throw errorStack.join();
-                }
-                return ans;
-              };
-            })(m, f);
-          } else {
-            gl[m] = f;
-          }
-        }
-      } else {
-        gl = ctx;
-      }
-
-      //add a get by name param
-      if (gl) {
-        gl.get = function(name) {
-          return typeof name == 'string'? gl[name] : name;
-        };
-      }
-
-      return gl;
-    } 
-
-  };
-  
-  //Feature test WebGL
-  (function() {
-    try {
-      var canvas = document.createElement('canvas');
-      PhiloGL.hasWebGL = function() {
-          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-      };
-    } catch(e) {
-      PhiloGL.hasWebGL = function() {
-          return false;
-      };
-    }
-  })();
-
-  PhiloGL.WebGL = WebGL;
-  
 })();
 
 //o3d.js
