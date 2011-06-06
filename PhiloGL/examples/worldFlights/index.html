@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PhiloGL - World Flights</title>
+    <meta name="author" content="Nicolas Garcia Belmonte" /> 
+    <link rel="stylesheet" media="all" type="text/css" href="style.css" />
+    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+  </head>
+  <body>
+    <div id="log-panel" style="display:none;">
+      <span id="log-message"></span>
+    </div>
+  
+    <div id="fallback" class="fallback"></div>
+    
+    <div id="container">      
+      <div id="title">
+        <h1>World Flights</h1>
+        <div class="description">Visualize major airlines flight routes</div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="map-canvas" width="800" height="500"></canvas>
+        <div id="list-wrapper" class="list-wrapper" style="display:none;">
+          <input type="text" id="search" placeholder="Search for an Airline" />
+          <div class="list-container">
+            <ul id="airline-list"></ul>
+          </div>
+          <div class="mask"> </div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Author: <a href="http://philogb.github.com/">Nicolas Garcia
+      Belmonte</a> - Source: <a href="http://openflights.org/data.html">OpenFlights</a>.
+  </div>
+  <script>
+    if (!PhiloGL.hasWebGL()) {
+      document.body.className = 'no-webgl';
+      document.getElementById('fallback').innerHTML = ''
+        +  '<div style="margin:10px;">'
+        +   'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        +  '</div>'
+        +   '<iframe width="853" height="510" src="http://www.youtube.com/embed/b263ETg5zqI" frameborder="0" allowfullscreen></iframe>';
+    }
+  </script>
+</body>
+</html>

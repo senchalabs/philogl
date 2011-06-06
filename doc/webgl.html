@@ -112,6 +112,354 @@
 <li>debug - (<em>boolean</em>) If true, all gl calls will be <code>console.log</code>-ged and errors thrown to the console.</li>
 </ul>
 
+<h2 id='WebGL:Application'>WebGL Class: WebGL.Application</h2>
+
+<p>The WebGL Application class has useful methods to manipulate buffers, textures and other things. Some of these methods can also be found in the <a href='program.md'>Program</a> class, but in this case these aren&#8217;t bound to any particular program. A WebGL Application is created via the <a href='core.html'>PhiloGL</a> constructor function and returned on the <code>onLoad</code> callback. The application carries all the state regardless of the number of programs and other buffers defined via the WebGL Application or any other <a href='program.html'>Program</a> instance. This design facilitates multiple program state and management.</p>
+
+<h3 id='properties'>Properties:</h3>
+
+<p>A program instance has multiple public properties.</p>
+
+<ul>
+<li>gl - (<em>object</em>) - The <code>WebGLRenderingContext</code></li>
+
+<li>canvas - (<em>object</em>) The Canvas DOM element where the 3D context has been retrieved.</li>
+
+<li>program - (<em>object</em>) A <a href='program.html'>Program</a> instance. Can also be an object with program ids as keys and <a href='program.html'>Program</a> instances as values.</li>
+
+<li>camera - (<em>object</em>) A <a href='camera.html'>Camera</a> instance.</li>
+
+<li>scene - (<em>object</em>) A <a href='scene.html'>Scene</a> instance.</li>
+
+<li>buffers - (<em>object</em>) An object with buffer string id as key, buffer object as value.</li>
+
+<li>frameBuffers - (<em>object</em>) An object with framebuffer string id as key, framebuffer object as value.</li>
+
+<li>renderBuffers - (<em>object</em>) An object with renderbuffer string id as key, renderbuffer object as value.</li>
+
+<li>textures - (<em>object</em>) An object with texture string id as key, texture object as value.</li>
+
+<li>usedProgram - (<em>object</em>) The current <a href='program.html'>Program</a> being used.</li>
+</ul>
+
+<h2 id='WebGL:Application:setBuffer'>WebGL.Application Method: setBuffer</h2>
+
+<p>This method is useful to set properties (and data) to a buffer and/or attributes. If the buffer does not exist it will be created. Also, for all properties set to a buffer, these properties are remembered so they&#8217;re optional for later calls.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setBuffer(name, options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name (unique id) of the buffer. If no <code>attribute</code> value is set in <code>options</code> then the buffer name will be used as attribute name.</li>
+
+<li>options - (<em>object</em>) An object with options/data described below:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>attribute - (<em>string</em>, optional) The name of the attribute to generate attribute calls to. If this parameter is not specified then the attribute name will be the buffer name.</li>
+
+<li>bufferType - (<em>enum</em>, optional) The type of the buffer. Possible options are <code>gl.ELEMENT_ARRAY_BUFFER</code>, <code>gl.ARRAY_BUFFER</code>. Default&#8217;s <code>gl.ARRAY_BUFFER</code>.</li>
+
+<li>size - (<em>numer</em>, optional) The size of the components in the buffer. Default&#8217;s 1.</li>
+
+<li>dataType - (<em>enum</em>, optional) The type of the data being stored in the buffer. Default&#8217;s <code>gl.FLOAT</code>.</li>
+
+<li>stride - (<em>number</em>, optional) The <code>stride</code> parameter when calling <code>gl.vertexAttribPointer</code>. Default&#8217;s 0.</li>
+
+<li>offset - (<em>number</em>, optional) The <code>offset</code> parameter when calling <code>gl.vertexAttribPointer</code>. Default&#8217;s 0.</li>
+
+<li>drawType - (<em>enum</em>, optional) The type of draw used when setting the <code>gl.bufferData</code>. Default&#8217;s <code>gl.STATIC_DRAW</code>.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Set buffer values for the vertices of a triangle. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='nx'>app</span><span class='p'>.</span><span class='nx'>setBuffer</span><span class='p'>(</span><span class='s1'>&#39;triangle&#39;</span><span class='p'>,</span> <span class='p'>{</span>
+  <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
+  <span class='nx'>value</span><span class='o'>:</span> <span class='k'>new</span> <span class='nx'>Float32Array</span><span class='p'>([</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>]),</span>
+  <span class='nx'>size</span><span class='o'>:</span> <span class='mi'>3</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='WebGL:Application:setBuffers'>WebGL.Application Method: setBuffers</h2>
+
+<p>For each <code>key, value</code> of the object passed in it executes <code>setBuffer(key, value)</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setBuffers(object);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>object - (<em>object</em>) An object with key value pairs matching a buffer name and its value respectively.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Set buffer values for the vertices of a triangle and a square. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='nx'>app</span><span class='p'>.</span><span class='nx'>setBuffers</span><span class='p'>({</span>
+  <span class='s1'>&#39;triangle&#39;</span><span class='o'>:</span> <span class='p'>{</span>
+    <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
+    <span class='nx'>value</span><span class='o'>:</span> <span class='k'>new</span> <span class='nx'>Float32Array</span><span class='p'>([</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>]),</span>
+    <span class='nx'>size</span><span class='o'>:</span> <span class='mi'>3</span>
+  <span class='p'>},</span>
+  
+  <span class='s1'>&#39;square&#39;</span><span class='o'>:</span> <span class='p'>{</span>
+    <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
+    <span class='nx'>value</span><span class='o'>:</span> <span class='k'>new</span> <span class='nx'>Float32Array</span><span class='p'>([</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>]),</span>
+    <span class='nx'>size</span><span class='o'>:</span> <span class='mi'>3</span>
+  <span class='p'>}</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='WebGL:Application:setFrameBuffer'>WebGL.Application Method: setFrameBuffer</h2>
+
+<p>Creates or binds/unbinds a framebuffer. You can also use this method to bind the framebuffer to a texture and renderbuffers. If the framebuffer already exists then calling <code>setFrameBuffer</code> with <code>true</code> or <code>false</code> as options will bind/unbind the framebuffer. Also, for all properties set to a buffer, these properties are remembered so they&#8217;re optional for later calls.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setFrameBuffer(name[, options]);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name (unique id) of the buffer.</li>
+
+<li>options - (<em>mixed</em>) Can be a boolean used to bind/unbind the framebuffer or an object with options/data described below:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>width - (<em>number</em>) The width of the framebuffer. Default&#8217;s 0.</li>
+
+<li>height - (<em>number</em>) The height of the framebuffer. Default&#8217;s 0.</li>
+
+<li>bindToTexture - (<em>mixed</em>, optional) Whether to bind the framebuffer onto a texture. If false the framebuffer wont be bound to a texture. Else you should provide an object with the same options as in <code>setTexture</code>.</li>
+
+<li>textureOptions - (<em>object</em>, optional) Some extra options for binding the framebuffer to the texture. Default&#8217;s <code>{ attachment: gl.COLOR_ATTACHMENT0 }</code>.</li>
+
+<li>bindToRenderBuffer - (<em>boolean</em>) Whether to bind the framebuffer to a renderbuffer. The <code>width</code> and <code>height</code> of the renderbuffer are the same as the ones specified above.</li>
+
+<li>renderBufferOptions - (<em>object</em>, optional) Some extra options for binding the framebuffer to the renderbuffer. Default&#8217;s <code>{ attachment: gl.DEPTH_ATTACHMENT }</code>.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Using a frambuffer to render a scene into a texture. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='c1'>//create framebuffer</span>
+<span class='nx'>app</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='p'>{</span>
+  <span class='nx'>width</span><span class='o'>:</span> <span class='nx'>screenWidth</span><span class='p'>,</span>
+  <span class='nx'>height</span><span class='o'>:</span> <span class='nx'>screenHeight</span><span class='p'>,</span>
+  <span class='nx'>bindToTexture</span><span class='o'>:</span> <span class='p'>{</span>      
+    <span class='nx'>parameters</span><span class='o'>:</span> <span class='p'>[{</span>
+      <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MAG_FILTER&#39;</span><span class='p'>,</span>
+      <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR&#39;</span>
+    <span class='p'>},</span> <span class='p'>{</span>
+      <span class='nx'>name</span><span class='o'>:</span> <span class='s1'>&#39;TEXTURE_MIN_FILTER&#39;</span><span class='p'>,</span>
+      <span class='nx'>value</span><span class='o'>:</span> <span class='s1'>&#39;LINEAR_MIPMAP_NEAREST&#39;</span><span class='p'>,</span>
+      <span class='nx'>generateMipmap</span><span class='o'>:</span> <span class='kc'>false</span>
+    <span class='p'>}]</span>
+  <span class='p'>},</span>
+  <span class='nx'>bindToRenderBuffer</span><span class='o'>:</span> <span class='kc'>true</span>
+<span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='WebGL:Application:setFrameBuffers'>WebGL.Application Method: setFrameBuffers</h2>
+
+<p>For each <code>key, value</code> of the object passed in it executes <code>setFrameBuffer(key, value)</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setFrameBuffers(object);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>object - (<em>object</em>) An object with key value pairs matching a buffer name and its value respectively.</li>
+</ol>
+
+<h2 id='WebGL:Application:setRenderBuffer'>WebGL.Application Method: setRenderBuffer</h2>
+
+<p>Creates or binds/unbinds a renderbuffer. If the renderbuffer already exists and the second parameter is a boolean it&#8217;ll bind or unbind the renderbuffer. Also, for all properties set to a buffer, these properties are remembered so they&#8217;re optional for later calls.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setRenderBuffer(name[, options]);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name (unique id) of the buffer.</li>
+
+<li>options - (<em>mixed</em>) Can be a boolean used to bind/unbind the renderbuffer or an object with options/data described below:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>width - (<em>number</em>) The width of the renderbuffer. Default&#8217;s 0.</li>
+
+<li>height - (<em>number</em>) The height of the renderbuffer. Default&#8217;s 0.</li>
+
+<li>storageType - (<em>enum</em>, optional) The storage type. Default&#8217;s <code>gl.DEPTH_COMPONENT16</code>.</li>
+</ul>
+
+<h2 id='WebGL:Application:setRenderBuffers'>WebGL.Application Method: setRenderBuffers</h2>
+
+<p>For each <code>key, value</code> of the object passed in it executes <code>setRenderBuffer(key, value)</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setRenderBuffers(object);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>object - (<em>object</em>) An object with key value pairs matching a buffer name and its value respectively.</li>
+</ol>
+
+<h2 id='WebGL:Application:setTexture'>WebGL.Application Method: setTexture</h2>
+
+<p>This method is used to either bind/unbind an existing texture or also to create a new texture form an <code>Image</code> element or to create an empty texture with specified dimensions. Also, for all properties set to a texture, these properties are remembered so they&#8217;re optional for later calls.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setTexture(name[, options]);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>name - (<em>string</em>) The name (unique id) of the texture.</li>
+
+<li>options - (<em>mixed</em>) Can be a boolean or enum used to bind/unbind the texture (or set the enum as active texture) or an object with options/data described below:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>
+<p>textureType - (<em>enum</em>, optional) The texture type used to call <code>gl.bindTexture</code> with. Default&#8217;s <code>gl.TEXTURE_2D</code>.</p>
+</li>
+
+<li>
+<p>pixelStore - (<em>array</em>, optional) An array of objects with name, value options to be set with <code>gl.pixelStorei</code> calls. Default&#8217;s <code>[{ name: gl.UNPACK_FLIP_Y_WEBGL, value: true }]</code>.</p>
+</li>
+
+<li>
+<p>parameters - (<em>array</em>, optional) An array of objects with nane, value options to be set with <code>gl.texParameteri</code>. Default&#8217;s <code>[{ name: gl.TEXTURE_MAG_FILTER, value: gl.NEAREST }, { name: gl.TEXTURE_MIN_FILTER, value: gl.NEAREST }]</code>.</p>
+</li>
+
+<li>
+<p>data - (<em>object</em>, optional) An object with properties described below:</p>
+
+<ul>
+<li>format - (<em>enum</em>, optional) The format used for <code>gl.texImage2D</code> calls. Default&#8217;s <code>gl.RGBA</code>.</li>
+
+<li>value - (<em>object</em>, optional) If set to an <code>Image</code> object then this image will be used to fill the texture. Default&#8217;s false. If no image is set then we might want to set the width and height of the texture.</li>
+
+<li>width - (<em>number</em>, optional) The width of the texture. Default&#8217;s 0.</li>
+
+<li>height - (<em>number</em>, optional) The height of the texture. Default&#8217;s 0.</li>
+
+<li>border - (<em>number</em>, optional) The border of the texture. Default&#8217;s 0.</li>
+</ul>
+</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Setting a texture for a box. Adapted from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>img</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>Image</span><span class='p'>();</span>
+
+<span class='nx'>img</span><span class='p'>.</span><span class='nx'>onload</span> <span class='o'>=</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+  <span class='nx'>app</span><span class='p'>.</span><span class='nx'>setTexture</span><span class='p'>(</span><span class='s1'>&#39;nearest&#39;</span><span class='p'>,</span> <span class='p'>{</span>
+    <span class='nx'>data</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>img</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+<span class='p'>};</span>
+
+<span class='nx'>img</span><span class='p'>.</span><span class='nx'>src</span> <span class='o'>=</span> <span class='s1'>&#39;path/to/image.png&#39;</span><span class='p'>;</span>
+</code></pre>
+</div>
+<h2 id='WebGL:Application:setTextures'>WebGL.Application Method: setTextures</h2>
+
+<p>For each <code>key, value</code> of the object passed in it executes <code>setTexture(key, value)</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.setTextures(object);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>object - (<em>object</em>) An object with key value pairs matching a texture name and its value respectively.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Set multiple type of textures from the same image. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
+<div class='highlight'><pre><code class='js'><span class='c1'>//load textures from image</span>
+<span class='kd'>var</span> <span class='nx'>img</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>Image</span><span class='p'>();</span>
+<span class='nx'>img</span><span class='p'>.</span><span class='nx'>onload</span> <span class='o'>=</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+  <span class='nx'>app</span><span class='p'>.</span><span class='nx'>setTextures</span><span class='p'>({</span>
+    <span class='s1'>&#39;nearest&#39;</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>data</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>img</span>
+      <span class='p'>}</span>
+    <span class='p'>},</span>
+
+    <span class='s1'>&#39;linear&#39;</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>data</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>img</span>
+      <span class='p'>},</span>
+      <span class='nx'>parameters</span><span class='o'>:</span> <span class='p'>[{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>TEXTURE_MAG_FILTER</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>LINEAR</span>
+      <span class='p'>},</span> <span class='p'>{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>TEXTURE_MIN_FILTER</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>LINEAR</span>
+      <span class='p'>}]</span>
+    <span class='p'>},</span>
+
+    <span class='s1'>&#39;mipmap&#39;</span><span class='o'>:</span> <span class='p'>{</span>
+      <span class='nx'>data</span><span class='o'>:</span> <span class='p'>{</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>img</span>
+      <span class='p'>},</span>
+      <span class='nx'>parameters</span><span class='o'>:</span> <span class='p'>[{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>TEXTURE_MAG_FILTER</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>LINEAR</span>
+      <span class='p'>},</span> <span class='p'>{</span>
+        <span class='nx'>name</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>TEXTURE_MIN_FILTER</span><span class='p'>,</span>
+        <span class='nx'>value</span><span class='o'>:</span> <span class='nx'>gl</span><span class='p'>.</span><span class='nx'>LINEAR_MIPMAP_NEAREST</span><span class='p'>,</span>
+        <span class='nx'>generateMipmap</span><span class='o'>:</span> <span class='kc'>true</span>
+      <span class='p'>}]</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+<span class='p'>};</span>
+
+<span class='nx'>img</span><span class='p'>.</span><span class='nx'>src</span> <span class='o'>=</span> <span class='s1'>&#39;path/to/image.png&#39;</span><span class='p'>;</span>
+</code></pre>
+</div>
+<h2 id='WebGL:Application:use'>WebGL.Application Method: use</h2>
+
+<p>Calls <code>gl.useProgram(program)</code> with the given program.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>app.use(program);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<p>program - (<em>object</em>) A <a href='program.html'>Program</a> instance.</p>
+
   
 <div class="footer">
   Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.

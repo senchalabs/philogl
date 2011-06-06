@@ -94,57 +94,60 @@
 
 <p>Append in this object vertex shaders to be used with a <a href='scene.html'>Scene</a>. We provide <code>Shaders.Vertex.Default</code> which is the default shader used in the library. You can find more scene compatible shaders <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. In order to get familiar with the attributes and uniforms used by the <a href='scene.html'>Scene</a> we provide the default vertex shader code:</p>
 
-<pre><code>    #define LIGHT_MAX 50
+<pre><code>#define LIGHT_MAX 50
 
-    attribute vec3 position;
-    attribute vec3 normal;
-    attribute vec4 color;
-    attribute vec2 texCoord1;
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec4 color;
+attribute vec4 pickingColor;
+attribute vec2 texCoord1;
 
-    uniform mat4 modelViewMatrix;
-    uniform mat4 viewMatrix;
-    uniform mat4 projectionMatrix;
-    uniform mat4 normalMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 normalMatrix;
 
-    uniform bool enableLights;
-    uniform vec3 ambientColor;
-    uniform vec3 directionalColor;
-    uniform vec3 lightingDirection;
+uniform bool enableLights;
+uniform vec3 ambientColor;
+uniform vec3 directionalColor;
+uniform vec3 lightingDirection;
 
-    uniform vec3 pointLocation[LIGHT_MAX];
-    uniform vec3 pointColor[LIGHT_MAX];
-    uniform int numberPoints;
+uniform vec3 pointLocation[LIGHT_MAX];
+uniform vec3 pointColor[LIGHT_MAX];
+uniform int numberPoints;
 
-    varying vec4 vColor;
-    varying vec2 vTexCoord;
-    varying vec3 lightWeighting;
+varying vec4 vColor;
+varying vec4 vPickingColor;
+varying vec2 vTexCoord;
+varying vec3 lightWeighting;
 
-    void main(void) {
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      
-      if(!enableLights) {
-        lightWeighting = vec3(1.0, 1.0, 1.0);
+void main(void) {
+  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+  
+  if(!enableLights) {
+    lightWeighting = vec3(1.0, 1.0, 1.0);
+  } else {
+    vec3 plightDirection;
+    vec3 pointWeight = vec3(0.0, 0.0, 0.0);
+    vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+    float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
+    for (int i = 0; i &lt; LIGHT_MAX; i++) {
+      if (i &lt; numberPoints) {
+        plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);
+        pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];
       } else {
-        vec3 plightDirection;
-        vec3 pointWeight = vec3(0.0, 0.0, 0.0);
-        vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
-        float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
-        for (int i = 0; i &lt; LIGHT_MAX; i++) {
-          if (i &lt; numberPoints) {
-            plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);
-            pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];
-          } else {
-            break;
-          }
-        }
-
-        lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
+        break;
       }
-      
-      vColor = color;
-      vTexCoord = texCoord1;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }</code></pre>
+    }
+
+    lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
+  }
+  
+  vColor = color;
+  vPickingColor = pickingColor;
+  vTexCoord = texCoord1;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}</code></pre>
 
 <h3 id='syntax'>Syntax:</h3>
 
@@ -158,46 +161,52 @@
 
 <p>Append in this object fragment shaders to be used with a <a href='scene.html'>Scene</a>. We provide <code>Shaders.Fragment.Default</code> which is the default shader used in the library. You can find more scene compatible shaders <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. In order to get familiar with the attributes and uniforms used by the <a href='scene.html'>Scene</a> we provide the default fragment shader code:</p>
 
-<pre><code>    #ifdef GL_ES
-    precision highp float;
-    #endif
+<pre><code>#ifdef GL_ES
+precision highp float;
+#endif
 
-    varying vec4 vColor;
-    varying vec2 vTexCoord;
-    varying vec3 lightWeighting;
+varying vec4 vColor;
+varying vec4 vPickingColor;
+varying vec2 vTexCoord;
+varying vec3 lightWeighting;
 
-    uniform bool hasTexture1;
-    uniform sampler2D sampler1;
+uniform bool hasTexture1;
+uniform sampler2D sampler1;
 
-    uniform bool enablePicking;
-    uniform vec3 pickColor;
+uniform bool enablePicking;
+uniform bool hasPickingColors;
+uniform vec3 pickColor;
 
-    uniform bool hasFog;
-    uniform vec3 fogColor;
+uniform bool hasFog;
+uniform vec3 fogColor;
 
-    uniform float fogNear;
-    uniform float fogFar;
+uniform float fogNear;
+uniform float fogFar;
 
-    void main(){
-      
-      if(!hasTexture1) {
-        gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
-      } else {
-        gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
-      }
+void main(){
+  
+  if(!hasTexture1) {
+    gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
+  } else {
+    gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
+  }
 
-      if(enablePicking) {
-        gl_FragColor = vec4(pickColor, 1.0);
-      }
-      
-      /* handle fog */
-      if (hasFog) {
-        float depth = gl_FragCoord.z / gl_FragCoord.w;
-        float fogFactor = smoothstep(fogNear, fogFar, depth);
-        gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
-      }  
+  if(enablePicking) {
+    if(hasPickingColors) {
+      gl_FragColor = vPickingColor;
+    } else {
+      gl_FragColor = vec4(pickColor, 1.0);
+    }
+  }
+  
+  /* handle fog */
+  if (hasFog) {
+    float depth = gl_FragCoord.z / gl_FragCoord.w;
+    float fogFactor = smoothstep(fogNear, fogFar, depth);
+    gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
+  }  
 
-    }</code></pre>
+}</code></pre>
 
 <h3 id='syntax'>Syntax:</h3>
 

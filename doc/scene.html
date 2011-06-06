@@ -236,6 +236,28 @@
 <span class='nx'>scene</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>box</span><span class='p'>);</span>
 </code></pre>
 </div>
+<h2 id='Scene:remove'>Scene Method: remove</h2>
+
+<p>Removes an <a href='o3d.html'>O3D</a> object from the Scene.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.remove(model);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<p>model - (<em>object</em>) The model to be removed.</p>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Add a moon and a box models to the scene. Then remove them.</p>
+<div class='highlight'><pre><code class='js'><span class='c1'>//Add objects to the scene</span>
+<span class='nx'>scene</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>box</span><span class='p'>);</span>
+
+<span class='c1'>//Remove the moon</span>
+<span class='nx'>scene</span><span class='p'>.</span><span class='nx'>remove</span><span class='p'>(</span><span class='nx'>moon</span><span class='p'>);</span>
+</code></pre>
+</div>
 <h2 id='Scene:render'>Scene Method: render</h2>
 
 <p>Renders all the objects added to the scene.</p>
@@ -298,6 +320,14 @@
 <h2 id='Scene:pick'>Scene Method: pick</h2>
 
 <p>Returns an <a href='o3d.html'>O3D</a> object under the given <code>x</code> and <code>y</code> coordinates. The object must have <code>pickable</code> set to <code>true</code> (which is the default O3D constructor value).</p>
+
+<h3 id='about_the_picking_algorithm'>About the picking algorithm</h3>
+
+<p>The picking algorithm used in PhiloGL is a color picking algorithm. Each model is assigned a different color and the scene is rendered to a texture. Then, the pixel pointed by the mouse position is retrieved from the texture and the color of that pixel is used to identify the model.</p>
+
+<h3 id='customizing_the_picking_algorithm'>Customizing the picking algorithm</h3>
+
+<p>Sometimes we want to know more than just which object has been picked. For example, we would want to know which face of that object has been picked. In that case the <a href='o3d.html'>O3D</a> constructor options <code>pickingColors</code> and <code>pick</code> are useful. By defining your own set of per vertex colors and a method that given a pixel returns special information on what part of the object has been retrieved, then it is possible to have finer grain picking. For more information about how to use this you can take a look at the Air Flights example or go to the <a href='http://groups.google.com/group/philogl'>Google group of the framework</a> and ask for more info.</p>
 
 <h3 id='syntax'>Syntax:</h3>
 

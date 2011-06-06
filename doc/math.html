@@ -118,6 +118,27 @@
 
 <p>A class to handle three dimensional vectors.</p>
 
+<h2 id='Vec3:fromQuat'>Vec3 Static Method: fromQuat</h2>
+
+<p>Create a new <code>Vec3</code> instance from the <code>x</code>, <code>y</code>, <code>z</code> coordinates of a <a href='#Quat'>Quat</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Vec3.fromQuat(q);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a vector from a Quaternion.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>fromQuat</span><span class='p'>(</span><span class='nx'>q</span><span class='p'>);</span> <span class='c1'>//Vec3(1, 2, 3)</span>
+</code></pre>
+</div>
 <h2 id='Vec3:constructor'>Vec3 Method: constructor</h2>
 
 <p>Creates a new <code>Vec3</code> instance.</p>
@@ -927,6 +948,27 @@ PhiloGL.Vec3.clone(v1);</code></pre>
 
 <p>A class to handle four by four matrices.</p>
 
+<h2 id='Mat4:fromQuat'>Mat4 Static Method: fromQuat</h2>
+
+<p>Create a new <code>Mat4</code> instance from a <a href='#Quat'>Quat</a> instance. The Quaternion must be a unit quaternion.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Mat4.fromQuat(q);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a matrix from a Quaternion.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>).</span><span class='nx'>$unit</span><span class='p'>(),</span>
+      <span class='nx'>m</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>fromQuat</span><span class='p'>(</span><span class='nx'>q</span><span class='p'>);</span> <span class='c1'>//a new Mat4 instance</span>
+</code></pre>
+</div>
 <h2 id='Mat4:constructor'>Mat4 Method: constructor</h2>
 
 <p>Creates a new <code>Mat4</code> instance. If no arguments are set then an Identity matrix is created.</p>
@@ -1745,6 +1787,839 @@ PhiloGL.Mat4.perspective(m, fov, aspect, near, far);</code></pre>
 <pre><code>m.toFloat32Array();
 
 PhiloGL.Mat4.toFloat32Array(m);</code></pre>
+
+<h2 id='Mat4:clone'>Mat4 Method: clone</h2>
+
+<p>Clones a matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>m.clone();
+
+PhiloGL.Mat4.clone(m);</code></pre>
+
+<h1 id='Quat'>Class: Quat</h1>
+
+<p>A class to handle Quaternions. More information on quternions can be found <a href='http://en.wikipedia.org/wiki/Quaternion'>here</a>. The quaternion will be represented by an instance with <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components that make a quaterion like: <code>xi + yj + zk + w</code>.</p>
+
+<h2 id='Quat:fromVec3'>Quat Static Method: fromVec3</h2>
+
+<p>Create a new <code>Quat</code> instance from the <code>x</code>, <code>y</code>, <code>z</code> coordinates of a <a href='#Vec3'>Vec3</a> and a real component.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromVec3(v[, r]);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v - (<em>object</em>) A <code>Vec3</code> instance.</li>
+
+<li>r - (<em>number</em>, optional) The real component. Default&#8217;s <code>0</code>.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from a Vec3.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>),</span>
+      <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromVec3</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span> <span class='c1'>//Quat(1, 2, 3, 7)</span>
+</code></pre>
+</div>
+<h2 id='Quat:fromMat4'>Quat Static Method: fromMat4</h2>
+
+<p>Create a new <code>Quat</code> instance from a <a href='#Mat4'>Mat4</a>. The <code>Mat4</code> instance must be an orthogonal matrix.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromMat4(m);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>m - (<em>object</em>) A <code>Mat4</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from a <code>Mat4</code>.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
+      <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromMat4</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span> <span class='c1'>//Quat</span>
+</code></pre>
+</div>
+<h2 id='Quat:fromXRotation'>Quat Static Method: fromXRotation</h2>
+
+<p>Create a new <code>Quat</code> instance from a rotation around the x-axis in radians.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromXRotation(angle);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>angle - (<em>number</em>) The angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from an x-axis rotation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromXRotation</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>);</span> <span class='c1'>//Quat(1, 0, 0, 0)</span>
+</code></pre>
+</div>
+<h2 id='Quat:fromYRotation'>Quat Static Method: fromYRotation</h2>
+
+<p>Create a new <code>Quat</code> instance from a rotation around the y-axis in radians.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromYRotation(angle);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>angle - (<em>number</em>) The angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from an y-axis rotation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromYRotation</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>);</span> <span class='c1'>//Quat(0, 1, 0, 0)</span>
+</code></pre>
+</div>
+<h2 id='Quat:fromZRotation'>Quat Static Method: fromZRotation</h2>
+
+<p>Create a new <code>Quat</code> instance from a rotation around the z-axis in radians.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromZRotation(angle);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>angle - (<em>number</em>) The angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from an z-axis rotation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromZRotation</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>);</span> <span class='c1'>//Quat(0, 0, 1, 0)</span>
+</code></pre>
+</div>
+<h2 id='Quat:fromAxisRotation'>Quat Static Method: fromAxisRotation</h2>
+
+<p>Create a new <code>Quat</code> instance from a rotation around an axis.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Quat.fromAxisRotation(v, angle);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>v - (<em>object</em>) A <code>Vec3</code>-like object.</li>
+
+<li>angle - (<em>number</em>) The angle in radians.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a Quaternion from an z-axis rotation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>),</span>
+      <span class='nx'>q</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>fromAxisRotation</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>);</span> <span class='c1'>//Quat(0, 0, 1, 0)</span>
+</code></pre>
+</div>
+<h2 id='Quat:constructor'>Quat Method: constructor</h2>
+
+<p>Creates a new <code>Quat</code> instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var q = new PhiloGL.Quat(x, y, z, w);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>, optional) The x component. If not provided is 0.</li>
+
+<li>y - (<em>number</em>, optional) The y component. If not provided is 0.</li>
+
+<li>z - (<em>number</em>, optional) The z component. If not provided is 0.</li>
+
+<li>w - (<em>number</em>, optional) The non-imaginary component. If not provided is 0.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a (0, 0, 0, 0) quaternion.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>();</span>
+</code></pre>
+</div>
+<p>Create a (1, 2, 3, 4) quaternion.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Quat:setQuat'>Quat Method: setQuat</h2>
+
+<p>Set <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> coordinates of one <code>Quat</code> into another <code>Quat</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.setQuat(q2);
+
+PhiloGL.Quat.setQuat(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and assign one quaternions components to the other one.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//v1 now contains (x=4, y=5, z=6, w=7)</span>
+</code></pre>
+</div>
+<p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components to another object.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 now has (x=4, y=5, z=6, w=7)</span>
+</code></pre>
+</div>
+<h2 id='Quat:set'>Quat Method: set</h2>
+
+<p>Set <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> coordinates.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.set(x, y, z, w);
+
+PhiloGL.Quat.set(q1, x, y, z, w);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>x - (<em>number</em>) The x coordinate.</li>
+
+<li>y - (<em>number</em>) The y coordinate.</li>
+
+<li>z - (<em>number</em>) The z coordinate.</li>
+
+<li>w - (<em>number</em>) The w coordinate.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and assign one quaternions components to the other one.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now contains (x=4, y=5, z=6, w=7)</span>
+</code></pre>
+</div>
+<p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components to another object.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now has (x=4, y=5, z=6, w=7)</span>
+</code></pre>
+</div>
+<h2 id='Quat:add'>Quat Method: add</h2>
+
+<p>Adds the <code>x</code>, <code>y</code>, <code>z</code> components of two <code>Quat</code> objects. Creates a new <code>Quat</code> instance and does not modify the original objects.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.add(q2);
+
+PhiloGL.Quat.add(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$add'>Quat Method: $add</h2>
+
+<p>Adds the <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components of two <code>Quat</code> objects. Modifies the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$add(q2);
+
+PhiloGL.Quat.$add(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now Quat(5, 7, 9, 11).</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: 5, y: 7, z: 9, w: 11 }.</span>
+</code></pre>
+</div>
+<h2 id='Quat:sub'>Quat Method: sub</h2>
+
+<p>Substracts the <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components of two <code>Quat</code> objects. Creates a new <code>Quat</code> instance and does not modify the original objects.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.sub(q2);
+
+PhiloGL.Quat.sub(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$sub'>Quat Method: $sub</h2>
+
+<p>Substracts the <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components of two <code>Quat</code> objects. Modifies the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$sub(q2);
+
+PhiloGL.Quat.$sub(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two quaternions and substract them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now Quat(-3, -3, -3, -3).</span>
+</code></pre>
+</div>
+<p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>},</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -3, y: -3, z: -3, w: -3 }.</span>
+</code></pre>
+</div>
+<h2 id='Quat:mulQuat'>Quat Method: mulQuat</h2>
+
+<p>Multiplies two quaternions returning a new <code>Quat</code> instance with the result. The original object is not modified.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.mulQuat(q2);
+
+PhiloGL.Quat.mulQuat(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two Quaternions and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>mulQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is unchanged but a new Quat(-1, 0, 0, 0) is created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$mulQuat'>Quat Method: $mulQuat</h2>
+
+<p>Multiplies two quaternions returning and modifies the receiver with the result.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$mulQuat(q2);
+
+PhiloGL.Quat.$mulQuat(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two Quaternions and multiply them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$mulQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now Quat(-1, 0, 0, 0).</span>
+</code></pre>
+</div>
+<h2 id='Quat:divQuat'>Quat Method: divQuat</h2>
+
+<p>Divides two quaternions returning a new <code>Quat</code> instance with the result. The original object is not modified.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.divQuat(q2);
+
+PhiloGL.Quat.divQuat(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two Quaternions and divide them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>divQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is unchanged but a new Quat(1, 0, 0, 0) is created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$divQuat'>Quat Method: $divQuat</h2>
+
+<p>Divides two quaternions returning and modifies the receiver with the result.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$divQuat(q2);
+
+PhiloGL.Quat.$divQuat(q1, q2);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>q2 - (<em>object</em>) A <code>Quat</code> instance.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create two Quaternions and divide them.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>),</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$divQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now Quat(1, 0, 0, 0).</span>
+</code></pre>
+</div>
+<h2 id='Quat:scale'>Quat Method: scale</h2>
+
+<p>Scales the Quat quaternion by a real number. Creates a new Quat with the scaled components.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.scale(s);
+
+PhiloGL.Quat.scale(q1, s);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>s - (<em>number</em>) A real number to scale the Quat.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is unchanged but a new Quat(2, 4, 6, 8) is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(2, 4, 6, 8) was created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$scale'>Quat Method: $scale</h2>
+
+<p>Scales the Quat quaternion by a real number. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$scale(s);
+
+PhiloGL.Quat.$scale(q1, s);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>s - (<em>number</em>) A real number to scale the Quat.</li>
+</ol>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is now Quat(2, 4, 6, 8).</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and scale it by 2.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: 2, y: 4, z: 6, w: 8 }.</span>
+</code></pre>
+</div>
+<h2 id='Quat:conjugate'>Quat Method: conjugate</h2>
+
+<p>Conjugates a <code>Quat</code>. Returns a new instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.conjugate();
+
+PhiloGL.Quat.conjugate(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and conjugate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>();</span> <span class='c1'>//q1 is unchanged but a new Quat(-1, -2, -3, 4) is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and conjugate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(-1, -2, -3, 4).</span>
+</code></pre>
+</div>
+<h2 id='Quat:$conjugate'>Quat Method: $conjugate</h2>
+
+<p>conjugates a <code>Quat</code>. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$conjugate();
+
+PhiloGL.Quat.$conjugate(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and conjugate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$conjugate</span><span class='p'>();</span> <span class='c1'>//q1 is now Quat(-1, -2, -3, 4).</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and conjugate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -1, y: -2, z: -3, w: 4 }.</span>
+</code></pre>
+</div>
+<h2 id='Quat:neg'>Quat Method: neg</h2>
+
+<p>Negates a <code>Quat</code>. Returns a new instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.neg();
+
+PhiloGL.Quat.neg(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>();</span> <span class='c1'>//q1 is unchanged but a new Quat(-1, -2, -3, -4) is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(-1, -2, -3, -4).</span>
+</code></pre>
+</div>
+<h2 id='Quat:$neg'>Quat Method: $neg</h2>
+
+<p>Negates a <code>Quat</code>. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$neg();
+
+PhiloGL.Quat.$neg(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$neg</span><span class='p'>();</span> <span class='c1'>//q1 is now Quat(-1, -2, -3, -4).</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and negate it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -1, y: -2, z: -3, w: -4 }.</span>
+</code></pre>
+</div>
+<h2 id='Quat:unit'>Quat Method: unit</h2>
+
+<p>Creates a unit quaternion from the coordinates of <code>Quat</code>. The original object is not modified.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.unit();
+
+PhiloGL.Quat.unit(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and make a unit quaternion from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>();</span> <span class='c1'>//q1 is unchanged but a new unit quaternion Quat is created.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and make a unit quaternion from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat that is a unit quaternion is created.</span>
+</code></pre>
+</div>
+<h2 id='Quat:$unit'>Quat Method: $unit</h2>
+
+<p>Creates a unit quaternion from the <code>Quat</code> coordinates. Changes the original object.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.$unit();
+
+PhiloGL.Quat.$unit(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and make a unit quaternion from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>();</span> <span class='c1'>//q1 is now a unit quaternion.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and make a unit quaternion from it.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now a unit quaternion object.</span>
+</code></pre>
+</div>
+<h2 id='Quat:norm'>Quat Method: norm</h2>
+
+<p>Calculates the norm of <code>Quat</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.norm();
+
+PhiloGL.Quat.norm(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and calculate its norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>vi</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>();</span> <span class='c1'>//returns the real valued norm.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and calculate its norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//A real number with the norm is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Quat:normSq'>Quat Method: normSq</h2>
+
+<p>Calculates the squared norm of <code>Quat</code>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.normSq();
+
+PhiloGL.Quat.normSq(q1);</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Create a quaternion and calculate its squared norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>);</span>
+
+  <span class='nx'>vi</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>();</span> <span class='c1'>//returns the real valued norm.</span>
+</code></pre>
+</div>
+<p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and calculate its squared norm.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
+        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
+        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
+      <span class='p'>};</span>
+
+  <span class='c1'>//A real number with the squared norm is returned.</span>
+  <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span>
+</code></pre>
+</div>
+<h2 id='Quat:clone'>Quat Method: clone</h2>
+
+<p>Clones a quaternion.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>  q1.clone();
+
+PhiloGL.Quat.clone(q1);</code></pre>
 
   
 <div class="footer">

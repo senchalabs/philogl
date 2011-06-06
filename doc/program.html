@@ -92,18 +92,10 @@
 
 <h3 id='properties'>Properties:</h3>
 
-<p>A program instance has multiple public properties.</p>
+<p>A program instance has as public properties:</p>
 
 <ul>
 <li>program - (<em>object</em>) The native WebGL program instance.</li>
-
-<li>buffers - (<em>object</em>) An object with buffer string id as key, buffer object as value.</li>
-
-<li>frameBuffers - (<em>object</em>) An object with framebuffer string id as key, framebuffer object as value.</li>
-
-<li>renderBuffers - (<em>object</em>) An object with renderbuffer string id as key, renderbuffer object as value.</li>
-
-<li>textures - (<em>object</em>) An object with texture string id as key, texture object as value.</li>
 </ul>
 
 <h3 id='notes'>Notes:</h3>
@@ -317,24 +309,6 @@ void main(void) {
 
 <p>For more information about the default shader code <code>Default</code> included in the Framework take a look at the <a href='shaders.html'>Shaders</a> script.</p>
 
-<h2 id='Program:setState'>Program Method: setState</h2>
-
-<p>Copies the current state of a Program into another program. The state is the current buffer, texture configuration etc.</p>
-
-<h3 id='syntax'>Syntax:</h3>
-
-<pre><code>program.setState(anotherProgram);</code></pre>
-
-<h3 id='arguments'>Arguments:</h3>
-
-<ol>
-<li>anotherProgram - (<em>object</em>) Another Program instance.</li>
-</ol>
-
-<h3 id='examples'>Examples:</h3>
-
-<p>See <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/13/'>lesson 13</a> for a useful example of <code>setState</code>.</p>
-
 <h2 id='Program:setUniform'>Program Method: setUniform</h2>
 
 <p>Sets the value of an uniform. There&#8217;s no need to convert the array into a typed array, that&#8217;s done automatically. The name of the uniform matches the name of the uniform declared in the shader.</p>
@@ -388,50 +362,6 @@ void main(void) {
 <h3 id='syntax'>Syntax:</h3>
 
 <pre><code>program.setBuffer(name, options);</code></pre>
-
-<h3 id='arguments'>Arguments:</h3>
-
-<ol>
-<li>name - (<em>string</em>) The name (unique id) of the buffer. If no <code>attribute</code> value is set in <code>options</code> then the buffer name will be used as attribute name.</li>
-
-<li>options - (<em>object</em>) An object with options/data described below:</li>
-</ol>
-
-<h3 id='options'>Options:</h3>
-
-<ul>
-<li>attribute - (<em>string</em>, optional) The name of the attribute to generate attribute calls to. If this parameter is not specified then the attribute name will be the buffer name.</li>
-
-<li>bufferType - (<em>enum</em>, optional) The type of the buffer. Possible options are <code>gl.ELEMENT_ARRAY_BUFFER</code>, <code>gl.ARRAY_BUFFER</code>. Default&#8217;s <code>gl.ARRAY_BUFFER</code>.</li>
-
-<li>size - (<em>numer</em>, optional) The size of the components in the buffer. Default&#8217;s 1.</li>
-
-<li>dataType - (<em>enum</em>, optional) The type of the data being stored in the buffer. Default&#8217;s <code>gl.FLOAT</code>.</li>
-
-<li>stride - (<em>number</em>, optional) The <code>stride</code> parameter when calling <code>gl.vertexAttribPointer</code>. Default&#8217;s 0.</li>
-
-<li>offset - (<em>number</em>, optional) The <code>offset</code> parameter when calling <code>gl.vertexAttribPointer</code>. Default&#8217;s 0.</li>
-
-<li>drawType - (<em>enum</em>, optional) The type of draw used when setting the <code>gl.bufferData</code>. Default&#8217;s <code>gl.STATIC_DRAW</code>.</li>
-</ul>
-
-<h3 id='examples'>Examples:</h3>
-
-<p>Set buffer values for the vertices of a triangle. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
-<div class='highlight'><pre><code class='js'><span class='nx'>program</span><span class='p'>.</span><span class='nx'>setBuffer</span><span class='p'>(</span><span class='s1'>&#39;triangle&#39;</span><span class='p'>,</span> <span class='p'>{</span>
-  <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
-  <span class='nx'>value</span><span class='o'>:</span> <span class='k'>new</span> <span class='nx'>Float32Array</span><span class='p'>([</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>]),</span>
-  <span class='nx'>size</span><span class='o'>:</span> <span class='mi'>3</span>
-<span class='p'>});</span>
-</code></pre>
-</div>
-<h2 id='Program:setBuffer'>Program Method: setBuffer</h2>
-
-<p>This method is useful to set properties (and data) to a buffer and/or attributes. If the buffer does not exist it will be created. Also, for all properties set to a buffer, these properties are remembered so they&#8217;re optional for later calls. If the buffer was already created, calling <code>setBuffer</code> without any options will just bind that buffer.</p>
-
-<h3 id='syntax'>Syntax:</h3>
-
-<pre><code>program.setBuffer(name[, options]);</code></pre>
 
 <h3 id='arguments'>Arguments:</h3>
 

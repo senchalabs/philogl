@@ -100,7 +100,7 @@
 
 <h2 id='PhiloGL:unpack'>PhiloGL Static Method: unpack</h2>
 
-<p>Unpacks <a href='math.html'>Vec3</a>, <a href='math.html'>Mat4</a>, <a href='camera.html'>Camera</a>, <a href='program.html'>Program</a>, <a href='webgl.html'>WebGL</a>, <a href='o3d.html'>O3D</a>, <a href='scene.html'>Scene</a>, <a href='shaders.html'>Shaders</a>, <a href='io.html'>IO</a>, <a href='event.html'>Events</a>, <a href='workers.html'>WorkerGroup</a>, <a href='fx.html'>Fx</a> modules and classes so they can be accessed by the global scope and not through PhiloGL.<em>moduleName</em>.</p>
+<p>Unpacks <a href='math.html'>Vec3</a>, <a href='math.html'>Mat4</a>, <a href='math.html'>Quat</a>, <a href='camera.html'>Camera</a>, <a href='program.html'>Program</a>, <a href='webgl.html'>WebGL</a>, <a href='o3d.html'>O3D</a>, <a href='scene.html'>Scene</a>, <a href='shaders.html'>Shaders</a>, <a href='io.html'>IO</a>, <a href='event.html'>Events</a>, <a href='workers.html'>WorkerGroup</a>, <a href='fx.html'>Fx</a> modules and classes so they can be accessed by the global scope and not through PhiloGL.<em>moduleName</em>.</p>
 
 <h3 id='syntax'>Syntax:</h3>
 
@@ -108,7 +108,7 @@
 
 <h2 id='PhiloGL:constructor'>PhiloGL Method: constructor</h2>
 
-<p>Creates a PhiloGL application. The PhiloGL application provides a <a href='webgl.html'>WebGL</a> context, a <a href='program.html'>Program</a>, a <a href='camera.html'>Camera</a>, a <a href='scene.html'>Scene</a>, and also options for handling <a href='event.html'>Events</a>, loading textures via <a href='io.html'>IO</a> and more.</p>
+<p>Creates a <a href='webgl.html#WebGL:Application'>PhiloGL application</a>. The PhiloGL application provides a <a href='webgl.html'>WebGL</a> context, a <a href='program.html'>Program</a>, a <a href='camera.html'>Camera</a>, a <a href='scene.html'>Scene</a>, and also options for handling <a href='event.html'>Events</a>, loading textures via <a href='io.html'>IO</a> and more. For more information about the application you may take a look at the <a href='webgl.html#WebGL:Application'>App</a> class. This section describes the configuration options you can pass in to create the WebGL application.</p>
 
 <h3 id='syntax'>Syntax:</h3>
 
@@ -124,25 +124,37 @@
 
 <h3 id='options'>Options:</h3>
 
-<ul>
-<li>
-<p>context - (<em>object</em>, optional) An object to pass in options for when the <a href=''>WebGL context</a> is created. For now the only option supported is <code>debug: true</code>.</p>
-</li>
-
-<li>
-<p>program - (<em>object</em>, optional) An object that contains options for creating a <a href='program.html'>Program</a>. The options for program are:</p>
+<h4 id='general_webglrenderingcontext_options'>General WebGLRenderingContext options:</h4>
 
 <ul>
-<li>from - (<em>string</em>) Possible options are <code>defaults</code>, <code>ids</code>, <code>sources</code>, <code>uris</code>.</li>
+<li>context - (<em>object</em>, optional) An object to pass in options for when the WebGL context is created. For now the only option supported is <code>debug: true</code>.</li>
+</ul>
+
+<h4 id='program_management'>Program management:</h4>
+
+<ul>
+<li>
+<p>program - (<em>mixed</em>, optional) An object that contains options for creating a <a href='program.html'>Program</a>. Can also be an array of program objects, provided that each object contains an id. The options for program are:</p>
+
+<ul>
+<li>id - (<em>string</em>) Used when creating multiple programs. The id of the program to create.</li>
+
+<li>from - (<em>string</em>) Possible options are <code>defaults</code>, <code>ids</code>, <code>sources</code>, <code>uris</code>. This will create a program <a href='program.html#Program:fromDefaultShaders'>from default shaders</a>, <a href='program.html#Program:fromShaderIds'>from script ids</a>, <a href='program.html#Program:fromShaderSources'>from string sources</a> and <a href='program.html#Program:fromShaderURIs'>from urls</a> respectively.</li>
 
 <li>path - (<em>string</em>, optional) Sets a link path appended as prefix to the <code>vs</code> and <code>fs</code> string properties.</li>
 
 <li>vs - (<em>string</em>) The name, id, source or path to the Vertex Shader.</li>
 
 <li>fs - (<em>string</em>) The name, id, source or path to the Fragment Shader.</li>
+
+<li>noCache - (<em>boolean</em>, optional) If true, files will be reloaded and not taken from the cache. Useful on development phase. Default&#8217;s <code>false</code>.</li>
 </ul>
 </li>
+</ul>
 
+<h4 id='camera_management'>Camera management:</h4>
+
+<ul>
 <li>
 <p>camera - (<em>object</em>, optional) An object with options for creating a <a href='camera.html'>Camera</a>. These options are:</p>
 
@@ -158,7 +170,11 @@
 <li>target - (<em>object</em>) The target position to where the camera will look at. Default&#8217;s <code>{ x: 0, y: 0, z: 0 }</code>.</li>
 </ul>
 </li>
+</ul>
 
+<h4 id='scene_management'>Scene management:</h4>
+
+<ul>
 <li>
 <p>scene - (<em>object</em>, optional) <a href='scene.html'>Scene</a> creation options. These options are:</p>
 
@@ -218,7 +234,11 @@
 </li>
 </ul>
 </li>
+</ul>
 
+<h4 id='texture_management'>Texture management:</h4>
+
+<ul>
 <li>
 <p>textures - (<em>object</em>, optional) An object to load textures with the <a href='io.html'>IO</a> module. See also <a href=''>Program.setTexture</a>. The object has as properties:</p>
 
@@ -256,7 +276,11 @@
 </li>
 </ul>
 </li>
+</ul>
 
+<h4 id='event_handling'>Event handling:</h4>
+
+<ul>
 <li>
 <p>events - (<em>object</em>, optional) An object with callbacks and configuration for event handling. For more information about the event callbacks check the <a href='event.html'>Event</a> documentation. These options are:</p>
 
@@ -308,13 +332,17 @@
 <li>onKeyUp - (<em>function</em>, optional) Handles the onKeyUp event.</li>
 </ul>
 </li>
+</ul>
 
+<h4 id='loading_callbacks'>Loading callbacks:</h4>
+
+<ul>
 <li>
 <p>onError - (<em>function</em>, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.</p>
 </li>
 
 <li>
-<p>onLoad - (<em>function</em>) A function called when the application is successfully created. An app is created if the context is loaded, the program is compiled and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly loaded and set and the camera is created. The first parameter of the callback function is an app object that has a properties:</p>
+<p>onLoad - (<em>function</em>) A function called when the application is successfully created. An <a href='webgl.html#WebGL:Application'>app instance</a> is created if the context is loaded, the program is compiled and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly loaded and set and the camera is created. The first parameter of the callback function is an <a href='webgl.html#WebGL:Application'>app instance</a> that has as some of the properties:</p>
 
 <ul>
 <li>gl - (<em>object</em>) The WebGL context.</li>
@@ -323,7 +351,7 @@
 
 <li>scene - (<em>object</em>) The <a href='scene.html'>Scene</a> instance.</li>
 
-<li>program - (<em>object</em>) The <a href='program.html'>Program</a> instance.</li>
+<li>program - (<em>object</em>) The <a href='program.html'>Program</a> instance, or an object containing program ids as keys and <a href='program.html'>Program</a> instances as values.</li>
 </ul>
 </li>
 </ul>
