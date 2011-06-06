@@ -204,6 +204,9 @@ function loadData() {
               callback();
               Log.write('Done.', true);
             },
+            onProgress: function(e) {
+              Log.write('Fetching data for airline ' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : '...'));
+            },
             onError: function() {
               Log.write('There was an error while fetching data for airline: ' + airlineId, true);
             }
