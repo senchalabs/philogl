@@ -230,8 +230,7 @@ Scene Method: pick {#Scene:pick}
 --------------------------------
 
 Returns an [O3D](o3d.html) object under the given `x` and `y`
-coordinates. The object must have `pickable` set to `true` (which is
-the default O3D constructor value).
+coordinates. The object must have `pickable` set to `true`.
 
 ### About the picking algorithm
 
