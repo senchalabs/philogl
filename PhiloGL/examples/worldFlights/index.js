@@ -159,7 +159,7 @@ function loadData() {
       Log.write('Building models...');
     },
     onProgress: function(e) {
-      Log.write('Loading airports data, please wait...' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : ''));
+      Log.write('Loading airports data, ' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : 'please wait...'));
     },
     onError: function() {
       Log.write('There was an error while fetching cities data.', true);
