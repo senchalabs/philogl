@@ -1,3 +1,5 @@
+(function() {
+
 //Unpack modules
 PhiloGL.unpack();
 
@@ -45,7 +47,8 @@ document.onreadystatechange = function() {
 };
 
 //some locals
-var $ = function(id) { return document.getElementById(id); },
+var isWindows = !!navigator.userAgent.toLowerCase().match(/windows/),
+    $ = function(id) { return document.getElementById(id); },
     $$ = function(selector) { return document.querySelectorAll(selector); },
     citiesWorker = new Worker('cities.js'),
     data = { citiesRoutes: {}, airlinesRoutes: {} },
@@ -345,7 +348,7 @@ function createApp() {
       from: 'uris',
       path: 'shaders/',
       vs: 'glow.vs.glsl',
-      fs: 'glow.fs.glsl',
+      fs: 'glow.' + (isWindows ? 'windows.' : '') + 'fs.glsl',
       noCache: true
     }],
     camera: {
@@ -566,4 +569,4 @@ function createApp() {
   });
 }
 
-
+})();

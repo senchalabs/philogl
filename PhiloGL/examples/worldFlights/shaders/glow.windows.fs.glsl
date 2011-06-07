@@ -2,8 +2,8 @@
 precision highp float;
 #endif
 
-#define BLUR_LIMIT 4 
-#define BLUR_LIMIT_SQ 64.0
+#define BLUR_LIMIT 2 
+#define BLUR_LIMIT_SQ 16.0
 
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
