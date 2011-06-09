@@ -1,4 +1,4 @@
-#define LIGHT_MAX 50
+#define LIGHT_MAX 40
 
 attribute vec3 position;
 attribute vec3 normal;
