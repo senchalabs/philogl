@@ -434,7 +434,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/earth3-specular.gif'],
+      src: ['img/earth3-specular.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
