@@ -93,7 +93,7 @@ models.earth = new O3D.Sphere({
   nlong: 50,
   radius: 1,
   shininess: 10,
-  textures: ['img/earth3-specular.gif'],
+  textures: ['img/earth3-specular.jpg'],
   program: 'earth'
 });
 models.earth.rotation.set(Math.PI - 0.3, 0,  0);
