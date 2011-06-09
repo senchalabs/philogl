@@ -30,6 +30,7 @@
   Camera.prototype = {
     
     update: function() {
+      this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
       this.modelView.lookAt(this.position, this.target, this.up);  
     }
   
