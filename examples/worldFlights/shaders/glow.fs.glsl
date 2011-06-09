@@ -2,8 +2,8 @@
 precision highp float;
 #endif
 
-#define BLUR_LIMIT 5 
-#define BLUR_LIMIT_SQ 100.0
+#define BLUR_LIMIT 4 
+#define BLUR_LIMIT_SQ 64.0
 
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
@@ -34,19 +34,6 @@ void main(void) {
     //Add real image
     fragmentColor += texture2D(sampler2, vec2((1.0 - vTexCoord1.s), vTexCoord1.t));
   }
-/*
-  if (fragmentColor.x > 1.0) {
-    fragmentColor.x -= 1.0;
-  }
-  
-  if (fragmentColor.y > 1.0) {
-    fragmentColor.y -= 1.0;
-  }
-  
-  if (fragmentColor.z > 1.0) {
-    fragmentColor.z -= 1.0;
-  }
-*/
   gl_FragColor = vec4(fragmentColor.rgb, 1.0);
 }
 
