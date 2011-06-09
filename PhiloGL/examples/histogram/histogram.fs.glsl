@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-#define LIGHT_MAX 50
+#define LIGHT_MAX 40
 
 varying vec3 vColor;
 varying vec4 vTransformedNormal;

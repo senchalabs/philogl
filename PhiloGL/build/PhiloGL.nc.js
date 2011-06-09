@@ -187,7 +187,7 @@ PhiloGL.unpack = function(branch) {
 };
 
 //Version
-PhiloGL.version = '1.2.0';
+PhiloGL.version = '1.2.1';
 
 //Holds the 3D context, holds the application
 var gl, app;
@@ -3571,7 +3571,7 @@ $.splat = (function() {
       FragmentShaders = Shaders.Fragment;
 
   VertexShaders.Default = [
-    "#define LIGHT_MAX 50",
+    "#define LIGHT_MAX 40",
     
     "attribute vec3 position;",
     "attribute vec3 normal;",
