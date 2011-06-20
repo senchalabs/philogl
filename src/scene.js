@@ -240,6 +240,11 @@
       obj.setTexCoords(program);
       obj.setIndices(program);
 
+      if (obj.dirty) {
+        // Calling obj.set* while dirty resets the buffers so we are clean
+        obj.dirty = false;
+      }
+
       //Now set modelView and normal matrices
       view.mulMat42(camera.modelView, obj.matrix);
       program.setUniform('modelViewMatrix', view);
