@@ -225,8 +225,9 @@ var airlineManager = {
     var airlineIds = this.airlineIds,
         routes = data.airlinesRoutes[airline],
         airlines = models.airlines,
-        vertices = airlines.vertices || [],
-        indices = airlines.indices || [],
+        slice = Array.prototype.slice,
+        vertices = slice.call(airlines.vertices || []),
+        indices = slice.call(airlines.indices || []),
         offset = vertices.length / 3,
         samplings = 10;
 
@@ -246,8 +247,9 @@ var airlineManager = {
     var airlines = models.airlines,
         routes = data.airlinesRoutes[airline],
         nroutes = routes.length,
-        vertices = airlines.vertices,
-        indices = airlines.indices,
+        slice = Array.prototype.slice,
+        vertices = slice.call(airlines.vertices),
+        indices = slice.call(airlines.indices),
         airlineIds = this.airlineIds,
         index = airlineIds.indexOf(airline),
         samplings = 10;
@@ -404,21 +406,9 @@ function createApp() {
         cities.update();
         airlines.update();
         
-        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(erot.y), 
-          y: 0, 
-          z: - sin(erot.y) 
-        });
-        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(crot.y), 
-          y: 0, 
-          z: sin(crot.y) 
-        });
-        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(arot.y), 
-          y: 0, 
-          z: sin(arot.y) 
-        });
+        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, - sin(erot.y)]);
+        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(crot.y), 0, sin(crot.y)]);
+        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(arot.y), 0, sin(arot.y)]);
         
         pos.x = e.x;
       },

@@ -52,41 +52,98 @@
   var getUniformSetter = function(program, info, isArray) {
     var name = info.name,
         loc = gl.getUniformLocation(program, name),
-        type = info.type;
+        type = info.type,
+        matrix = false,
+        vector = true,
+        glFunction, typedArray;
 
     if (info.size > 1 && isArray) {
       switch(type) {
         case gl.FLOAT:
-          return function(val) { gl.uniform1fv(loc, new Float32Array(val)); };
-        case gl.INT: case gl.BOOL:
-          return function(val) { gl.uniform1iv(loc, new Uint16Array(val)); };
+          glFunction = gl.uniform1fv;
+          typedArray = Float32Array;
+          vector = false;
+          break;
+        case gl.INT: case gl.BOOL: case gl.SAMPLER_2D: case gl.SAMPLER_CUBE:
+          glFunction = gl.uniform1iv;
+          typedArray = Uint16Array;
+          vector = false;
+          break;
       }
     }
-
-    switch (type) {
-      case gl.FLOAT:
-        return function(val) { gl.uniform1f(loc, val); };
-      case gl.FLOAT_VEC2:
-        return function(val) { gl.uniform2fv(loc, new Float32Array(val)); };
-      case gl.FLOAT_VEC3:
-        return function(val) { gl.uniform3fv(loc, new Float32Array(val)); };
-      case gl.FLOAT_VEC4:
-        return function(val) { gl.uniform4fv(loc, new Float32Array(val)); };
-      case gl.INT: case gl.BOOL: case gl.SAMPLER_2D: case gl.SAMPLER_CUBE:
-        return function(val) { gl.uniform1i(loc, val); };
-      case gl.INT_VEC2: case gl.BOOL_VEC2:
-        return function(val) { gl.uniform2iv(loc, new Uint16Array(val)); };
-      case gl.INT_VEC3: case gl.BOOL_VEC3:
-        return function(val) { gl.uniform3iv(loc, new Uint16Array(val)); };
-      case gl.INT_VEC4: case gl.BOOL_VEC4:
-        return function(val) { gl.uniform4iv(loc, new Uint16Array(val)); };
-      case gl.FLOAT_MAT2:
-        return function(val) { gl.uniformMatrix2fv(loc, false, val.toFloat32Array()); };
-      case gl.FLOAT_MAT3:
-        return function(val) { gl.uniformMatrix3fv(loc, false, val.toFloat32Array()); };
-      case gl.FLOAT_MAT4:
-        return function(val) { gl.uniformMatrix4fv(loc, false, val.toFloat32Array()); };
+    
+    if (vector) {
+      switch (type) {
+        case gl.FLOAT:
+          glFunction = gl.uniform1f;
+          break;
+        case gl.FLOAT_VEC2:
+          glFunction = gl.uniform2fv;
+          typedArray = isArray ? Float32Array : new Float32Array(2);
+          break;
+        case gl.FLOAT_VEC3:
+          glFunction = gl.uniform3fv;
+          typedArray = isArray ? Float32Array : new Float32Array(3);
+          break;
+        case gl.FLOAT_VEC4:
+          glFunction = gl.uniform4fv;
+          typedArray = isArray ? Float32Array : new Float32Array(4);
+          break;
+        case gl.INT: case gl.BOOL: case gl.SAMPLER_2D: case gl.SAMPLER_CUBE:
+          glFunction = gl.uniform1i;
+          break;
+        case gl.INT_VEC2: case gl.BOOL_VEC2:
+          glFunction = gl.uniform2iv;
+          typedArray = isArray ? Uint16Array : new Uint16Array(2);
+          break;
+        case gl.INT_VEC3: case gl.BOOL_VEC3:
+          glFunction = gl.uniform3iv;
+          typedArray = isArray ? Uint16Array : new Uint16Array(3);
+          break;
+        case gl.INT_VEC4: case gl.BOOL_VEC4:
+          glFunction = gl.uniform4iv;
+          typedArray = isArray ? Uint16Array : new Uint16Array(4);
+          break;
+        case gl.FLOAT_MAT2:
+          matrix = true;
+          glFunction = gl.uniformMatrix2fv;
+          break;
+        case gl.FLOAT_MAT3:
+          matrix = true;
+          glFunction = gl.uniformMatrix3fv;
+          break;
+        case gl.FLOAT_MAT4:
+          matrix = true;
+          glFunction = gl.uniformMatrix4fv;
+          break;
+      }
     }
+    //Set a uniform array
+    if (isArray) {
+      return function(val) {
+        glFunction.call(gl, loc, new typedArray(val));
+      };
+    
+    //Set a matrix uniform
+    } else if (matrix) {
+      return function(val) {
+        glFunction.call(gl, loc, false, val.toFloat32Array());
+      };
+    
+    //Set a vector/typed array uniform
+    } else if (typedArray) {
+      return function(val) {
+        typedArray.set(val);
+        glFunction.call(gl, loc, typedArray);
+      };
+    
+    //Set a primitive-valued uniform
+    } else {
+      return function(val) {
+        glFunction.call(gl, loc, val);
+      };
+    }
+
     throw "Unknown type: " + type;
 
   };

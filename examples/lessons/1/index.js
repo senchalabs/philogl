@@ -1,5 +1,8 @@
 function webGLStart() {
   PhiloGL('lesson01-canvas', {
+    context: {
+      debug: true
+    },
     program: {
       from: 'ids',
       vs: 'shader-vs',
@@ -36,6 +39,7 @@ function webGLStart() {
       
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       camera.modelView.id();
+      console.log('modelView', camera.modelView, camera.modelView.toFloat32Array());
       //Draw Triangle
       camera.modelView.$translate(-1.5, 0, -7);
       program.setUniform('uMVMatrix', camera.modelView);

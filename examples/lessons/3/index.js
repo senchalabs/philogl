@@ -1,25 +1,25 @@
 function webGLStart() {
   //Load models
   var triangle = new PhiloGL.O3D.Model({
-    vertices: [[ 0,  1, 0],
-               [-1, -1, 0],
-               [ 1, -1, 0]],
+    vertices: [ 0,  1, 0,
+               -1, -1, 0,
+                1, -1, 0],
 
-    colors: [[1, 0, 0, 1],
-              [0, 1, 0, 1],
-              [0, 0, 1, 1]]
+    colors: [1, 0, 0, 1,
+             0, 1, 0, 1,
+             0, 0, 1, 1]
   });
 
   var square = new PhiloGL.O3D.Model({
-    vertices: [[ 1,  1, 0],
-                [-1,  1, 0],
-                [ 1, -1, 0],
-                [-1, -1, 0]],
+    vertices: [ 1,  1, 0,
+               -1,  1, 0,
+                1, -1, 0,
+               -1, -1, 0],
 
-    colors: [[0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1]]
+    colors: [0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1]
   });
 
   //Create App
@@ -56,12 +56,12 @@ function webGLStart() {
         //set buffers with element data
         program.setBuffers({
           'aVertexPosition': {
-            value: elem.toFloat32Array('vertices'),
+            value: elem.vertices,
             size: 3
           },
 
           'aVertexColor': {
-            value: elem.toFloat32Array('colors'),
+            value: elem.colors,
             size: 4
           }
         });

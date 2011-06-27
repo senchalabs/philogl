@@ -5,7 +5,7 @@
   
   //returns an O3D object or false otherwise.
   function toO3D(n) {
-    return n !== true? n : false;
+    return n !== true ? n : false;
   }
   
   //Returns an element position
@@ -268,7 +268,7 @@
       }
       if(this.hovered) {
         var target = toO3D(e.getTarget());
-        if(this.hovered != target) {
+        if(!target || target.id != this.hovered.id) {
           this.callbacks.onMouseLeave(e, this.hovered);
           this.hovered = target;
           if(target) {

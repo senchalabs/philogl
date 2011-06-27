@@ -3,35 +3,35 @@ function webGLStart() {
   var cube = new PhiloGL.O3D.Model({
     texture: 'nehe.gif',
 
-    vertices: [[-1, -1,  1],
-               [ 1, -1,  1],
-               [ 1,  1,  1],
-               [-1,  1,  1],
+    vertices: [-1, -1,  1,
+                1, -1,  1,
+                1,  1,  1,
+               -1,  1,  1,
 
-               [-1, -1, -1],
-               [-1,  1, -1],
-               [ 1,  1, -1],
-               [ 1, -1, -1],
+               -1, -1, -1,
+               -1,  1, -1,
+                1,  1, -1,
+                1, -1, -1,
 
-               [-1,  1, -1],
-               [-1,  1,  1],
-               [ 1,  1,  1],
-               [ 1,  1, -1],
+               -1,  1, -1,
+               -1,  1,  1,
+                1,  1,  1,
+                1,  1, -1,
 
-               [-1, -1, -1],
-               [ 1, -1, -1],
-               [ 1, -1,  1],
-               [-1, -1,  1],
+               -1, -1, -1,
+                1, -1, -1,
+                1, -1,  1,
+               -1, -1,  1,
 
-               [ 1, -1, -1],
-               [ 1,  1, -1],
-               [ 1,  1,  1],
-               [ 1, -1,  1],
+                1, -1, -1,
+                1,  1, -1,
+                1,  1,  1,
+                1, -1,  1,
 
-               [-1, -1, -1],
-               [-1, -1,  1],
-               [-1,  1,  1],
-               [-1,  1, -1]],
+               -1, -1, -1,
+               -1, -1,  1,
+               -1,  1,  1,
+               -1,  1, -1],
 
     texCoords: [
             // Front face
@@ -110,15 +110,15 @@ function webGLStart() {
       //set buffers with cube data
       program.setBuffers({
         'aVertexPosition': {
-          value: cube.toFloat32Array('vertices'),
+          value: cube.vertices,
           size: 3
         },
         'aTextureCoord': {
-          value: cube.toFloat32Array('texCoords'),
+          value: cube.texCoords,
           size: 2
         },
         'indices': {
-          value: cube.toUint16Array('indices'),
+          value: cube.indices,
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           size: 1
         }

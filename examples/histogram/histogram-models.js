@@ -9,6 +9,7 @@ var dim = 8,
     sphereNormals = [],
     sphereIndices = [],
     lastIndex = 0,
+    slice = Array.prototype.slice,
 
     rgbPositions = [],
     hsvPositions = [],
@@ -23,15 +24,16 @@ function createSpheres() {
         nlong: nlong,
         radius: 0.1
       }),
-      vertices = sphere.vertices,
-      normals = sphere.normals,
+      vertices = slice.call(sphere.vertices),
+      normals = slice.call(sphere.normals),
+      sindices = slice.call(sphere.indices),
       indices;
 
        
   while(cube--) {
     sphereVertices.push.apply(sphereVertices, vertices.slice());
     sphereNormals.push.apply(sphereNormals, normals.slice());
-    indices = sphere.indices.map((function(offset) {
+    indices = sindices.map((function(offset) {
       return function(n) { return n + offset; };
     })(lastIndex));
     sphereIndices.push.apply(sphereIndices, indices);

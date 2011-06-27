@@ -120,7 +120,7 @@
           pointSpecularColors = [];
       
       //Normalize lighting direction vector
-      dir = Vec3.unit(dir).$scale(-1);
+      dir = Vec3.unit([dir.x, dir.y, dir.z]).$scale(-1);
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
@@ -251,9 +251,9 @@
         obj.render(gl, program, camera);
       } else {
         if (obj.indices) {
-          gl.drawElements((obj.drawType !== undefined)? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+          gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
         } else {
-          gl.drawArrays(gl.get(obj.drawType || 'TRIANGLES'), 0, obj.vertices.length / 3);
+          gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.vertices.length / 3);
         }
       }
       

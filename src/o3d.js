@@ -9,11 +9,31 @@
       sin = Math.sin,
       pi = Math.PI,
       max = Math.max,
-      flatten = function(arr) {
-        if (arr && arr.length && $.type(arr[0]) == 'array') 
-          return [].concat.apply([], arr);
-        return arr;
-      };
+      slice = Array.prototype.slice;
+  
+  function normalizeColors(arr, len) {
+    if (arr && arr.length < len) {
+      var a0 = arr[0],
+          a1 = arr[1],
+          a2 = arr[2],
+          a3 = arr[3],
+          ans = [a0, a1, a2, a3],
+          times = len / arr.length,
+          index;
+      
+      while (--times) {
+        index = times * 4;
+        ans[index    ] = a0;
+        ans[index + 1] = a1;
+        ans[index + 2] = a2;
+        ans[index + 3] = a3;
+      }
+
+      return new Float32Array(ans);
+    } else {
+      return arr;
+    }
+  }
   
   //Model repository
   var O3D = {};
@@ -26,17 +46,17 @@
     this.pickable = !!opt.pickable;
     this.pick = opt.pick || function() { return false; };
     if (opt.pickingColors) {
-      this.pickingColors = flatten(opt.pickingColors);
+      this.pickingColors = opt.pickingColors;
     }
 
-    this.vertices = flatten(opt.vertices);
-    this.normals = flatten(opt.normals);
+    this.vertices = opt.vertices;
+    this.normals = opt.normals;
     this.textures = opt.textures && $.splat(opt.textures);
-    this.colors = flatten(opt.colors);
-    this.indices = flatten(opt.indices);
+    this.colors = opt.colors;
+    this.indices = opt.indices;
     this.shininess = opt.shininess || 0;
     if (opt.texCoords) {
-      this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
+      this.texCoords = opt.texCoords;
     }
 
     //extra uniforms
@@ -46,7 +66,7 @@
     //override the render method
     this.render = opt.render;
     //whether to render as triangles, lines, points, etc.
-    this.drawType = opt.drawType;
+    this.drawType = opt.drawType || 'TRIANGLES';
     //whether to display the object at all
     this.display = 'display' in opt? opt.display : true;
     //before and after render callbacks
@@ -61,21 +81,19 @@
     this.rotation = new Vec3;
     this.scale = new Vec3(1, 1, 1);
     this.matrix = new Mat4;
-    
-    //Set a color per vertex if this is not the case
-    this.normalizeColors();
 
     if (opt.computeCentroids) {
       this.computeCentroids();
     }
+
     if (opt.computeNormals) {
       this.computeNormals();
     }
   
   };
 
-  //Shader setter mixin
-  var setters = {
+  //Buffer setter mixin
+  var Setters = {
     
     setUniforms: function(program) {
       program.setUniforms(this.uniforms);
@@ -114,7 +132,7 @@
       if (force || this.dynamic) {
         program.setBuffer('vertices-' + this.id, {
           attribute: 'position',
-          value: this.toFloat32Array('vertices'),
+          value: this.vertices,
           size: 3
         });
       } else {
@@ -132,7 +150,7 @@
       if (force || this.dynamic) {
         program.setBuffer('normals-' + this.id, {
           attribute: 'normal',
-          value: this.toFloat32Array('normals'),
+          value: this.normals,
           size: 3
         });
       } else {
@@ -151,7 +169,7 @@
         program.setBuffer('indices-' + this.id, {
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           drawType: gl.STATIC_DRAW,
-          value: this.toUint16Array('indices'),
+          value: this.indices,
           size: 1
         });
       } else {
@@ -169,7 +187,7 @@
       if (force || this.dynamic) {
         program.setBuffer('pickingColors-' + this.id, {
           attribute: 'pickingColor',
-          value: this.toFloat32Array('pickingColors'),
+          value: this.pickingColors,
           size: 4
         });
       } else {
@@ -187,7 +205,7 @@
       if (force || this.dynamic) {
         program.setBuffer('colors-' + this.id, {
           attribute: 'color',
-          value: this.toFloat32Array('colors'),
+          value: this.colors,
           size: 4
         });
       } else {
@@ -211,7 +229,7 @@
           this.textures.forEach(function(tex, i) {
             program.setBuffer('texCoords-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
-              value: new Float32Array(this.texCoords[tex]),
+              value: this.texCoords[tex],
               size: 2
             });
           });
@@ -219,7 +237,7 @@
         } else {
           program.setBuffer('texCoords-' + id, {
             attribute: 'texCoord1',
-            value: this.toFloat32Array('texCoords'),
+            value: this.texCoords,
             size: 2
           });
         }
@@ -251,9 +269,147 @@
       }
     }
  };
+  
+  //ensure known attributes use typed arrays
+  O3D.Model.prototype = Object.create(null, {
+    vertices: {
+      set: function(val) {
+        if (!val) return;
+        var vlen = val.length;
+        if (val.BYTES_PER_ELEMENT) {
+          this.$vertices = val;
+        } else {
+          if (this.$verticesLength == vlen) {
+            this.$vertices.set(val);
+          } else {
+            this.$vertices = new Float32Array(val);
+          }
+        }
+        this.$verticesLength = vlen;
+      },
+      get: function() {
+        return this.$vertices;
+      }
+    },
+    
+    normals: {
+      set: function(val) {
+        if (!val) return;
+        var vlen = val.length;
+        if (val.BYTES_PER_ELEMENT) {
+          this.$normals = val;
+        } else {
+          if (this.$normalsLength == vlen) {
+            this.$normals.set(val);
+          } else {
+            this.$normals = new Float32Array(val);
+          }
+        }
+        this.$normalsLength = vlen;
+      },
+      get: function() {
+        return this.$normals;
+      }
+    },
+    
+    colors: {
+      set: function(val) {
+        if (!val) return;
+        var vlen = val.length;
+        if (val.BYTES_PER_ELEMENT) {
+          this.$colors = val;
+        } else {
+          if (this.$colorsLength == vlen) {
+            this.$colors.set(val);
+          } else {
+            this.$colors = new Float32Array(val);
+          }
+        }
+        if (this.$vertices && this.$verticesLength / 3 * 4 != vlen) {
+          this.$colors = normalizeColors(slice.call(this.$colors), this.$verticesLength / 3 * 4);
+        }
+        this.$colorsLength = this.$colors.length;
+      },
+      get: function() {
+        return this.$colors;
+      }
+    },
+    
+    pickingColors: {
+      set: function(val) {
+        if (!val) return;
+        var vlen = val.length;
+        if (val.BYTES_PER_ELEMENT) {
+          this.$pickingColors = val;
+        } else {
+          if (this.$pickingColorsLength == vlen) {
+            this.$pickingColors.set(val);
+          } else {
+            this.$pickingColors = new Float32Array(val);
+          }
+        }
+        if (this.$vertices && this.$verticesLength / 3 * 4 != vlen) {
+          this.$pickingColors = normalizeColors(slice.call(this.$pickingColors), this.$verticesLength / 3 * 4);
+        }
+        this.$pickingColorsLength = this.$pickingColors.length;
+      },
+      get: function() {
+        return this.$pickingColors;
+      }
+    },
+    
+    texCoords: {
+      set: function(val) {
+        if (!val) return;
+        if ($.type(val) == 'object') {
+          var ans = {};
+          for (var prop in val) {
+            var texCoordArray = val[prop];
+            ans[prop] = texCoordArray.BYTES_PER_ELEMENT ? texCoordArray : new Float32Array(texCoordArray);
+          }
+          this.$texCoords = ans;
+        } else {
+          var vlen = val.length;
+          if (val.BYTES_PER_ELEMENT) {
+            this.$texCoords = val;
+          } else {
+            if (this.$texCoordsLength == vlen) {
+              this.$texCoords.set(val);
+            } else {
+              this.$texCoords = new Float32Array(val);
+            }
+          }
+          this.$texCoordsLength = vlen;
+        }
+      },
+      get: function() {
+        return this.$texCoords;
+      }
+    },
 
+    indices: {
+      set: function(val) {
+        if (!val) return;
+        var vlen = val.length;
+        if (val.BYTES_PER_ELEMENT) {
+          this.$indices = val;
+        } else {
+          if (this.$indicesLength == vlen) {
+            this.$indices.set(val);
+          } else {
+            this.$indices = new Uint16Array(val);
+          }
+        }
+        this.$indicesLength = vlen;
+      },
+      get: function() {
+        return this.$indices;
+      }
+    }
+    
+  });
 
-  O3D.Model.prototype = {
+  $.extend(O3D.Model.prototype, {
     $$family: 'model',
 
     update: function() {
@@ -268,37 +424,6 @@
       matrix.$scale(scale.x, scale.y, scale.z);
     },
 
-    toFloat32Array: function(name) {
-      return new Float32Array(this[name]);
-    },
-
-    toUint16Array: function(name) {
-      return new Uint16Array(this[name]);
-    },
-    
-    normalizeColors: function() {
-      if (!this.vertices) return;
-
-      var lv = this.vertices.length * 4 / 3;
-      if (this.colors && this.colors.length < lv) {
-        var times = lv / this.colors.length,
-            colors = this.colors,
-            colorsCopy = colors.slice();
-        while (--times) {
-          colors.push.apply(colors, colorsCopy);
-        }
-      }
-      
-      if (this.pickingColors && this.pickingColors.length < lv) {
-        var times = lv / this.pickingColors.length,
-            pickingColors = this.pickingColors,
-            pickingColorsCopy = pickingColors.slice();
-        while (--times) {
-          pickingColors.push.apply(pickingColors, pickingColorsCopy);
-        }
-      }
-    },
- 
     computeCentroids: function() {
       var faces = this.faces,
           vertices = this.vertices,
@@ -362,69 +487,11 @@
       this.normals = normals;
     }
 
-  };
+  });
   
-  //Apply our setters mixin
-  $.extend(O3D.Model.prototype, setters);
-/*
-  //O3D.Group will group O3D elements into one group
-  O3D.Group = function(opt) {
-    O3D.Model.call(this, opt);
-    this.models = [];
-  };
+  //Apply our Setters mixin
+  $.extend(O3D.Model.prototype, Setters);
 
-  O3D.Group.prototype = Object.create(O3D.Model.prototype, {
-    //Add model(s)
-    add: {
-      value: function() {
-        this.models.push.apply(this.models, Array.prototype.slice.call(arguments));
-      }
-    },
-    updateProperties: {
-      value: function(propertyNames) {
-        var vertices = [],
-            normals = [],
-            colors = [],
-            texCoords = [],
-            textures = [],
-            indices = [],
-            lastIndex = 0,
-
-            doVertices = 'vertices' in propertyNames,
-            doNormals = 'normals' in propertyNames,
-            doColors = 'colors' in propertyNames,
-            doTexCoords = 'texCoords' in propertyNames,
-            doTextures = 'textures' in propertyNames,
-            doIndices = 'indices' in propertyNames,
-
-            view = new PhiloGL.Mat4;
-
-        for (var i = 0, models = this.models, l = models.length; i < l; i++) {
-          var model = models[i];
-          //transform vertices and transform normals
-          vertices.push.apply(vertices, model.vertices || []);
-          normals.push.apply(normals, model.normals || []);
-
-          texCoords.push.apply(texCoords, model.texCoords || []);
-          textures.push.apply(textures, model.textures || []);
-          colors.push.apply(colors, model.colors || []);
-          //Update indices
-          (function(model, lastIndex) {
-            indices.push.apply(indices, (model.indices || []).map(function(n) { return n + lastIndex; }));
-          })(model, lastIndex);
-          lastIndex = Math.max.apply(Math, indices) +1;
-        }
-
-        this.vertices = !!vertices.length && vertices;
-        this.normals = !!normals.length && normals;
-        this.texCoords = !!texCoords.length && texCoords;
-        this.textures = !!textures.length && textures;
-        this.colors = !!colors.length && colors;
-        this.indices = !!indices.length && indices;
-      }
-    }
-});    
-*/
   //Now some primitives, Cube, Sphere, Cone, Cylinder
   //Cube
   O3D.Cube = function(config) {
@@ -546,9 +613,8 @@
   
   //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
   //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
-
-  O3D.Sphere = function(opt) {
-       var nlat = opt.nlat || 10,
+  O3D.Sphere = function(opt) { 
+      var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
            radius = opt.radius || 1,
            startLat = 0,
@@ -558,10 +624,10 @@
            endLong = 2 * pi,
            longRange = endLong - startLong,
            numVertices = (nlat + 1) * (nlong + 1),
-           vertices = [],
-           normals = [],
-           texCoords = [],
-           indices = [];
+           vertices = new Float32Array(numVertices * 3),
+           normals = new Float32Array(numVertices * 3),
+           texCoords = new Float32Array(numVertices * 2),
+           indices = new Uint16Array(nlat * nlong * 6);
 
       if (typeof radius == 'number') {
         var value = radius;
@@ -583,11 +649,21 @@
               ux = cosTheta * sinPhi,
               uy = cosPhi,
               uz = sinTheta * sinPhi,
-              r = radius(ux, uy, uz, u, v);
+              r = radius(ux, uy, uz, u, v),
+              index = x + y * (nlong + 1),
+              i3 = index * 3,
+              i2 = index * 2;
 
-          vertices.push(r * ux, r * uy, r * uz);
-          normals.push(ux, uy, uz);
-          texCoords.push(u, v);
+          vertices[i3 + 0] = r * ux;
+          vertices[i3 + 1] = r * uy;
+          vertices[i3 + 2] = r * uz;
+
+          normals[i3 + 0] = ux;
+          normals[i3 + 1] = uy;
+          normals[i3 + 2] = uz;
+
+          texCoords[i2 + 0] = u;
+          texCoords[i2 + 1] = v;
         }
       }
 
@@ -595,14 +671,15 @@
       var numVertsAround = nlat + 1;
       for (x = 0; x < nlat; x++) {
         for (y = 0; y < nlong; y++) {
+          var index = (x * nlong + y) * 6;
           
-          indices.push(y * numVertsAround + x,
-                      y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x);
-
-          indices.push((y + 1) * numVertsAround + x,
-                       y * numVertsAround + x + 1,
-                      (y + 1) * numVertsAround + x + 1);
+          indices[index + 0] = y * numVertsAround + x;
+          indices[index + 1] = y * numVertsAround + x + 1;
+          indices[index + 2] = (y + 1) * numVertsAround + x;
+          
+          indices[index + 3] = (y + 1) * numVertsAround + x;
+          indices[index + 4] = y * numVertsAround + x + 1;
+          indices[index + 5] = (y + 1) * numVertsAround + x + 1;
         }
       }
 
@@ -620,9 +697,7 @@
   O3D.IcoSphere = function(opt) {
     var iterations = opt.iterations || 0,
         vertices = [],
-        normals = [],
         indices = [],
-        texCoords = [],
         sqrt = Math.sqrt,
         acos = Math.acos,
         atan2 = Math.atan2,
@@ -727,7 +802,11 @@
     }
 
     //Calculate texCoords and normals
-    for (var i = 0, l = indices.length; i < l; i += 3) {
+    var l = indices.length,
+        normals = new Float32Array(l * 3),
+        texCoords = new Float32Array(l * 2);
+
+    for (var i = 0; i < l; i += 3) {
       var i1 = indices[i    ],
           i2 = indices[i + 1],
           i3 = indices[i + 2],
@@ -804,20 +883,22 @@
         bottomCap = !!config.bottomCap,
         extra = (topCap? 2 : 0) + (bottomCap? 2 : 0),
         numVertices = (nradial + 1) * (nvertical + 1 + extra),
-        vertices = [],
-        normals = [],
-        texCoords = [],
-        indices = [],
+        vertices = new Float32Array(numVertices * 3),
+        normals = new Float32Array(numVertices * 3),
+        texCoords = new Float32Array(numVertices * 2),
+        indices = new Uint16Array(nradial * (nvertical + extra) * 6),
         vertsAroundEdge = nradial + 1,
-        slant = Math.atan2(bottomRadius - topRadius, height),
         math = Math,
+        slant = math.atan2(bottomRadius - topRadius, height),
         msin = math.sin,
         mcos = math.cos,
         mpi = math.PI,
         cosSlant = mcos(slant),
         sinSlant = msin(slant),
         start = topCap? -2 : 0,
-        end = nvertical + (bottomCap? 2 : 0);
+        end = nvertical + (bottomCap? 2 : 0),
+        i3 = 0,
+        i2 = 0;
 
     for (var i = start; i <= end; i++) {
       var v = i / nvertical,
@@ -844,24 +925,33 @@
       for (var j = 0; j < vertsAroundEdge; j++) {
         var sin = msin(j * mpi * 2 / nradial);
         var cos = mcos(j * mpi * 2 / nradial);
-        vertices.push(sin * ringRadius, y, cos * ringRadius);
-        normals.push(
-            (i < 0 || i > nvertical) ? 0 : (sin * cosSlant),
-            (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant),
-            (i < 0 || i > nvertical) ? 0 : (cos * cosSlant));
-        texCoords.push(j / nradial, v);
+        
+        vertices[i3 + 0] = sin * ringRadius;
+        vertices[i3 + 1] = y;
+        vertices[i3 + 2] = cos * ringRadius;
+        
+        normals[i3 + 0] = (i < 0 || i > nvertical) ? 0 : (sin * cosSlant);
+        normals[i3 + 1] = (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant);
+        normals[i3 + 2] = (i < 0 || i > nvertical) ? 0 : (cos * cosSlant);
+
+        texCoords[i2 + 0] = j / nradial;
+        texCoords[i2 + 1] = v;
+
+        i2 += 2;
+        i3 += 3;
       }
     }
 
     for (i = 0; i < nvertical + extra; i++) {
       for (j = 0; j < nradial; j++) {
-        indices.push(vertsAroundEdge * (i + 0) + 0 + j,
-                     vertsAroundEdge * (i + 0) + 1 + j,
-                     vertsAroundEdge * (i + 1) + 1 + j,
-                      
-                     vertsAroundEdge * (i + 0) + 0 + j,
-                     vertsAroundEdge * (i + 1) + 1 + j,
-                     vertsAroundEdge * (i + 1) + 0 + j);
+        var index = (i * nradial + j) * 6;
+        
+        indices[index + 0] = vertsAroundEdge * (i + 0) + 0 + j;
+        indices[index + 1] = vertsAroundEdge * (i + 0) + 1 + j;
+        indices[index + 2] = vertsAroundEdge * (i + 1) + 1 + j;
+        indices[index + 3] = vertsAroundEdge * (i + 0) + 0 + j;
+        indices[index + 4] = vertsAroundEdge * (i + 1) + 1 + j;
+        indices[index + 5] = vertsAroundEdge * (i + 1) + 0 + j;
       }
     }
 
@@ -903,39 +993,52 @@
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
-        positions = [],
-        normals = [],
-        texCoords = [];
+        positions = new Float32Array(numVertices * 3),
+        normals = new Float32Array(numVertices * 3),
+        texCoords = new Float32Array(numVertices * 2),
+        i2 = 0, i3 = 0;
 
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
             v = z / subdivisions2;
         
-        texCoords.push(u, v);
+        texCoords[i2 + 0] = u;
+        texCoords[i2 + 1] = v;
+        i2 += 2;
         
         switch (type) {
           case 'x,y':
-            positions.push(c1len * u - c1len * 0.5,
-                           c2len * v - c2len * 0.5,
-                           offset);
-            normals.push(0, 0, 1);
+            positions[i3 + 0] = c1len * u - c1len * 0.5;
+            positions[i3 + 1] = c2len * v - c2len * 0.5;
+            positions[i3 + 2] = offset;
+
+            normals[i3 + 0] = 0;
+            normals[i3 + 1] = 0;
+            normals[i3 + 2] = 1;
           break;
 
           case 'x,z':
-            positions.push(c1len * u - c1len * 0.5,
-                           offset,
-                           c2len * v - c2len * 0.5);
-            normals.push(0, 1, 0);
+            positions[i3 + 0] = c1len * u - c1len * 0.5;
+            positions[i3 + 1] = offset;
+            positions[i3 + 2] = c2len * v - c2len * 0.5;
+
+            normals[i3 + 0] = 0;
+            normals[i3 + 1] = 1;
+            normals[i3 + 2] = 0;
           break;
 
           case 'y,z':
-            positions.push(offset,
-                           c1len * u - c1len * 0.5,
-                           c2len * v - c2len * 0.5);
-            normals.push(1, 0, 0);
+            positions[i3 + 0] = offset;
+            positions[i3 + 1] = c1len * u - c1len * 0.5;
+            positions[i3 + 2] = c2len * v - c2len * 0.5;
+
+            normals[i3 + 0] = 1;
+            normals[i3 + 1] = 0;
+            normals[i3 + 2] = 0;
           break;
         }
+        i3 += 3;
       }
     }
 
@@ -944,15 +1047,16 @@
 
     for (z = 0; z < subdivisions2; z++) {
       for (x = 0; x < subdivisions1; x++) {
+        var index = (z * subdivisions1 + x) * 6;
         // Make triangle 1 of quad.
-        indices.push((z + 0) * numVertsAcross + x,
-                     (z + 1) * numVertsAcross + x,
-                     (z + 0) * numVertsAcross + x + 1);
+        indices[index + 0] = (z + 0) * numVertsAcross + x;
+        indices[index + 1] = (z + 1) * numVertsAcross + x;
+        indices[index + 2] = (z + 0) * numVertsAcross + x + 1;
 
         // Make triangle 2 of quad.
-        indices.push((z + 1) * numVertsAcross + x,
-                     (z + 1) * numVertsAcross + x + 1,
-                     (z + 0) * numVertsAcross + x + 1);
+        indices[index + 3] = (z + 1) * numVertsAcross + x;
+        indices[index + 4] = (z + 1) * numVertsAcross + x + 1;
+        indices[index + 5] = (z + 0) * numVertsAcross + x + 1;
       }
     }
 
