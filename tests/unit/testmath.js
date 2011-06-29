@@ -522,3 +522,24 @@ assert(typeof q.setQuat === 'function');
 assert(typeof q.sub === 'function');
 assert(typeof q.unit === 'function');
 delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 0, 1), Math.PI);
+assert(q.x === 0);
+assert(q.y === 0);
+assert(q.z === 1);
+assert(q.w === Math.cos(Math.PI / 2));
+delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 1, 0), Math.PI);
+assert(q.x === 0);
+assert(q.y === 1);
+assert(q.z === 0);
+assert(q.w === Math.cos(Math.PI / 2));
+delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(1, 0, 0), Math.PI);
+assert(q.x === 1);
+assert(q.y === 0);
+assert(q.z === 0);
+assert(q.w === Math.cos(Math.PI / 2));
+delete q;
