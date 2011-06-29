@@ -502,3 +502,23 @@ assert(m[15] === 1);
 var q = new PhiloGL.Quat;
 
 
+var q = new PhiloGL.Quat;
+assert(q.x === 0);
+assert(q.y === 0);
+assert(q.z === 0);
+assert(q.w === 0);
+assert(typeof q.add === 'function');
+assert(typeof q.clone === 'function');
+assert(typeof q.conjugate === 'function');
+assert(typeof q.divQuat === 'function');
+assert(typeof q.invert === 'function');
+assert(typeof q.mulQuat === 'function');
+assert(typeof q.neg === 'function');
+assert(typeof q.norm === 'function');
+assert(typeof q.normSq === 'function');
+assert(typeof q.scale === 'function');
+assert(typeof q.set === 'function');
+assert(typeof q.setQuat === 'function');
+assert(typeof q.sub === 'function');
+assert(typeof q.unit === 'function');
+delete q;
