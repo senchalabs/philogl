@@ -962,10 +962,10 @@
           bZ = q[2],
           bW = q[3];
 
-      dest.a = aW * bX + aX * bW + aY * bZ - aZ * bY;
-      dest.b = aW * bY + aY * bW + aZ * bX - aX * bZ;
-      dest.c = aW * bZ + aZ * bW + aX * bY - aY * bX;
-      dest.d = aW * bW - aX * bX - aY * bY - aZ * bZ;
+      dest[0] = aW * bX + aX * bW + aY * bZ - aZ * bY;
+      dest[1] = aW * bY + aY * bW + aZ * bX - aX * bZ;
+      dest[2] = aW * bZ + aZ * bW + aX * bY - aY * bX;
+      dest[3] = aW * bW - aX * bX - aY * bY - aZ * bZ;
 
       return dest;
     },
@@ -1000,10 +1000,10 @@
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
       
-      dest.a = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
-      dest.b = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
-      dest.c = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
-      dest.d = (aW * bW + aX * bX + aY * bY + aZ * bZ) * d;
+      dest[0] = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
+      dest[1] = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
+      dest[2] = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
+      dest[3] = (aW * bW + aX * bX + aY * bY + aZ * bZ) * d;
 
       return dest;
     },
@@ -1027,10 +1027,10 @@
 
       var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
 
-      dest.a = -q0 * d;
-      dest.b = -q1 * d;
-      dest.c = -q2 * d;
-      dest.d =  q3 * d;
+      dest[0] = -q0 * d;
+      dest[1] = -q1 * d;
+      dest[2] = -q2 * d;
+      dest[3] =  q3 * d;
       
       return dest;
     },

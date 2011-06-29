@@ -502,3 +502,54 @@ assert(m[15] === 1);
 var q = new PhiloGL.Quat;
 
 
+var q = new PhiloGL.Quat;
+assert(q[0] === 0);
+assert(q[1] === 0);
+assert(q[2] === 0);
+assert(q[3] === 0);
+assert(typeof q.add === 'function');
+assert(typeof q.clone === 'function');
+assert(typeof q.conjugate === 'function');
+assert(typeof q.divQuat === 'function');
+assert(typeof q.invert === 'function');
+assert(typeof q.mulQuat === 'function');
+assert(typeof q.neg === 'function');
+assert(typeof q.norm === 'function');
+assert(typeof q.normSq === 'function');
+assert(typeof q.scale === 'function');
+assert(typeof q.set === 'function');
+assert(typeof q.setQuat === 'function');
+assert(typeof q.sub === 'function');
+assert(typeof q.unit === 'function');
+delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 0, 1), Math.PI);
+assert(q[0] === 0);
+assert(q[1] === 0);
+assert(q[2] === 1);
+assert(q[3] === Math.cos(Math.PI / 2));
+delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 1, 0), Math.PI);
+assert(q[0] === 0);
+assert(q[1] === 1);
+assert(q[2] === 0);
+assert(q[3] === Math.cos(Math.PI / 2));
+delete q;
+
+var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(1, 0, 0), Math.PI);
+assert(q[0] === 1);
+assert(q[1] === 0);
+assert(q[2] === 0);
+assert(q[3] === Math.cos(Math.PI / 2));
+delete q;
+
+var q1 = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(5, 0, -2), Math.PI / 3),
+    q2 = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(1, 3, 0), Math.PI / 4);
+q1.$mulQuat(q2);
+assert(q1[0] === 0.6011183144537015);
+assert(q1[1] === 0.29193457751898655);
+assert(q1[2] === -0.0030205353559888126);
+assert(q1[3] === 0.7439232829017486);
+delete q1;
+delete q2;
