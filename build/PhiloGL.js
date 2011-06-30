@@ -2571,6 +2571,7 @@ $.splat = (function() {
   Camera.prototype = {
     
     update: function() {
+      this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
       this.modelView.lookAt(this.position, this.target, this.up);  
     }
   
@@ -3133,11 +3134,11 @@ $.splat = (function() {
        var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
            radius = opt.radius || 1,
-           startLat = 0,
-           endLat = pi,
+           startLat = opt.startLat || 0,
+           endLat = opt.endLat|| pi,
            latRange = endLat - startLat,
-           startLong = 0,
-           endLong = 2 * pi,
+           startLong = opt.startLong || 0,
+           endLong = opt.endLong || 2 * pi,
            longRange = endLong - startLong,
            numVertices = (nlat + 1) * (nlong + 1),
            vertices = [],
@@ -3156,8 +3157,8 @@ $.splat = (function() {
         for (var x = 0; x <= nlong; x++) {
           var u = x / nlong,
               v = y / nlat,
-              theta = longRange * u,
-              phi = latRange * v,
+              theta = longRange * u + startLong,
+              phi = latRange * v + startLat,
               sinTheta = sin(theta),
               cosTheta = cos(theta),
               sinPhi = sin(phi),
