@@ -8,17 +8,18 @@
       tan = Math.tan,
       pi = Math.PI,
       slice = Array.prototype.slice,
-      //Chrome does not support call/apply on typed array constructors.
+      typedArray = this.Float32Array,
+      //As of version 12 Chrome does not support call/apply on typed array constructors.
       ArrayImpl = (function() {
-        if (!Float32Array.call) {
+        if (!typedArray.call) {
           return Array;
         }
         try {
-          Float32Array.call({}, 10);
+          typedArray.call({}, 10);
         } catch (e) {
           return Array;
         }
-        return Float32Array;
+        return typedArray;
       })(),
       typed = ArrayImpl != Array;
 
@@ -39,7 +40,7 @@
   //Vec3 Class
   var Vec3 = function(x, y, z) {
     if (typed) {
-      Float32Array.call(this, 3);
+      typedArray.call(this, 3);
 
       this[0] = x || 0;
       this[1] = y || 0;
@@ -51,12 +52,12 @@
                 z || 0);
     }
 
-    this.typedContainer = new Float32Array(3);
+    this.typedContainer = new typedArray(3);
   };
 
   //fast Vec3 create.
   Vec3.create = function() {
-    return new Float32Array(3);
+    return new typedArray(3);
   };
 
   //create fancy x, y, z setters and getters.
@@ -235,7 +236,7 @@
       if (dest.$$family) {
         return new Vec3(dest[0], dest[1], dest[2]);
       } else {
-        return Vec3.setVec3(new Float32Array(3), dest);
+        return Vec3.setVec3(new typedArray(3), dest);
       }
     },
 
@@ -287,11 +288,11 @@
       this.id();
     }
 
-    this.typedContainer = new Float32Array(16);
+    this.typedContainer = new typedArray(16);
   };
 
   Mat4.create = function() {
-   return new Float32Array(16);
+   return new typedArray(16);
   };
 
   //create fancy components setters and getters.
@@ -354,7 +355,7 @@
                         dest[2], dest[6], dest[10], dest[14],
                         dest[3], dest[7], dest[11], dest[15]);
       } else {
-        return new Float32Array(dest);
+        return new typedArray(dest);
       }
     },
 
@@ -788,11 +789,11 @@
     this[2] = z || 0;
     this[3] = w || 0;
 
-    this.typedContainer = new Float32Array(4);
+    this.typedContainer = new typedArray(4);
   };
 
   Quat.create = function() {
-    return new Float32Array(4);
+    return new typedArray(4);
   };
 
   generics = {
@@ -819,7 +820,7 @@
       if (dest.$$family) {
         return new Quat(dest[0], dest[1], dest[2], dest[3]);
       } else {
-        return Quat.setQuat(new Float32Array(4), dest);
+        return Quat.setQuat(new typedArray(4), dest);
       }
     },
 
