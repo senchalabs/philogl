@@ -1163,13 +1163,13 @@ $.splat = (function() {
           vy = vec[1], 
           vz = vec[2],
           m11 = vx * vx * nc + c, 
-          m21 = vx * vy * nc - vz * s, 
-          m31 = vx * vz * nc + vy * s,
-          m12 = vy * vx * nc + vz * s, 
+          m12 = vx * vy * nc - vz * s, 
+          m13 = vx * vz * nc + vy * s,
+          m21 = vy * vx * nc + vz * s, 
           m22 = vy * vy * nc + c, 
-          m32 = vy * vz * nc - vx * s,
-          m13 = vx * vz * nc - vy * s, 
-          m23 = vy * vz * nc + vx * s, 
+          m23 = vy * vz * nc - vx * s,
+          m31 = vx * vz * nc - vy * s, 
+          m32 = vy * vz * nc + vx * s, 
           m33 = vz * vz * nc + c,
           d11 = dest[0],
           d12 = dest[4],
@@ -2303,29 +2303,31 @@ $.splat = (function() {
           break;
       }
     }
+
+    glFunction = glFunction.bind(gl);
     //Set a uniform array
     if (isArray) {
       return function(val) {
-        glFunction.call(gl, loc, new typedArray(val));
+        glFunction(loc, new typedArray(val));
       };
     
     //Set a matrix uniform
     } else if (matrix) {
       return function(val) {
-        glFunction.call(gl, loc, false, val.toFloat32Array());
+        glFunction(loc, false, val.toFloat32Array());
       };
     
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
         typedArray.set(val);
-        glFunction.call(gl, loc, typedArray);
+        glFunction(loc, typedArray);
       };
     
     //Set a primitive-valued uniform
     } else {
       return function(val) {
-        glFunction.call(gl, loc, val);
+        glFunction(loc, val);
       };
     }
 
