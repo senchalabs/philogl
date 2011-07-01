@@ -1165,19 +1165,12 @@ $.splat = (function() {
           m11 = vx * vx * nc + c, 
           m12 = vx * vy * nc - vz * s, 
           m13 = vx * vz * nc + vy * s,
-          m14 = 0,
           m21 = vy * vx * nc + vz * s, 
           m22 = vy * vy * nc + c, 
           m23 = vy * vz * nc - vx * s,
-          m24 = 0,
           m31 = vx * vz * nc - vy * s, 
           m32 = vy * vz * nc + vx * s, 
           m33 = vz * vz * nc + c,
-          m34 = 0,
-          m41 = 0,
-          m42 = 0,
-          m43 = 0,
-          m44 = 1,
           d11 = dest[0],
           d12 = dest[4],
           d13 = dest[8],
@@ -1195,41 +1188,26 @@ $.splat = (function() {
           d43 = dest[11],
           d44 = dest[15];
       
-      dest[0] = d11 * m11 + d12 * m21 + d13 * m31 + d14 * m41;
-      dest[4] = d11 * m12 + d12 * m22 + d13 * m32 + d14 * m42;
-      dest[8] = d11 * m13 + d12 * m23 + d13 * m33 + d14 * m43;
-      dest[12] = d11 * m14 + d12 * m24 + d13 * m34 + d14 * m44;
+      dest[0 ] = d11 * m11 + d12 * m21 + d13 * m31;
+      dest[4 ] = d11 * m12 + d12 * m22 + d13 * m32;
+      dest[8 ] = d11 * m13 + d12 * m23 + d13 * m33;
+      dest[12] = d14;
 
-      dest[1] = d21 * m11 + d22 * m21 + d23 * m31 + d24 * m41;
-      dest[5] = d21 * m12 + d22 * m22 + d23 * m32 + d24 * m42;
-      dest[9] = d21 * m13 + d22 * m23 + d23 * m33 + d24 * m43;
-      dest[13] = d21 * m14 + d22 * m24 + d23 * m34 + d24 * m44;
+      dest[1 ] = d21 * m11 + d22 * m21 + d23 * m31;
+      dest[5 ] = d21 * m12 + d22 * m22 + d23 * m32;
+      dest[9 ] = d21 * m13 + d22 * m23 + d23 * m33;
+      dest[13] = d24;
 
-      dest[2] = d31 * m11 + d32 * m21 + d33 * m31 + d34 * m41;
-      dest[6] = d31 * m12 + d32 * m22 + d33 * m32 + d34 * m42;
-      dest[10] = d31 * m13 + d32 * m23 + d33 * m33 + d34 * m43;
-      dest[14] = d31 * m14 + d32 * m24 + d33 * m34 + d34 * m44;
+      dest[2 ] = d31 * m11 + d32 * m21 + d33 * m31;
+      dest[6 ] = d31 * m12 + d32 * m22 + d33 * m32;
+      dest[10] = d31 * m13 + d32 * m23 + d33 * m33;
+      dest[14] = d34;
 
-      dest[3] = d41 * m11 + d42 * m21 + d43 * m31 + d44 * m41;
-      dest[7] = d41 * m12 + d42 * m22 + d43 * m32 + d44 * m42;
-      dest[11] = d41 * m13 + d42 * m23 + d43 * m33 + d44 * m43;
-      dest[15] = d41 * m14 + d42 * m24 + d43 * m34 + d44 * m44;
-/*
-      dest[0] = d11 * m11 + d21 * m12 + d31 * m13;
-      dest[4] = d12 * m11 + d22 * m12 + d32 * m13;
-      dest[8] = d13 * m11 + d23 * m12 + d33 * m13;
-      dest[12] = d14 * m11 + d24 * m12 + d34 * m13;
-      
-      dest[1] = d11 * m21 + d21 * m22 + d31 * m23;
-      dest[5] = d12 * m21 + d22 * m22 + d32 * m23;
-      dest[9] = d13 * m21 + d23 * m22 + d33 * m23;
-      dest[13] = d14 * m21 + d24 * m22 + d34 * m23;
-      
-      dest[2] = d11 * m31 + d21 * m32 + d31 * m33;
-      dest[6] = d12 * m31 + d22 * m32 + d32 * m33;
-      dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
-      dest[14] = d14 * m31 + d24 * m32 + d34 * m33;
-*/
+      dest[3 ] = d41 * m11 + d42 * m21 + d43 * m31;
+      dest[7 ] = d41 * m12 + d42 * m22 + d43 * m32;
+      dest[11] = d41 * m13 + d42 * m23 + d43 * m33;
+      dest[15] = d44;
+
       return dest;
 
     },
