@@ -118,29 +118,31 @@
           break;
       }
     }
+
+    glFunction = glFunction.bind(gl);
     //Set a uniform array
     if (isArray) {
       return function(val) {
-        glFunction.call(gl, loc, new typedArray(val));
+        glFunction(loc, new typedArray(val));
       };
     
     //Set a matrix uniform
     } else if (matrix) {
       return function(val) {
-        glFunction.call(gl, loc, false, val.toFloat32Array());
+        glFunction(loc, false, val.toFloat32Array());
       };
     
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
         typedArray.set(val);
-        glFunction.call(gl, loc, typedArray);
+        glFunction(loc, typedArray);
       };
     
     //Set a primitive-valued uniform
     } else {
       return function(val) {
-        glFunction.call(gl, loc, val);
+        glFunction(loc, val);
       };
     }
 
@@ -275,25 +277,16 @@
         fragmentShaderURI = opt.path + opt.fs,
         XHR = PhiloGL.IO.XHR;
 
-    new XHR({
-      url: vertexShaderURI,
+    new XHR.Group({
+      urls: [vertexShaderURI, fragmentShaderURI],
       noCache: opt.noCache,
       onError: function(arg) {
         opt.onError(arg);
       },
-      onSuccess: function(vs) {
-        new XHR({
-          url: fragmentShaderURI,
-          noCache: opt.noCache,
-          onError: function(arg) {
-            opt.onError(arg);
-          },
-          onSuccess: function(fs) {
-            opt.onSuccess(Program.fromShaderSources(vs, fs), opt);  
-          }
-        }).send();
+      onComplete: function(ans) {
+        opt.onSuccess(Program.fromShaderSources(ans[0], ans[1]), opt);
       }
-    }).send();
+    }).send();  
   };
 
   PhiloGL.Program = Program;

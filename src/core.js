@@ -156,7 +156,7 @@ this.PhiloGL = null;
 
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(branch) {
-  branch = branch || window || self;
+  branch = branch || globalContext;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
@@ -166,7 +166,7 @@ PhiloGL.unpack = function(branch) {
 PhiloGL.version = '1.2.1';
 
 //Holds the 3D context, holds the application
-var gl, app;
+var gl, app, globalContext = this;
 
 //Utility functions
 function $(d) {

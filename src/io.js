@@ -106,7 +106,7 @@
 
   //Make parallel requests and group the responses.
   XHR.Group = function(opt) {
-    opt = $merge({
+    opt = $.merge({
       urls: [],
       onError: $.empty,
       onSuccess: $.empty,
@@ -137,7 +137,7 @@
 
     function handleError(i) {
       return function(e) {
-        len--;
+        --len;
         opt.onError(e, i);
         
         if (!len) opt.onComplete(ans);
@@ -146,7 +146,7 @@
 
     function handleSuccess(i) {
       return function(response) {
-        len--;
+        --len;
         ans[i] = response;
         opt.onSuccess(response, i);
 
