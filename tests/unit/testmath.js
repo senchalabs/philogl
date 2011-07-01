@@ -1,5 +1,7 @@
 PhiloGL.unpack();
 
+var abs = Math.abs, delta = 0.001;
+
 assert(typeof PhiloGL.Vec3 === 'function');
 assert(typeof PhiloGL.Mat4 === 'function');
 assert(typeof PhiloGL.Quat === 'function');
@@ -63,324 +65,6 @@ assert(m[13] === 0);
 assert(m[14] === 0);
 assert(m[15] === 1);
 
-//test add
-assert(typeof Mat4.add === 'function');
-m = m.add(m);
-assert(m[0 ] === 2);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 2);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 2);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 2);
-
-//test $add
-assert(typeof Mat4.$add === 'function');
-m.id();
-m.$add(m);
-assert(m[0 ] === 2);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 2);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 2);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 2);
-
-//test frustum
-assert(typeof Mat4.frustum === 'function');
-
-//test invert
-assert(typeof Mat4.invert === 'function');
-m.id();
-m = m.invert();
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
-//test $invert
-assert(typeof Mat4.$invert === 'function');
-m.id();
-m.$invert();
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
-//test lookAt
-assert(typeof Mat4.lookAt === 'function');
-
-//test mulMat4
-assert(typeof Mat4.mulMat4 === 'function');
-var m1 = new Mat4;
-var m2 = new Mat4;
-m1 = m1.mulMat4(m2);
-assert(m1[0 ] === 1);
-assert(m1[1 ] === 0);
-assert(m1[2 ] === 0);
-assert(m1[3 ] === 0);
-assert(m1[4 ] === 0);
-assert(m1[5 ] === 1);
-assert(m1[6 ] === 0);
-assert(m1[7 ] === 0);
-assert(m1[8 ] === 0);
-assert(m1[9 ] === 0);
-assert(m1[10] === 1);
-assert(m1[11] === 0);
-assert(m1[12] === 0);
-assert(m1[13] === 0);
-assert(m1[14] === 0);
-assert(m1[15] === 1);
-
-//test $mulMat4
-assert(typeof Mat4.$mulMat4 === 'function');
-var m1 = new Mat4;
-var m2 = new Mat4;
-m1.$mulMat4(m2);
-assert(m1[0 ] === 1);
-assert(m1[1 ] === 0);
-assert(m1[2 ] === 0);
-assert(m1[3 ] === 0);
-assert(m1[4 ] === 0);
-assert(m1[5 ] === 1);
-assert(m1[6 ] === 0);
-assert(m1[7 ] === 0);
-assert(m1[8 ] === 0);
-assert(m1[9 ] === 0);
-assert(m1[10] === 1);
-assert(m1[11] === 0);
-assert(m1[12] === 0);
-assert(m1[13] === 0);
-assert(m1[14] === 0);
-assert(m1[15] === 1);
-
-//test mulMat42
-assert(typeof Mat4.mulMat42 === 'function');
-var m1 = new Mat4;
-var m2 = new Mat4;
-var ans = new Mat4;
-ans.mulMat42(m1, m2);
-
-assert(ans[0 ] === 1);
-assert(ans[1 ] === 0);
-assert(ans[2 ] === 0);
-assert(ans[3 ] === 0);
-assert(ans[4 ] === 0);
-assert(ans[5 ] === 1);
-assert(ans[6 ] === 0);
-assert(ans[7 ] === 0);
-assert(ans[8 ] === 0);
-assert(ans[9 ] === 0);
-assert(ans[10] === 1);
-assert(ans[11] === 0);
-assert(ans[12] === 0);
-assert(ans[13] === 0);
-assert(ans[14] === 0);
-assert(ans[15] === 1);
-
-//test mulVec3
-assert(typeof Mat4.mulVec3 === 'function');
-var v = new Vec3(1, 1, 1),
-    m = new Mat4,
-    ans = m.mulVec3(v);
-
-assert(ans[0] === 1);
-assert(ans[1] === 1);
-assert(ans[2] === 1);
-
-//test $mulVec3
-assert(typeof Mat4.$mulVec3 === 'function');
-var v = new Vec3(1, 1, 1),
-    m = new Mat4;
-
-m.$mulVec3(v);
-
-assert(v[0] === 1);
-assert(v[1] === 1);
-assert(v[2] === 1);
-
-//test perspective
-assert(typeof Mat4.perspective === 'function');
-
-//test rotateAxis
-assert(typeof Mat4.rotateAxis === 'function');
-var v = [1, 1, 1],
-    theta = 0,
-    m = new Mat4,
-    ans = m.rotateAxis(theta, v);
-
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
-//test $rotateAxis
-assert(typeof Mat4.$rotateAxis === 'function');
-var v = [1, 1, 1],
-    theta = 0,
-    m = new Mat4;
-    
-m.$rotateAxis(theta, v);
-
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
-//test rotateXYZ
-assert(typeof Mat4.rotateXYZ === 'function');
-m.id();
-var ans = m.rotateXYZ(0, 0, 0);
-
-assert(ans[0 ] === 1);
-assert(ans[1 ] === 0);
-assert(ans[2 ] === 0);
-assert(ans[3 ] === 0);
-assert(ans[4 ] === 0);
-assert(ans[5 ] === 1);
-assert(ans[6 ] === 0);
-assert(ans[7 ] === 0);
-assert(ans[8 ] === 0);
-assert(ans[9 ] === 0);
-assert(ans[10] === 1);
-assert(ans[11] === 0);
-assert(ans[12] === 0);
-assert(ans[13] === 0);
-assert(ans[14] === 0);
-assert(ans[15] === 1);
-
-//test $rotateXYZ
-assert(typeof Mat4.$rotateXYZ === 'function');
-m.id();
-m.$rotateXYZ(0, 0, 0);
-
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
-//test scale
-assert(typeof Mat4.scale === 'function');
-m.id();
-var ans = m.scale(2, 2, 2);
-
-assert(ans[0 ] === 2);
-assert(ans[1 ] === 0);
-assert(ans[2 ] === 0);
-assert(ans[3 ] === 0);
-assert(ans[4 ] === 0);
-assert(ans[5 ] === 2);
-assert(ans[6 ] === 0);
-assert(ans[7 ] === 0);
-assert(ans[8 ] === 0);
-assert(ans[9 ] === 0);
-assert(ans[10] === 2);
-assert(ans[11] === 0);
-assert(ans[12] === 0);
-assert(ans[13] === 0);
-assert(ans[14] === 0);
-assert(ans[15] === 1);
-
-//test $scale
-assert(typeof Mat4.$scale === 'function');
-m.id();
-m.$scale(2, 2, 2);
-
-assert(m[0 ] === 2);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 2);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 2);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
-
 //test set
 assert(typeof Mat4.set === 'function');
 m.id();
@@ -406,98 +90,260 @@ assert(m[13] === 14);
 assert(m[14] === 15);
 assert(m[15] === 16);
 
-//test toFloat32Array
-assert(typeof Mat4.toFloat32Array === 'function');
+//test add
+assert(typeof Mat4.add === 'function');
 m.id();
-assert(m.toFloat32Array().BYTES_PER_ELEMENT === 4);
-
-//test translate
-assert(typeof Mat4.translate === 'function');
-m.id();
-var ans = m.translate(1, 2, 3);
-
-assert(ans[0 ] === 1);
-assert(ans[1 ] === 0);
-assert(ans[2 ] === 0);
-assert(ans[3 ] === 0);
-assert(ans[4 ] === 0);
-assert(ans[5 ] === 1);
-assert(ans[6 ] === 0);
-assert(ans[7 ] === 0);
-assert(ans[8 ] === 0);
-assert(ans[9 ] === 0);
-assert(ans[10] === 1);
-assert(ans[11] === 0);
-assert(ans[12] === 1);
-assert(ans[13] === 2);
-assert(ans[14] === 3);
-assert(ans[15] === 1);
-
-//test $translate
-assert(typeof Mat4.$translate === 'function');
-m.id();
-m.$translate(1, 2, 3);
-
-assert(m[0 ] === 1);
+m = m.add(m);
+assert(m[0 ] === 2);
 assert(m[1 ] === 0);
 assert(m[2 ] === 0);
 assert(m[3 ] === 0);
 assert(m[4 ] === 0);
-assert(m[5 ] === 1);
+assert(m[5 ] === 2);
 assert(m[6 ] === 0);
 assert(m[7 ] === 0);
 assert(m[8 ] === 0);
 assert(m[9 ] === 0);
-assert(m[10] === 1);
+assert(m[10] === 2);
 assert(m[11] === 0);
-assert(m[12] === 1);
-assert(m[13] === 2);
-assert(m[14] === 3);
-assert(m[15] === 1);
+assert(m[12] === 0);
+assert(m[13] === 0);
+assert(m[14] === 0);
+assert(m[15] === 2);
 
 //test transpose
 assert(typeof Mat4.transpose === 'function');
 m.id();
+m.set(1, 5, 9 , 13,
+      2, 6, 10, 14,
+      3, 7, 11, 15,
+      4, 8, 12, 16);
+
 var ans = m.transpose();
+
+assert(abs(ans.n11 - 1) < delta);
+assert(abs(ans.n12 - 2) < delta);
+assert(abs(ans.n13 - 3) < delta);
+assert(abs(ans.n14 - 4) < delta);
+assert(abs(ans.n21 - 5) < delta);
+assert(abs(ans.n22 - 6) < delta);
+assert(abs(ans.n23 - 7) < delta);
+assert(abs(ans.n24 - 8) < delta);
+assert(abs(ans.n31 - 9) < delta);
+assert(abs(ans.n32 - 10) < delta);
+assert(abs(ans.n33 - 11) < delta);
+assert(abs(ans.n34 - 12) < delta);
+assert(abs(ans.n41 - 13) < delta);
+assert(abs(ans.n42 - 14) < delta);
+assert(abs(ans.n43 - 15) < delta);
+assert(abs(ans.n44 - 16) < delta);
+
+//test mulMat42
+assert(typeof Mat4.mulMat42 === 'function');
+var m1 = new Mat4;
+m1.set(1, 5, 9 , 13,
+       2, 6, 10, 14,
+       3, 7, 11, 15,
+       4, 8, 12, 16);
+
+var m2 = new Mat4;
+m2.set(1, 5, 9 , 13,
+       2, 6, 10, 14,
+       3, 7, 11, 15,
+       4, 8, 12, 16).$transpose();
+
+var ans = new Mat4;
+ans.mulMat42(m1, m2);
+
+assert(abs(ans.n11 - 276) < delta);
+assert(abs(ans.n12 - 304) < delta);
+assert(abs(ans.n13 - 332) < delta);
+assert(abs(ans.n14 - 360) < delta);
+assert(abs(ans.n21 - 304) < delta);
+assert(abs(ans.n22 - 336) < delta);
+assert(abs(ans.n23 - 368) < delta);
+assert(abs(ans.n24 - 400) < delta);
+assert(abs(ans.n31 - 332) < delta);
+assert(abs(ans.n32 - 368) < delta);
+assert(abs(ans.n33 - 404) < delta);
+assert(abs(ans.n34 - 440) < delta);
+assert(abs(ans.n41 - 360) < delta);
+assert(abs(ans.n42 - 400) < delta);
+assert(abs(ans.n43 - 440) < delta);
+assert(abs(ans.n44 - 480) < delta);
+
+
+//test rotateAxis
+assert(typeof Mat4.rotateAxis === 'function');
+var v = [1, 2, 3],
+    theta = Math.PI,
+    m = new Mat4,
+    ans = m.rotateAxis(theta, v);
+
+assert(abs(ans.n11 - 1) < delta);
+assert(abs(ans.n12 - 3.9999999999999996) < delta);
+assert(abs(ans.n13 - 6) < delta);
+assert(abs(ans.n14 - 0) < delta);
+assert(abs(ans.n21 - 4) < delta);
+assert(abs(ans.n22 - 7) < delta);
+assert(abs(ans.n23 - 12) < delta);
+assert(abs(ans.n24 - 0) < delta);
+assert(abs(ans.n31 - 6) < delta);
+assert(abs(ans.n32 - 12) < delta);
+assert(abs(ans.n33 - 17) < delta);
+assert(abs(ans.n34 - 0) < delta);
+assert(abs(ans.n41 - 0) < delta);
+assert(abs(ans.n42 - 0) < delta);
+assert(abs(ans.n43 - 0) < delta);
+assert(abs(ans.n44 - 1) < delta);
+
+
+//test rotateXYZ
+assert(typeof Mat4.rotateXYZ === 'function');
+m.id();
+var ans = m.rotateXYZ(1, 2, 3);
+console.log('rotate 1 0 0', ans);
+assert(abs(ans.n11 - 0.411982245665683) < delta);
+assert(abs(ans.n12 - -0.8337376517741568) < delta);
+assert(abs(ans.n13 - -0.36763046292489926) < delta);
+assert(abs(ans.n14 - 0) < delta);
+assert(abs(ans.n21 - -0.05872664492762098) < delta);
+assert(abs(ans.n22 - -0.42691762127620736) < delta);
+assert(abs(ans.n23 - 0.9023815854833308) < delta);
+assert(abs(ans.n24 - 0) < delta);
+assert(abs(ans.n31 - -0.9092974268256817) < delta);
+assert(abs(ans.n32 - -0.35017548837401463) < delta);
+assert(abs(ans.n33 - -0.2248450953661529) < delta);
+assert(abs(ans.n34 - 0) < delta);
+assert(abs(ans.n41 - 0) < delta);
+assert(abs(ans.n42 - 0) < delta);
+assert(abs(ans.n43 - 0) < delta);
+assert(abs(ans.n44 - 1) < delta);
+
+
+//test scale
+assert(typeof Mat4.scale === 'function');
+m.id();
+var ans = m.scale(1, 2, 3);
 
 assert(ans[0 ] === 1);
 assert(ans[1 ] === 0);
 assert(ans[2 ] === 0);
 assert(ans[3 ] === 0);
 assert(ans[4 ] === 0);
-assert(ans[5 ] === 1);
+assert(ans[5 ] === 2);
 assert(ans[6 ] === 0);
 assert(ans[7 ] === 0);
 assert(ans[8 ] === 0);
 assert(ans[9 ] === 0);
-assert(ans[10] === 1);
+assert(ans[10] === 3);
 assert(ans[11] === 0);
 assert(ans[12] === 0);
 assert(ans[13] === 0);
 assert(ans[14] === 0);
 assert(ans[15] === 1);
 
-//test $transpose
-assert(typeof Mat4.$transpose === 'function');
-m.id();
-m.$transpose();
 
-assert(m[0 ] === 1);
-assert(m[1 ] === 0);
-assert(m[2 ] === 0);
-assert(m[3 ] === 0);
-assert(m[4 ] === 0);
-assert(m[5 ] === 1);
-assert(m[6 ] === 0);
-assert(m[7 ] === 0);
-assert(m[8 ] === 0);
-assert(m[9 ] === 0);
-assert(m[10] === 1);
-assert(m[11] === 0);
-assert(m[12] === 0);
-assert(m[13] === 0);
-assert(m[14] === 0);
-assert(m[15] === 1);
+//test translate
+assert(typeof Mat4.translate === 'function');
+m.id();
+var ans = m.translate(1, 2, 3);
+assert(abs(ans.n11 - 1) < delta);
+assert(abs(ans.n12 - 0) < delta);
+assert(abs(ans.n13 - 0) < delta);
+assert(abs(ans.n14 - 1) < delta);
+assert(abs(ans.n21 - 0) < delta);
+assert(abs(ans.n22 - 1) < delta);
+assert(abs(ans.n23 - 0) < delta);
+assert(abs(ans.n24 - 2) < delta);
+assert(abs(ans.n31 - 0) < delta);
+assert(abs(ans.n32 - 0) < delta);
+assert(abs(ans.n33 - 1) < delta);
+assert(abs(ans.n34 - 3) < delta);
+assert(abs(ans.n41 - 0) < delta);
+assert(abs(ans.n42 - 0) < delta);
+assert(abs(ans.n43 - 0) < delta);
+assert(abs(ans.n44 - 1) < delta);
+
+
+//test frustum
+assert(typeof Mat4.frustum === 'function');
+m.id();
+var ans = m.frustum(-1, 1, -1, 1, 0.1, 100);
+assert(abs(ans.n11 - 0.1) < delta);
+assert(abs(ans.n12 - 0) < delta);
+assert(abs(ans.n13 - 0) < delta);
+assert(abs(ans.n14 - 0) < delta);
+assert(abs(ans.n21 - 0) < delta);
+assert(abs(ans.n22 - 0.1) < delta);
+assert(abs(ans.n23 - 0) < delta);
+assert(abs(ans.n24 - 0) < delta);
+assert(abs(ans.n31 - 0) < delta);
+assert(abs(ans.n32 - 0) < delta);
+assert(abs(ans.n33 - -1.002002002002002) < delta);
+assert(abs(ans.n34 - -0.20020020020020018) < delta);
+assert(abs(ans.n41 - 0) < delta);
+assert(abs(ans.n42 - 0) < delta);
+assert(abs(ans.n43 - -1) < delta);
+assert(abs(ans.n44 - 0) < delta);
+
+
+//test invert
+assert(typeof Mat4.invert === 'function');
+m.id();
+var ans = m.frustum(-1, 1, -1, 1, 0.1, 100).invert();
+assert(abs(ans.n11 - 9.99999999) < delta);
+assert(abs(ans.n12 - 0) < delta);
+assert(abs(ans.n13 - 0) < delta);
+assert(abs(ans.n14 - 0) < delta);
+assert(abs(ans.n21 - 0) < delta);
+assert(abs(ans.n22 - 9.99999999) < delta);
+assert(abs(ans.n23 - 0) < delta);
+assert(abs(ans.n24 - 0) < delta);
+assert(abs(ans.n31 - 0) < delta);
+assert(abs(ans.n32 - 0) < delta);
+assert(abs(ans.n33 - 0) < delta);
+assert(abs(ans.n34 - -1) < delta);
+assert(abs(ans.n41 - 0) < delta);
+assert(abs(ans.n42 - 0) < delta);
+assert(abs(ans.n43 - -4.995) < delta);
+assert(abs(ans.n44 - 5.005) < delta);
+
+
+//test lookAt
+assert(typeof Mat4.lookAt === 'function');
+
+
+//test mulVec3
+assert(typeof Mat4.mulVec3 === 'function');
+var v = new Vec3(1, 1, 1),
+    m = new Mat4,
+    ans = m.mulVec3(v);
+
+assert(ans[0] === 1);
+assert(ans[1] === 1);
+assert(ans[2] === 1);
+
+//test $mulVec3
+assert(typeof Mat4.$mulVec3 === 'function');
+var v = new Vec3(1, 1, 1),
+    m = new Mat4;
+
+m.$mulVec3(v);
+
+assert(v[0] === 1);
+assert(v[1] === 1);
+assert(v[2] === 1);
+
+//test perspective
+assert(typeof Mat4.perspective === 'function');
+
+
+//test toFloat32Array
+assert(typeof Mat4.toFloat32Array === 'function');
+m.id();
+assert(m.toFloat32Array().BYTES_PER_ELEMENT === 4);
+
 
 var q = new PhiloGL.Quat;
 

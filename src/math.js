@@ -54,8 +54,17 @@
     this.typedContainer = new Float32Array(3);
   };
 
+  //fast Vec3 create.
+  Vec3.create = function() {
+    return new Float32Array(3);
+  };
+
   //create fancy x, y, z setters and getters.
   Vec3.prototype = Object.create(ArrayImpl.prototype, {
+    $$family: {
+      value: 'Vec3'
+    },
+    
     x: descriptor(0),
     y: descriptor(1),
     z: descriptor(2)
@@ -223,33 +232,24 @@
     },
 
     clone: function(dest) {
-      return new Vec3(dest[0], dest[1], dest[2]);
+      if (dest.$$family) {
+        return new Vec3(dest[0], dest[1], dest[2]);
+      } else {
+        return Vec3.setVec3(new Float32Array(3), dest);
+      }
     },
 
-    toFloat32Array: (function() {
-      if (typed) {
-        return function(dest) {
+    toFloat32Array: function(dest) {
           var ans = dest.typedContainer;
+
+          if (!ans) return dest;
           
           ans[0] = dest[0];
           ans[1] = dest[1];
           ans[2] = dest[2];
 
           return ans;
-          //return new Float32Array(dest);
-        };
-      } else {
-        return function(dest) {
-          var ans = dest.typedContainer;
-          
-          ans[0] = dest[0];
-          ans[1] = dest[1];
-          ans[2] = dest[2];
-
-          return ans;
-        };
-      }
-    })()
+    }
   };
   
   //add generics and instance methods
@@ -288,10 +288,18 @@
     }
 
     this.typedContainer = new Float32Array(16);
- };
+  };
+
+  Mat4.create = function() {
+   return new Float32Array(16);
+  };
 
   //create fancy components setters and getters.
   Mat4.prototype = Object.create(ArrayImpl.prototype, {
+    
+    $$family: {
+      value: 'Mat4'
+    },
     
     n11: descriptor(0),
     n21: descriptor(1),
@@ -340,10 +348,14 @@
     },
 
     clone: function(dest) {
-      return new Mat4(dest[0], dest[4], dest[8], dest[12],
-                      dest[1], dest[5], dest[9], dest[13],
-                      dest[2], dest[6], dest[10], dest[14],
-                      dest[3], dest[7], dest[11], dest[15]);
+      if (dest.$$family) {
+        return new Mat4(dest[0], dest[4], dest[8], dest[12],
+                        dest[1], dest[5], dest[9], dest[13],
+                        dest[2], dest[6], dest[10], dest[14],
+                        dest[3], dest[7], dest[11], dest[15]);
+      } else {
+        return new Float32Array(dest);
+      }
     },
 
     set: function(dest, n11, n12, n13, n14,
@@ -372,13 +384,8 @@
     },
 
     mulVec3: function(dest, vec) {
-      var vx = vec[0],
-          vy = vec[1],
-          vz = vec[2];
-
-      return new Vec3(dest[0] * vx + dest[4] * vy + dest[8] * vz + dest[12],
-                      dest[1] * vx + dest[5] * vy + dest[9] * vz + dest[13],
-                      dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14]);
+      var ans = Vec3.clone(vec);
+      return Mat4.$mulVec3(dest, ans);
     },
 
     $mulVec3: function(dest, vec) {
@@ -393,306 +400,265 @@
     },
 
     mulMat42: function(dest, a, b) {
-      var an11 = a[0], an12 = a[4], an13 = a[8], an14 = a[12],
-          an21 = a[1], an22 = a[5], an23 = a[9], an24 = a[13],
-          an31 = a[2], an32 = a[6], an33 = a[10], an34 = a[14],
-          an41 = a[3], an42 = a[7], an43 = a[11], an44 = a[15],
-          bn11 = b[0], bn12 = b[4], bn13 = b[8], bn14 = b[12],
-          bn21 = b[1], bn22 = b[5], bn23 = b[9], bn24 = b[13],
-          bn31 = b[2], bn32 = b[6], bn33 = b[10], bn34 = b[14],
-          bn41 = b[3], bn42 = b[7], bn43 = b[11], bn44 = b[15];
+      var a11 = a[0], a12 = a[4], a13 = a[8], a14 = a[12],
+          a21 = a[1], a22 = a[5], a23 = a[9], a24 = a[13],
+          a31 = a[2], a32 = a[6], a33 = a[10], a34 = a[14],
+          a41 = a[3], a42 = a[7], a43 = a[11], a44 = a[15],
+          b11 = b[0], b12 = b[4], b13 = b[8], b14 = b[12],
+          b21 = b[1], b22 = b[5], b23 = b[9], b24 = b[13],
+          b31 = b[2], b32 = b[6], b33 = b[10], b34 = b[14],
+          b41 = b[3], b42 = b[7], b43 = b[11], b44 = b[15];
 
 
-      dest[0] = an11 * bn11 + an12 * bn21 + an13 * bn31 + an14 * bn41;
-      dest[4] = an11 * bn12 + an12 * bn22 + an13 * bn32 + an14 * bn42;
-      dest[8] = an11 * bn13 + an12 * bn23 + an13 * bn33 + an14 * bn43;
-      dest[12] = an11 * bn14 + an12 * bn24 + an13 * bn34 + an14 * bn44;
+      dest[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+      dest[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+      dest[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+      dest[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
 
-      dest[1] = an21 * bn11 + an22 * bn21 + an23 * bn31 + an24 * bn41;
-      dest[5] = an21 * bn12 + an22 * bn22 + an23 * bn32 + an24 * bn42;
-      dest[9] = an21 * bn13 + an22 * bn23 + an23 * bn33 + an24 * bn43;
-      dest[13] = an21 * bn14 + an22 * bn24 + an23 * bn34 + an24 * bn44;
+      dest[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+      dest[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+      dest[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+      dest[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
 
-      dest[2] = an31 * bn11 + an32 * bn21 + an33 * bn31 + an34 * bn41;
-      dest[6] = an31 * bn12 + an32 * bn22 + an33 * bn32 + an34 * bn42;
-      dest[10] = an31 * bn13 + an32 * bn23 + an33 * bn33 + an34 * bn43;
-      dest[14] = an31 * bn14 + an32 * bn24 + an33 * bn34 + an34 * bn44;
+      dest[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+      dest[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+      dest[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+      dest[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
 
-      dest[3] = an41 * bn11 + an42 * bn21 + an43 * bn31 + an44 * bn41;
-      dest[7] = an41 * bn12 + an42 * bn22 + an43 * bn32 + an44 * bn42;
-      dest[11] = an41 * bn13 + an42 * bn23 + an43 * bn33 + an44 * bn43;
-      dest[15] = an41 * bn14 + an42 * bn24 + an43 * bn34 + an44 * bn44;
+      dest[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+      dest[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+      dest[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+      dest[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
       return dest;
     },
     
     mulMat4: function(a, b) {
-      var an11 = a[0], an12 = a[4], an13 = a[8], an14 = a[12],
-          an21 = a[1], an22 = a[5], an23 = a[9], an24 = a[13],
-          an31 = a[2], an32 = a[6], an33 = a[10], an34 = a[14],
-          an41 = a[3], an42 = a[7], an43 = a[11], an44 = a[15],
-          bn11 = b[0], bn12 = b[4], bn13 = b[8], bn14 = b[12],
-          bn21 = b[1], bn22 = b[5], bn23 = b[9], bn24 = b[13],
-          bn31 = b[2], bn32 = b[6], bn33 = b[10], bn34 = b[14],
-          bn41 = b[3], bn42 = b[7], bn43 = b[11], bn44 = b[15];
-
-      var dest = new Mat4();
-
-      dest[0] = an11 * bn11 + an12 * bn21 + an13 * bn31 + an14 * bn41;
-      dest[4] = an11 * bn12 + an12 * bn22 + an13 * bn32 + an14 * bn42;
-      dest[8] = an11 * bn13 + an12 * bn23 + an13 * bn33 + an14 * bn43;
-      dest[12] = an11 * bn14 + an12 * bn24 + an13 * bn34 + an14 * bn44;
-
-      dest[1] = an21 * bn11 + an22 * bn21 + an23 * bn31 + an24 * bn41;
-      dest[5] = an21 * bn12 + an22 * bn22 + an23 * bn32 + an24 * bn42;
-      dest[9] = an21 * bn13 + an22 * bn23 + an23 * bn33 + an24 * bn43;
-      dest[13] = an21 * bn14 + an22 * bn24 + an23 * bn34 + an24 * bn44;
-
-      dest[2] = an31 * bn11 + an32 * bn21 + an33 * bn31 + an34 * bn41;
-      dest[6] = an31 * bn12 + an32 * bn22 + an33 * bn32 + an34 * bn42;
-      dest[10] = an31 * bn13 + an32 * bn23 + an33 * bn33 + an34 * bn43;
-      dest[14] = an31 * bn14 + an32 * bn24 + an33 * bn34 + an34 * bn44;
-
-      dest[3] = an41 * bn11 + an42 * bn21 + an43 * bn31 + an44 * bn41;
-      dest[7] = an41 * bn12 + an42 * bn22 + an43 * bn32 + an44 * bn42;
-      dest[11] = an41 * bn13 + an42 * bn23 + an43 * bn33 + an44 * bn43;
-      dest[15] = an41 * bn14 + an42 * bn24 + an43 * bn34 + an44 * bn44;
-      return dest;
+      var m = Mat4.clone(a);
+      return Mat4.mulMat42(m, a, b);
     },
 
     $mulMat4: function(a, b) {
-      var an11 = a[0], an12 = a[4], an13 = a[8], an14 = a[12],
-          an21 = a[1], an22 = a[5], an23 = a[9], an24 = a[13],
-          an31 = a[2], an32 = a[6], an33 = a[10], an34 = a[14],
-          an41 = a[3], an42 = a[7], an43 = a[11], an44 = a[15],
-          bn11 = b[0], bn12 = b[4], bn13 = b[8], bn14 = b[12],
-          bn21 = b[1], bn22 = b[5], bn23 = b[9], bn24 = b[13],
-          bn31 = b[2], bn32 = b[6], bn33 = b[10], bn34 = b[14],
-          bn41 = b[3], bn42 = b[7], bn43 = b[11], bn44 = b[15];
-
-      a[0] = an11 * bn11 + an12 * bn21 + an13 * bn31 + an14 * bn41;
-      a[4] = an11 * bn12 + an12 * bn22 + an13 * bn32 + an14 * bn42;
-      a[8] = an11 * bn13 + an12 * bn23 + an13 * bn33 + an14 * bn43;
-      a[12] = an11 * bn14 + an12 * bn24 + an13 * bn34 + an14 * bn44;
-
-      a[1] = an21 * bn11 + an22 * bn21 + an23 * bn31 + an24 * bn41;
-      a[5] = an21 * bn12 + an22 * bn22 + an23 * bn32 + an24 * bn42;
-      a[9] = an21 * bn13 + an22 * bn23 + an23 * bn33 + an24 * bn43;
-      a[13] = an21 * bn14 + an22 * bn24 + an23 * bn34 + an24 * bn44;
-
-      a[2] = an31 * bn11 + an32 * bn21 + an33 * bn31 + an34 * bn41;
-      a[6] = an31 * bn12 + an32 * bn22 + an33 * bn32 + an34 * bn42;
-      a[10] = an31 * bn13 + an32 * bn23 + an33 * bn33 + an34 * bn43;
-      a[14] = an31 * bn14 + an32 * bn24 + an33 * bn34 + an34 * bn44;
-
-      a[3] = an41 * bn11 + an42 * bn21 + an43 * bn31 + an44 * bn41;
-      a[7] = an41 * bn12 + an42 * bn22 + an43 * bn32 + an44 * bn42;
-      a[11] = an41 * bn13 + an42 * bn23 + an43 * bn33 + an44 * bn43;
-      a[15] = an41 * bn14 + an42 * bn24 + an43 * bn34 + an44 * bn44;
-      return a;
+      return Mat4.mulMat42(a, a, b);
     },
 
     add: function(dest, m) {
-      var ndest = new Mat4();
-
-      ndest[0] = dest[0] + m[0];
-      ndest[4] = dest[4] + m[4];
-      ndest[8] = dest[8] + m[8];
-      ndest[12] = dest[12] + m[12];
-      ndest[1] = dest[1] + m[1];
-      ndest[5] = dest[5] + m[5];
-      ndest[9] = dest[9] + m[9];
-      ndest[13] = dest[13] + m[13];
-      ndest[2] = dest[2] + m[2];
-      ndest[6] = dest[6] + m[6];
-      ndest[10] = dest[10] + m[10];
-      ndest[14] = dest[14] + m[14];
-      ndest[3] = dest[3] + m[3];
-      ndest[7] = dest[7] + m[7];
-      ndest[11] = dest[11] + m[11];
-      ndest[15] = dest[15] + m[15];
-      return ndest;
+      var copy = Mat4.clone(dest);
+      return Mat4.$add(copy, m);
     },
    
     $add: function(dest, m) {
-      dest[0] += m[0];
-      dest[4] += m[4];
-      dest[8] += m[8];
+      dest[0 ] += m[0];
+      dest[4 ] += m[4];
+      dest[8 ] += m[8];
       dest[12] += m[12];
-      dest[1] += m[1];
-      dest[5] += m[5];
-      dest[9] += m[9];
+      dest[1 ] += m[1];
+      dest[5 ] += m[5];
+      dest[9 ] += m[9];
       dest[13] += m[13];
-      dest[2] += m[2];
-      dest[6] += m[6];
+      dest[2 ] += m[2];
+      dest[6 ] += m[6];
       dest[10] += m[10];
       dest[14] += m[14];
-      dest[3] += m[3];
-      dest[7] += m[7];
+      dest[3 ] += m[3];
+      dest[7 ] += m[7];
       dest[11] += m[11];
       dest[15] += m[15];
       return dest;
     },
 
     transpose: function(dest) {
-      var n11 = dest[0], n12 = dest[4], n13 = dest[8], n14 = dest[12],
-      n21 = dest[1], n22 = dest[5], n23 = dest[9], n24 = dest[13],
-      n31 = dest[2], n32 = dest[6], n33 = dest[10], n34 = dest[14],
-      n41 = dest[3], n42 = dest[7], n43 = dest[11], n44 = dest[15];
-
-      return new Mat4(n11, n21, n31, n41,
-                      n12, n22, n32, n42,
-                      n13, n23, n33, n43,
-                      n14, n24, n34, n44);
+      var m = Mat4.clone(dest);
+      return Mat4.$transpose(m);
     },
 
     $transpose: function(dest) {
-      var n11 = dest[0], n12 = dest[4], n13 = dest[8], n14 = dest[12],
-      n21 = dest[1], n22 = dest[5], n23 = dest[9], n24 = dest[13],
-      n31 = dest[2], n32 = dest[6], n33 = dest[10], n34 = dest[14],
-      n41 = dest[3], n42 = dest[7], n43 = dest[11], n44 = dest[15];
+      var n4 = dest[4], n8 = dest[8], n12 = dest[12],
+          n1 = dest[1], n9 = dest[9], n13 = dest[13],
+          n2 = dest[2], n6 = dest[6], n14 = dest[14],
+          n3 = dest[3], n7 = dest[7], n11 = dest[11];
 
-      return Mat4.set(dest, n11, n21, n31, n41,
-                      n12, n22, n32, n42,
-                      n13, n23, n33, n43,
-                      n14, n24, n34, n44);
+      dest[1] = n4;
+      dest[2] = n8;
+      dest[3] = n12;
+      dest[4] = n1;
+      dest[6] = n9;
+      dest[7] = n13;
+      dest[8] = n2;
+      dest[9] = n6;
+      dest[11] = n14;
+      dest[12] = n3;
+      dest[13] = n7;
+      dest[14] = n11;
+
+      return dest;
     },
 
     rotateAxis: function(dest, theta, vec) {
-      var s = sin(theta), c = cos(theta), nc = 1 - c,
-      vx = vec[0], vy = vec[1], vz = vec[2],
-      m = new Mat4(vx * vx * nc + c, vx * vy * nc - vz * s, vx * vz * nc + vy * s, 0,
-                   vy * vx * nc + vz * s, vy * vy * nc + c, vy * vz * nc - vx * s, 0,
-                   vx * vz * nc - vy * s, vy * vz * nc + vx * s, vz * vz * nc + c, 0,
-                   0,                    0,                     0,                 1);
-
-                   return Mat4.mulMat4(dest, m);
+      var m = Mat4.clone(dest);
+      return Mat4.$rotateAxis(m, theta, vec);
     },
 
     $rotateAxis: function(dest, theta, vec) {
-      var s = sin(theta), c = cos(theta), nc = 1 - c,
-      vx = vec[0], vy = vec[1], vz = vec[2],
-      m = new Mat4(vx * vx * nc + c, vx * vy * nc - vz * s, vx * vz * nc + vy * s, 0,
-                   vy * vx * nc + vz * s, vy * vy * nc + c, vy * vz * nc - vx * s, 0,
-                   vx * vz * nc - vy * s, vy * vz * nc + vx * s, vz * vz * nc + c, 0,
-                   0,                    0,                     0,                 1);
+      var s = sin(theta), 
+          c = cos(theta), 
+          nc = 1 - c,
+          vx = vec[0], 
+          vy = vec[1], 
+          vz = vec[2],
+          m11 = vx * vx * nc + c, 
+          m21 = vx * vy * nc - vz * s, 
+          m31 = vx * vz * nc + vy * s,
+          m12 = vy * vx * nc + vz * s, 
+          m22 = vy * vy * nc + c, 
+          m32 = vy * vz * nc - vx * s,
+          m13 = vx * vz * nc - vy * s, 
+          m23 = vy * vz * nc + vx * s, 
+          m33 = vz * vz * nc + c,
+          d11 = dest[0],
+          d12 = dest[4],
+          d13 = dest[8],
+          d14 = dest[12],
+          d21 = dest[1],
+          d22 = dest[5],
+          d23 = dest[9],
+          d24 = dest[13],
+          d31 = dest[2],
+          d32 = dest[6],
+          d33 = dest[10],
+          d34 = dest[14];
 
-                   return Mat4.$mulMat4(dest, m);
+      dest[0] = d11 * m11 + d21 * m12 + d31 * m13;
+      dest[4] = d12 * m11 + d22 * m12 + d32 * m13;
+      dest[8] = d13 * m11 + d23 * m12 + d33 * m13;
+      dest[12] = d14 * m11 + d24 * m12 + d34 * m13;
+      
+      dest[1] = d11 * m21 + d21 * m22 + d31 * m23;
+      dest[5] = d12 * m21 + d22 * m22 + d32 * m23;
+      dest[9] = d13 * m21 + d23 * m22 + d33 * m23;
+      dest[13] = d14 * m21 + d24 * m22 + d34 * m23;
+      
+      dest[2] = d11 * m31 + d21 * m32 + d31 * m33;
+      dest[6] = d12 * m31 + d22 * m32 + d32 * m33;
+      dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
+      dest[14] = d14 * m31 + d24 * m32 + d34 * m33;
+
+      return dest;
+
     },
 
     rotateXYZ: function(dest, rx, ry, rz) {
-      var m = new Mat4(cos(ry) * cos(rz), -cos(rx) * sin(rz) + sin(rx) * sin(ry) * cos(rz), sin(rx) * sin(rz) + cos(rx) * sin(ry) * cos(rz), 0,
-                       cos(ry) * sin(rz), cos(rx) * cos(rz) + sin(rx) * sin(ry) * sin(rz), -sin(rx) * cos(rz) + cos(rx) * sin(ry) * sin(rz), 0,
-                       -sin(ry),          sin(rx) * cos(ry),                               cos(rx) * cos(ry),                                0,
-                       0,                 0,                                               0,                                                1);
-
-                       return Mat4.mulMat4(dest, m);
+      var ans = Mat4.clone(dest);
+      return Mat4.$rotateXYZ(ans, rx, ry, rz);
     },
 
     $rotateXYZ: function(dest, rx, ry, rz) {
-      var m = new Mat4(cos(ry) * cos(rz), -cos(rx) * sin(rz) + sin(rx) * sin(ry) * cos(rz), sin(rx) * sin(rz) + cos(rx) * sin(ry) * cos(rz), 0,
-                       cos(ry) * sin(rz), cos(rx) * cos(rz) + sin(rx) * sin(ry) * sin(rz), -sin(rx) * cos(rz) + cos(rx) * sin(ry) * sin(rz), 0,
-                       -sin(ry),          sin(rx) * cos(ry),                               cos(rx) * cos(ry),                                0,
-                       0,                 0,                                               0,                                                1);
+      var d11 = dest[0 ],
+          d12 = dest[4 ],
+          d13 = dest[8 ],
+          d14 = dest[12],
+          d21 = dest[1 ],
+          d22 = dest[5 ],
+          d23 = dest[9 ],
+          d24 = dest[13],
+          d31 = dest[2 ],
+          d32 = dest[6 ],
+          d33 = dest[10],
+          d34 = dest[14],
+          crx = cos(rx),
+          cry = cos(ry),
+          crz = cos(rz),
+          srx = sin(rx),
+          sry = sin(ry),
+          srz = sin(rz),
+          m11 =  cry * crz,
+          m12 = -crx * srz + srx * sry * crz,
+          m13 =  srx * srz + crx * sry * crz,
+          m21 =  cry * srz, 
+          m22 =  crx * crz + srx * sry * srz, 
+          m23 = -srx * crz + crx * sry * srz, 
+          m31 = -sry,
+          m32 =  srx * cry,
+          m33 =  crx * cry;
 
-                       return Mat4.$mulMat4(dest, m);
+      dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
+      dest[4 ] = d12 * m11 + d22 * m12 + d32 * m13;
+      dest[8 ] = d13 * m11 + d23 * m12 + d33 * m13;
+      dest[12] = d14 * m11 + d24 * m12 + d34 * m13;
+      
+      dest[1 ] = d11 * m21 + d21 * m22 + d31 * m23;
+      dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
+      dest[9 ] = d13 * m21 + d23 * m22 + d33 * m23;
+      dest[13] = d14 * m21 + d24 * m22 + d34 * m23;
+      
+      dest[2 ] = d11 * m31 + d21 * m32 + d31 * m33;
+      dest[6 ] = d12 * m31 + d22 * m32 + d32 * m33;
+      dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
+      dest[14] = d14 * m31 + d24 * m32 + d34 * m33;
+
+      return dest;
     },
 
     translate: function(dest, x, y, z) {
-      var m = new Mat4(1, 0, 0, x,
-                       0, 1, 0, y,
-                       0, 0, 1, z,
-                       0, 0, 0, 1);
-
-                       return Mat4.mulMat4(dest, m);
+      var m = Mat4.clone(dest);
+      return Mat4.$translate(m, x, y, z);
     },
 
     $translate: function(dest, x, y, z) {
-      var m = new Mat4(1, 0, 0, x,
-                       0, 1, 0, y,
-                       0, 0, 1, z,
-                       0, 0, 0, 1);
-                       return Mat4.$mulMat4(dest, m);
+      dest[12] = dest[0 ] * x + dest[4 ] * y + dest[8 ] * z + dest[12];
+      dest[13] = dest[1 ] * x + dest[5 ] * y + dest[9 ] * z + dest[13];
+      dest[14] = dest[2 ] * x + dest[6 ] * y + dest[10] * z + dest[14];
+      dest[15] = dest[3 ] * x + dest[7 ] * y + dest[11] * z + dest[15];
+      
+      return dest;
     },
 
-    scale: function(dest, x, y, z) {
-      var m = new Mat4(x, 0, 0, 0,
-                       0, y, 0, 0,
-                       0, 0, z, 0,
-                       0, 0, 0, 1);
 
-                       return Mat4.mulMat4(dest, m);
+    scale: function(dest, x, y, z) {
+      var m = Mat4.clone(dest);
+      return Mat4.$scale(m, x, y, z);
     },
 
     $scale: function(dest, x, y, z) {
-      var m = new Mat4(x, 0, 0, 0,
-                       0, y, 0, 0,
-                       0, 0, z, 0,
-                       0, 0, 0, 1);
-
-                       return Mat4.$mulMat4(dest, m);
+      dest[0 ] *= x;
+      dest[4 ] *= x;
+      dest[8 ] *= x;
+      dest[12] *= x;
+      dest[1 ] *= y;
+      dest[5 ] *= y;
+      dest[9 ] *= y;
+      dest[13] *= y;
+      dest[2 ] *= z;
+      dest[6 ] *= z;
+      dest[10] *= z;
+      dest[14] *= z;
+      
+      return dest;
     },
 
     //Method based on PreGL https://github.com/deanm/pregl/ (c) Dean McNamee.
     invert: function(dest) {
-      var  ndest = new Mat4(), 
-      x0 = dest[0],  x1 = dest[4],  x2 = dest[8],  x3 = dest[12],
-      x4 = dest[1],  x5 = dest[5],  x6 = dest[9],  x7 = dest[13],
-      x8 = dest[2],  x9 = dest[6], x10 = dest[10], x11 = dest[14],
-      x12 = dest[3], x13 = dest[7], x14 = dest[11], x15 = dest[15];
-
-      var a0 = x0*x5 - x1*x4,
-      a1 = x0*x6 - x2*x4,
-      a2 = x0*x7 - x3*x4,
-      a3 = x1*x6 - x2*x5,
-      a4 = x1*x7 - x3*x5,
-      a5 = x2*x7 - x3*x6,
-      b0 = x8*x13 - x9*x12,
-      b1 = x8*x14 - x10*x12,
-      b2 = x8*x15 - x11*x12,
-      b3 = x9*x14 - x10*x13,
-      b4 = x9*x15 - x11*x13,
-      b5 = x10*x15 - x11*x14;
-
-      var invdet = 1 / (a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0);
-
-      ndest[0] = (+ x5*b5 - x6*b4 + x7*b3) * invdet;
-      ndest[4] = (- x1*b5 + x2*b4 - x3*b3) * invdet;
-      ndest[8] = (+ x13*a5 - x14*a4 + x15*a3) * invdet;
-      ndest[12] = (- x9*a5 + x10*a4 - x11*a3) * invdet;
-      ndest[1] = (- x4*b5 + x6*b2 - x7*b1) * invdet;
-      ndest[5] = (+ x0*b5 - x2*b2 + x3*b1) * invdet;
-      ndest[9] = (- x12*a5 + x14*a2 - x15*a1) * invdet;
-      ndest[13] = (+ x8*a5 - x10*a2 + x11*a1) * invdet;
-      ndest[2] = (+ x4*b4 - x5*b2 + x7*b0) * invdet;
-      ndest[6] = (- x0*b4 + x1*b2 - x3*b0) * invdet;
-      ndest[10] = (+ x12*a4 - x13*a2 + x15*a0) * invdet;
-      ndest[14] = (- x8*a4 + x9*a2 - x11*a0) * invdet;
-      ndest[3] = (- x4*b3 + x5*b1 - x6*b0) * invdet;
-      ndest[7] = (+ x0*b3 - x1*b1 + x2*b0) * invdet;
-      ndest[11] = (- x12*a3 + x13*a1 - x14*a0) * invdet;
-      ndest[15] = (+ x8*a3 - x9*a1 + x10*a0) * invdet;
-
-      return ndest;
+      var m = Mat4.clone(dest);
+      return  Mat4.$invert(m);
     },
 
     $invert: function(dest) {
-      var  x0 = dest[0],  x1 = dest[4],  x2 = dest[8],  x3 = dest[12],
-      x4 = dest[1],  x5 = dest[5],  x6 = dest[9],  x7 = dest[13],
-      x8 = dest[2],  x9 = dest[6], x10 = dest[10], x11 = dest[14],
-      x12 = dest[3], x13 = dest[7], x14 = dest[11], x15 = dest[15];
+      var x0 = dest[0],  x1 = dest[4],  x2 = dest[8],  x3 = dest[12],
+          x4 = dest[1],  x5 = dest[5],  x6 = dest[9],  x7 = dest[13],
+          x8 = dest[2],  x9 = dest[6], x10 = dest[10], x11 = dest[14],
+          x12 = dest[3], x13 = dest[7], x14 = dest[11], x15 = dest[15];
 
       var a0 = x0*x5 - x1*x4,
-      a1 = x0*x6 - x2*x4,
-      a2 = x0*x7 - x3*x4,
-      a3 = x1*x6 - x2*x5,
-      a4 = x1*x7 - x3*x5,
-      a5 = x2*x7 - x3*x6,
-      b0 = x8*x13 - x9*x12,
-      b1 = x8*x14 - x10*x12,
-      b2 = x8*x15 - x11*x12,
-      b3 = x9*x14 - x10*x13,
-      b4 = x9*x15 - x11*x13,
-      b5 = x10*x15 - x11*x14;
+          a1 = x0*x6 - x2*x4,
+          a2 = x0*x7 - x3*x4,
+          a3 = x1*x6 - x2*x5,
+          a4 = x1*x7 - x3*x5,
+          a5 = x2*x7 - x3*x6,
+          b0 = x8*x13 - x9*x12,
+          b1 = x8*x14 - x10*x12,
+          b2 = x8*x15 - x11*x12,
+          b3 = x9*x14 - x10*x13,
+          b4 = x9*x15 - x11*x13,
+          b5 = x10*x15 - x11*x14;
 
       var invdet = 1 / (a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0);
 
@@ -773,10 +739,10 @@
                       0, 0,  0,  1);
     },
 
-    toFloat32Array: (function() {
-      if (typed) {
-        return function(dest) {
+    toFloat32Array: function(dest) {
           var ans = dest.typedContainer;
+
+          if (!ans) return dest;
           
           ans[0] = dest[0];
           ans[1] = dest[1];
@@ -796,33 +762,7 @@
           ans[15] = dest[15];
 
           return ans;
-          //return dest;
-        };
-      } else {
-        return function(dest) {
-          var ans = dest.typedContainer;
-          
-          ans[0] = dest[0];
-          ans[1] = dest[1];
-          ans[2] = dest[2];
-          ans[3] = dest[3];
-          ans[4] = dest[4];
-          ans[5] = dest[5];
-          ans[6] = dest[6];
-          ans[7] = dest[7];
-          ans[8] = dest[8];
-          ans[9] = dest[9];
-          ans[10] = dest[10];
-          ans[11] = dest[11];
-          ans[12] = dest[12];
-          ans[13] = dest[13];
-          ans[14] = dest[14];
-          ans[15] = dest[15];
-
-          return ans;
-        };
-      }
-    })()
+    }
   };
   
   //add generics and instance methods
@@ -851,6 +791,10 @@
     this.typedContainer = new Float32Array(4);
   };
 
+  Quat.create = function() {
+    return new Float32Array(4);
+  };
+
   generics = {
 
     setQuat: function(dest, q) {
@@ -872,7 +816,11 @@
     },
     
     clone: function(dest) {
-      return new Quat(dest[0], dest[1], dest[2], dest[3]);
+      if (dest.$$family) {
+        return new Quat(dest[0], dest[1], dest[2], dest[3]);
+      } else {
+        return Quat.setQuat(new Float32Array(4), dest);
+      }
     },
 
     neg: function(dest) {
@@ -962,10 +910,10 @@
           bZ = q[2],
           bW = q[3];
 
-      dest.a = aW * bX + aX * bW + aY * bZ - aZ * bY;
-      dest.b = aW * bY + aY * bW + aZ * bX - aX * bZ;
-      dest.c = aW * bZ + aZ * bW + aX * bY - aY * bX;
-      dest.d = aW * bW - aX * bX - aY * bY - aZ * bZ;
+      dest[0] = aW * bX + aX * bW + aY * bZ - aZ * bY;
+      dest[1] = aW * bY + aY * bW + aZ * bX - aX * bZ;
+      dest[2] = aW * bZ + aZ * bW + aX * bY - aY * bX;
+      dest[3] = aW * bW - aX * bX - aY * bY - aZ * bZ;
 
       return dest;
     },
@@ -1000,10 +948,10 @@
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
       
-      dest.a = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
-      dest.b = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
-      dest.c = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
-      dest.d = (aW * bW + aX * bX + aY * bY + aZ * bZ) * d;
+      dest[0] = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
+      dest[1] = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
+      dest[2] = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
+      dest[3] = (aW * bW + aX * bX + aY * bY + aZ * bZ) * d;
 
       return dest;
     },
@@ -1027,10 +975,10 @@
 
       var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
 
-      dest.a = -q0 * d;
-      dest.b = -q1 * d;
-      dest.c = -q2 * d;
-      dest.d =  q3 * d;
+      dest[0] = -q0 * d;
+      dest[1] = -q1 * d;
+      dest[2] = -q2 * d;
+      dest[3] =  q3 * d;
       
       return dest;
     },
