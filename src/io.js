@@ -104,6 +104,67 @@
     }
   };
 
+  //Make parallel requests and group the responses.
+  XHR.Group = function(opt) {
+    opt = $merge({
+      urls: [],
+      onError: $.empty,
+      onSuccess: $.empty,
+      onComplete: $.empty,
+      method: 'GET',
+      async: true,
+      noCache: false,
+      //body: null,
+      sendAsBinary: false
+    }, opt || {});
+
+    var urls = $.splat(opt.urls),
+        len = urls.length,
+        ans = Array(len),
+        reqs = urls.map(function(url, i) {
+            return new XHR({
+              url: url,
+              method: opt.method,
+              async: opt.async,
+              noCache: opt.noCache,
+              sendAsBinary: opt.sendAsBinary,
+              body: opt.body,
+              //add callbacks
+              onError: handleError(i),
+              onSuccess: handleSuccess(i)
+            });
+        });
+
+    function handleError(i) {
+      return function(e) {
+        len--;
+        opt.onError(e, i);
+        
+        if (!len) opt.onComplete(ans);
+      };
+    }
+
+    function handleSuccess(i) {
+      return function(response) {
+        len--;
+        ans[i] = response;
+        opt.onSuccess(response, i);
+
+        if (!len) opt.onComplete(ans);
+      };
+    }
+
+    this.reqs = reqs;
+  };
+
+  XHR.Group.prototype = {
+    send: function() {
+      this.reqs.forEach(function(req) {
+        req.send();
+      });
+    }
+  };
+
   var JSONP = function(opt) {
     opt = $.merge({
       url: 'http://sencha.com/',
