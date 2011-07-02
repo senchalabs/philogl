@@ -959,23 +959,23 @@ $.splat = (function() {
     },
     
     n11: descriptor(0),
-    n21: descriptor(1),
-    n31: descriptor(2),
-    n41: descriptor(3),
+    n12: descriptor(1),
+    n13: descriptor(2),
+    n14: descriptor(3),
     
-    n12: descriptor(4),
+    n21: descriptor(4),
     n22: descriptor(5),
-    n32: descriptor(6),
-    n42: descriptor(7),
+    n23: descriptor(6),
+    n24: descriptor(7),
 
-    n13: descriptor(8),
-    n23: descriptor(9),
+    n31: descriptor(8),
+    n32: descriptor(9),
     n33: descriptor(10),
-    n43: descriptor(11),
+    n34: descriptor(11),
 
-    n14: descriptor(12),
-    n24: descriptor(13),
-    n34: descriptor(14),
+    n41: descriptor(12),
+    n42: descriptor(13),
+    n43: descriptor(14),
     n44: descriptor(15)
   
   });
@@ -1006,35 +1006,35 @@ $.splat = (function() {
 
     clone: function(dest) {
       if (dest.$$family) {
-        return new Mat4(dest[0], dest[4], dest[8], dest[12],
-                        dest[1], dest[5], dest[9], dest[13],
-                        dest[2], dest[6], dest[10], dest[14],
-                        dest[3], dest[7], dest[11], dest[15]);
+        return new Mat4(dest[0], dest[1], dest[2], dest[3],
+                        dest[4], dest[5], dest[6], dest[7],
+                        dest[8], dest[9], dest[10], dest[11],
+                        dest[12], dest[13], dest[14], dest[15]);
       } else {
         return new typedArray(dest);
       }
     },
 
     set: function(dest, n11, n12, n13, n14,
-                  n21, n22, n23, n24,
-                  n31, n32, n33, n34,
-                  n41, n42, n43, n44) {
+                        n21, n22, n23, n24,
+                        n31, n32, n33, n34,
+                        n41, n42, n43, n44) {
       
       dest[0 ] = n11;
-      dest[1 ] = n21;
-      dest[2 ] = n31;
-      dest[3 ] = n41;
-      dest[4 ] = n12;
+      dest[1 ] = n12;
+      dest[2 ] = n13;
+      dest[3 ] = n14;
+      dest[4 ] = n21;
       dest[5 ] = n22;
-      dest[6 ] = n32;
-      dest[7 ] = n42;
-      dest[8 ] = n13;
-      dest[9 ] = n23;
+      dest[6 ] = n23;
+      dest[7 ] = n24;
+      dest[8 ] = n31;
+      dest[9 ] = n32;
       dest[10] = n33;
-      dest[11] = n43;
-      dest[12] = n14;
-      dest[13] = n24;
-      dest[14] = n34;
+      dest[11] = n34;
+      dest[12] = n41;
+      dest[13] = n42;
+      dest[14] = n43;
       dest[15] = n44;
       
       return dest;
@@ -1050,42 +1050,42 @@ $.splat = (function() {
           vy = vec[1],
           vz = vec[2];
 
-      vec[0] = dest[0] * vx + dest[4] * vy + dest[8] * vz + dest[12];
-      vec[1] = dest[1] * vx + dest[5] * vy + dest[9] * vz + dest[13];
-      vec[2] = dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14];
+      vec[0] = dest[0] * vx + dest[1] * vy + dest[2 ] * vz + dest[3 ];
+      vec[1] = dest[4] * vx + dest[5] * vy + dest[6 ] * vz + dest[7 ];
+      vec[2] = dest[8] * vx + dest[9] * vy + dest[10] * vz + dest[11];
       return vec;
     },
 
     mulMat42: function(dest, a, b) {
-      var a11 = a[0], a12 = a[4], a13 = a[8], a14 = a[12],
-          a21 = a[1], a22 = a[5], a23 = a[9], a24 = a[13],
-          a31 = a[2], a32 = a[6], a33 = a[10], a34 = a[14],
-          a41 = a[3], a42 = a[7], a43 = a[11], a44 = a[15],
-          b11 = b[0], b12 = b[4], b13 = b[8], b14 = b[12],
-          b21 = b[1], b22 = b[5], b23 = b[9], b24 = b[13],
-          b31 = b[2], b32 = b[6], b33 = b[10], b34 = b[14],
-          b41 = b[3], b42 = b[7], b43 = b[11], b44 = b[15];
+      var a11 = a[0 ], a12 = a[1 ], a13 = a[2 ], a14 = a[3 ],
+          a21 = a[4 ], a22 = a[5 ], a23 = a[6 ], a24 = a[7 ],
+          a31 = a[8 ], a32 = a[9 ], a33 = a[10], a34 = a[11],
+          a41 = a[12], a42 = a[13], a43 = a[14], a44 = a[15],
+          b11 = b[0 ], b12 = b[1 ], b13 = b[2 ], b14 = b[3 ],
+          b21 = b[4 ], b22 = b[5 ], b23 = b[6 ], b24 = b[7 ],
+          b31 = b[8 ], b32 = b[9 ], b33 = b[10], b34 = b[11],
+          b41 = b[12], b42 = b[13], b43 = b[14], b44 = b[15];
 
 
-      dest[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
-      dest[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
-      dest[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
-      dest[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+      dest[0 ] = b11 * a11 + b12 * a21 + b13 * a31 + b14 * a41;
+      dest[1 ] = b11 * a12 + b12 * a22 + b13 * a32 + b14 * a42;
+      dest[2 ] = b11 * a13 + b12 * a23 + b13 * a33 + b14 * a43;
+      dest[3 ] = b11 * a14 + b12 * a24 + b13 * a34 + b14 * a44;
 
-      dest[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
-      dest[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
-      dest[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
-      dest[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+      dest[4 ] = b21 * a11 + b22 * a21 + b23 * a31 + b24 * a41;
+      dest[5 ] = b21 * a12 + b22 * a22 + b23 * a32 + b24 * a42;
+      dest[6 ] = b21 * a13 + b22 * a23 + b23 * a33 + b24 * a43;
+      dest[7 ] = b21 * a14 + b22 * a24 + b23 * a34 + b24 * a44;
 
-      dest[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
-      dest[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
-      dest[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
-      dest[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+      dest[8 ] = b31 * a11 + b32 * a21 + b33 * a31 + b34 * a41;
+      dest[9 ] = b31 * a12 + b32 * a22 + b33 * a32 + b34 * a42;
+      dest[10] = b31 * a13 + b32 * a23 + b33 * a33 + b34 * a43;
+      dest[11] = b31 * a14 + b32 * a24 + b33 * a34 + b34 * a44;
 
-      dest[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
-      dest[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
-      dest[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
-      dest[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+      dest[12] = b41 * a11 + b42 * a21 + b43 * a31 + b44 * a41;
+      dest[13] = b41 * a12 + b42 * a22 + b43 * a32 + b44 * a42;
+      dest[14] = b41 * a13 + b42 * a23 + b43 * a33 + b44 * a43;
+      dest[15] = b41 * a14 + b42 * a24 + b43 * a34 + b44 * a44;
       return dest;
     },
     
@@ -1105,21 +1105,22 @@ $.splat = (function() {
    
     $add: function(dest, m) {
       dest[0 ] += m[0];
-      dest[4 ] += m[4];
-      dest[8 ] += m[8];
-      dest[12] += m[12];
       dest[1 ] += m[1];
-      dest[5 ] += m[5];
-      dest[9 ] += m[9];
-      dest[13] += m[13];
       dest[2 ] += m[2];
-      dest[6 ] += m[6];
-      dest[10] += m[10];
-      dest[14] += m[14];
       dest[3 ] += m[3];
+      dest[4 ] += m[4];
+      dest[5 ] += m[5];
+      dest[6 ] += m[6];
       dest[7 ] += m[7];
+      dest[8 ] += m[8];
+      dest[9 ] += m[9];
+      dest[10] += m[10];
       dest[11] += m[11];
+      dest[12] += m[12];
+      dest[13] += m[13];
+      dest[14] += m[14];
       dest[15] += m[15];
+      
       return dest;
     },
 
@@ -1163,53 +1164,47 @@ $.splat = (function() {
           vy = vec[1], 
           vz = vec[2],
           m11 = vx * vx * nc + c, 
-          m12 = vx * vy * nc - vz * s, 
-          m13 = vx * vz * nc + vy * s,
-          m21 = vy * vx * nc + vz * s, 
+          m12 = vx * vy * nc + vz * s, 
+          m13 = vx * vz * nc - vy * s,
+          m21 = vy * vx * nc - vz * s, 
           m22 = vy * vy * nc + c, 
-          m23 = vy * vz * nc - vx * s,
-          m31 = vx * vz * nc - vy * s, 
-          m32 = vy * vz * nc + vx * s, 
+          m23 = vy * vz * nc + vx * s,
+          m31 = vx * vz * nc + vy * s, 
+          m32 = vy * vz * nc - vx * s, 
           m33 = vz * vz * nc + c,
           d11 = dest[0],
-          d12 = dest[4],
-          d13 = dest[8],
-          d14 = dest[12],
-          d21 = dest[1],
+          d12 = dest[1],
+          d13 = dest[2],
+          d14 = dest[3],
+          d21 = dest[4],
           d22 = dest[5],
-          d23 = dest[9],
-          d24 = dest[13],
-          d31 = dest[2],
-          d32 = dest[6],
+          d23 = dest[6],
+          d24 = dest[7],
+          d31 = dest[8],
+          d32 = dest[9],
           d33 = dest[10],
-          d34 = dest[14],
-          d41 = dest[3],
-          d42 = dest[7],
-          d43 = dest[11],
+          d34 = dest[11],
+          d41 = dest[12],
+          d42 = dest[13],
+          d43 = dest[14],
           d44 = dest[15];
       
-      dest[0 ] = d11 * m11 + d12 * m21 + d13 * m31;
-      dest[4 ] = d11 * m12 + d12 * m22 + d13 * m32;
-      dest[8 ] = d11 * m13 + d12 * m23 + d13 * m33;
-      dest[12] = d14;
+      dest[0] = d11*m11 + d21*m12 + d31*m13;
+      dest[1] = d12*m11 + d22*m12 + d32*m13;
+      dest[2] = d13*m11 + d23*m12 + d33*m13;
+      dest[3] = d14*m11 + d24*m12 + d34*m13;
 
-      dest[1 ] = d21 * m11 + d22 * m21 + d23 * m31;
-      dest[5 ] = d21 * m12 + d22 * m22 + d23 * m32;
-      dest[9 ] = d21 * m13 + d22 * m23 + d23 * m33;
-      dest[13] = d24;
+      dest[4] = d11*m21 + d21*m22 + d31*m23;
+      dest[5] = d12*m21 + d22*m22 + d32*m23;
+      dest[6] = d13*m21 + d23*m22 + d33*m23;
+      dest[7] = d14*m21 + d24*m22 + d34*m23;
 
-      dest[2 ] = d31 * m11 + d32 * m21 + d33 * m31;
-      dest[6 ] = d31 * m12 + d32 * m22 + d33 * m32;
-      dest[10] = d31 * m13 + d32 * m23 + d33 * m33;
-      dest[14] = d34;
-
-      dest[3 ] = d41 * m11 + d42 * m21 + d43 * m31;
-      dest[7 ] = d41 * m12 + d42 * m22 + d43 * m32;
-      dest[11] = d41 * m13 + d42 * m23 + d43 * m33;
-      dest[15] = d44;
+      dest[8] = d11*m31 + d21*m32 + d31*m33;
+      dest[9] = d12*m31 + d22*m32 + d32*m33;
+      dest[10] = d13*m31 + d23*m32 + d33*m33;
+      dest[11] = d14*m31 + d24*m32 + d34*m33;
 
       return dest;
-
     },
 
     rotateXYZ: function(dest, rx, ry, rz) {
@@ -1219,17 +1214,17 @@ $.splat = (function() {
 
     $rotateXYZ: function(dest, rx, ry, rz) {
       var d11 = dest[0 ],
-          d12 = dest[4 ],
-          d13 = dest[8 ],
-          d14 = dest[12],
-          d21 = dest[1 ],
+          d12 = dest[1 ],
+          d13 = dest[2 ],
+          d14 = dest[3],
+          d21 = dest[4 ],
           d22 = dest[5 ],
-          d23 = dest[9 ],
-          d24 = dest[13],
-          d31 = dest[2 ],
-          d32 = dest[6 ],
+          d23 = dest[6 ],
+          d24 = dest[7],
+          d31 = dest[8 ],
+          d32 = dest[9 ],
           d33 = dest[10],
-          d34 = dest[14],
+          d34 = dest[11],
           crx = cos(rx),
           cry = cos(ry),
           crz = cos(rz),
@@ -1247,19 +1242,19 @@ $.splat = (function() {
           m33 =  crx * cry;
 
       dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
-      dest[4 ] = d12 * m11 + d22 * m12 + d32 * m13;
-      dest[8 ] = d13 * m11 + d23 * m12 + d33 * m13;
-      dest[12] = d14 * m11 + d24 * m12 + d34 * m13;
+      dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
+      dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
+      dest[3 ] = d14 * m11 + d24 * m12 + d34 * m13;
       
-      dest[1 ] = d11 * m21 + d21 * m22 + d31 * m23;
+      dest[4 ] = d11 * m21 + d21 * m22 + d31 * m23;
       dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
-      dest[9 ] = d13 * m21 + d23 * m22 + d33 * m23;
-      dest[13] = d14 * m21 + d24 * m22 + d34 * m23;
+      dest[6 ] = d13 * m21 + d23 * m22 + d33 * m23;
+      dest[7] = d14 * m21 + d24 * m22 + d34 * m23;
       
-      dest[2 ] = d11 * m31 + d21 * m32 + d31 * m33;
-      dest[6 ] = d12 * m31 + d22 * m32 + d32 * m33;
+      dest[8 ] = d11 * m31 + d21 * m32 + d31 * m33;
+      dest[9 ] = d12 * m31 + d22 * m32 + d32 * m33;
       dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
-      dest[14] = d14 * m31 + d24 * m32 + d34 * m33;
+      dest[11] = d14 * m31 + d24 * m32 + d34 * m33;
 
       return dest;
     },
@@ -1286,17 +1281,17 @@ $.splat = (function() {
 
     $scale: function(dest, x, y, z) {
       dest[0 ] *= x;
-      dest[4 ] *= x;
-      dest[8 ] *= x;
-      dest[12] *= x;
-      dest[1 ] *= y;
+      dest[1 ] *= x;
+      dest[2 ] *= x;
+      dest[3 ] *= x;
+      dest[4 ] *= y;
       dest[5 ] *= y;
-      dest[9 ] *= y;
-      dest[13] *= y;
-      dest[2 ] *= z;
-      dest[6 ] *= z;
+      dest[6 ] *= y;
+      dest[7 ] *= y;
+      dest[8 ] *= z;
+      dest[9 ] *= z;
       dest[10] *= z;
-      dest[14] *= z;
+      dest[11] *= z;
       
       return dest;
     },
@@ -1328,21 +1323,21 @@ $.splat = (function() {
 
       var invdet = 1 / (a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0);
 
-      dest[0] = (+ x5*b5 - x6*b4 + x7*b3) * invdet;
-      dest[4] = (- x1*b5 + x2*b4 - x3*b3) * invdet;
-      dest[8] = (+ x13*a5 - x14*a4 + x15*a3) * invdet;
-      dest[12] = (- x9*a5 + x10*a4 - x11*a3) * invdet;
-      dest[1] = (- x4*b5 + x6*b2 - x7*b1) * invdet;
-      dest[5] = (+ x0*b5 - x2*b2 + x3*b1) * invdet;
-      dest[9] = (- x12*a5 + x14*a2 - x15*a1) * invdet;
-      dest[13] = (+ x8*a5 - x10*a2 + x11*a1) * invdet;
-      dest[2] = (+ x4*b4 - x5*b2 + x7*b0) * invdet;
-      dest[6] = (- x0*b4 + x1*b2 - x3*b0) * invdet;
+      dest[0 ] = (+ x5*b5 - x6*b4 + x7*b3) * invdet;
+      dest[1 ] = (- x1*b5 + x2*b4 - x3*b3) * invdet;
+      dest[2 ] = (+ x13*a5 - x14*a4 + x15*a3) * invdet;
+      dest[3 ] = (- x9*a5 + x10*a4 - x11*a3) * invdet;
+      dest[4 ] = (- x4*b5 + x6*b2 - x7*b1) * invdet;
+      dest[5 ] = (+ x0*b5 - x2*b2 + x3*b1) * invdet;
+      dest[6 ] = (- x12*a5 + x14*a2 - x15*a1) * invdet;
+      dest[7 ] = (+ x8*a5 - x10*a2 + x11*a1) * invdet;
+      dest[8 ] = (+ x4*b4 - x5*b2 + x7*b0) * invdet;
+      dest[9 ] = (- x0*b4 + x1*b2 - x3*b0) * invdet;
       dest[10] = (+ x12*a4 - x13*a2 + x15*a0) * invdet;
-      dest[14] = (- x8*a4 + x9*a2 - x11*a0) * invdet;
-      dest[3] = (- x4*b3 + x5*b1 - x6*b0) * invdet;
-      dest[7] = (+ x0*b3 - x1*b1 + x2*b0) * invdet;
-      dest[11] = (- x12*a3 + x13*a1 - x14*a0) * invdet;
+      dest[11] = (- x8*a4 + x9*a2 - x11*a0) * invdet;
+      dest[12] = (- x4*b3 + x5*b1 - x6*b0) * invdet;
+      dest[13] = (+ x0*b3 - x1*b1 + x2*b0) * invdet;
+      dest[14] = (- x12*a3 + x13*a1 - x14*a0) * invdet;
       dest[15] = (+ x8*a3 - x9*a1 + x10*a0) * invdet;
 
       return dest;
@@ -1411,20 +1406,20 @@ $.splat = (function() {
           if (!ans) return dest;
           
           ans[0] = dest[0];
-          ans[1] = dest[1];
-          ans[2] = dest[2];
-          ans[3] = dest[3];
-          ans[4] = dest[4];
+          ans[1] = dest[4];
+          ans[2] = dest[8];
+          ans[3] = dest[12];
+          ans[4] = dest[1];
           ans[5] = dest[5];
-          ans[6] = dest[6];
-          ans[7] = dest[7];
-          ans[8] = dest[8];
-          ans[9] = dest[9];
+          ans[6] = dest[9];
+          ans[7] = dest[13];
+          ans[8] = dest[2];
+          ans[9] = dest[6];
           ans[10] = dest[10];
-          ans[11] = dest[11];
-          ans[12] = dest[12];
-          ans[13] = dest[13];
-          ans[14] = dest[14];
+          ans[11] = dest[14];
+          ans[12] = dest[3];
+          ans[13] = dest[7];
+          ans[14] = dest[11];
           ans[15] = dest[15];
 
           return ans;

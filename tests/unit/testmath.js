@@ -68,10 +68,10 @@ assert(m[15] === 1);
 //test set
 assert(typeof Mat4.set === 'function');
 m.id();
-m.set(1, 5, 9 , 13,
-      2, 6, 10, 14,
-      3, 7, 11, 15,
-      4, 8, 12, 16);
+m.set(1, 2, 3, 4,
+      5, 6, 7, 8,
+      9, 10, 11, 12,
+      13,14, 15, 16);
 
 assert(m[0 ] === 1);
 assert(m[1 ] === 2);
@@ -141,16 +141,16 @@ assert(abs(ans.n44 - 16) < delta);
 //test mulMat42
 assert(typeof Mat4.mulMat42 === 'function');
 var m1 = new Mat4;
-m1.set(1, 5, 9 , 13,
-       2, 6, 10, 14,
-       3, 7, 11, 15,
-       4, 8, 12, 16);
+m1.set(1, 2, 3 , 4,
+       5, 6, 7, 8,
+       9, 10, 11, 12,
+       13, 14, 15, 16);
 
 var m2 = new Mat4;
-m2.set(1, 5, 9 , 13,
-       2, 6, 10, 14,
-       3, 7, 11, 15,
-       4, 8, 12, 16).$transpose();
+m2.set(1, 2, 3, 4,
+       5, 6, 7, 8,
+       9, 10, 11, 12,
+       13, 14, 15, 16).$transpose();
 
 var ans = new Mat4;
 ans.mulMat42(m1, m2);
@@ -176,21 +176,27 @@ assert(abs(ans.n44 - 480) < delta);
 //test rotateAxis
 assert(typeof Mat4.rotateAxis === 'function');
 var v = [1, 2, 3],
-    theta = Math.PI,
-    m = new Mat4,
-    ans = m.rotateAxis(theta, v);
+    len = Math.sqrt(1 * 1 + 2 * 2 + 3 * 3),
+    theta = Math.PI / 4,
+    m = new Mat4;
 
-assert(abs(ans.n11 - 1) < delta);
-assert(abs(ans.n12 - 3.9999999999999996) < delta);
-assert(abs(ans.n13 - 6) < delta);
+    v[0] /= len;
+    v[1] /= len;
+    v[2] /= len;
+
+var ans = m.rotateAxis(theta, v);
+
+assert(abs(ans.n11 - 0.7280277013778687) < delta);
+assert(abs(ans.n12 - 0.6087886095046997) < delta);
+assert(abs(ans.n13 - -0.31520164012908936) < delta);
 assert(abs(ans.n14 - 0) < delta);
-assert(abs(ans.n21 - 4) < delta);
-assert(abs(ans.n22 - 7) < delta);
-assert(abs(ans.n23 - 12) < delta);
+assert(abs(ans.n21 - -0.525104820728302) < delta);
+assert(abs(ans.n22 - 0.7907905578613281) < delta);
+assert(abs(ans.n23 - 0.3145079016685486) < delta);
 assert(abs(ans.n24 - 0) < delta);
-assert(abs(ans.n31 - 6) < delta);
-assert(abs(ans.n32 - 12) < delta);
-assert(abs(ans.n33 - 17) < delta);
+assert(abs(ans.n31 - 0.4407272934913635) < delta);
+assert(abs(ans.n32 - -0.06345657259225845) < delta);
+assert(abs(ans.n33 - 0.8953952789306641) < delta);
 assert(abs(ans.n34 - 0) < delta);
 assert(abs(ans.n41 - 0) < delta);
 assert(abs(ans.n42 - 0) < delta);
@@ -202,7 +208,6 @@ assert(abs(ans.n44 - 1) < delta);
 assert(typeof Mat4.rotateXYZ === 'function');
 m.id();
 var ans = m.rotateXYZ(1, 2, 3);
-console.log('rotate 1 0 0', ans);
 assert(abs(ans.n11 - 0.411982245665683) < delta);
 assert(abs(ans.n12 - -0.8337376517741568) < delta);
 assert(abs(ans.n13 - -0.36763046292489926) < delta);
@@ -251,18 +256,18 @@ var ans = m.translate(1, 2, 3);
 assert(abs(ans.n11 - 1) < delta);
 assert(abs(ans.n12 - 0) < delta);
 assert(abs(ans.n13 - 0) < delta);
-assert(abs(ans.n14 - 1) < delta);
+assert(abs(ans.n14 - 0) < delta);
 assert(abs(ans.n21 - 0) < delta);
 assert(abs(ans.n22 - 1) < delta);
 assert(abs(ans.n23 - 0) < delta);
-assert(abs(ans.n24 - 2) < delta);
+assert(abs(ans.n24 - 0) < delta);
 assert(abs(ans.n31 - 0) < delta);
 assert(abs(ans.n32 - 0) < delta);
 assert(abs(ans.n33 - 1) < delta);
-assert(abs(ans.n34 - 3) < delta);
-assert(abs(ans.n41 - 0) < delta);
-assert(abs(ans.n42 - 0) < delta);
-assert(abs(ans.n43 - 0) < delta);
+assert(abs(ans.n34 - 0) < delta);
+assert(abs(ans.n41 - 1) < delta);
+assert(abs(ans.n42 - 2) < delta);
+assert(abs(ans.n43 - 3) < delta);
 assert(abs(ans.n44 - 1) < delta);
 
 
@@ -303,10 +308,10 @@ assert(abs(ans.n24 - 0) < delta);
 assert(abs(ans.n31 - 0) < delta);
 assert(abs(ans.n32 - 0) < delta);
 assert(abs(ans.n33 - 0) < delta);
-assert(abs(ans.n34 - -1) < delta);
+assert(abs(ans.n34 - -4.995) < delta);
 assert(abs(ans.n41 - 0) < delta);
 assert(abs(ans.n42 - 0) < delta);
-assert(abs(ans.n43 - -4.995) < delta);
+assert(abs(ans.n43 - -1) < delta);
 assert(abs(ans.n44 - 5.005) < delta);
 
 
