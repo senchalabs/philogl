@@ -121,6 +121,6 @@
 
   ].join("\n");
 
-  PhiloGL.Shaders = Shaders;
+  Octant.Shaders = Shaders;
   
 })();

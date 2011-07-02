@@ -1,5 +1,5 @@
 function webGLStart() {
-  PhiloGL('lesson02-canvas', {
+  Octant('lesson02-canvas', {
     program: {
       from: 'ids',
       vs: 'shader-vs',

@@ -1,6 +1,6 @@
-importScripts('../../build/PhiloGL.js');
+importScripts('../../build/Octant.js');
 
-PhiloGL.unpack(self);
+Octant.unpack(self);
 
 //Pairing Heap
 function PHeap(elem, subheaps) {

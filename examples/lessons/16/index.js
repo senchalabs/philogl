@@ -2,7 +2,7 @@ function webGLStart() {
   var $id = function(d) { return document.getElementById(d); };
 
   //unpack modules
-  PhiloGL.unpack();
+  Octant.unpack();
   
   //create all models
   var models = {};
@@ -89,7 +89,7 @@ function webGLStart() {
 
   function createApp(models) {
     //Create application
-    PhiloGL('lesson16-canvas', {
+    Octant('lesson16-canvas', {
       camera: {
         position: {
           x: 0, y: 0, z: -3

@@ -14,7 +14,7 @@ attributes defined in the shaders so that the buffer creation and updating is tr
 The good thing about the design though is that the Scene provides many callback functions that can be executed at different 
 stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you 
 to create your own shader files that are compatible with the [Scene](scene.html) class. Some examples of [Scene](scene.html) compatible shader 
-files can be found [here](https://github.com/senchalabs/philogl/tree/master/shaders). Also, for more information about the 
+files can be found [here](https://github.com/philogb/octant/tree/master/shaders). Also, for more information about the 
 default shaders take a look at the [Shaders](shaders.html) class. The [O3D](o3d.html) options describe how to override or set callbacks when rendering 
 objects with a default scene.
 
@@ -26,7 +26,7 @@ Creates a new [Scene](scene.html) instance.
 
 ### Syntax:
 
-	var scene = new PhiloGL.Scene(program, camera, options);
+	var scene = new Octant.Scene(program, camera, options);
 
 ### Arguments:
 
@@ -55,10 +55,10 @@ Creates a new [Scene](scene.html) instance.
 
 ### Examples:
 
-Create a new Scene instance. Taken from [lesson 16](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/).
+Create a new Scene instance. Taken from [lesson 16](http://philogb.github.com/octant/Octant/examples/lessons/16/).
 
 {% highlight js %}
-var innerScene = new PhiloGL.Scene(program, innerCamera, {
+var innerScene = new Octant.Scene(program, innerCamera, {
   lights: {
     enable: true,
     points: {
@@ -79,7 +79,7 @@ var innerScene = new PhiloGL.Scene(program, innerCamera, {
 Create a new Scene instance and add some fog to it.
 
 {% highlight js %}
-var scene = new PhiloGL.Scene(program, camera, {
+var scene = new Octant.Scene(program, camera, {
   //Setup lighting.
   lights: {
     enable: true,
@@ -126,7 +126,7 @@ A variable argument list of [O3D](o3d.html) instances.
 
 ### Examples:
 
-Add a moon and a box models to the scene. Taken from [lesson 12](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/12/).
+Add a moon and a box models to the scene. Taken from [lesson 12](http://philogb.github.com/octant/Octant/examples/lessons/12/).
 
 {% highlight js %}
 //Add objects to the scene
@@ -194,7 +194,7 @@ buffer.
 ### Examples:
 
 Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done 
-to render the inner scene in the laptop example on [lesson 16](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/).
+to render the inner scene in the laptop example on [lesson 16](http://philogb.github.com/octant/Octant/examples/lessons/16/).
 
 {% highlight js %}
 function drawInnerScene() {
@@ -234,7 +234,7 @@ coordinates. The object must have `pickable` set to `true`.
 
 ### About the picking algorithm
 
-The picking algorithm used in PhiloGL is a color picking
+The picking algorithm used in Octant is a color picking
 algorithm. Each model is assigned a different color and the scene is 
 rendered to a texture. Then, the pixel pointed by the mouse
 position is retrieved from the texture and the color of that pixel is 
@@ -250,7 +250,7 @@ vertex colors and a method that given a pixel returns special
 information on what part of the object has been retrieved, then it is
 possible to have finer grain picking. For more information about how to 
 use this you can take a look at the Air Flights example or go to the
-[Google group of the framework](http://groups.google.com/group/philogl)
+[Google group of the framework](http://groups.google.com/group/octant)
 and ask for more info.
 
 ### Syntax:

@@ -26,7 +26,7 @@ Creates a group of web workers out of the same script.
 
 ### Syntax:
 
-	var workerGroup = new PhiloGL.WorkerGroup(scriptName, n);
+	var workerGroup = new Octant.WorkerGroup(scriptName, n);
 
 ### Arguments:
 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PhiloGL - Surface Explorer</title>
+    <title>Octant - Surface Explorer</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
+    <script type="text/javascript" src="../../build/Octant.js"></script>
     <script type="text/javascript" src="explorer.js"></script>
   </head>
   <body onload="init();">
@@ -99,7 +99,7 @@
       </div>
 
       <div class="footer">
-        Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a> - Inspired by Dean McNamee's <a href="http://graphycalc.com/">GraphyCalc</a>.
+        Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a> - Inspired by Dean McNamee's <a href="http://graphycalc.com/">GraphyCalc</a>.
       </div>
 
     </div>
@@ -107,7 +107,7 @@
     <div id="fallback" class="fallback"></div>
 
   <script>
-    if (!PhiloGL.hasWebGL()) {
+    if (!Octant.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

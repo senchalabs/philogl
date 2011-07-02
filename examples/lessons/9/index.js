@@ -1,5 +1,5 @@
 //Add Uniform Color Fragment Shader
-PhiloGL.Shaders.Fragment.ColorUniform = [
+Octant.Shaders.Fragment.ColorUniform = [
 
     "#ifdef GL_ES",
     "precision highp float;",
@@ -35,7 +35,7 @@ function webGLStart() {
   
   //Define a Star Class
   var Star = function(startingDistance, rotationSpeed) {
-    PhiloGL.O3D.Model.call(this, {
+    Octant.O3D.Model.call(this, {
       vertices: [
         -1.0, -1.0,  0.0,
         1.0, -1.0,  0.0,
@@ -73,7 +73,7 @@ function webGLStart() {
     this.randomiseColors();
   };
 
-  Star.prototype = Object.create(PhiloGL.O3D.Model.prototype, {
+  Star.prototype = Object.create(Octant.O3D.Model.prototype, {
     
     randomiseColors: {
       value: function() {
@@ -110,7 +110,7 @@ function webGLStart() {
 
   });
 
-  PhiloGL('lesson09-canvas', {
+  Octant('lesson09-canvas', {
     program: {
       from: 'defaults',
       fs: 'ColorUniform'

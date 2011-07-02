@@ -8,7 +8,7 @@ Module: WebGL {#WebGL}
 ===============================
 
 Provides the `getContext` method which is a wrapper around the method that returns the native context for a 3D canvas. Also 
-has the code to add `PhiloGL.hasWebGL()` that returns a *boolean* whether the current browser supports WebGL or not.
+has the code to add `Octant.hasWebGL()` that returns a *boolean* whether the current browser supports WebGL or not.
 
 WebGL Function: getContext {#WebGL:getContext}
 ------------------------------------------------
@@ -17,7 +17,7 @@ Returns a WebGL context. Tries to get the context via `experimental-webgl` or ju
 
 ### Syntax:
 
-	var gl = PhiloGL.WebGL.getContext(canvas[, options]);
+	var gl = Octant.WebGL.getContext(canvas[, options]);
 
 ### Arguments:
 
@@ -36,7 +36,7 @@ The WebGL Application class has useful methods to manipulate
 buffers, textures and other things. Some of these methods can also be
 found in the [Program](program.md) class, but in this case these aren't bound to any
 particular program. A WebGL Application is created via the
-[PhiloGL](core.html) constructor function and returned on the `onLoad`
+[Octant](core.html) constructor function and returned on the `onLoad`
 callback. The application carries all the state regardless of the number of programs and other buffers defined via 
 the WebGL Application or any other [Program](program.html) instance. This
 design facilitates multiple program state and management.
@@ -87,7 +87,7 @@ be the buffer name.
 ### Examples:
 
 Set buffer values for the vertices of a triangle. 
-The context of this example can be seen [here](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/).
+The context of this example can be seen [here](http://philogb.github.com/octant/Octant/examples/lessons/1/).
 
 {% highlight js %}
 app.setBuffer('triangle', {
@@ -114,7 +114,7 @@ For each `key, value` of the object passed in it executes `setBuffer(key, value)
 ### Examples:
 
 Set buffer values for the vertices of a triangle and a square. 
-The context of this example can be seen [here](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/).
+The context of this example can be seen [here](http://philogb.github.com/octant/Octant/examples/lessons/1/).
 
 {% highlight js %}
 app.setBuffers({
@@ -161,7 +161,7 @@ with the same options as in `setTexture`.
 
 ### Examples:
 
-Using a frambuffer to render a scene into a texture. Taken from [lesson 16](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/).
+Using a frambuffer to render a scene into a texture. Taken from [lesson 16](http://philogb.github.com/octant/Octant/examples/lessons/16/).
 
 {% highlight js %}
 //create framebuffer
@@ -265,7 +265,7 @@ set the width and height of the texture.
 
 ### Examples:
 
-Setting a texture for a box. Adapted from [lesson 6](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/).
+Setting a texture for a box. Adapted from [lesson 6](http://philogb.github.com/octant/Octant/examples/lessons/6/).
 
 {% highlight js %}
 var img = new Image();
@@ -297,7 +297,7 @@ For each `key, value` of the object passed in it executes `setTexture(key, value
 
 ### Examples:
 
-Set multiple type of textures from the same image. Taken from [lesson 6](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/).
+Set multiple type of textures from the same image. Taken from [lesson 6](http://philogb.github.com/octant/Octant/examples/lessons/6/).
 
 {% highlight js %}
 //load textures from image

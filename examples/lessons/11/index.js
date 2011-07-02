@@ -2,7 +2,7 @@ function webGLStart() {
   var pos, $id = function(d) { return document.getElementById(d); };
   
   //Create moon
-  var moon = new PhiloGL.O3D.Sphere({
+  var moon = new Octant.O3D.Sphere({
     nlat: 30,
     nlong: 30,
     radius: 2,
@@ -10,7 +10,7 @@ function webGLStart() {
   });
 
   //Create application
-  PhiloGL('lesson11-canvas', {
+  Octant('lesson11-canvas', {
     camera: {
       position: {
         x: 0, y: 0, z: -7

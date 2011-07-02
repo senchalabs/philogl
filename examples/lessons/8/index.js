@@ -1,5 +1,5 @@
 //Add Blend Fragment Shader
-PhiloGL.Shaders.Fragment.Blend = [
+Octant.Shaders.Fragment.Blend = [
 
     "#ifdef GL_ES",
     "precision highp float;",
@@ -53,7 +53,7 @@ function webGLStart() {
       alpha = $id('alpha');
   
   //Create object
-  var cube = new PhiloGL.O3D.Model({
+  var cube = new Octant.O3D.Model({
     vertices: [-1, -1,  1,
                 1, -1,  1,
                 1,  1,  1,
@@ -167,7 +167,7 @@ function webGLStart() {
               20, 21, 22, 20, 22, 23]
   });
 
-  PhiloGL('lesson08-canvas', {
+  Octant('lesson08-canvas', {
     program: {
       from: 'defaults',
       fs: 'Blend'

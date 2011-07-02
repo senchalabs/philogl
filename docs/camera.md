@@ -27,7 +27,7 @@ The Camera object, used as eye to project the scene into.
 
 ### Syntax:
 
-	var camera = new PhiloGL.Camera(fov, aspect, near, far [, options]);
+	var camera = new Octant.Camera(fov, aspect, near, far [, options]);
 
 ### Arguments:
 
@@ -48,7 +48,7 @@ Creates a camera with position (0, 0, 10) pointing to a target in (0, 0, 0).
 
 {% highlight js %}
   var canvas = document.getElementById('canvas');
-  var camera = new PhiloGL.Camera(45, canvas.width / canvas.height, 0.1, 100, {
+  var camera = new Octant.Camera(45, canvas.width / canvas.height, 0.1, 100, {
         position: {
           x: 0, y: 0, z: 10
         }                             
@@ -68,7 +68,7 @@ Updates the Camera *modelView* matrix with the information provided on *position
 ### Examples:
 
 {% highlight js %}
-  var camera = new PhiloGL.Camera(45, canvas.width / canvas.height, 0.1, 100, {
+  var camera = new Octant.Camera(45, canvas.width / canvas.height, 0.1, 100, {
     position: {
       x: 0, y: 0, z: 10
     }                             

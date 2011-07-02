@@ -1,6 +1,6 @@
 function webGLStart() {
   //Load models
-  var triangle = new PhiloGL.O3D.Model({
+  var triangle = new Octant.O3D.Model({
     vertices: [ 0,  1, 0,
                -1, -1, 0,
                 1, -1, 0],
@@ -10,7 +10,7 @@ function webGLStart() {
              0, 0, 1, 1]
   });
 
-  var square = new PhiloGL.O3D.Model({
+  var square = new Octant.O3D.Model({
     vertices: [ 1,  1, 0,
                -1,  1, 0,
                 1, -1, 0,
@@ -23,7 +23,7 @@ function webGLStart() {
   });
 
   //Create App
-  PhiloGL('lesson03-canvas', {
+  Octant('lesson03-canvas', {
     program: {
       from: 'ids',
       vs: 'shader-vs',
@@ -37,7 +37,7 @@ function webGLStart() {
           canvas = app.canvas,
           program = app.program,
           camera = app.camera,
-          view = new PhiloGL.Mat4,
+          view = new Octant.Mat4,
           rTri = 0, rSquare = 0;
 
       gl.viewport(0, 0, canvas.width, canvas.height);

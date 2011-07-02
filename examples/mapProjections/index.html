@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PhiloGL - Map Projections</title>
+    <title>Octant - Map Projections</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
+    <script type="text/javascript" src="../../build/Octant.js"></script>
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body onload="init();">
@@ -38,12 +38,11 @@
   </div>
   
   <div class="footer">
-    Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> -
-    Author: <a href="http://blog.thejit.org/">Nicolas Garcia
+    Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia
       Belmonte</a>.
   </div>
   <script>
-    if (!PhiloGL.hasWebGL()) {
+    if (!Octant.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

@@ -396,6 +396,6 @@
     }
   }
 
-  PhiloGL.Events = Events;
+  Octant.Events = Events;
     
 })();

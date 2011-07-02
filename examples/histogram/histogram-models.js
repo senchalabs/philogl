@@ -1,4 +1,4 @@
-importScripts('../../build/PhiloGL.js');
+importScripts('../../build/Octant.js');
 
 var dim = 8,
     cube = dim * dim * dim,
@@ -19,7 +19,7 @@ var dim = 8,
 
 function createSpheres() {
   var cube = dim * dim * dim,
-      sphere = new PhiloGL.O3D.Sphere({
+      sphere = new Octant.O3D.Sphere({
         nlat: nlat,
         nlong: nlong,
         radius: 0.1

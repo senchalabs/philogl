@@ -1,6 +1,6 @@
 function init() {
   //unpack modules
-  PhiloGL.unpack();
+  Octant.unpack();
   
   //Shortcut for getElementById
   var $id = function(d) { return document.getElementById(d); };
@@ -13,7 +13,7 @@ function init() {
       loading = $id('loading');
 
   //Create earth
-  var earth = new PhiloGL.O3D.Sphere({
+  var earth = new Octant.O3D.Sphere({
     nlat: 30,
     nlong: 30,
     radius: 2,
@@ -27,7 +27,7 @@ function init() {
   //Create Temperature Maps
   var imageCanvas = $id('image-data').getContext('2d'),
       tempMaps = [],
-      currentTempMap = new PhiloGL.O3D.Sphere({
+      currentTempMap = new Octant.O3D.Sphere({
         nlat: 60,
         nlong: 60,
         radius: 2,
@@ -177,7 +177,7 @@ function init() {
     var theta = 0;
 
     //Create application
-    PhiloGL('map-canvas', {
+    Octant('map-canvas', {
       program: {
         from: 'uris',
         path: './',

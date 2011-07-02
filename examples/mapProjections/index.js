@@ -1,5 +1,5 @@
 //Unpack modules
-PhiloGL.unpack();
+Octant.unpack();
 
 var Types = {
   SHADOW: 0,
@@ -80,7 +80,7 @@ function init() {
 
 function createApp() {
   //Create application
-  PhiloGL('map-canvas', {
+  Octant('map-canvas', {
     program: [{
       id: 'earth',
       from: 'uris',

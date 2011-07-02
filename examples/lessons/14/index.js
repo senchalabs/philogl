@@ -2,20 +2,20 @@ function webGLStart() {
   var $id = function(d) { return document.getElementById(d); };
   
   //Get Model
-  new PhiloGL.IO.XHR({
+  new Octant.IO.XHR({
     url: 'Teapot.json',
     onSuccess: function(text) {
       var json = JSON.parse(text);
       json.colors = [1, 1, 1, 1];
       json.textures = 'arroway.de_metal+structure+06_d100_flat.jpg';
-      var teapot = new PhiloGL.O3D.Model(json);
+      var teapot = new Octant.O3D.Model(json);
       animateObject(teapot);
     }
   }).send();
 
   function animateObject(teapot) {
     //Create application
-    PhiloGL('lesson14-canvas', {
+    Octant('lesson14-canvas', {
       program: {
         from: 'uris',
         path: '../../../shaders/',

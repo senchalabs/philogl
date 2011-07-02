@@ -1,6 +1,6 @@
-importScripts('../../build/PhiloGL.js');
+importScripts('../../build/Octant.js');
 
-PhiloGL.unpack(self);
+Octant.unpack(self);
 
 onmessage = function(e) {
   var cities = e.data,

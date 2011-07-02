@@ -36,7 +36,7 @@ The main constructor function for the Model class. Use this to create a new Mode
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Model(options);
+	var model = new Octant.O3D.Model(options);
 
 ### Arguments:
 
@@ -73,7 +73,7 @@ array of floats as values (to handle multiple textures).
 Create a pyramid model (used in lesson 4 of learning WebGL examples).
 
 {% highlight js %}
-var pyramid = new PhiloGL.O3D.Model({
+var pyramid = new Octant.O3D.Model({
     vertices: [[ 0,  1,  0],
                [-1, -1,  1],
                [ 1, -1,  1],
@@ -123,7 +123,7 @@ var fromVertices =  [ 0,  1,  0,
 
 var toVertices = fromVertices.map(function(value) { return value * 2; });
 
-var pyramid = new PhiloGL.O3D.Model({
+var pyramid = new Octant.O3D.Model({
     vertices: fromVertices,
 
     uniforms: {
@@ -227,7 +227,7 @@ options as O3D.Model constructor but has preset for `vertices`, `normals` and `i
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Cube(options);
+	var model = new Octant.O3D.Cube(options);
 
 ### Arguments:
 
@@ -238,7 +238,7 @@ options as O3D.Model constructor but has preset for `vertices`, `normals` and `i
 Create a white cube.
 
 {% highlight js %}
-var whiteCube = new PhiloGL.O3D.Cube({
+var whiteCube = new Octant.O3D.Cube({
       colors: [1, 1, 1, 1]
     });
 {% endhighlight %}
@@ -261,7 +261,7 @@ The main constructor function for the Sphere class. Use this to create a new Sph
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Sphere(options);
+	var model = new Octant.O3D.Sphere(options);
 
 ### Arguments:
 
@@ -278,7 +278,7 @@ The main constructor function for the Sphere class. Use this to create a new Sph
 Create a white Sphere of radius 2.
 
 {% highlight js %}
-var whiteSphere = new PhiloGL.O3D.Sphere({
+var whiteSphere = new Octant.O3D.Sphere({
   radius: 2,
   colors: [1, 1, 1, 1]
 });
@@ -302,7 +302,7 @@ The main constructor function for the IcoSphere class. Use this to create a new 
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.IcoSphere(options);
+	var model = new Octant.O3D.IcoSphere(options);
 
 ### Arguments:
 
@@ -317,7 +317,7 @@ The main constructor function for the IcoSphere class. Use this to create a new 
 Create a white IcoSphere of radius 1.
 
 {% highlight js %}
-var whiteSphere = new PhiloGL.O3D.IcoSphere({
+var whiteSphere = new Octant.O3D.IcoSphere({
   iterations: 1,
   colors: [1, 1, 1, 1]
 });
@@ -341,7 +341,7 @@ The main constructor function for the Plane class. Use this to create a new Plan
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Plane(options);
+	var model = new Octant.O3D.Plane(options);
 
 ### Arguments:
 
@@ -363,7 +363,7 @@ The main constructor function for the Plane class. Use this to create a new Plan
 Create a white XZ plane.
 
 {% highlight js %}
-var whitePlane = new PhiloGL.O3D.Plane({
+var whitePlane = new Octant.O3D.Plane({
   type: 'x,z',
   xlen: 10,
   zlen: 20,
@@ -393,7 +393,7 @@ The main constructor function for the Cylinder class. Use this to create a new C
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Cylinder(options);
+	var model = new Octant.O3D.Cylinder(options);
 
 ### Arguments:
 
@@ -413,7 +413,7 @@ The main constructor function for the Cylinder class. Use this to create a new C
 Create a white Cylinder of radius 2 and height 3.
 
 {% highlight js %}
-var whiteCylinder = new PhiloGL.O3D.Cylinder({
+var whiteCylinder = new Octant.O3D.Cylinder({
   radius: 2,
   height: 3,
   colors: [1, 1, 1, 1]
@@ -438,7 +438,7 @@ The main constructor function for the Cone class. Use this to create a new Cone.
 
 ### Syntax:
 
-	var model = new PhiloGL.O3D.Cone(options);
+	var model = new Octant.O3D.Cone(options);
 
 ### Arguments:
 
@@ -456,7 +456,7 @@ The main constructor function for the Cone class. Use this to create a new Cone.
 Create a white Cone of base radius 2 and height 3.
 
 {% highlight js %}
-var whiteCone = new PhiloGL.O3D.Cone({
+var whiteCone = new Octant.O3D.Cone({
   radius: 2,
   height: 3,
   cap: true,

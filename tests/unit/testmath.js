@@ -1,12 +1,12 @@
-PhiloGL.unpack();
+Octant.unpack();
 
 var abs = Math.abs, delta = 0.001;
 
-assert(typeof PhiloGL.Vec3 === 'function');
-assert(typeof PhiloGL.Mat4 === 'function');
-assert(typeof PhiloGL.Quat === 'function');
+assert(typeof Octant.Vec3 === 'function');
+assert(typeof Octant.Mat4 === 'function');
+assert(typeof Octant.Quat === 'function');
 
-var v = new PhiloGL.Vec3;
+var v = new Octant.Vec3;
 assert(v.x === 0);
 assert(v.y === 0);
 assert(v.z === 0);
@@ -26,7 +26,7 @@ assert(typeof v.sub === 'function');
 assert(typeof v.sub2 === 'function');
 assert(typeof v.unit === 'function');
 
-var m = new PhiloGL.Mat4;
+var m = new Octant.Mat4;
 //test getters and setters
 assert(m.n11 === 1);
 assert(m.n12 === 0);
@@ -350,10 +350,10 @@ m.id();
 assert(m.toFloat32Array().BYTES_PER_ELEMENT === 4);
 
 
-var q = new PhiloGL.Quat;
+var q = new Octant.Quat;
 
 
-var q = new PhiloGL.Quat;
+var q = new Octant.Quat;
 assert(q[0] === 0);
 assert(q[1] === 0);
 assert(q[2] === 0);
@@ -374,29 +374,29 @@ assert(typeof q.sub === 'function');
 assert(typeof q.unit === 'function');
 delete q;
 
-var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 0, 1), Math.PI);
+var q = Octant.Quat.fromAxisRotation(new Octant.Vec3(0, 0, 1), Math.PI);
 assert(q[0] === 0);
 assert(q[1] === 0);
 assert(q[2] === 1);
 assert(q[3] === Math.cos(Math.PI / 2));
 delete q;
 
-var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(0, 1, 0), Math.PI);
+var q = Octant.Quat.fromAxisRotation(new Octant.Vec3(0, 1, 0), Math.PI);
 assert(q[0] === 0);
 assert(q[1] === 1);
 assert(q[2] === 0);
 assert(q[3] === Math.cos(Math.PI / 2));
 delete q;
 
-var q = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(1, 0, 0), Math.PI);
+var q = Octant.Quat.fromAxisRotation(new Octant.Vec3(1, 0, 0), Math.PI);
 assert(q[0] === 1);
 assert(q[1] === 0);
 assert(q[2] === 0);
 assert(q[3] === Math.cos(Math.PI / 2));
 delete q;
 
-var q1 = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(5, 0, -2), Math.PI / 3),
-    q2 = PhiloGL.Quat.fromAxisRotation(new PhiloGL.Vec3(1, 3, 0), Math.PI / 4);
+var q1 = Octant.Quat.fromAxisRotation(new Octant.Vec3(5, 0, -2), Math.PI / 3),
+    q2 = Octant.Quat.fromAxisRotation(new Octant.Vec3(1, 3, 0), Math.PI / 4);
 q1.$mulQuat(q2);
 assert(q1[0] === 0.6011183144537015);
 assert(q1[1] === 0.29193457751898655);

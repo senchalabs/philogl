@@ -3,8 +3,11 @@
 build/compiler.jar export-ignore
 build/build.py export-ignore
 build.sh export-ignore
-examples export-ignore
-shaders export-ignore
+examples/explorer export-ignore
+examples/histogram export-ignore
+examples/worldFlights export-ignore
+examples/mapProjections export-ignore
+examples/temperatureAnomalies export-ignore
 TODO export-ignore
 src export-ignore
 docs export-ignore

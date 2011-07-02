@@ -1,4 +1,4 @@
- PhiloGL.Shaders.Fragment.Ufm = [
+ Octant.Shaders.Fragment.Ufm = [
 
     "#ifdef GL_ES",
     "precision highp float;",
@@ -46,8 +46,8 @@
   ].join("\n");
 
 (function() {
-  //Unpack PhiloGL modules
-  PhiloGL.unpack();
+  //Unpack Octant modules
+  Octant.unpack();
   
   //Utility fn to getElementById
   function $id(d) {
@@ -86,7 +86,7 @@
 
   window.init = function() {
     //Create App
-    PhiloGL('surface-explorer-canvas', {
+    Octant('surface-explorer-canvas', {
       program: {
         fs: 'Ufm'
       },

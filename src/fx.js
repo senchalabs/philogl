@@ -158,6 +158,6 @@
   }
   
 
-  PhiloGL.Fx = Fx;
+  Octant.Fx = Fx;
 
 })();

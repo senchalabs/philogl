@@ -18,7 +18,7 @@ Shaders Object: Vertex {#Shaders:Vertex}
 --------------------------------------
 
 Append in this object vertex shaders to be used with a [Scene](scene.html). We provide `Shaders.Vertex.Default` which is the 
-default shader used in the library. You can find more scene compatible shaders [here](https://github.com/senchalabs/philogl/tree/master/shaders). 
+default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/octant/tree/master/shaders). 
 In order to get familiar with the attributes and uniforms used by the [Scene](scene.html) we provide the default vertex shader code:
 
     #define LIGHT_MAX 50
@@ -78,7 +78,7 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
 
 ### Syntax:
 
-	PhiloGL.Shaders.Vertex.MyName = shaderCode;
+	Octant.Shaders.Vertex.MyName = shaderCode;
 
 ### Examples:
 
@@ -89,7 +89,7 @@ Shaders Object: Fragment {#Shaders:Fragment}
 -----------------------------------------
 
 Append in this object fragment shaders to be used with a [Scene](scene.html). We provide `Shaders.Fragment.Default` which is the 
-default shader used in the library. You can find more scene compatible shaders [here](https://github.com/senchalabs/philogl/tree/master/shaders). 
+default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/octant/tree/master/shaders). 
 In order to get familiar with the attributes and uniforms used by the [Scene](scene.html) we provide the default fragment shader code:
 
     #ifdef GL_ES
@@ -142,15 +142,15 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
 
 ### Syntax:
 
-	PhiloGL.Shaders.Fragment.MyName = shaderCode;
+	Octant.Shaders.Fragment.MyName = shaderCode;
 
 ### Examples:
 
-Extending the Fragment Shader object to use a blending uniform. You can see the entire example in [lesson 8](http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/8/).
+Extending the Fragment Shader object to use a blending uniform. You can see the entire example in [lesson 8](http://philogb.github.com/octant/Octant/examples/lessons/8/).
 
 {% highlight js %}
 //Add Blend Fragment Shader
-PhiloGL.Shaders.Fragment.Blend = [
+Octant.Shaders.Fragment.Blend = [
 
     "#ifdef GL_ES",
     "precision highp float;",

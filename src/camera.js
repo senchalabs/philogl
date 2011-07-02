@@ -3,8 +3,8 @@
 
 (function () {
   //Define some locals
-  var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+  var Vec3 = Octant.Vec3,
+      Mat4 = Octant.Mat4;
 
   //Camera class
   var Camera = function(fov, aspect, near, far, opt) {
@@ -36,6 +36,6 @@
   
   };
 
-  PhiloGL.Camera = Camera;
+  Octant.Camera = Camera;
 
 })();

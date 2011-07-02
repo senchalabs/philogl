@@ -1,6 +1,6 @@
 /**
 @preserve
-Copyright (c) 2011 Sencha Inc. - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
+Copyright (c) 2011 Nicolas Garcia Belmonte (http://philogb.github.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,15 @@ THE SOFTWARE.
 */
 (function() { 
 //core.js
-//Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
+//Provides general utility methods, module unpacking methods and the Octant app creation method.
 
 //Global
-this.PhiloGL = null;
+this.Octant = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.
 (function () {
-  PhiloGL = function(canvasId, opt) {
+  Octant = function(canvasId, opt) {
     opt = $.merge({
       context: {
         /* 
@@ -77,7 +77,7 @@ this.PhiloGL = null;
         optScene = opt.scene;
     
     //get Context global to all framework
-    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+    gl = Octant.WebGL.getContext(canvasId, optContext);
 
     if (!gl) {
         opt.onError("The WebGL context couldn't been initialized");
@@ -119,7 +119,7 @@ this.PhiloGL = null;
       var pfrom = optProgram.from;
       for (var p in popt) {
         if (pfrom == p) {
-          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          program = Octant.Program[popt[p]]($.extend(programCallback, optProgram));
           break;
         }
       }
@@ -132,17 +132,17 @@ this.PhiloGL = null;
     function loadProgramDeps(gl, program, callback) {
       //get Camera
       var canvas = gl.canvas,
-          camera = new PhiloGL.Camera(optCamera.fov, 
+          camera = new Octant.Camera(optCamera.fov, 
                                       canvas.width / canvas.height, 
                                       optCamera.near, 
                                       optCamera.far, optCamera);
       camera.update();
       
       //get Scene
-      var scene = new PhiloGL.Scene(program, camera, optScene);
+      var scene = new Octant.Scene(program, camera, optScene);
       
       //make app instance global to all framework
-      app = new PhiloGL.WebGL.Application({
+      app = new Octant.WebGL.Application({
         gl: gl,
         canvas: canvas,
         program: program,
@@ -157,14 +157,14 @@ this.PhiloGL = null;
       
       //get Events
       if (optEvents) {
-        PhiloGL.Events.create(app, $.extend(optEvents, {
+        Octant.Events.create(app, $.extend(optEvents, {
           bind: app
         }));
       }
 
       //load Textures
       if (optTextures.src.length) {
-        new PhiloGL.IO.Textures($.extend(optTextures, {
+        new Octant.IO.Textures($.extend(optTextures, {
           onComplete: function() {
             callback(app);
           }
@@ -179,15 +179,15 @@ this.PhiloGL = null;
 
 
 //Unpacks the submodules to the global space.
-PhiloGL.unpack = function(branch) {
+Octant.unpack = function(branch) {
   branch = branch || globalContext;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
-      branch[module] = PhiloGL[module];
+      branch[module] = Octant[module];
   });
 };
 
 //Version
-PhiloGL.version = '1.2.1';
+Octant.version = '1.2.1';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -640,17 +640,17 @@ $.splat = (function() {
   (function() {
     try {
       var canvas = document.createElement('canvas');
-      PhiloGL.hasWebGL = function() {
+      Octant.hasWebGL = function() {
           return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
       };
     } catch(e) {
-      PhiloGL.hasWebGL = function() {
+      Octant.hasWebGL = function() {
           return false;
       };
     }
   })();
 
-  PhiloGL.WebGL = WebGL;
+  Octant.WebGL = WebGL;
   
 })();
 
@@ -1778,9 +1778,9 @@ $.splat = (function() {
                     0,                     0,                     0,                             1);
   };
 
-  PhiloGL.Vec3 = Vec3;
-  PhiloGL.Mat4 = Mat4;
-  PhiloGL.Quat = Quat;
+  Octant.Vec3 = Vec3;
+  Octant.Mat4 = Mat4;
+  Octant.Quat = Quat;
 
 })();
 
@@ -2183,7 +2183,7 @@ $.splat = (function() {
     }
   }
 
-  PhiloGL.Events = Events;
+  Octant.Events = Events;
     
 })();
 
@@ -2445,9 +2445,9 @@ $.splat = (function() {
     var opt = getOptions.apply({}, arguments),
         vs = opt.vs || 'Default',
         fs = opt.fs || 'Default',
-        sh = PhiloGL.Shaders;
+        sh = Octant.Shaders;
 
-    return PhiloGL.Program.fromShaderSources(sh.Vertex[vs], 
+    return Octant.Program.fromShaderSources(sh.Vertex[vs], 
                                               sh.Fragment[fs]);
   };
   
@@ -2464,7 +2464,7 @@ $.splat = (function() {
 
     var vertexShaderURI = opt.path + opt.vs,
         fragmentShaderURI = opt.path + opt.fs,
-        XHR = PhiloGL.IO.XHR;
+        XHR = Octant.IO.XHR;
 
     new XHR.Group({
       urls: [vertexShaderURI, fragmentShaderURI],
@@ -2478,7 +2478,7 @@ $.splat = (function() {
     }).send();  
   };
 
-  PhiloGL.Program = Program;
+  Octant.Program = Program;
 
 })();
 
@@ -2490,7 +2490,7 @@ $.splat = (function() {
 
   var XHR = function(opt) {
     opt = $.merge({
-      url: 'http://sencha.com/',
+      url: 'http://octantjs.org/',
       method: 'GET',
       async: true,
       noCache: false,
@@ -2651,7 +2651,7 @@ $.splat = (function() {
 
   var JSONP = function(opt) {
     opt = $.merge({
-      url: 'http://sencha.com/',
+      url: 'http://octantjs.org/',
       data: {},
       noCache: false,
       onComplete: $.empty,
@@ -2672,7 +2672,7 @@ $.splat = (function() {
     //create source url
     var src = opt.url + 
       (opt.url.indexOf('?') > -1 ? '&' : '?') +
-      opt.callbackKey + '=PhiloGL.IO.JSONP.requests.request_' + index +
+      opt.callbackKey + '=Octant.IO.JSONP.requests.request_' + index +
       (data.length > 0 ? '&' + data : '');
     //create script
     var script = document.createElement('script');
@@ -2765,7 +2765,7 @@ $.splat = (function() {
   IO.JSONP = JSONP;
   IO.Images = Images;
   IO.Textures = Textures;
-  PhiloGL.IO = IO;
+  Octant.IO = IO;
 
 })();
 
@@ -2774,8 +2774,8 @@ $.splat = (function() {
 
 (function () {
   //Define some locals
-  var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+  var Vec3 = Octant.Vec3,
+      Mat4 = Octant.Mat4;
 
   //Camera class
   var Camera = function(fov, aspect, near, far, opt) {
@@ -2807,7 +2807,7 @@ $.splat = (function() {
   
   };
 
-  PhiloGL.Camera = Camera;
+  Octant.Camera = Camera;
 
 })();
 
@@ -2816,8 +2816,8 @@ $.splat = (function() {
 
 (function () {
   //Define some locals
-  var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4,
+  var Vec3 = Octant.Vec3,
+      Mat4 = Octant.Mat4,
       cos = Math.cos,
       sin = Math.sin,
       pi = Math.PI,
@@ -3071,7 +3071,7 @@ $.splat = (function() {
 
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
+      for (var i = 0, texs = this.textures, l = texs.length, mtexs = Octant.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           program.setUniform('hasTexture' + (i + 1), true);
           program.setUniform('sampler' + (i + 1), i);
@@ -3888,7 +3888,7 @@ $.splat = (function() {
   O3D.id = $.time();
 
   //Assign to namespace
-  PhiloGL.O3D = O3D;
+  Octant.O3D = O3D;
 
 })();
 
@@ -4015,7 +4015,7 @@ $.splat = (function() {
 
   ].join("\n");
 
-  PhiloGL.Shaders = Shaders;
+  Octant.Shaders = Shaders;
   
 })();
 
@@ -4024,8 +4024,8 @@ $.splat = (function() {
 
 (function () {
   //Define some locals
-  var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+  var Vec3 = Octant.Vec3,
+      Mat4 = Octant.Mat4;
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -4290,7 +4290,7 @@ $.splat = (function() {
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
-      var program = PhiloGL.Program.fromDefaultShaders();
+      var program = Octant.Program.fromDefaultShaders();
       //create framebuffer
       app.setFrameBuffer('$picking', {
         width: 1,
@@ -4406,7 +4406,7 @@ $.splat = (function() {
   Scene.MAX_TEXTURES = 3;
   Scene.MAX_POINT_LIGHTS = 50;
 
-  PhiloGL.Scene = Scene;
+  Octant.Scene = Scene;
 
 })();
 
@@ -4461,7 +4461,7 @@ $.splat = (function() {
     }
   };
 
-  PhiloGL.WorkerGroup = WorkerGroup;
+  Octant.WorkerGroup = WorkerGroup;
 
 })();
 
@@ -4625,7 +4625,7 @@ $.splat = (function() {
   }
   
 
-  PhiloGL.Fx = Fx;
+  Octant.Fx = Fx;
 
 })();
 
