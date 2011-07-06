@@ -148,8 +148,8 @@
           dy = dest.y - vec.y,
           dz = dest.z - vec.z;
       
-      return sqrt(dx * dx,
-                  dy * dy,
+      return sqrt(dx * dx +
+                  dy * dy +
                   dz * dz);
     },
 
