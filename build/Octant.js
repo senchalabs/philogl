@@ -959,23 +959,23 @@ $.splat = (function() {
     },
     
     n11: descriptor(0),
-    n12: descriptor(1),
-    n13: descriptor(2),
-    n14: descriptor(3),
+    n12: descriptor(4),
+    n13: descriptor(8),
+    n14: descriptor(12),
     
-    n21: descriptor(4),
+    n21: descriptor(1),
     n22: descriptor(5),
-    n23: descriptor(6),
-    n24: descriptor(7),
+    n23: descriptor(9),
+    n24: descriptor(13),
 
-    n31: descriptor(8),
-    n32: descriptor(9),
+    n31: descriptor(2),
+    n32: descriptor(6),
     n33: descriptor(10),
-    n34: descriptor(11),
+    n34: descriptor(14),
 
-    n41: descriptor(12),
-    n42: descriptor(13),
-    n43: descriptor(14),
+    n41: descriptor(3),
+    n42: descriptor(7),
+    n43: descriptor(11),
     n44: descriptor(15)
   
   });
@@ -1006,10 +1006,10 @@ $.splat = (function() {
 
     clone: function(dest) {
       if (dest.$$family) {
-        return new Mat4(dest[0], dest[1], dest[2], dest[3],
-                        dest[4], dest[5], dest[6], dest[7],
-                        dest[8], dest[9], dest[10], dest[11],
-                        dest[12], dest[13], dest[14], dest[15]);
+        return new Mat4(dest[0], dest[4], dest[8], dest[12],
+                        dest[1], dest[5], dest[9], dest[13],
+                        dest[2], dest[6], dest[10], dest[14],
+                        dest[3], dest[7], dest[11], dest[15]);
       } else {
         return new typedArray(dest);
       }
@@ -1021,20 +1021,20 @@ $.splat = (function() {
                         n41, n42, n43, n44) {
       
       dest[0 ] = n11;
-      dest[1 ] = n12;
-      dest[2 ] = n13;
-      dest[3 ] = n14;
-      dest[4 ] = n21;
+      dest[4 ] = n12;
+      dest[8 ] = n13;
+      dest[12] = n14;
+      dest[1 ] = n21;
       dest[5 ] = n22;
-      dest[6 ] = n23;
-      dest[7 ] = n24;
-      dest[8 ] = n31;
-      dest[9 ] = n32;
+      dest[9 ] = n23;
+      dest[13] = n24;
+      dest[2 ] = n31;
+      dest[6 ] = n32;
       dest[10] = n33;
-      dest[11] = n34;
-      dest[12] = n41;
-      dest[13] = n42;
-      dest[14] = n43;
+      dest[14] = n34;
+      dest[3 ] = n41;
+      dest[7 ] = n42;
+      dest[11] = n43;
       dest[15] = n44;
       
       return dest;
@@ -1050,9 +1050,9 @@ $.splat = (function() {
           vy = vec[1],
           vz = vec[2];
 
-      vec[0] = dest[0] * vx + dest[1] * vy + dest[2 ] * vz + dest[3 ];
-      vec[1] = dest[4] * vx + dest[5] * vy + dest[6 ] * vz + dest[7 ];
-      vec[2] = dest[8] * vx + dest[9] * vy + dest[10] * vz + dest[11];
+      vec[0] = dest[0] * vx + dest[4] * vy + dest[8 ] * vz + dest[12];
+      vec[1] = dest[1] * vx + dest[5] * vy + dest[9 ] * vz + dest[13];
+      vec[2] = dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14];
       return vec;
     },
 
@@ -1189,18 +1189,18 @@ $.splat = (function() {
           d43 = dest[14],
           d44 = dest[15];
       
-      dest[0] = d11*m11 + d21*m12 + d31*m13;
-      dest[1] = d12*m11 + d22*m12 + d32*m13;
-      dest[2] = d13*m11 + d23*m12 + d33*m13;
-      dest[3] = d14*m11 + d24*m12 + d34*m13;
+      dest[0 ] = d11*m11 + d21*m12 + d31*m13;
+      dest[1 ] = d12*m11 + d22*m12 + d32*m13;
+      dest[2 ] = d13*m11 + d23*m12 + d33*m13;
+      dest[3 ] = d14*m11 + d24*m12 + d34*m13;
 
-      dest[4] = d11*m21 + d21*m22 + d31*m23;
-      dest[5] = d12*m21 + d22*m22 + d32*m23;
-      dest[6] = d13*m21 + d23*m22 + d33*m23;
-      dest[7] = d14*m21 + d24*m22 + d34*m23;
+      dest[4 ] = d11*m21 + d21*m22 + d31*m23;
+      dest[5 ] = d12*m21 + d22*m22 + d32*m23;
+      dest[6 ] = d13*m21 + d23*m22 + d33*m23;
+      dest[7 ] = d14*m21 + d24*m22 + d34*m23;
 
-      dest[8] = d11*m31 + d21*m32 + d31*m33;
-      dest[9] = d12*m31 + d22*m32 + d32*m33;
+      dest[8 ] = d11*m31 + d21*m32 + d31*m33;
+      dest[9 ] = d12*m31 + d22*m32 + d32*m33;
       dest[10] = d13*m31 + d23*m32 + d33*m33;
       dest[11] = d14*m31 + d24*m32 + d34*m33;
 
@@ -1216,11 +1216,11 @@ $.splat = (function() {
       var d11 = dest[0 ],
           d12 = dest[1 ],
           d13 = dest[2 ],
-          d14 = dest[3],
+          d14 = dest[3 ],
           d21 = dest[4 ],
           d22 = dest[5 ],
           d23 = dest[6 ],
-          d24 = dest[7],
+          d24 = dest[7 ],
           d31 = dest[8 ],
           d32 = dest[9 ],
           d33 = dest[10],
@@ -1249,7 +1249,7 @@ $.splat = (function() {
       dest[4 ] = d11 * m21 + d21 * m22 + d31 * m23;
       dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
       dest[6 ] = d13 * m21 + d23 * m22 + d33 * m23;
-      dest[7] = d14 * m21 + d24 * m22 + d34 * m23;
+      dest[7 ] = d14 * m21 + d24 * m22 + d34 * m23;
       
       dest[8 ] = d11 * m31 + d21 * m32 + d31 * m33;
       dest[9 ] = d12 * m31 + d22 * m32 + d32 * m33;
@@ -1354,50 +1354,68 @@ $.splat = (function() {
       var y = Vec3.cross(z, x);
       y.$unit();
       return Mat4.set(dest, x[0], x[1], x[2], -x.dot(eye),
-                      y[0], y[1], y[2], -y.dot(eye),
-                      z[0], z[1], z[2], -z.dot(eye),
-                      0,   0,   0,   1);
+                            y[0], y[1], y[2], -y.dot(eye),
+                            z[0], z[1], z[2], -z.dot(eye),
+                            0,   0,   0,   1);
     },
 
     frustum: function(dest, left, right, bottom, top, near, far) {
-      var x = 2 * near / (right - left),
-      y = 2 * near / (top - bottom),
-      a = (right + left) / (right - left),
-      b = (top + bottom) / (top - bottom),
-      c = - (far + near) / (far - near),
-      d = -2 * far * near / (far - near);
+      var rl = right - left,
+          tb = top - bottom,
+          fn = far - near;
+          
+      dest[0] = (near * 2) / rl;
+      dest[1] = 0;
+      dest[2] = 0;
+      dest[3] = 0;
+      dest[4] = 0;
+      dest[5] = (near * 2) / tb;
+      dest[6] = 0;
+      dest[7] = 0;
+      dest[8] = (right + left) / rl;
+      dest[9] = (top + bottom) / tb;
+      dest[10] = -(far + near) / fn;
+      dest[11] = -1;
+      dest[12] = 0;
+      dest[13] = 0;
+      dest[14] = -(far * near * 2) / fn;
+      dest[15] = 0;
 
-      return Mat4.set(dest, x, 0, a, 0,
-                      0, y, b, 0,
-                      0, 0, c, d,
-                      0, 0, -1,0);
-
+      return dest;
     },
 
     perspective: function(dest, fov, aspect, near, far) {
       var ymax = near * tan(fov * pi / 360),
-      ymin = -ymax,
-      xmin = ymin * aspect,
-      xmax = ymax * aspect;
+          ymin = -ymax,
+          xmin = ymin * aspect,
+          xmax = ymax * aspect;
 
       return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
     },
 
     ortho: function(dest, left, right, bottom, top, near, far) {
-      var w = right - left,
-      h = top - bottom,
-      p = far - near,
-      x = (right + left) / w,
-      y = (top + bottom) / h,
-      z = (far + near) / p,
-      w2 =  2 / w,
-      h2 =  2 / h,
-      p2 = -2 / p;
+      var rl = right - left,
+          tb = top - bottom,
+          fn = far - near;
 
-      return Mat4.set(dest, w2, 0, 0, -x,
-                      0, h2, 0, -y,
-                      0, 0, p2, -z,
-                      0, 0,  0,  1);
+      dest[0] = 2 / rl;
+      dest[1] = 0;
+      dest[2] = 0;
+      dest[3] = 0;
+      dest[4] = 0;
+      dest[5] = 2 / tb;
+      dest[6] = 0;
+      dest[7] = 0;
+      dest[8] = 0;
+      dest[9] = 0;
+      dest[10] = -2 / fn;
+      dest[11] = 0;
+      dest[12] = -(left + right) / rl;
+      dest[13] = -(top + bottom) / tb;
+      dest[14] = -(far + near) / fn;
+      dest[15] = 1;
+
+      return dest;
     },
 
     toFloat32Array: function(dest) {
@@ -1406,21 +1424,38 @@ $.splat = (function() {
           if (!ans) return dest;
           
           ans[0] = dest[0];
-          ans[1] = dest[4];
-          ans[2] = dest[8];
-          ans[3] = dest[12];
-          ans[4] = dest[1];
+          ans[1] = dest[1];
+          ans[2] = dest[2];
+          ans[3] = dest[3];
+          ans[4] = dest[4];
           ans[5] = dest[5];
-          ans[6] = dest[9];
-          ans[7] = dest[13];
-          ans[8] = dest[2];
-          ans[9] = dest[6];
+          ans[6] = dest[6];
+          ans[7] = dest[7];
+          ans[8] = dest[8];
+          ans[9] = dest[9];
           ans[10] = dest[10];
-          ans[11] = dest[14];
-          ans[12] = dest[3];
-          ans[13] = dest[7];
-          ans[14] = dest[11];
+          ans[11] = dest[11];
+          ans[12] = dest[12];
+          ans[13] = dest[13];
+          ans[14] = dest[14];
           ans[15] = dest[15];
+          
+          // ans[0] = dest[0];
+          // ans[1] = dest[4];
+          // ans[2] = dest[8];
+          // ans[3] = dest[12];
+          // ans[4] = dest[1];
+          // ans[5] = dest[5];
+          // ans[6] = dest[9];
+          // ans[7] = dest[13];
+          // ans[8] = dest[2];
+          // ans[9] = dest[6];
+          // ans[10] = dest[10];
+          // ans[11] = dest[14];
+          // ans[12] = dest[3];
+          // ans[13] = dest[7];
+          // ans[14] = dest[11];
+          // ans[15] = dest[15];
 
           return ans;
     }
