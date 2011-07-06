@@ -39,6 +39,8 @@
       this.texCoords = $.type(opt.texCoords) == 'object'? opt.texCoords : flatten(opt.texCoords);
     }
 
+    //whether the vertices and normals should be updated before rendering
+    this.dynamic = opt.dynamic || false;
     //extra uniforms
     this.uniforms = opt.uniforms || {};
     //extra attribute descriptors
@@ -62,6 +64,9 @@
     this.scale = new Vec3(1, 1, 1);
     this.matrix = new Mat4;
     
+    //whether the vertices, normals etc. have changed and need updating
+    this.dirty = false;
+
     //Set a color per vertex if this is not the case
     this.normalizeColors();
 
@@ -111,7 +116,8 @@
     setVertices: function(program, force) {
       if (!this.vertices) return;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
+        this.vertices = flatten(this.vertices);
         program.setBuffer('vertices-' + this.id, {
           attribute: 'position',
           value: this.toFloat32Array('vertices'),
@@ -129,7 +135,8 @@
     setNormals: function(program, force) {
       if (!this.normals) return;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
+        this.normals = flatten(this.normals);
         program.setBuffer('normals-' + this.id, {
           attribute: 'normal',
           value: this.toFloat32Array('normals'),
@@ -147,7 +154,8 @@
     setIndices: function(program, force) {
       if (!this.indices) return;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
+        this.indices = flatten(this.indices);
         program.setBuffer('indices-' + this.id, {
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           drawType: gl.STATIC_DRAW,
@@ -166,7 +174,8 @@
     setPickingColors: function(program, force) {
       if (!this.pickingColors) return;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
+        this.pickingColors = flatten(this.pickingColors);
         program.setBuffer('pickingColors-' + this.id, {
           attribute: 'pickingColor',
           value: this.toFloat32Array('pickingColors'),
@@ -184,7 +193,8 @@
     setColors: function(program, force) {
       if (!this.colors) return;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
+        this.colors = flatten(this.colors);
         program.setBuffer('colors-' + this.id, {
           attribute: 'color',
           value: this.toFloat32Array('colors'),
@@ -204,7 +214,7 @@
 
       var id = this.id;
 
-      if (force || this.dynamic) {
+      if (force || this.dynamic || this.dirty) {
         //If is an object containing textureName -> textureCoordArray
         //Set all textures, samplers and textureCoords.
         if ($.type(this.texCoords) == 'object') {
@@ -217,6 +227,7 @@
           });
         //An array of textureCoordinates
         } else {
+          this.texCoords = flatten(this.texCoords);
           program.setBuffer('texCoords-' + id, {
             attribute: 'texCoord1',
             value: this.toFloat32Array('texCoords'),
@@ -266,6 +277,10 @@
       matrix.$translate(pos.x, pos.y, pos.z);
       matrix.$rotateXYZ(rot.x, rot.y, rot.z);
       matrix.$scale(scale.x, scale.y, scale.z);
+    },
+
+    updateCoordinates: function() {
+      this.dirty = true;
     },
 
     toFloat32Array: function(name) {
