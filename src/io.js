@@ -159,9 +159,9 @@
 
   XHR.Group.prototype = {
     send: function() {
-      this.reqs.forEach(function(req) {
-        req.send();
-      });
+      for (var i = 0, reqs = this.reqs, l = reqs.length; i < l; ++i) {
+        reqs[i].send();
+      }
     }
   };
 

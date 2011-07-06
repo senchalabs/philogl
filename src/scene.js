@@ -198,7 +198,8 @@
       !multiplePrograms && this.beforeRender(renderProgram || program);
       
       //Go through each model and render it.
-      this.models.forEach(function(elem, i) {
+      for (var i = 0, models = this.models, l = models.length; i < l; ++i) {
+        var elem = models[i];
         if (elem.display) {
           var program = renderProgram || this.getProgram(elem);
           //Setup the beforeRender method for each object
@@ -210,7 +211,7 @@
           options.onAfterRender(elem, i);
           elem.onAfterRender(program, camera);
         }
-      }, this);
+      }
     },
 
     renderToTexture: function(name, opt) {
