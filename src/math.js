@@ -533,20 +533,20 @@
           d43 = dest[14],
           d44 = dest[15];
       
-      dest[0 ] = d11*m11 + d21*m12 + d31*m13;
-      dest[1 ] = d12*m11 + d22*m12 + d32*m13;
-      dest[2 ] = d13*m11 + d23*m12 + d33*m13;
-      dest[3 ] = d14*m11 + d24*m12 + d34*m13;
+      dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
+      dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
+      dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
+      dest[3 ] = d14 * m11 + d24 * m12 + d34 * m13;
 
-      dest[4 ] = d11*m21 + d21*m22 + d31*m23;
-      dest[5 ] = d12*m21 + d22*m22 + d32*m23;
-      dest[6 ] = d13*m21 + d23*m22 + d33*m23;
-      dest[7 ] = d14*m21 + d24*m22 + d34*m23;
+      dest[4 ] = d11 * m21 + d21 * m22 + d31 * m23;
+      dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
+      dest[6 ] = d13 * m21 + d23 * m22 + d33 * m23;
+      dest[7 ] = d14 * m21 + d24 * m22 + d34 * m23;
 
-      dest[8 ] = d11*m31 + d21*m32 + d31*m33;
-      dest[9 ] = d12*m31 + d22*m32 + d32*m33;
-      dest[10] = d13*m31 + d23*m32 + d33*m33;
-      dest[11] = d14*m31 + d24*m32 + d34*m33;
+      dest[8 ] = d11 * m31 + d21 * m32 + d31 * m33;
+      dest[9 ] = d12 * m31 + d22 * m32 + d32 * m33;
+      dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
+      dest[11] = d14 * m31 + d24 * m32 + d34 * m33;
 
       return dest;
     },
@@ -576,13 +576,13 @@
           sry = sin(ry),
           srz = sin(rz),
           m11 =  cry * crz,
-          m12 = -crx * srz + srx * sry * crz,
-          m13 =  srx * srz + crx * sry * crz,
-          m21 =  cry * srz, 
+          m21 = -crx * srz + srx * sry * crz,
+          m31 =  srx * srz + crx * sry * crz,
+          m12 =  cry * srz, 
           m22 =  crx * crz + srx * sry * srz, 
-          m23 = -srx * crz + crx * sry * srz, 
-          m31 = -sry,
-          m32 =  srx * cry,
+          m32 = -srx * crz + crx * sry * srz, 
+          m13 = -sry,
+          m23 =  srx * cry,
           m33 =  crx * cry;
 
       dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
@@ -647,10 +647,10 @@
     },
 
     $invert: function(dest) {
-      var x0 = dest[0],  x1 = dest[4],  x2 = dest[8],  x3 = dest[12],
-          x4 = dest[1],  x5 = dest[5],  x6 = dest[9],  x7 = dest[13],
-          x8 = dest[2],  x9 = dest[6], x10 = dest[10], x11 = dest[14],
-          x12 = dest[3], x13 = dest[7], x14 = dest[11], x15 = dest[15];
+      var x0 = dest[0],  x1 = dest[1],  x2 = dest[2],  x3 = dest[3],
+          x4 = dest[4],  x5 = dest[5],  x6 = dest[6],  x7 = dest[7],
+          x8 = dest[8],  x9 = dest[9], x10 = dest[10], x11 = dest[11],
+          x12 = dest[12], x13 = dest[13], x14 = dest[14], x15 = dest[15];
 
       var a0 = x0*x5 - x1*x4,
           a1 = x0*x6 - x2*x4,
@@ -783,23 +783,6 @@
           ans[13] = dest[13];
           ans[14] = dest[14];
           ans[15] = dest[15];
-          
-          // ans[0] = dest[0];
-          // ans[1] = dest[4];
-          // ans[2] = dest[8];
-          // ans[3] = dest[12];
-          // ans[4] = dest[1];
-          // ans[5] = dest[5];
-          // ans[6] = dest[9];
-          // ans[7] = dest[13];
-          // ans[8] = dest[2];
-          // ans[9] = dest[6];
-          // ans[10] = dest[10];
-          // ans[11] = dest[14];
-          // ans[12] = dest[3];
-          // ans[13] = dest[7];
-          // ans[14] = dest[11];
-          // ans[15] = dest[15];
 
           return ans;
     }

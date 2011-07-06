@@ -92,7 +92,7 @@ models.earth = new O3D.Sphere({
   textures: ['img/earth3-specular.gif'],
   program: 'earth'
 });
-models.earth.rotation.set(Math.PI + 0.3, 0,  0);
+models.earth.rotation.set(Math.PI - 0.3, 0,  0);
 models.earth.update();
 
 //Create airline routes model
@@ -109,7 +109,7 @@ models.airlines = new O3D.Model({
     }
   }
 });
-models.airlines.rotation.set(0.3, 0, 0);
+models.airlines.rotation.set(-0.3, 0, 0);
 models.airlines.update();
 
 //Create cities layer model and create Octant app.
@@ -139,7 +139,7 @@ citiesWorker.onmessage = function(e) {
         }
       }
     }));
-    models.cities.rotation.set(0.3, 0, 0);
+    models.cities.rotation.set(-0.3, 0, 0);
     models.cities.update();
 
     Log.write('Loading assets...');
@@ -399,14 +399,14 @@ function createApp() {
             sin = Math.sin;
 
         erot.y += -(pos.x - e.x) / 100;
-        crot.y += (pos.x - e.x) / 100;
-        arot.y += (pos.x - e.x) / 100;
+        crot.y += -(pos.x - e.x) / 100;
+        arot.y += -(pos.x - e.x) / 100;
         
         earth.update();
         cities.update();
         airlines.update();
         
-        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, sin(erot.y)]);
+        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, -sin(erot.y)]);
         cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(crot.y), 0, sin(crot.y)]);
         airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(arot.y), 0, sin(arot.y)]);
         
