@@ -203,8 +203,8 @@
           dy = dest[1] - vec[1],
           dz = dest[2] - vec[2];
       
-      return sqrt(dx * dx,
-                  dy * dy,
+      return sqrt(dx * dx + 
+                  dy * dy + 
                   dz * dz);
     },
 
