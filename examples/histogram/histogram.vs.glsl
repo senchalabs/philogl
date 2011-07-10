@@ -9,9 +9,9 @@ uniform float to;
 uniform float delta;
 attribute float histogram;
 
-uniform mat4 modelViewMatrix;
+uniform mat4 worldMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 normalMatrix;
+uniform mat4 worldInverseTransposeMatrix;
 uniform float size;
 
 varying vec4 vTransformedNormal;
@@ -50,8 +50,8 @@ void main(void) {
                        r * sin(theta) * sin(phi), 
                        r * cos(theta));
   
-  vPosition = modelViewMatrix * vec4(translation + position, 1.0);
-  vTransformedNormal = normalMatrix * vec4(sphereNormals, 1.0);
+  vPosition = worldMatrix * vec4(translation + position, 1.0);
+  vTransformedNormal = worldInverseTransposeMatrix * vec4(sphereNormals, 1.0);
   vColor = colors;
   gl_Position = projectionMatrix * vPosition;
 }

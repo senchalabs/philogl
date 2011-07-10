@@ -129,7 +129,7 @@
           pointSpecularColors = [];
       
       //Normalize lighting direction vector
-      dir = Vec3.unit([dir.x, dir.y, dir.z]).$scale(-1);
+      dir = new Vec3(dir.x, dir.y, dir.z).$unit().$scale(-1);
       
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
@@ -242,7 +242,7 @@
           object = obj.matrix,
           world = view.mulMat4(object),
           worldInverse = world.invert(),
-          worldInverseTransposeMatrix= worldInverse.transpose();
+          worldInverseTranspose = worldInverse.transpose();
 
       obj.setUniforms(program);
       obj.setAttributes(program);

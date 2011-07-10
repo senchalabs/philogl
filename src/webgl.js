@@ -322,7 +322,8 @@
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
-            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
+//            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
+            gl.texImage2D(textureTarget[i], 0, format, format, gl.UNSIGNED_BYTE, value[i]);
           }
         } else {
           gl.texImage2D(textureTarget, 0, format, format, gl.UNSIGNED_BYTE, value);

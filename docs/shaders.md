@@ -56,7 +56,7 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
       } else {
         vec3 plightDirection;
         vec3 pointWeight = vec3(0.0, 0.0, 0.0);
-        vec4 transformedNormal = worldInverseTransposeMatrix* vec4(normal, 1.0);
+        vec4 transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
         float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
         for (int i = 0; i < LIGHT_MAX; i++) {
           if (i < numberPoints) {
