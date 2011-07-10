@@ -59,7 +59,7 @@ Creates a camera with position (0, 0, 10) pointing to a target in (0, 0, 0).
 Camera Method: update {#Camera:update}
 ------------------------------------
 
-Updates the Camera *modelView* matrix with the information provided on *position* and *target* respectively.
+Updates the Camera *view* matrix with the information provided on *position* and *target* respectively.
 
 ### Syntax:
 

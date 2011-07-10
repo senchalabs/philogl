@@ -105,7 +105,7 @@ function webGLStart() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      camera.modelView.id();
+      camera.view.id();
 
       //set buffers with cube data
       program.setBuffers({
@@ -133,7 +133,7 @@ function webGLStart() {
         //update element matrix
         cube.update();
         //get new view matrix out of element and camera matrices
-        view.mulMat42(camera.modelView, cube.matrix);
+        view.mulMat42(camera.view, cube.matrix);
         //set attributes, indices and textures
         program.setBuffer('aVertexPosition')
               .setBuffer('aTextureCoord')

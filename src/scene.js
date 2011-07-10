@@ -95,9 +95,18 @@
       this.setupLighting(program);
       this.setupEffects(program);
       //Set Camera view and projection matrix
-      var camera = this.camera;
-      program.setUniform('projectionMatrix', camera.projection);
-      program.setUniform('viewMatrix', camera.modelView);
+      var camera = this.camera,
+          pos = camera.position,
+          view = camera.view,
+          projection = camera.projection;
+
+      program.setUniforms({
+        cameraPosition: [pos.x, pos.y, pos.z],
+        projectionMatrix: projection,
+        viewMatrix: view,
+        viewProjectionMatrix: view.mulMat4(projection),
+        viewInverseMatrix: view.invert()
+      });
     },
 
     //Setup the lighting system: ambient, directional, point lights.
@@ -228,11 +237,17 @@
 
     renderObject: function(obj, program) {
       var camera = this.camera,
-          view = new Mat4;
+          view = camera.view,
+          projection = camera.projection,
+          object = obj.matrix,
+          world = view.mulMat4(object),
+          worldInverse = world.invert(),
+          worldInverseTransposeMatrix= worldInverse.transpose();
 
       obj.setUniforms(program);
       obj.setAttributes(program);
       obj.setShininess(program);
+      obj.setReflection(program);
       obj.setVertices(program);
       obj.setColors(program);
       obj.setPickingColors(program);
@@ -241,10 +256,14 @@
       obj.setTexCoords(program);
       obj.setIndices(program);
 
-      //Now set modelView and normal matrices
-      view.mulMat42(camera.modelView, obj.matrix);
-      program.setUniform('modelViewMatrix', view);
-      program.setUniform('normalMatrix', view.invert().$transpose());
+      //Now set view and normal matrices
+      program.setUniforms({
+        objectMatrix: object,
+        worldMatrix: world,
+        worldInverseMatrix: worldInverse,
+        worldInverseTransposeMatrix: worldInverseTranspose
+//        worldViewProjection:  view.mulMat4(object).$mulMat4(view.mulMat4(projection))
+      });
       
       //Draw
       //TODO(nico): move this into O3D, but, somehow, abstract the gl.draw* methods inside that object.

@@ -29,10 +29,10 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
     attribute vec4 pickingColor;
     attribute vec2 texCoord1;
     
-    uniform mat4 modelViewMatrix;
+    uniform mat4 viewMatrix;
     uniform mat4 viewMatrix;
     uniform mat4 projectionMatrix;
-    uniform mat4 normalMatrix;
+    uniform mat4 worldInverseTranspose;
 
     uniform bool enableLights;
     uniform vec3 ambientColor;
@@ -49,14 +49,14 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
     varying vec3 lightWeighting;
     
     void main(void) {
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      vec4 mvPosition = viewMatrix * vec4(position, 1.0);
       
       if(!enableLights) {
         lightWeighting = vec3(1.0, 1.0, 1.0);
       } else {
         vec3 plightDirection;
         vec3 pointWeight = vec3(0.0, 0.0, 0.0);
-        vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+        vec4 transformedNormal = worldInverseTransposeMatrix* vec4(normal, 1.0);
         float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
         for (int i = 0; i < LIGHT_MAX; i++) {
           if (i < numberPoints) {
@@ -73,7 +73,7 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
       vColor = color;
       vPickingColor = pickingColor;
       vTexCoord = texCoord1;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0);
     }
 
 ### Syntax:

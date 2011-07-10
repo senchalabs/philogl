@@ -46,13 +46,13 @@ function webGLStart() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      camera.modelView.id();
+      camera.view.id();
       
       function setupElement(elem) {
         //update element matrix
         elem.update();
         //get new view matrix out of element and camera matrices
-        view.mulMat42(camera.modelView, elem.matrix);
+        view.mulMat42(camera.view, elem.matrix);
         //set buffers with element data
         program.setBuffers({
           'aVertexPosition': {

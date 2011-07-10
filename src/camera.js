@@ -23,7 +23,7 @@
     this.up = up && new Vec3(up.x, up.y, up.z) || new Vec3(0, 1, 0);
     
     this.projection = new Mat4().perspective(fov, aspect, near, far);
-    this.modelView = new Mat4;
+    this.view = new Mat4;
 
   };
 
@@ -31,7 +31,7 @@
     
     update: function() {
       this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
-      this.modelView.lookAt(this.position, this.target, this.up);  
+      this.view.lookAt(this.position, this.target, this.up);  
     }
   
   };

@@ -55,6 +55,9 @@
     this.colors = opt.colors;
     this.indices = opt.indices;
     this.shininess = opt.shininess || 0;
+    this.reflection = opt.reflection || 0;
+    this.refraction = opt.refraction || 0;
+
     if (opt.texCoords) {
       this.texCoords = opt.texCoords;
     }
@@ -124,6 +127,19 @@
 
     setShininess: function(program) {
       program.setUniform('shininess', this.shininess || 0);
+    },
+    
+    setReflection: function(program) {
+      if (this.reflection || this.refraction) {
+        program.setUniforms({
+          useReflection: true,
+          refraction: this.refraction,
+          reflection: this.reflection,
+          combine: 0
+        });
+      } else {
+        program.setUniform('useReflection', false);
+      }
     },
     
     setVertices: function(program, force) {
@@ -258,14 +274,23 @@
 
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
+      var dist = 5;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = Octant.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
-          program.setUniform('hasTexture' + (i + 1), true);
-          program.setUniform('sampler' + (i + 1), i);
-          program.setTexture(texs[i], gl['TEXTURE' + i]);
+          var isCube = app.textureMemo[texs[i]].isCube;
+          if (isCube) {
+            program.setUniform('hasTextureCube' + (i + 1), true);
+            program.setTexture(texs[i], gl['TEXTURE' + (i + dist)]);
+          } else {
+            program.setUniform('hasTexture' + (i + 1), true);
+            program.setTexture(texs[i], gl['TEXTURE' + i]);
+          }
         } else {
+          program.setUniform('hasTextureCube' + (i + 1), false);
           program.setUniform('hasTexture' + (i + 1), false);
         }
+        program.setUniform('sampler' + (i + 1), i);
+        program.setUniform('samplerCube' + (i + 1), i + dist);
       }
     }
  };

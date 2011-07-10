@@ -292,13 +292,17 @@
 
       }, this.textureMemo[name] || {}, opt || {});
 
-      var textureType = ('textureType' in opt)? opt.textureType : gl.TEXTURE_2D,
+      var textureType = ('textureType' in opt)? gl.get(opt.textureType) : gl.TEXTURE_2D,
+          textureTarget = ('textureTarget' in opt)? gl.get(opt.textureTarget) : textureType,
+          isCube = textureType == gl.TEXTURE_CUBE_MAP,
           hasTexture = name in this.textures,
           texture = hasTexture? this.textures[name] : gl.createTexture(),
           pixelStore = opt.pixelStore,
           parameters = opt.parameters,
           data = opt.data,
-          hasValue = !!opt.data.value;
+          value = data.value,
+          format = data.format,
+          hasValue = !!data.value;
 
       //save texture
       if (!hasTexture) {
@@ -312,11 +316,20 @@
           gl.pixelStorei(opt.name, opt.value);
         });
       }
+      
       //load texture
       if (hasValue) {
-        gl.texImage2D(textureType, 0, data.format, data.format, gl.UNSIGNED_BYTE, data.value);
+        //beware that we can be loading multiple textures (i.e. it could be a cubemap)
+        if (isCube) {
+          for (var i = 0; i < 6; ++i) {
+            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
+          }
+        } else {
+          gl.texImage2D(textureTarget, 0, format, format, gl.UNSIGNED_BYTE, value);
+        }
+      //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
-        gl.texImage2D(textureType, 0, data.format, data.width, data.height, data.border, data.format, gl.UNSIGNED_BYTE, null);
+        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, gl.UNSIGNED_BYTE, null); 
       }
       //set texture parameters
       if (!hasTexture) {
@@ -329,6 +342,8 @@
           }
         });
       }
+      //remember whether the texture is a cubemap or not
+      opt.isCube = isCube;
       //set default options so we don't have to next time.
       delete opt.data;
       this.textureMemo[name] = opt;

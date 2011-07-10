@@ -227,7 +227,7 @@ function webGLStart() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      camera.modelView.id();
+      camera.view.id();
       
       //Add object to our default scene
       scene.add(cube);

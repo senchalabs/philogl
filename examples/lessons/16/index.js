@@ -200,7 +200,7 @@ function webGLStart() {
         outerCamera.update();
         innerCamera.update();
       
-        outerCamera.modelView.$translate(0, -0.5, 0);
+        outerCamera.view.$translate(0, -0.5, 0);
         
         function drawInnerScene() {
           program.setFrameBuffer('monitor', true);
