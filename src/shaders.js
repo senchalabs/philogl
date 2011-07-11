@@ -40,7 +40,6 @@
     "uniform vec3 pointColor[LIGHT_MAX];",
     "uniform int numberPoints;",
     //reflection / refraction configuration
-		"uniform float refraction;",
 		"uniform bool useReflection;",
     //varyings
 		"varying vec3 vReflection;",
@@ -111,7 +110,7 @@
     "uniform vec3 pickColor;",
 		//reflection / refraction configs
 		"uniform float reflection;",
-		"uniform int combine;",
+		"uniform float refraction;",
     //fog configuration
     "uniform bool hasFog;",
     "uniform vec3 fogColor;",
@@ -128,13 +127,15 @@
       //has cube texture then apply reflection
      "if (hasTextureCube1) {",
        "vec3 nReflection = normalize(vReflection);",
-       "vec3 reflectionValue = -reflect(nReflection, vNormal.xyz);",
-       "vec4 cubeColor = textureCube(samplerCube1, reflectionValue);",
-        "if (true || combine == 1) {",
-          "gl_FragColor = vec4(mix(gl_FragColor.xyz, cubeColor.xyz, reflection), 1.0);",
-        "} else {",
-          "gl_FragColor = gl_FragColor * cubeColor;",
-        "}",
+       "vec3 reflectionValue;",
+       "if (refraction > 0.0) {",
+        "reflectionValue = refract(nReflection, vNormal.xyz, refraction);",
+       "} else {",
+        "reflectionValue = -reflect(nReflection, vNormal.xyz);",
+       "}",
+       //TODO(nico): check whether this is right.
+       "vec4 cubeColor = textureCube(samplerCube1, vec3(-reflectionValue.x, -reflectionValue.y, reflectionValue.z));",
+       "gl_FragColor = vec4(mix(gl_FragColor.xyz, cubeColor.xyz, reflection), 1.0);",
      "}",
       //set picking
       "if (enablePicking) {",

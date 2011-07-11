@@ -181,7 +181,7 @@ this.Octant = null;
 //Unpacks the submodules to the global space.
 Octant.unpack = function(branch) {
   branch = branch || globalContext;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx'].forEach(function(module) {
+  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
       branch[module] = Octant[module];
   });
 };
@@ -2104,6 +2104,9 @@ $.splat = (function() {
           this.callbacks.onMouseEnter(e, this.hovered);
         }
       }
+      if (!this.opt.picking) {
+        this.callbacks.onMouseMove(e);
+      }
     },
     
     mousewheel: function(e) {
@@ -2819,23 +2822,41 @@ $.splat = (function() {
         target = opt.target,
         up = opt.up;
 
+    this.type = opt.type ? opt.type : 'perspective';
     this.fov = fov;
     this.near = near;
     this.far = far;
     this.aspect = aspect;
-    this.position = pos && new Vec3(pos.x, pos.y, pos.z) || new Vec3;
-    this.target = target && new Vec3(target.x, target.y, target.z) || new Vec3;
+    this.position = pos && new Vec3(pos.x, pos.y, pos.z) || new Vec3();
+    this.target = target && new Vec3(target.x, target.y, target.z) || new Vec3();
     this.up = up && new Vec3(up.x, up.y, up.z) || new Vec3(0, 1, 0);
-    
-    this.projection = new Mat4().perspective(fov, aspect, near, far);
-    this.view = new Mat4;
+    if (this.type == 'perspective') {
+      this.projection = new Mat4().perspective(fov, aspect, near, far);
+    } else {
+      var ymax = near * Math.tan(fov * Math.PI / 360),
+          ymin = -ymax,
+          xmin = ymin * aspect,
+          xmax = ymax * aspect;
+
+      this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, near, far);
+    }
+    this.view = new Mat4();
 
   };
 
   Camera.prototype = {
     
     update: function() {
-      this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
+      if (this.type == 'perspective') {
+        this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
+      } else {
+        var ymax = this.near * Math.tan(this.fov * Math.PI / 360),
+            ymin = -ymax,
+            xmin = ymin * this.aspect,
+            xmax = ymax * this.aspect;
+
+        this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, this.near, this.far);
+      }
       this.view.lookAt(this.position, this.target, this.up);  
     }
   
@@ -2981,8 +3002,7 @@ $.splat = (function() {
         program.setUniforms({
           useReflection: true,
           refraction: this.refraction,
-          reflection: this.reflection,
-          combine: 0
+          reflection: this.reflection
         });
       } else {
         program.setUniform('useReflection', false);
@@ -3993,7 +4013,6 @@ $.splat = (function() {
     "uniform vec3 pointColor[LIGHT_MAX];",
     "uniform int numberPoints;",
     //reflection / refraction configuration
-		"uniform float refraction;",
 		"uniform bool useReflection;",
     //varyings
 		"varying vec3 vReflection;",
@@ -4064,7 +4083,7 @@ $.splat = (function() {
     "uniform vec3 pickColor;",
 		//reflection / refraction configs
 		"uniform float reflection;",
-		"uniform int combine;",
+		"uniform float refraction;",
     //fog configuration
     "uniform bool hasFog;",
     "uniform vec3 fogColor;",
@@ -4081,13 +4100,15 @@ $.splat = (function() {
       //has cube texture then apply reflection
      "if (hasTextureCube1) {",
        "vec3 nReflection = normalize(vReflection);",
-       "vec3 reflectionValue = -reflect(nReflection, vNormal.xyz);",
-       "vec4 cubeColor = textureCube(samplerCube1, reflectionValue);",
-        "if (true || combine == 1) {",
-          "gl_FragColor = vec4(mix(gl_FragColor.xyz, cubeColor.xyz, reflection), 1.0);",
-        "} else {",
-          "gl_FragColor = gl_FragColor * cubeColor;",
-        "}",
+       "vec3 reflectionValue;",
+       "if (refraction > 0.0) {",
+        "reflectionValue = refract(nReflection, vNormal.xyz, refraction);",
+       "} else {",
+        "reflectionValue = -reflect(nReflection, vNormal.xyz);",
+       "}",
+       //TODO(nico): check whether this is right.
+       "vec4 cubeColor = textureCube(samplerCube1, vec3(-reflectionValue.x, -reflectionValue.y, reflectionValue.z));",
+       "gl_FragColor = vec4(mix(gl_FragColor.xyz, cubeColor.xyz, reflection), 1.0);",
      "}",
       //set picking
       "if (enablePicking) {",
@@ -4159,7 +4180,7 @@ $.splat = (function() {
   };
 
   Scene.prototype = {
-    
+    //Add and remove objects
     add: function() {
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
@@ -4211,14 +4232,17 @@ $.splat = (function() {
       var camera = this.camera,
           pos = camera.position,
           view = camera.view,
-          projection = camera.projection;
+          projection = camera.projection,
+          viewProjection = view.mulMat4(projection),
+          viewProjectionInverse = viewProjection.invert();
 
       program.setUniforms({
         cameraPosition: [pos.x, pos.y, pos.z],
         projectionMatrix: projection,
         viewMatrix: view,
-        viewProjectionMatrix: view.mulMat4(projection),
-        viewInverseMatrix: view.invert()
+        viewProjectionMatrix: viewProjection,
+        viewInverseMatrix: view.invert(),
+        viewProjectionInverseMatrix: viewProjectionInverse
       });
     },
 
@@ -4336,6 +4360,7 @@ $.splat = (function() {
       }
     },
 
+    //renders the scene to a specified texture
     renderToTexture: function(name, opt) {
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
@@ -4348,6 +4373,7 @@ $.splat = (function() {
       gl.bindTexture(texMemo.textureType, null);
     },
 
+    //renders one model.
     renderObject: function(obj, program) {
       var camera = this.camera,
           view = camera.view,
@@ -4515,7 +4541,7 @@ $.splat = (function() {
     }
   };
   
-  Scene.MAX_TEXTURES = 3;
+  Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
 
   Octant.Scene = Scene;
@@ -4739,6 +4765,80 @@ $.splat = (function() {
 
   Octant.Fx = Fx;
 
+})();
+
+//media.js
+//media has utility functions for image, video and audio manipulation (and
+//maybe others like device, etc).
+(function() {
+  var Media = {};
+
+  var Image = function() {};
+  //post process an image by setting it to a texture with a specified fragment
+  //and vertex shader.
+  Image.postProcess = function(opt) {
+    var program = app.program[opt.program],
+        textures = Array.isArray(opt.fromTexture) ? opt.fromTexture : [opt.fromTexture],
+        framebuffer = opt.toFrameBuffer,
+        screen = !!opt.toScreen,
+        width = opt.width || app.canvas.width,
+        height = opt.height || app.canvas.height,
+        plane = new Octant.O3D.Plane({
+          type: 'x,y',
+          xlen: 1,
+          ylen: 1,
+          offset: 0,
+          textures: textures,
+          program: opt.program
+        }),
+        camera = new Octant.Camera(45, 1, 0.1, 100, {
+          position: { x: 0, y: 0, z: 1 }
+        }),
+        scene = new Octant.Scene(program, camera);
+
+    camera.update();
+
+    if (framebuffer) {
+      //create framebuffer
+      if (!(framebuffer in app.frameBufferMemo)) {
+        app.setFrameBuffer(framebuffer, {
+          width: width,
+          height: height,
+          bindToTexture: {
+            parameters: [{
+              name: 'TEXTURE_MAG_FILTER',
+              value: 'LINEAR'
+            }, {
+              name: 'TEXTURE_MIN_FILTER',
+              value: 'LINEAR',
+              generateMipmap: false
+            }]
+          },
+          bindToRenderBuffer: true
+        });
+      }
+      program.use();
+      app.setFrameBuffer(framebuffer, true);
+      gl.viewport(0, 0, width, height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      scene.add(plane);
+      program.setUniforms(opt.uniforms || {});
+      scene.renderToTexture(framebuffer);
+      app.setFrameBuffer(framebuffer, false);
+    } else if (screen) {
+      program.use();
+      gl.viewport(0, 0, width, height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      scene.add(plane);
+      program.setUniforms(opt.uniforms || {});
+      scene.render();
+    }
+
+    return this;
+  };
+
+  Media.Image = Image;
+  Octant.Media = Media;
 })();
 
 })();

@@ -134,8 +134,7 @@
         program.setUniforms({
           useReflection: true,
           refraction: this.refraction,
-          reflection: this.reflection,
-          combine: 0
+          reflection: this.reflection
         });
       } else {
         program.setUniform('useReflection', false);

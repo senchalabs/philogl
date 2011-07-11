@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Octant - Quaternion Julia Set</title>
+    <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" media="all" type="text/css" href="style.css" />
+    <script type="text/javascript" src="../../build/Octant.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+  </head>
+  <body onload="init();">
+    <div id="container">
+      
+      <div id="title">
+        <h1>Thom Yorke's head. 2-pass bloom filter.</h1>
+      </div>
+      
+      <div class="controls">
+        100% Fragment Shader generated Quaterion Julia Set.
+        <table>
+          <tr>
+            <td><input id="t" type="checkbox" /> t</td>
+            <td>
+              from: <input id="tfrom" type="number" value="0" step="0.1" disabled /> 
+              to: <input id="tto" type="number" value="1" step="0.1" disabled /> 
+              loop: <input id="tloop" type="checkbox" disabled /> 
+              <input id="tplay" type="button" value="Play" disabled />
+            </td>
+          </tr>
+          <tr>
+            <td>display</td>
+            <td>
+              grid: <input id="grid" type="checkbox" /> 
+              surface colors: R 
+              <select id="scolorR">
+                <option>0.0</option>
+                <option>0.1</option>
+                <option>0.2</option>
+                <option>0.3</option>
+                <option>0.4</option>
+                <option selected>0.5</option>
+                <option>0.6</option>
+                <option>0.7</option>
+                <option>0.8</option>
+                <option>0.9</option>
+                <option>1.0</option>
+              </select>
+              G 
+              <select id="scolorG">
+                <option>0.0</option>
+                <option>0.1</option>
+                <option>0.2</option>
+                <option selected>0.3</option>
+                <option>0.4</option>
+                <option>0.5</option>
+                <option>0.6</option>
+                <option>0.7</option>
+                <option>0.8</option>
+                <option>0.9</option>
+                <option>1.0</option>
+              </select>
+              B
+              <select id="scolorB">
+                <option>0.0</option>
+                <option>0.1</option>
+                <option>0.2</option>
+                <option>0.3</option>
+                <option>0.4</option>
+                <option>0.5</option>
+                <option>0.6</option>
+                <option>0.7</option>
+                <option selected>0.8</option>
+                <option>0.9</option>
+                <option>1.0</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div id="canvas-container">
+        <canvas id="canvas" width="1024" height="512" style="background-color:black;"></canvas>
+      </div>
+
+      <div class="footer">
+        Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a>.
+      </div>
+
+    </div>
+    
+    <div id="fallback" class="fallback"></div>
+
+  <script>
+    if (!Octant.hasWebGL()) {
+      document.body.className = 'no-webgl';
+      document.getElementById('fallback').innerHTML = ''
+        +  '<div style="margin:10px;">'
+        +   'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        +  '</div>'
+        +  ' <iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/J6IM1QS2l10" frameborder="0" allowfullscreen></iframe>';
+    }
+  </script>
+  </body>
+</html>

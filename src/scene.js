@@ -98,14 +98,17 @@
       var camera = this.camera,
           pos = camera.position,
           view = camera.view,
-          projection = camera.projection;
+          projection = camera.projection,
+          viewProjection = view.mulMat4(projection),
+          viewProjectionInverse = viewProjection.invert();
 
       program.setUniforms({
         cameraPosition: [pos.x, pos.y, pos.z],
         projectionMatrix: projection,
         viewMatrix: view,
-        viewProjectionMatrix: view.mulMat4(projection),
-        viewInverseMatrix: view.invert()
+        viewProjectionMatrix: viewProjection,
+        viewInverseMatrix: view.invert(),
+        viewProjectionInverseMatrix: viewProjectionInverse
       });
     },
 
@@ -402,7 +405,7 @@
     }
   };
   
-  Scene.MAX_TEXTURES = 3;
+  Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
 
   Octant.Scene = Scene;

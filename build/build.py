@@ -12,7 +12,8 @@ files = [
   'shaders.js',
   'scene.js',
   'workers.js',
-  'fx.js'
+  'fx.js',
+  'media.js'
 ]
 
 def build():

@@ -283,6 +283,9 @@
           this.callbacks.onMouseEnter(e, this.hovered);
         }
       }
+      if (!this.opt.picking) {
+        this.callbacks.onMouseMove(e);
+      }
     },
     
     mousewheel: function(e) {
