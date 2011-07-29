@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Octant - Reflection Test</title>
+    <title>Reflective Metaballs</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <script type="text/javascript" src="../../build/Octant.js"></script>
+    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
 		<script type="text/javascript" src="Grid.js"></script>
     <script type="text/javascript" src="Balls.js"></script>    
     <script type="text/javascript" src="index.js"></script>
@@ -13,11 +13,19 @@
     <div id="container">
       
       <div id="title">
-        <h1>Reflection Test</h1>
+        <h1>Reflective Metaballs</h1>
       </div>
       
       <div class="controls">
-        Test reflection and refraction.
+        A Metaballs example with cubemap reflection. You can change the background image by clicking below.
+
+        <ul>
+          <li><img src="grimmnight/thumb.jpg" title="GrimmNight" /></li>
+          <li><img src="interstellar/thumb.jpg" title="InterStellar" /></li>
+          <li><img src="miramar/thumb.jpg" title="Miramar" /></li>
+          <li><img src="stormydays/thumb.jpg" title="StormyDays" /></li>
+          <li><img src="violentdays/thumb.jpg" title="ViolentDays" /></li>
+        </ul>
       </div>
 
       <div id="canvas-container">
@@ -33,7 +41,7 @@
     <div id="fallback" class="fallback"></div>
 
   <script>
-    if (!Octant.hasWebGL()) {
+    if (!PhiloGL.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

@@ -1,4 +1,4 @@
-assert(typeof Octant === 'function');
+assert(typeof PhiloGL === 'function');
 
-assert(window.hasOwnProperty('Octant'));
-assert(typeof window.Octant === 'function');
+assert(window.hasOwnProperty('PhiloGL'));
+assert(typeof window.PhiloGL === 'function');

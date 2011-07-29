@@ -18,7 +18,7 @@ The main constructor function for the Fx class. Use this to create a new animati
 
 ### Syntax:
 
-	var fx = new Octant.Fx(options);
+	var fx = new PhiloGL.Fx(options);
 
 ### Arguments:
 
@@ -34,16 +34,16 @@ The main constructor function for the Fx class. Use this to create a new animati
 ### Examples:
 
 Creating a simple animation instance that transitions an objects height value from a value to another one. 
-In this example we also use `Octant.Fx.compute` method to to linear interpolation (lerp). 
+In this example we also use `PhiloGL.Fx.compute` method to to linear interpolation (lerp). 
 
 {% highlight js %}
   var obj = {}, from = 10, to = 20;
 
-  var fx = new Octant.Fx({
+  var fx = new PhiloGL.Fx({
     duration: 1500,
-    transition: Octant.Fx.Transition.Back.easeOut,
+    transition: PhiloGL.Fx.Transition.Back.easeOut,
     onCompute: function(delta) {
-      obj.height = Octant.Fx.compute(from, to, delta);
+      obj.height = PhiloGL.Fx.compute(from, to, delta);
     },
     onComplete: function() {
       alert("completed!");
@@ -67,20 +67,20 @@ In order to trigger/start the animation we call the `start` method on the animat
 ### Examples:
 
 Creating a simple animation instance that transitions an objects height value from a value to another one. 
-In this example we also use `Octant.Fx.compute` method to to linear interpolation (lerp). 
+In this example we also use `PhiloGL.Fx.compute` method to to linear interpolation (lerp). 
 
 {% highlight js %}
   var obj = {};
   //create a Fx instance
-  var fx = new Octant.Fx({
+  var fx = new PhiloGL.Fx({
     duration: 1500,
-    transition: Octant.Fx.Transition.Back.easeOut,
+    transition: PhiloGL.Fx.Transition.Back.easeOut,
     onCompute: function(delta) {
       //access `from` and `to` from the options object
       var from = this.opt.from,
           to = this.opt.to;
       
-      obj.height = Octant.Fx.compute(from, to, delta);
+      obj.height = PhiloGL.Fx.compute(from, to, delta);
     },
     onComplete: function() {
       alert("completed!");
@@ -108,20 +108,20 @@ will not have any effect on the `fx` instance.
 ### Examples:
 
 Creating a simple animation instance that transitions an object's height from a value to another one. 
-In this example we also use `Octant.Fx.compute` method to do linear interpolation (lerp). 
+In this example we also use `PhiloGL.Fx.compute` method to do linear interpolation (lerp). 
 
 {% highlight js %}
   var obj = {};
   //create a Fx instance
-  var fx = new Octant.Fx({
+  var fx = new PhiloGL.Fx({
     duration: 1500,
-    transition: Octant.Fx.Transition.Back.easeOut,
+    transition: PhiloGL.Fx.Transition.Back.easeOut,
     onCompute: function(delta) {
       //access from and to from the options object
       var from = this.opt.from,
           to = this.opt.to;
       
-      obj.height = Octant.Fx.compute(from, to, delta);
+      obj.height = PhiloGL.Fx.compute(from, to, delta);
     },
     onComplete: function() {
       alert("completed!");
@@ -148,25 +148,25 @@ Fx Method: compute {#Fx:compute}
 
 ### Syntax:
 
-	Octant.Fx.compute(from, to, delta);
+	PhiloGL.Fx.compute(from, to, delta);
 
 ### Examples:
 
 Creating a simple animation instance that transitions an object's height from a value to another one. 
-We use `Octant.Fx.compute` to interpolate between two number values.
+We use `PhiloGL.Fx.compute` to interpolate between two number values.
 
 {% highlight js %}
   var obj = {};
   //create a Fx instance
-  var fx = new Octant.Fx({
+  var fx = new PhiloGL.Fx({
     duration: 1500,
-    transition: Octant.Fx.Transition.Back.easeOut,
+    transition: PhiloGL.Fx.Transition.Back.easeOut,
     onCompute: function(delta) {
       //access from and to from the options object
       var from = this.opt.from,
           to = this.opt.to;
       
-      obj.height = Octant.Fx.compute(from, to, delta);
+      obj.height = PhiloGL.Fx.compute(from, to, delta);
     },
     onComplete: function() {
       alert("completed!");
@@ -182,16 +182,16 @@ You can read more about `animationTime` [here](https://developer.mozilla.org/en/
 
 ### Syntax:
 
-	Octant.Fx.animationTime();
+	PhiloGL.Fx.animationTime();
 
 ### Examples:
 
 Log the number of milliseconds passed since the beginning of the interval.
 
 {% highlight js %}
-  var start = Octant.Fx.animationTime();
+  var start = PhiloGL.Fx.animationTime();
   setInterval(function() {
-    console.log(Octant.Fx.animationTime() - start);
+    console.log(PhiloGL.Fx.animationTime() - start);
   }, 1000 / 60);
 {% endhighlight %}
 
@@ -205,7 +205,7 @@ Since this is a cross-browser method, when `requestAnimationFrame` is not native
 
 ### Syntax:
 
-	Octant.Fx.requestAnimationFrame(callback);
+	PhiloGL.Fx.requestAnimationFrame(callback);
 
 ### Arguments:
 
@@ -216,7 +216,7 @@ Since this is a cross-browser method, when `requestAnimationFrame` is not native
 Log the number of milliseconds passed since the beginning of the animation.
 
 {% highlight js %}
-  var Fx = Octant.Fx,
+  var Fx = PhiloGL.Fx,
       start = Fx.animationTime();
   
   Fx.requestAnimationFrame(function callback() {
@@ -234,18 +234,18 @@ http://mootools.net.  Copyright © 2006-2011 Valerio Proietti, http://mad4milk.n
 
 ### Syntax:
 
-	Octant.Fx.Transition.Quart.easeInOut;
+	PhiloGL.Fx.Transition.Quart.easeInOut;
 
 ### Examples:
 
 Create a new animation object that has a `Quart.easeInOut` transition.
 
 {% highlight js %}
-  var fx = new Octant.Fx({
+  var fx = new PhiloGL.Fx({
     duration: 1500,
-    transition: Octant.Fx.Transition.Back.easeOut,
+    transition: PhiloGL.Fx.Transition.Back.easeOut,
     onCompute: function(delta) {
-      obj.height = Octant.Fx.compute(from, to, delta);
+      obj.height = PhiloGL.Fx.compute(from, to, delta);
     },
     onComplete: function() {
       alert("completed!");

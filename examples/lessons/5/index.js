@@ -1,6 +1,6 @@
 function webGLStart() {
   //Create object
-  var cube = new Octant.O3D.Model({
+  var cube = new PhiloGL.O3D.Model({
     texture: 'nehe.gif',
 
     vertices: [-1, -1,  1,
@@ -79,7 +79,7 @@ function webGLStart() {
               20, 21, 22, 20, 22, 23]
   });
 
-  Octant('lesson05-canvas', {
+  PhiloGL('lesson05-canvas', {
     program: {
       from: 'ids',
       vs: 'shader-vs',
@@ -96,7 +96,7 @@ function webGLStart() {
           canvas = app.canvas,
           program = app.program,
           camera = app.camera,
-          view = new Octant.Mat4,
+          view = new PhiloGL.Mat4,
           rCube = 0;
 
       gl.viewport(0, 0, canvas.width, canvas.height);

@@ -1,6 +1,6 @@
 function webGLStart() {
   //Load models
-  var pyramid = new Octant.O3D.Model({
+  var pyramid = new PhiloGL.O3D.Model({
     vertices: [ 0,  1,  0,
                -1, -1,  1,
                 1, -1,  1,
@@ -28,7 +28,7 @@ function webGLStart() {
              0, 1, 0, 1]
   });
 
-  var cube = new Octant.O3D.Model({
+  var cube = new PhiloGL.O3D.Model({
     vertices: [-1, -1,  1,
                 1, -1,  1,
                 1,  1,  1,
@@ -92,7 +92,7 @@ function webGLStart() {
               20, 21, 22, 20, 22, 23]
   });
 
-  Octant('lesson04-canvas', {
+  PhiloGL('lesson04-canvas', {
     program: {
       from: 'ids',
       vs: 'shader-vs',
@@ -106,7 +106,7 @@ function webGLStart() {
           canvas = app.canvas,
           program = app.program,
           camera = app.camera,
-          view = new Octant.Mat4,
+          view = new PhiloGL.Mat4,
           rPyramid = 0, rCube = 0;
 
       gl.viewport(0, 0, canvas.width, canvas.height);

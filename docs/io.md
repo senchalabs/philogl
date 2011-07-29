@@ -24,7 +24,7 @@ Initializes a new XHR instance.
 
 ### Syntax:
 
-	var xhr = new Octant.IO.XHR(options);
+	var xhr = new PhiloGL.IO.XHR(options);
 
 ### Arguments:
 
@@ -49,7 +49,7 @@ Default's `false`.
 Creating a request object to a specific url.
 
 {% highlight js %}
-  var req = new Octant.IO.XHR({
+  var req = new PhiloGL.IO.XHR({
     url: '/mydomain/somethingelse/',
     
     onSuccess: function(text) {
@@ -77,7 +77,7 @@ Creating a request object to a specific url and making the request.
 Note the `send` call at the end of the instanciation.
 
 {% highlight js %}
-  var req = new Octant.IO.XHR({
+  var req = new PhiloGL.IO.XHR({
     url: '/mydomain/somethingelse/',
     
     onSuccess: function(text) {
@@ -105,7 +105,7 @@ Creates and sends a JSONP request. Can be called without the `new` keyword.
 
 ### Syntax:
 
-	Octant.IO.JSONP(options);
+	PhiloGL.IO.JSONP(options);
 
 ### Arguments:
 
@@ -125,7 +125,7 @@ Default's `false`.
 Creating a request object to a specific url.
 
 {% highlight js %}
-  Octant.IO.JSONP({
+  PhiloGL.IO.JSONP({
     url: '/anotherdomain/somethingelse/',
     callbackKey: 'callbackName',
     data: {
@@ -150,7 +150,7 @@ Creates a request to Images providing an array that will be asynchonously filled
 
 ### Syntax:
 
-	var images = new Octant.IO.Images(options);
+	var images = new PhiloGL.IO.Images(options);
 
 ### Arguments:
 
@@ -171,7 +171,7 @@ Creating a request to load images.
 {% highlight js %}
   var imageUrls = ['image1.png', 'image2.png', 'image3.png'];
 
-  var images = new Octant.IO.Images({
+  var images = new PhiloGL.IO.Images({
     src: imageUrls,
     onProgress: function(perc) {
       console.log(perc + ' loaded');
@@ -195,7 +195,7 @@ Can be called without the `new` keyword.
 
 ### Syntax:
 
-	Octant.IO.Textures(program, options);
+	PhiloGL.IO.Textures(program, options);
 
 ### Arguments:
 
@@ -214,10 +214,10 @@ Default's `false`.
 Creating a request to load images and set them as textures for a specific program.
 
 {% highlight js %}
-  var program = Octant.Program.fromShaderIds('vs-id', 'fs-id');
+  var program = PhiloGL.Program.fromShaderIds('vs-id', 'fs-id');
   var imageUrls = ['image1.png', 'image2.png', 'image3.png'];
 
-  Octant.IO.Textures(program, {
+  PhiloGL.IO.Textures(program, {
     src: imageUrls,
     onComplete: function() {
       alert("All images and textures loaded!");

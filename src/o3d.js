@@ -3,8 +3,8 @@
 
 (function () {
   //Define some locals
-  var Vec3 = Octant.Vec3,
-      Mat4 = Octant.Mat4,
+  var Vec3 = PhiloGL.Vec3,
+      Mat4 = PhiloGL.Mat4,
       cos = Math.cos,
       sin = Math.sin,
       pi = Math.PI,
@@ -274,7 +274,7 @@
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
       var dist = 5;
-      for (var i = 0, texs = this.textures, l = texs.length, mtexs = Octant.Scene.MAX_TEXTURES; i < mtexs; i++) {
+      for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           var isCube = app.textureMemo[texs[i]].isCube;
           if (isCube) {
@@ -1099,6 +1099,6 @@
   O3D.id = $.time();
 
   //Assign to namespace
-  Octant.O3D = O3D;
+  PhiloGL.O3D = O3D;
 
 })();

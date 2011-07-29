@@ -2,7 +2,7 @@ function webGLStart() {
   var $id = function(d) { return document.getElementById(d); };
   
   //Create moon
-  var earth = new Octant.O3D.Sphere({
+  var earth = new PhiloGL.O3D.Sphere({
     nlat: 30,
     nlong: 30,
     radius: 2,
@@ -12,7 +12,7 @@ function webGLStart() {
   });
   
   //Create application
-  Octant('lesson15-canvas', {
+  PhiloGL('lesson15-canvas', {
     program: {
       from: 'uris',
       path: '../../../shaders/',

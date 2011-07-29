@@ -1,9 +1,9 @@
 //Unpack modules
-Octant.unpack();
+PhiloGL.unpack();
 
 //Get handles when document is ready
 document.onreadystatechange = function() {
-  if (document.readyState == 'complete' && Octant.hasWebGL()) {
+  if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
     logPanel = $('log-panel');
     logMessage = $('log-message');
     airlineList = $('airline-list');
@@ -112,7 +112,7 @@ models.airlines = new O3D.Model({
 models.airlines.rotation.set(-0.3, 0, 0);
 models.airlines.update();
 
-//Create cities layer model and create Octant app.
+//Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
   var modelInfo = e.data;
 
@@ -320,7 +320,7 @@ var airlineManager = {
 
 function createApp() {
   //Create application
-  Octant('map-canvas', {
+  PhiloGL('map-canvas', {
     program: [{
       //to render cities and routes
       id: 'layer',

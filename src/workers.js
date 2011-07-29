@@ -49,6 +49,6 @@
     }
   };
 
-  Octant.WorkerGroup = WorkerGroup;
+  PhiloGL.WorkerGroup = WorkerGroup;
 
 })();

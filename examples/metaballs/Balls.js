@@ -1,5 +1,5 @@
-Balls.offset = 1.75;
-Balls.speed = 60;
+Balls.offset = 1.5;
+Balls.speed = 80;
 
 
 function Balls(n, grid) {

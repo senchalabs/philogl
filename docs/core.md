@@ -7,36 +7,36 @@ categories: [Documentation]
 Script: Core {#Core}
 ===========================
 
-Provides the global `Octant` function to create WebGL applications, the static `Octant.hasWebGL()` method to detect if the browser is WebGL capable 
-and the static `Octant.unpack()` method for unpacking modules into the global namespace.
+Provides the global `PhiloGL` function to create WebGL applications, the static `PhiloGL.hasWebGL()` method to detect if the browser is WebGL capable 
+and the static `PhiloGL.unpack()` method for unpacking modules into the global namespace.
 
 
-Octant Static Method: hasWebGL {#Octant:hasWebGL}
+PhiloGL Static Method: hasWebGL {#PhiloGL:hasWebGL}
 ------------------------------------------------------
 
 Returns true or false whether the browser supports WebGL or not.
 
 ### Syntax:
 
-	Octant.hasWebGL();
+	PhiloGL.hasWebGL();
 
 
-Octant Static Method: unpack {#Octant:unpack}
+PhiloGL Static Method: unpack {#PhiloGL:unpack}
 -------------------------------------------------
 
 Unpacks [Vec3](math.html), [Mat4](math.html), [Quat](math.html), [Camera](camera.html), [Program](program.html), [WebGL](webgl.html), [O3D](o3d.html), 
 [Scene](scene.html), [Shaders](shaders.html), [IO](io.html), [Events](event.html), [WorkerGroup](workers.html), [Fx](fx.html) 
-modules and classes so they can be accessed by the global scope and not through Octant.*moduleName*.
+modules and classes so they can be accessed by the global scope and not through PhiloGL.*moduleName*.
 
 ### Syntax:
 
-	Octant.unpack();
+	PhiloGL.unpack();
 
 
-Octant Method: constructor {#Octant:constructor}
+PhiloGL Method: constructor {#PhiloGL:constructor}
 ----------------------------------------------------
 
-Creates a [Octant application](webgl.html#WebGL:Application). The Octant application provides a [WebGL](webgl.html) context, 
+Creates a [PhiloGL application](webgl.html#WebGL:Application). The PhiloGL application provides a [WebGL](webgl.html) context, 
 a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), and also options for handling [Events](event.html), 
 loading textures via [IO](io.html) and more. For more information about
 the application you may take a look at the [App](webgl.html#WebGL:Application) class. This
@@ -45,7 +45,7 @@ the WebGL application.
 
 ### Syntax:
 
-	Octant(canvasId, options);
+	PhiloGL(canvasId, options);
 
 ### Arguments:
 
@@ -159,11 +159,11 @@ instances as values.
 ### Examples:
 
 Creates an application from two shader files, sets some camera properties and loads two images as textures. 
-Taken from LearningWebGL [lesson 14](http://philogb.github.com/octant/Octant/examples/lessons/14/).
+Taken from LearningWebGL [lesson 14](http://philogb.github.com/philogl/PhiloGL/examples/lessons/14/).
 
 {% highlight js %}
   //Create application
-  Octant('lesson14-canvas', {
+  PhiloGL('lesson14-canvas', {
     program: {
       from: 'uris',
       path: '../../../shaders/',
@@ -197,11 +197,11 @@ Taken from LearningWebGL [lesson 14](http://philogb.github.com/octant/Octant/exa
 {% endhighlight %}
 
 Creates an application with a moon texture and sets events to apply drag and drop to the moon object as well as to zoom in and out. 
-Taken from LearningWebGL [lesson 11](http://philogb.github.com/octant/Octant/examples/lessons/11/).
+Taken from LearningWebGL [lesson 11](http://philogb.github.com/philogl/PhiloGL/examples/lessons/11/).
 
 {% highlight js %}
   //Create application
-  Octant('lesson11-canvas', {
+  PhiloGL('lesson11-canvas', {
     camera: {
       position: {
         x: 0, y: 0, z: -7

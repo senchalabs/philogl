@@ -1,12 +1,12 @@
 (function() {
-  //Unpack Octant modules
-  Octant.unpack();
+  //Unpack PhiloGL modules
+  PhiloGL.unpack();
 
   window.init = function() {
     var pos;
 
     //Create App
-    Octant('canvas', {
+    PhiloGL('canvas', {
       program: [{
         id: 'hoc',
         path: 'shaders/',

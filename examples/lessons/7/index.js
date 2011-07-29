@@ -23,7 +23,7 @@ function webGLStart() {
         b: $id('directionalB')
       };
   //Create object
-  var cube = new Octant.O3D.Model({
+  var cube = new PhiloGL.O3D.Model({
     vertices: [-1, -1,  1,
                 1, -1,  1,
                 1,  1,  1,
@@ -137,7 +137,7 @@ function webGLStart() {
               20, 21, 22, 20, 22, 23]
   });
 
-  Octant('lesson07-canvas', {
+  PhiloGL('lesson07-canvas', {
     textures: {
       src: ['crate.gif'],
       parameters: [{

@@ -1,6 +1,6 @@
 (function() {
-  //Unpack Octant modules
-  Octant.unpack();
+  //Unpack PhiloGL modules
+  PhiloGL.unpack();
   
   //Utility fn to getElementById
   function $id(d) {
@@ -75,7 +75,7 @@
     function initApp() {
       var theta = Math.PI / 4;
       //Create App
-      Octant('histogram-canvas', {
+      PhiloGL('histogram-canvas', {
         program: {
           from: 'uris',
           path: './',

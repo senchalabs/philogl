@@ -1,6 +1,6 @@
 (function() {
-  //Unpack Octant modules
-  Octant.unpack();
+  //Unpack PhiloGL modules
+  PhiloGL.unpack();
   
   //Utility fn to getElementById
   function $id(d) {
@@ -67,7 +67,7 @@
   
   window.init = function() {
     //Create App
-    Octant('surface-explorer-canvas', {
+    PhiloGL('surface-explorer-canvas', {
       program: {
         from: 'uris',
         path: './',

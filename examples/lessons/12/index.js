@@ -2,20 +2,20 @@ function webGLStart() {
   var pos, $id = function(d) { return document.getElementById(d); };
   
   //Create moon
-  var moon = new Octant.O3D.Sphere({
+  var moon = new PhiloGL.O3D.Sphere({
     nlat: 30,
     nlong: 30,
     radius: 2,
     textures: 'moon.gif'
   });
   //Create box
-  var box = new Octant.O3D.Cube({
+  var box = new PhiloGL.O3D.Cube({
     textures: 'crate.gif'
   });
   box.scale.set(2, 2, 2);
 
   //Create application
-  Octant('lesson12-canvas', {
+  PhiloGL('lesson12-canvas', {
     camera: {
       position: {
         x: 0, y: 0, z: 30

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Octant - Quaternion Julia Set</title>
+    <title>PhiloGL - Quaternion Julia Set</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <script type="text/javascript" src="../../build/Octant.js"></script>
+    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body onload="init();">
@@ -79,11 +79,11 @@
       <div id="canvas-container">
         
         <div id="panel1" class="panel" style="display:none;">
-          <div id="pointer1" draggable="true" class="pointer"></div>
+          <div id="pointer1" class="pointer"></div>
         </div>
         
         <div id="panel2" class="panel" style="display:none;">
-          <div id="pointer2" draggable="true" class="pointer"></div>
+          <div id="pointer2" class="pointer"></div>
         </div>
 
         <canvas id="canvas" width="900" height="450" style="background-color:black;"></canvas>
@@ -98,7 +98,7 @@
     <div id="fallback" class="fallback"></div>
 
   <script>
-    if (!Octant.hasWebGL()) {
+    if (!PhiloGL.hasWebGL()) {
       document.body.className = 'no-webgl';
       document.getElementById('fallback').innerHTML = ''
         +  '<div style="margin:10px;">'

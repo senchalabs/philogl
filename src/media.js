@@ -14,7 +14,7 @@
         screen = !!opt.toScreen,
         width = opt.width || app.canvas.width,
         height = opt.height || app.canvas.height,
-        plane = new Octant.O3D.Plane({
+        plane = new PhiloGL.O3D.Plane({
           type: 'x,y',
           xlen: 1,
           ylen: 1,
@@ -22,10 +22,10 @@
           textures: textures,
           program: opt.program
         }),
-        camera = new Octant.Camera(45, 1, 0.1, 100, {
+        camera = new PhiloGL.Camera(45, 1, 0.1, 100, {
           position: { x: 0, y: 0, z: 1 }
         }),
-        scene = new Octant.Scene(program, camera);
+        scene = new PhiloGL.Scene(program, camera);
 
     camera.update();
 
@@ -69,5 +69,5 @@
   };
 
   Media.Image = Image;
-  Octant.Media = Media;
+  PhiloGL.Media = Media;
 })();

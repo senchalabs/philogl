@@ -1,9 +1,9 @@
-Octant: A JavaScript WebGL Framework
+PhiloGL: A JavaScript WebGL Framework
 =====================================
 
-Author: Nicolas Garcia Belmonte. More information in the [home page of the project](http://philogb.github.com/octant/)!
+Author: Nicolas Garcia Belmonte. More information in the [home page of the project](http://senchalabs.github.com/philogl/)!
 
-      Copyright (c) 2011 Nicolas Garcia Belmonte (http://philogb.github.com/).
+      Copyright (c) 2011 Sencha Labs (http://senchalabs.org/).
 
       Permission is hereby granted, free of charge, to any person obtaining a copy
       of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,3 @@ Author: Nicolas Garcia Belmonte. More information in the [home page of the proje
       OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
       THE SOFTWARE.
 
-
-
-Notes:
-------
-
-This repository has been forked from [PhiloGL](http://github.com/senchalabs/philogl), 
-copyright (c) [Sencha Labs](http://senchalabs.org/), [MIT License](http://github.com/senchalabs/philogl/LICENSE) 
-as of version 1.2.1 released on 2011-06-08. The author of the PhiloGL Framework is Nicolas Garcia Belmonte.
-
-Any new code added here is copyright (c) Nicolas Garcia Belmonte, [MIT License](http://github.com/philogb/octant/LICENSE).

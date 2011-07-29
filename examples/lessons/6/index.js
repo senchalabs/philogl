@@ -6,7 +6,7 @@ function webGLStart() {
       filters = ['nearest', 'linear', 'mipmap'];
 
   //Create object
-  var cube = new Octant.O3D.Model({
+  var cube = new PhiloGL.O3D.Model({
     vertices: [-1, -1,  1,
                 1, -1,  1,
                 1,  1,  1,
@@ -83,7 +83,7 @@ function webGLStart() {
               20, 21, 22, 20, 22, 23]
   });
 
-  Octant('lesson06-canvas', {
+  PhiloGL('lesson06-canvas', {
     program: {
       from: 'ids',
       vs: 'shader-vs',
@@ -125,7 +125,7 @@ function webGLStart() {
           canvas = app.canvas,
           program = app.program,
           camera = app.camera,
-          view = new Octant.Mat4,
+          view = new PhiloGL.Mat4,
           rCube = 0;
 
       gl.viewport(0, 0, canvas.width, canvas.height);

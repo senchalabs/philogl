@@ -5,21 +5,6 @@ html, body {
   padding: 0;
 }
 
-input, select {
-  font-size: 15px;
-  font-family: 'Crimson Text', Verdana;
-  max-width: 80px;
-}
-
-#fxy {
-  width: 550px;
-  max-width: 550px;
-}
-
-input.error {
-  background: #ffdddd;
-}
-
 #container {
   width: 900px;
   margin: auto;
@@ -49,6 +34,8 @@ body.no-webgl div.fallback {
   background-color: rgb(255, 241, 168);
 }
 
+
+
 #title {
 
 }
@@ -67,10 +54,26 @@ h1 {
 /*  text-align: left;*/
 }
 
-.controls table tr td {
-  text-align: left;
-  margin: auto;
-  font-size: 15px;
+.controls ul {
+  margin:0;
+  padding:0;
+}
+
+.controls ul li {
+  display: inline-block;
+  margin: 10px 5px;
+}
+
+.controls ul li img {
+  width: 150px;
+  box-shadow: 0 0 5px #000;
+  cursor: pointer;
+  -webkit-transition: box-shadow 1000ms;
+  -moz-transition: box-shadow 1000ms;
+}
+
+.controls ul li img:hover {
+  box-shadow: 0 0 20px #000;
 }
 
 #canvas-container {

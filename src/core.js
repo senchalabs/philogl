@@ -1,13 +1,13 @@
 //core.js
-//Provides general utility methods, module unpacking methods and the Octant app creation method.
+//Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
 //Global
-this.Octant = null;
+this.PhiloGL = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.
 (function () {
-  Octant = function(canvasId, opt) {
+  PhiloGL = function(canvasId, opt) {
     opt = $.merge({
       context: {
         /* 
@@ -53,7 +53,7 @@ this.Octant = null;
         optScene = opt.scene;
     
     //get Context global to all framework
-    gl = Octant.WebGL.getContext(canvasId, optContext);
+    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
 
     if (!gl) {
         opt.onError("The WebGL context couldn't been initialized");
@@ -95,7 +95,7 @@ this.Octant = null;
       var pfrom = optProgram.from;
       for (var p in popt) {
         if (pfrom == p) {
-          program = Octant.Program[popt[p]]($.extend(programCallback, optProgram));
+          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
           break;
         }
       }
@@ -108,17 +108,17 @@ this.Octant = null;
     function loadProgramDeps(gl, program, callback) {
       //get Camera
       var canvas = gl.canvas,
-          camera = new Octant.Camera(optCamera.fov, 
+          camera = new PhiloGL.Camera(optCamera.fov, 
                                       canvas.width / canvas.height, 
                                       optCamera.near, 
                                       optCamera.far, optCamera);
       camera.update();
       
       //get Scene
-      var scene = new Octant.Scene(program, camera, optScene);
+      var scene = new PhiloGL.Scene(program, camera, optScene);
       
       //make app instance global to all framework
-      app = new Octant.WebGL.Application({
+      app = new PhiloGL.WebGL.Application({
         gl: gl,
         canvas: canvas,
         program: program,
@@ -133,14 +133,14 @@ this.Octant = null;
       
       //get Events
       if (optEvents) {
-        Octant.Events.create(app, $.extend(optEvents, {
+        PhiloGL.Events.create(app, $.extend(optEvents, {
           bind: app
         }));
       }
 
       //load Textures
       if (optTextures.src.length) {
-        new Octant.IO.Textures($.extend(optTextures, {
+        new PhiloGL.IO.Textures($.extend(optTextures, {
           onComplete: function() {
             callback(app);
           }
@@ -155,15 +155,15 @@ this.Octant = null;
 
 
 //Unpacks the submodules to the global space.
-Octant.unpack = function(branch) {
+PhiloGL.unpack = function(branch) {
   branch = branch || globalContext;
   ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
-      branch[module] = Octant[module];
+      branch[module] = PhiloGL[module];
   });
 };
 
 //Version
-Octant.version = '1.2.1';
+PhiloGL.version = '1.2.1';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;

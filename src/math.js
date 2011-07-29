@@ -1140,9 +1140,9 @@
                     0,                     0,                     0,                             1);
   };
 
-  Octant.Vec3 = Vec3;
-  Octant.Mat4 = Mat4;
-  Octant.Quat = Quat;
+  PhiloGL.Vec3 = Vec3;
+  PhiloGL.Mat4 = Mat4;
+  PhiloGL.Quat = Quat;
 
 })();
 

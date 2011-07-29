@@ -2,7 +2,7 @@ function webGLStart() {
   var $id = function(d) { return document.getElementById(d); };
   
   //Create moon
-  var moon = new Octant.O3D.Sphere({
+  var moon = new PhiloGL.O3D.Sphere({
     nlat: 30,
     nlong: 30,
     radius: 2,
@@ -11,7 +11,7 @@ function webGLStart() {
     colors: [1, 1, 1, 1]
   });
   //Create box
-  var box = new Octant.O3D.Cube({
+  var box = new PhiloGL.O3D.Cube({
     textures: 'crate.gif',
     program: 'vertex',
     colors: [1, 1, 1, 1]
@@ -19,7 +19,7 @@ function webGLStart() {
   box.scale.set(2, 2, 2);
 
   //Create application
-  Octant('lesson13-canvas', {
+  PhiloGL('lesson13-canvas', {
     program: [{
       id: 'vertex',
       from: 'defaults'

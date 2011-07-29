@@ -3,8 +3,8 @@
 
 (function () {
   //Define some locals
-  var Vec3 = Octant.Vec3,
-      Mat4 = Octant.Mat4;
+  var Vec3 = PhiloGL.Vec3,
+      Mat4 = PhiloGL.Mat4;
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -292,7 +292,7 @@
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
-      var program = Octant.Program.fromDefaultShaders();
+      var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
       app.setFrameBuffer('$picking', {
         width: 1,
@@ -408,6 +408,6 @@
   Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
 
-  Octant.Scene = Scene;
+  PhiloGL.Scene = Scene;
 
 })();

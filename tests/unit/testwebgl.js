@@ -1,4 +1,4 @@
-assert(typeof Octant.Program === 'function');
+assert(typeof PhiloGL.Program === 'function');
 
-assert(typeof Octant.WebGL === 'object');
-assert(typeof Octant.WebGL.getContext === 'function');
+assert(typeof PhiloGL.WebGL === 'object');
+assert(typeof PhiloGL.WebGL.getContext === 'function');

@@ -6,7 +6,7 @@
 
   var XHR = function(opt) {
     opt = $.merge({
-      url: 'http://octantjs.org/',
+      url: 'http://philogljs.org/',
       method: 'GET',
       async: true,
       noCache: false,
@@ -167,7 +167,7 @@
 
   var JSONP = function(opt) {
     opt = $.merge({
-      url: 'http://octantjs.org/',
+      url: 'http://philogljs.org/',
       data: {},
       noCache: false,
       onComplete: $.empty,
@@ -188,7 +188,7 @@
     //create source url
     var src = opt.url + 
       (opt.url.indexOf('?') > -1 ? '&' : '?') +
-      opt.callbackKey + '=Octant.IO.JSONP.requests.request_' + index +
+      opt.callbackKey + '=PhiloGL.IO.JSONP.requests.request_' + index +
       (data.length > 0 ? '&' + data : '');
     //create script
     var script = document.createElement('script');
@@ -281,6 +281,6 @@
   IO.JSONP = JSONP;
   IO.Images = Images;
   IO.Textures = Textures;
-  Octant.IO = IO;
+  PhiloGL.IO = IO;
 
 })();

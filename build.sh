@@ -1,7 +1,7 @@
 cd build/
-rm Octant.zip
-python build.py > Octant.js
-#java -jar compiler.jar --js Octant.js --js_output_file Octant.cls.js
+rm PhiloGL.zip
+python build.py > PhiloGL.js
+#java -jar compiler.jar --js PhiloGL.js --js_output_file PhiloGL.cls.js
 cd ../
-#git archive --format zip --output ./build/Octant.zip master 
+#git archive --format zip --output ./build/PhiloGL.zip master 
 

@@ -256,9 +256,9 @@
     var opt = getOptions.apply({}, arguments),
         vs = opt.vs || 'Default',
         fs = opt.fs || 'Default',
-        sh = Octant.Shaders;
+        sh = PhiloGL.Shaders;
 
-    return Octant.Program.fromShaderSources(sh.Vertex[vs], 
+    return PhiloGL.Program.fromShaderSources(sh.Vertex[vs], 
                                               sh.Fragment[fs]);
   };
   
@@ -275,7 +275,7 @@
 
     var vertexShaderURI = opt.path + opt.vs,
         fragmentShaderURI = opt.path + opt.fs,
-        XHR = Octant.IO.XHR;
+        XHR = PhiloGL.IO.XHR;
 
     new XHR.Group({
       urls: [vertexShaderURI, fragmentShaderURI],
@@ -289,6 +289,6 @@
     }).send();  
   };
 
-  Octant.Program = Program;
+  PhiloGL.Program = Program;
 
 })();

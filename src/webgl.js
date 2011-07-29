@@ -373,16 +373,16 @@
   (function() {
     try {
       var canvas = document.createElement('canvas');
-      Octant.hasWebGL = function() {
+      PhiloGL.hasWebGL = function() {
           return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
       };
     } catch(e) {
-      Octant.hasWebGL = function() {
+      PhiloGL.hasWebGL = function() {
           return false;
       };
     }
   })();
 
-  Octant.WebGL = WebGL;
+  PhiloGL.WebGL = WebGL;
   
 })();

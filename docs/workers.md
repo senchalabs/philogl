@@ -26,7 +26,7 @@ Creates a group of web workers out of the same script.
 
 ### Syntax:
 
-	var workerGroup = new Octant.WorkerGroup(scriptName, n);
+	var workerGroup = new PhiloGL.WorkerGroup(scriptName, n);
 
 ### Arguments:
 
@@ -59,7 +59,7 @@ Map different configuration objects into each worker. Just like using `map` as a
 
 ### Examples:
 
-Divide the calculation space into an octree providing each worker with the grid dimensions of an octant. The entire application can be seen 
+Divide the calculation space into an octree providing each worker with the grid dimensions of an philogl. The entire application can be seen 
 [here](https://github.com/philogb/Playground/blob/master/Isosurface/Metaballs/cubes.js).
 
 {% highlight js %}
@@ -115,7 +115,7 @@ and the new value responded by a worker as second parameter.
 
 ### Examples:
 
-Reduce all calculations from each octant into a single object. More information [here](https://github.com/philogb/Playground/blob/master/Isosurface/Metaballs/cubes.js).
+Reduce all calculations from each philogl into a single object. More information [here](https://github.com/philogb/Playground/blob/master/Isosurface/Metaballs/cubes.js).
 
 {% highlight js %}
 var indexAcum = 0, initialValue = {

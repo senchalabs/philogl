@@ -1,4 +1,4 @@
-Octant.unpack();
+PhiloGL.unpack();
 function webGLStart() {
   var pitch = 0,
       pitchRate = 0,
@@ -53,7 +53,7 @@ function webGLStart() {
   function startApp() {
     
     //Create App
-    Octant('lesson10-canvas', {
+    PhiloGL('lesson10-canvas', {
       textures: {
         src: ['mud.gif'],
         parameters: [{

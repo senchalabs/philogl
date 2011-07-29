@@ -9,7 +9,7 @@
       if (model.$$family == 'model') {
         this.model = opt.model;
       } else {
-        this.model = new Octant.O3D.Model(opt.model);
+        this.model = new PhiloGL.O3D.Model(opt.model);
       }
     }
     
