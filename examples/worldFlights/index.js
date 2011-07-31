@@ -265,6 +265,8 @@ var airlineManager = {
     for (var i = (samplings - 1) * 2 * nacum, l = indices.length; i < l; i++) {
       indices[i] -= (samplings * nroutes);
     }
+    airlines.vertices = vertices;
+    airlines.indices = indices;
     airlines.dynamic = true;
   },
 
