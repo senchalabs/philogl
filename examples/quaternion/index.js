@@ -41,7 +41,7 @@
         onMouseMove: function(e) {
           var camera = this.camera,
               pos = camera.position;
-          pos.x = e.x * 0.0005;
+          pos.x = e.x * 0.0001;
           this.program.setUniform('rO', pos.toFloat32Array());
         }
       },
