@@ -2345,7 +2345,15 @@ $.splat = (function() {
       }
     }
 
-    glFunction = glFunction.bind(gl);
+    //TODO(nico): Safari 5.1 doesn't have Function.prototype.bind.
+    //remove this check when they implement it.
+    if (glFunction.bind) {
+      glFunction = glFunction.bind(gl);
+    } else {
+      var target = glFunction;
+      glFunction = function() { target.apply(gl, arguments); };
+    }
+
     //Set a uniform array
     if (isArray) {
       return function(val) {
@@ -2531,9 +2539,9 @@ $.splat = (function() {
       method: 'GET',
       async: true,
       noCache: false,
-      responseType: false,
       //body: null,
       sendAsBinary: false,
+      responseType: false,
       onProgress: $.empty,
       onSuccess: $.empty,
       onError: $.empty,
@@ -2566,14 +2574,13 @@ $.splat = (function() {
       var req = this.req,
           opt = this.opt,
           async = opt.async;
-
       
       if (opt.noCache) {
         opt.url += (opt.url.indexOf('?') >= 0? '&' : '?') + $.uid();
       }
 
       req.open(opt.method, opt.url, async);
-      
+
       if (opt.responseType) {
         req.responseType = opt.responseType;
       }
@@ -2582,7 +2589,7 @@ $.splat = (function() {
         req.onreadystatechange = function(e) {
           if (req.readyState == XHR.State.COMPLETED) {
             if (req.status == 200) {
-              opt.onSuccess(opt.responseType ? req.response : req.responseText);
+              opt.onSuccess(req.responseType ? req.response : req.responseText);
             } else {
               opt.onError(req.status);
             }
@@ -2598,7 +2605,7 @@ $.splat = (function() {
 
       if (!async) {
         if (req.status == 200) {
-          opt.onSuccess(opt.responseType ? req.response : req.responseText);
+          opt.onSuccess(req.responseType ? req.response : req.responseText);
         } else {
           opt.onError(req.status);
         }
@@ -2656,8 +2663,8 @@ $.splat = (function() {
               async: opt.async,
               noCache: opt.noCache,
               sendAsBinary: opt.sendAsBinary,
-              body: opt.body,
               responseType: opt.responseType,
+              body: opt.body,
               //add callbacks
               onError: handleError(i),
               onSuccess: handleSuccess(i)
@@ -2830,6 +2837,7 @@ $.splat = (function() {
         target = opt.target,
         up = opt.up;
 
+    this.type = opt.type ? opt.type : 'perspective';
     this.fov = fov;
     this.near = near;
     this.far = far;
@@ -2837,7 +2845,16 @@ $.splat = (function() {
     this.position = pos && new Vec3(pos.x, pos.y, pos.z) || new Vec3();
     this.target = target && new Vec3(target.x, target.y, target.z) || new Vec3();
     this.up = up && new Vec3(up.x, up.y, up.z) || new Vec3(0, 1, 0);
-    this.projection = new Mat4().perspective(fov, aspect, near, far);
+    if (this.type == 'perspective') {
+      this.projection = new Mat4().perspective(fov, aspect, near, far);
+    } else {
+      var ymax = near * Math.tan(fov * Math.PI / 360),
+          ymin = -ymax,
+          xmin = ymin * aspect,
+          xmax = ymax * aspect;
+
+      this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, near, far);
+    }
     this.view = new Mat4();
 
   };
@@ -2845,7 +2862,16 @@ $.splat = (function() {
   Camera.prototype = {
     
     update: function() {
-      this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
+      if (this.type == 'perspective') {
+        this.projection = new Mat4().perspective(this.fov, this.aspect, this.near, this.far);
+      } else {
+        var ymax = this.near * Math.tan(this.fov * Math.PI / 360),
+            ymin = -ymax,
+            xmin = ymin * this.aspect,
+            xmax = ymax * this.aspect;
+
+        this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, this.near, this.far);
+      }
       this.view.lookAt(this.position, this.target, this.up);  
     }
   
@@ -4169,7 +4195,7 @@ $.splat = (function() {
   };
 
   Scene.prototype = {
-    //Add and remove objects
+    
     add: function() {
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
@@ -4349,7 +4375,6 @@ $.splat = (function() {
       }
     },
 
-    //renders the scene to a specified texture
     renderToTexture: function(name, opt) {
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
@@ -4362,7 +4387,6 @@ $.splat = (function() {
       gl.bindTexture(texMemo.textureType, null);
     },
 
-    //renders one model.
     renderObject: function(obj, program) {
       var camera = this.camera,
           view = camera.view,

@@ -12,6 +12,7 @@
       noCache: false,
       //body: null,
       sendAsBinary: false,
+      responseType: false,
       onProgress: $.empty,
       onSuccess: $.empty,
       onError: $.empty,
@@ -50,12 +51,16 @@
       }
 
       req.open(opt.method, opt.url, async);
+
+      if (opt.responseType) {
+        req.responseType = opt.responseType;
+      }
       
       if (async) {
         req.onreadystatechange = function(e) {
           if (req.readyState == XHR.State.COMPLETED) {
             if (req.status == 200) {
-              opt.onSuccess(req.responseText);
+              opt.onSuccess(req.responseType ? req.response : req.responseText);
             } else {
               opt.onError(req.status);
             }
@@ -71,7 +76,7 @@
 
       if (!async) {
         if (req.status == 200) {
-          opt.onSuccess(req.responseText);
+          opt.onSuccess(req.responseType ? req.response : req.responseText);
         } else {
           opt.onError(req.status);
         }
@@ -115,7 +120,8 @@
       async: true,
       noCache: false,
       //body: null,
-      sendAsBinary: false
+      sendAsBinary: false,
+      responseType: false
     }, opt || {});
 
     var urls = $.splat(opt.urls),
@@ -128,6 +134,7 @@
               async: opt.async,
               noCache: opt.noCache,
               sendAsBinary: opt.sendAsBinary,
+              responseType: opt.responseType,
               body: opt.body,
               //add callbacks
               onError: handleError(i),

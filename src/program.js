@@ -119,7 +119,15 @@
       }
     }
 
-    glFunction = glFunction.bind(gl);
+    //TODO(nico): Safari 5.1 doesn't have Function.prototype.bind.
+    //remove this check when they implement it.
+    if (glFunction.bind) {
+      glFunction = glFunction.bind(gl);
+    } else {
+      var target = glFunction;
+      glFunction = function() { target.apply(gl, arguments); };
+    }
+
     //Set a uniform array
     if (isArray) {
       return function(val) {
