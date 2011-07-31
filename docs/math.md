@@ -7,14 +7,14 @@ categories: [Documentation]
 Script: Math {#Math}
 ===========================
 
-The Math script provides `Vec3` and `Mat4` classes to manage three dimensional vectors and four by four matrices respectively. 
+The Math script provides `Vec3`, `Mat4` and `Quat` classes to manage three dimensional vectors, four by four matrices and quaternions respectively. 
 
 ### Generics:
 
-One very interesting thing to point about the Math script is that all `Vec3` and `Mat4` methods are generics. This means that all 
-instance methods of `Vec3` and `Mat4` can also be accessed as static methods in which the first parameter of the static method is the receiver. 
-The receiver does not *have to be* an instance of the class but can instead be a `Vec3`-like or `Mat4`-like object. 
-This means that a simple object (i.e `{}`) can be used as the receiver for these methods. 
+One very interesting thing to point about the Math script is that all `Vec3`, `Mat4` and `Quat` methods are generics. This means that all 
+instance methods of `Vec3`, `Mat4`, and `Quat` can also be accessed as static methods in which the first parameter of the static method is the receiver. 
+The receiver does not *have to be* an instance of the class but can instead be a `Vec3`-like, `Mat4`-like or `Quat`-like object. 
+This means that a simple array (i.e `[]`) can be used as the receiver for these methods. 
 
 Although the *syntax* section for each method will include the generic and non-generic one, the arguments for each method will be described as with the instance 
 method syntax.
@@ -34,6 +34,25 @@ Say you want to add two `Vec3` vectors, `v1` and `v2`. Then there are three ways
 These are the conventions we will be using for method naming. Methods altering the receiver will have a dollar sign (i.e. `$`), as opposed to 
 methods creating a new instance with the result. Methods requiring a receiver *and* the instances involved in the operation as formal parameters 
 will be suffixed with the number `2`.
+
+### Notes:
+
+**New from version 1.3:** 
+
+All classes now extend from `Array` or some
+`DataView` class (i.e. some typed array). This means that `Vec3`, `Mat4`
+and `Quat`-like objects are now plain arrays and not plain objects. I
+have added getters for all properties in `Vec3`, `Mat4` and `Quat`
+classes so you can still access them via `vec.x`, etc, but remember
+that the inner implementation is now an array, so `vec3[0]` will also
+work. The examples have been updated to reflect this.
+
+This implementation changes the signature for some methods and probably
+if you used object literals for `Vec3`, `Mat4` and `Quat` classes these
+things will have to be changed into arrays. The good thing about this is a noticeable
+boost in performance everywhere in the library, and in particular in the
+math functions. More information about this can be found in [my
+blog](http://blog.thejit.org/).
 
 
 Class: Vec3 {#Vec3}
@@ -124,14 +143,10 @@ Create two vectors and assign one vectors components to the other one.
 Set an object's `x`, `y`, `z` components to another object.
 
 {% highlight js %}
-  var v1 = {},
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [],
+      v2 = [ 4, 5, 6 ];
 
-  PhiloGL.Vec3.setVec3(v1, v2); //v1 now has (x=4, y=5, z=6)
+  PhiloGL.Vec3.setVec3(v1, v2); //v1 now has [4, 5, 6]
 {% endhighlight %}
 
 
@@ -166,14 +181,10 @@ Create two vectors and assign one vectors components to the other one.
 Set an object's `x`, `y`, `z` components to another object.
 
 {% highlight js %}
-  var v1 = {},
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [],
+      v2 = [ 4, 5, 6 ];
 
-  PhiloGL.Vec3.set(v1, v2.x, v2.y, v2.z); //v1 now has (x=4, y=5, z=6)
+  PhiloGL.Vec3.set(v1, v2.x, v2.y, v2.z); //v1 now has [4, 5, 6]
 {% endhighlight %}
 
 Vec3 Method: add {#Vec3:add}
@@ -205,16 +216,8 @@ Create two vectors and add them.
 Create two `x`, `y`, `z` objects and add them.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   PhiloGL.Vec3.add(v1, v2); //v1 and v2 are still the same but a new Vec3(5, 7, 9) was created.
 {% endhighlight %}
@@ -249,19 +252,12 @@ Create two vectors and add them.
 Create two `x`, `y`, `z` objects and add them.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
-  PhiloGL.Vec3.$add(v1, v2); //v1 is now { x: 5, y: 7, z: 9 }.
+  PhiloGL.Vec3.$add(v1, v2); //v1 is now [ 5, 7, 9 ].
 {% endhighlight %}
+
 
 Vec3 Method: add2 {#Vec3:add2}
 ------------------------------------
@@ -294,19 +290,11 @@ Create two vectors and add them.
 Create two `x`, `y`, `z` objects and add them.
 
 {% highlight js %}
-  var v1 = {},
-      v2 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v3 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [],
+      v2 = [ 1, 2, 3 ],
+      v3 = [ 4, 5, 6 ];
 
-  PhiloGL.Vec3.add2(v1, v2, v3); //v2 and v3 are still the same but v1 is { x: 5, y: 7, z: 9 }.
+  PhiloGL.Vec3.add2(v1, v2, v3); //v2 and v3 are still the same but v1 is [ 5, 7, 9 ].
 {% endhighlight %}
 
 
@@ -339,16 +327,8 @@ Create two vectors and substract them.
 Create two `x`, `y`, `z` objects and substract them.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   PhiloGL.Vec3.sub(v1, v2); //v1 and v2 are still the same but a new Vec3(-3, -3, -3) was created.
 {% endhighlight %}
@@ -383,19 +363,12 @@ Create two vectors and substract them.
 Create two `x`, `y`, `z` objects and add them.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
-  PhiloGL.Vec3.$sub(v1, v2); //v1 is now { x: -3, y: -3, z: -3 }.
+  PhiloGL.Vec3.$sub(v1, v2); //v1 is now [ -3, -3, -3 ].
 {% endhighlight %}
+
 
 Vec3 Method: sub2 {#Vec3:sub2}
 ------------------------------------
@@ -428,17 +401,9 @@ Create two vectors and substract them.
 Create two `x`, `y`, `z` objects and substract them.
 
 {% highlight js %}
-  var v1 = {},
-      v2 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v3 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [],
+      v2 = [ 1, 2, 3 ],
+      v3 = [ 4, 5, 6 ];
 
   PhiloGL.Vec3.sub2(v1, v2, v3); //v2 and v3 are still the same but v1 is { x: -3, y: -3, z: -3 }.
 {% endhighlight %}
@@ -472,11 +437,7 @@ Create a vector and scale it by 2.
 Create an `x`, `y`, `z` object and scale it by 2.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   PhiloGL.Vec3.scale(v1, 2); //v1 is still the same but a new Vec3(2, 4, 6) was created.
 {% endhighlight %}
@@ -510,13 +471,9 @@ Create a vector and scale it by 2.
 Create an `x`, `y`, `z` object and scale it by 2.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
-  PhiloGL.Vec3.$scale(v1, 2); //v1 is now { x: 2, y: 4, z: 6 }.
+  PhiloGL.Vec3.$scale(v1, 2); //v1 is now [ 2, 4, 6 ].
 {% endhighlight %}
 
 
@@ -544,11 +501,7 @@ Create a vector and negate it.
 Create an `x`, `y`, `z` object and negate it.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   PhiloGL.Vec3.neg(v1); //v1 is still the same but a new Vec3(-1, -2, -3).
 {% endhighlight %}
@@ -578,13 +531,9 @@ Create a vector and negate it.
 Create an `x`, `y`, `z` object and negate it.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
-  PhiloGL.Vec3.neg(v1); //v1 is now { x: -1, y: -2, z: -3).
+  PhiloGL.Vec3.neg(v1); //v1 is now [ -1, -2, -3 ].
 {% endhighlight %}
 
 
@@ -612,11 +561,7 @@ Create a vector and make a unit vector from it.
 Create an `x`, `y`, `z` object and make a unit vector from it.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   PhiloGL.Vec3.unit(v1); //v1 is still the same but a new Vec3 that is a unit vector is created.
 {% endhighlight %}
@@ -646,11 +591,7 @@ Create a vector and make a unit vector from it.
 Create an `x`, `y`, `z` object make a unit vector from it.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   PhiloGL.Vec3.$unit(v1); //v1 is now a unit vector object.
 {% endhighlight %}
@@ -686,16 +627,8 @@ Create two vectors and make a cross product.
 Create two `x`, `y`, `z` objects and make a cross product.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   //v1 and v2 are still the same but a new Vec3 with the result was created.
   var ans = PhiloGL.Vec3.cross(v1, v2);
@@ -732,16 +665,8 @@ Create two vectors and make a cross product.
 Create two `x`, `y`, `z` objects and make a cross product.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   //v1 contains now the result.
   var ans = PhiloGL.Vec3.$cross(v1, v2);
@@ -777,16 +702,8 @@ Create two vectors and calculate the distance.
 Create two `x`, `y`, `z` objects and calculate their distance.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   //a real number with the distance is returned.
   var ans = PhiloGL.Vec3.distTo(v1, v2);
@@ -822,16 +739,8 @@ Create two vectors and calculate the squared distance.
 Create two `x`, `y`, `z` objects and calculate their squared distance.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   //a real number with the squared distance is returned.
   var ans = PhiloGL.Vec3.distToSq(v1, v2);
@@ -862,11 +771,7 @@ Create a vector and calculate its norm.
 Create an `x`, `y`, `z` object and calculate its norm.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   //A real number with the norm is returned.
   var ans = PhiloGL.Vec3.norm(v1);
@@ -897,11 +802,7 @@ Create a vector and calculate its squared norm.
 Create an `x`, `y`, `z` object and calculate its squared norm.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      };
+  var v1 = [ 1, 2, 3 ];
 
   //A real number with the squared norm is returned.
   var ans = PhiloGL.Vec3.normSq(v1);
@@ -938,16 +839,8 @@ Create two vectors and calculate the dot product.
 Create two `x`, `y`, `z` objects and calculate the dot product.
 
 {% highlight js %}
-  var v1 = {
-        x: 1,
-        y: 2,
-        z: 3
-      },
-      v2 = {
-        x: 4,
-        y: 5,
-        z: 6
-      };
+  var v1 = [ 1, 2, 3 ],
+      v2 = [ 4, 5, 6 ];
 
   //a real number with the dot product is returned.
   var ans = PhiloGL.Vec3.dot(v1, v2);
@@ -1025,10 +918,10 @@ Create an identity matrix.
 Create a null matrix.
 
 {% highlight js %}
-  var m = 0 PhiloGL.Mat4( 0, 0, 0, 0,
-                          0, 0, 0, 0,
-                          0, 0, 0, 0,
-                          0, 0, 0, 0 );
+  var m = new PhiloGL.Mat4( 0, 0, 0, 0,
+                            0, 0, 0, 0,
+                            0, 0, 0, 0,
+                            0, 0, 0, 0 );
 {% endhighlight %}
 
 
@@ -1059,7 +952,7 @@ Create an identity matrix from some random matrix.
 Create an identity matrix object.
 
 {% highlight js %}
-  var m = {};
+  var m = [];
 
   PhiloGL.Mat4.id(m); //m object components are the Identity matrix ones.
 {% endhighlight %}
@@ -1102,7 +995,7 @@ Create a matrix and set some values to it.
 Set an empty object matrix coordinates onto some values.
 
 {% highlight js %}
-  var m = {};
+  var m = [];
 
   PhiloGL.Mat4.set(m, 1, 2, 3, 4,
                       1, 2, 3, 4,
@@ -1141,8 +1034,8 @@ Create a matrix and a vector and multiply them.
 Create a matrix object and a vector object and multiply them.
 
 {% highlight js %}
-  var m = {},
-      v = {};
+  var m = [],
+      v = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Vec3.set(v, 1, 1, 1);
@@ -1180,8 +1073,8 @@ Create a matrix and a vector and multiply them.
 Create a matrix object and a vector object and multiply them.
 
 {% highlight js %}
-  var m = {},
-      v = {};
+  var m = [],
+      v = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Vec3.set(v, 1, 1, 1);
@@ -1219,8 +1112,8 @@ Create two matrices and multiply them.
 Create a two matrices objects and multiply them.
 
 {% highlight js %}
-  var m = {},
-      m1 = {};
+  var m = [],
+      m1 = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.id(m1);
@@ -1257,8 +1150,8 @@ Create two matrices and multiply them.
 Create a two matrices objects and multiply them.
 
 {% highlight js %}
-  var m = {},
-      m1 = {};
+  var m = [],
+      m1 = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.id(m1);
@@ -1297,9 +1190,9 @@ Create two matrices and multiply them.
 Create a two matrices objects and multiply them.
 
 {% highlight js %}
-  var m = {},
-      m1 = {},
-      m2 = {};
+  var m = [],
+      m1 = [],
+      m2 = [];
 
   PhiloGL.Mat4.id(m1);
   PhiloGL.Mat4.id(m2);
@@ -1336,8 +1229,8 @@ Create two matrices and add them.
 Create a two matrices objects and add them.
 
 {% highlight js %}
-  var m = {},
-      m1 = {};
+  var m = [],
+      m1 = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.id(m1);
@@ -1374,8 +1267,8 @@ Create two matrices and add them.
 Create a two matrices objects and add them.
 
 {% highlight js %}
-  var m = {},
-      m1 = {};
+  var m = [],
+      m1 = [];
 
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.id(m1);
@@ -1443,7 +1336,7 @@ Applies a rotation of `theta` by `vec` to a `Mat4` matrix returning the result i
 ### Arguments:
 
 1. theta - (*number*) An angle in radians.
-2. vec - (*object*) A `Vec3` (or x, y, z object).
+2. vec - (*object*) A `Vec3` (or array).
 
 ### Examples:
 
@@ -1460,7 +1353,7 @@ Another way of doing the same thing without creating a `Vec3`.
 
 {% highlight js %}
   var m = new PhiloGL.Mat4(),
-      v = { x: 1, y: 1, z: 1 };
+      v = [ 1, 1, 1 ];
   
   m.rotateAxis(Math.PI, v); //the result is a new matrix
 {% endhighlight %}
@@ -1480,7 +1373,7 @@ Applies a rotation of angle `theta` by vector `vec` to a `Mat4` altering the cur
 ### Arguments:
 
 1. theta - (*number*) An angle in radians.
-2. vec - (*object*) A `Vec3` (or x, y, z object).
+2. vec - (*object*) A `Vec3` (or array).
 
 ### Examples:
 
@@ -1497,7 +1390,7 @@ Another way of doing the same thing without creating a `Vec3`.
 
 {% highlight js %}
   var m = new PhiloGL.Mat4(),
-      v = { x: 1, y: 1, z: 1 };
+      v = [ 1, 1, 1 ];
   
   m.$rotateAxis(Math.PI, v); //the result is in m
 {% endhighlight %}
@@ -1534,7 +1427,7 @@ Create a rotation on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.rotateXYZ(m, Math.PI, 0, 0); //creates a new Mat4 with the result.
@@ -1572,7 +1465,7 @@ Create a rotation on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.$rotateXYZ(m, Math.PI, 0, 0); //alters m
@@ -1610,7 +1503,7 @@ Create a translation on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.translate(m, 10, 0, 0); //creates a new Mat4 with the result.
@@ -1648,7 +1541,7 @@ Create a translation on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.$translate(m, 10, 0, 0); //the result is in m
@@ -1686,7 +1579,7 @@ Create a scaling on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.scale(m, 10, 0, 0); //creates a new Mat4 with the result.
@@ -1724,7 +1617,7 @@ Create a scaling on the x-axis.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {};
+  var m = [];
   
   PhiloGL.Mat4.id(m);
   PhiloGL.Mat4.$scale(m, 10, 0, 0); //the result is in m
@@ -1802,9 +1695,9 @@ Create a lookAt matrix. The eye is looking at the origin.
 
 {% highlight js %}
   var m = new PhiloGL.Mat4(),
-      eye = { x: 1, y: 0, z: 1 },
-      center = { x: 0, y: 0, z: 0},
-      up = { x: 0, y: 1, z: 0};
+      eye = [ 1, 0, 1 ],
+      center = [ 0, 0, 0 ],
+      up = [ 0, 1, 0 ];
 
   m.lookAt(eye, center, up); //the original matrix is modified.
 {% endhighlight %}
@@ -1812,10 +1705,10 @@ Create a lookAt matrix. The eye is looking at the origin.
 Another way of doing it with generics:
 
 {% highlight js %}
-  var m = {},
-      eye = { x: 1, y: 0, z: 1 },
-      center = { x: 0, y: 0, z: 0},
-      up = { x: 0, y: 1, z: 0};
+  var m = [],
+      eye = [ 1, 0, 1 ],
+      center = [ 0, 0, 0 ],
+      up = [ 0, 1, 0 ];
 
   PhiloGL.Mat4.lookAt(m, eye, center, up); //the original object is modified.
 {% endhighlight %}
@@ -1894,8 +1787,6 @@ Converts the matrix in a [Float32Array](https://developer.mozilla.org/en/JavaScr
 ### Syntax:
 
 	m.toFloat32Array();
-    
-    PhiloGL.Mat4.toFloat32Array(m);
 
 
 Mat4 Method: clone {#Mat4:clone}
@@ -1916,7 +1807,7 @@ Class: Quat {#Quat}
 A class to handle Quaternions. More information on quternions can be
 found [here](http://en.wikipedia.org/wiki/Quaternion). The quaternion
 will be represented by an instance with `x`, `y`, `z`, `w` components
-that make a quaterion like: `xi + yj + zk + w`.
+that make a quaternion like: `xi + yj + zk + w`.
 
 
 Quat Static Method: fromVec3 {#Quat:fromVec3}
@@ -2047,7 +1938,7 @@ Create a new `Quat` instance from a rotation around an axis.
 
 ### Arguments:
 
-1. v - (*object*) A `Vec3`-like object.
+1. v - (*object*) A `Vec3`-like object (i.e an array of three components).
 2. angle - (*number*) The angle in radians.
 
 ### Examples:
@@ -2115,21 +2006,16 @@ Create two quaternions and assign one quaternions components to the other one.
   var q1 = new PhiloGL.Quat(1, 2, 3, 4),
       q2 = new PhiloGL.Quat(4, 5, 6, 7);
 
-  q1.setQuat(q2); //v1 now contains (x=4, y=5, z=6, w=7)
+  q1.setQuat(q2); //v1 now contains [ 4, 5, 6, 7 ]
 {% endhighlight %}
 
 Set an object's `x`, `y`, `z`, `w` components to another object.
 
 {% highlight js %}
-  var q1 = {},
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+  var q1 = [],
+      q2 = [ 4, 5, 6, 7 ];
 
-  PhiloGL.Quat.setQuat(q1, q2); //q1 now has (x=4, y=5, z=6, w=7)
+  PhiloGL.Quat.setQuat(q1, q2); //q1 now has [ 4, 5, 6, 7 ]
 {% endhighlight %}
 
 
@@ -2159,21 +2045,16 @@ Create two quaternions and assign one quaternions components to the other one.
   var q1 = new PhiloGL.Quat(1, 2, 3, 4),
       q2 = new PhiloGL.Quat(4, 5, 6, 7);
 
-  q1.set(q2.x, q2.y, q2.z, q2.w); //q1 now contains (x=4, y=5, z=6, w=7)
+  q1.set(q2.x, q2.y, q2.z, q2.w); //q1 now contains [ 4, 5, 6, 7 ]
 {% endhighlight %}
 
 Set an object's `x`, `y`, `z`, `w` components to another object.
 
 {% highlight js %}
-  var q1 = {},
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+  var q1 = [],
+      q2 = [ 4, 5, 6, 7 ];
 
-  PhiloGL.Quat.set(q1, q2.x, q2.y, q2.z, q2.w); //q1 now has (x=4, y=5, z=6, w=7)
+  PhiloGL.Quat.set(q1, q2.x, q2.y, q2.z, q2.w); //q1 now has [ 4, 5, 6, 7 ]
 {% endhighlight %}
 
 
@@ -2206,18 +2087,8 @@ Create two quaternions and add them.
 Create two `x`, `y`, `z`, `w` objects and add them.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      },
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+  var q1 = [ 1, 2, 3, 4 ],
+      q2 = [ 4, 5, 6, 7 ];
 
   PhiloGL.Quat.add(q1, q2); //q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.
 {% endhighlight %}
@@ -2252,20 +2123,10 @@ Create two quaternions and add them.
 Create two `x`, `y`, `z`, `w` objects and add them.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      },
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+  var q1 = [ 1, 2, 3, 4 ],
+      q2 = [ 4, 5, 6, 7 ];
 
-  PhiloGL.Quat.$add(q1, q2); //q1 is now { x: 5, y: 7, z: 9, w: 11 }.
+  PhiloGL.Quat.$add(q1, q2); //q1 is now [ 5, 7, 9, 11 ].
 {% endhighlight %}
 
 
@@ -2304,12 +2165,7 @@ Create two `x`, `y`, `z`, `w` objects and substract them.
         z: 3,
         w: 4
       },
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+      q2 = [ 4, 5, 6, 7 ];
 
   PhiloGL.Quat.sub(q1, q2); //q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.
 {% endhighlight %}
@@ -2344,20 +2200,10 @@ Create two quaternions and substract them.
 Create two `x`, `y`, `z`, `w` objects and add them.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      },
-      q2 = {
-        x: 4,
-        y: 5,
-        z: 6,
-        w: 7
-      };
+  var q1 = [ 1, 2, 3, 4 ],
+      q2 = [ 4, 5, 6, 7 ];
 
-  PhiloGL.Quat.$sub(q1, q2); //q1 is now { x: -3, y: -3, z: -3, w: -3 }.
+  PhiloGL.Quat.$sub(q1, q2); //q1 is now [ -3, -3, -3, -3 ].
 {% endhighlight %}
 
 
@@ -2499,12 +2345,7 @@ Create a quaternion and scale it by 2.
 Create an `x`, `y`, `z`, `w` object and scale it by 2.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   PhiloGL.Quat.scale(q1, 2); //q1 is still the same but a new Quat(2, 4, 6, 8) was created.
 {% endhighlight %}
@@ -2538,14 +2379,9 @@ Create a quaternion and scale it by 2.
 Create an `x`, `y`, `z`, `w` object and scale it by 2.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
-  PhiloGL.Quat.$scale(q1, 2); //q1 is now { x: 2, y: 4, z: 6, w: 8 }.
+  PhiloGL.Quat.$scale(q1, 2); //q1 is now [ 2, 4, 6, 8 ].
 {% endhighlight %}
 
 
@@ -2573,12 +2409,7 @@ Create a quaternion and conjugate it.
 Create an `x`, `y`, `z`, `w` object and conjugate it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   PhiloGL.Quat.conjugate(q1); //q1 is still the same but a new Quat(-1, -2, -3, 4).
 {% endhighlight %}
@@ -2608,14 +2439,9 @@ Create a quaternion and conjugate it.
 Create an `x`, `y`, `z`, `w` object and conjugate it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
-  PhiloGL.Quat.conjugate(q1); //q1 is now { x: -1, y: -2, z: -3, w: 4 }.
+  PhiloGL.Quat.conjugate(q1); //q1 is now [ -1, -2, -3, 4 ].
 {% endhighlight %}
 
 
@@ -2643,12 +2469,7 @@ Create a quaternion and negate it.
 Create an `x`, `y`, `z`, `w` object and negate it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   PhiloGL.Quat.neg(q1); //q1 is still the same but a new Quat(-1, -2, -3, -4).
 {% endhighlight %}
@@ -2678,14 +2499,9 @@ Create a quaternion and negate it.
 Create an `x`, `y`, `z`, `w` object and negate it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
-  PhiloGL.Quat.neg(q1); //q1 is now { x: -1, y: -2, z: -3, w: -4 }.
+  PhiloGL.Quat.neg(q1); //q1 is now [ -1, -2, -3, -4 ].
 {% endhighlight %}
 
 
@@ -2714,12 +2530,7 @@ Create a quaternion and make a unit quaternion from it.
 Create an `x`, `y`, `z`, `w` object and make a unit quaternion from it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   PhiloGL.Quat.unit(q1); //q1 is still the same but a new Quat that is a unit quaternion is created.
 {% endhighlight %}
@@ -2749,14 +2560,9 @@ Create a quaternion and make a unit quaternion from it.
 Create an `x`, `y`, `z`, `w` object and make a unit quaternion from it.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
-  PhiloGL.Quat.$unit(q1); //q1 is now a unit quaternion object.
+  PhiloGL.Quat.$unit(q1); //q1 is now a unit quaternion vector.
 {% endhighlight %}
 
 
@@ -2784,12 +2590,7 @@ Create a quaternion and calculate its norm.
 Create an `x`, `y`, `z`, `w` object and calculate its norm.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   //A real number with the norm is returned.
   var ans = PhiloGL.Quat.norm(q1);
@@ -2820,12 +2621,7 @@ Create a quaternion and calculate its squared norm.
 Create an `x`, `y`, `z`, `w` object and calculate its squared norm.
 
 {% highlight js %}
-  var q1 = {
-        x: 1,
-        y: 2,
-        z: 3,
-        w: 4
-      };
+  var q1 = [ 1, 2, 3, 4 ];
 
   //A real number with the squared norm is returned.
   var ans = PhiloGL.Quat.normSq(q1);

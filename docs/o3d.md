@@ -54,6 +54,8 @@ The main constructor function for the Model class. Use this to create a new Mode
 * colors - (*array*, optional) An array of colors in RGBA. If just one color is specified that color will be used for all faces.
 * indices - (*array*, optional) An array of numbers describing the vertex indices for each face.
 * shininess - (*number*, optional) A number between [0.1, 200] describing how shiny an object is.
+* reflection - (*number*, optional) A number between [0, 1] describing the reflectivity of an object.
+* refraction - (*number*, optional) A number between [0, 1] describing the refraction index of an object.
 * attributes - (*object*, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more 
 about attribute descriptors you can find a description of them in [program.setBuffer](program.html#Program:setBuffer). 
 * uniforms - (*object*, optional) An object with uniform names and values to be set before rendering the model.
@@ -67,6 +69,23 @@ array of floats as values (to handle multiple textures).
 * onBeforeRender - (*function*, optional) Called before rendering an object. The first two formal parameters are the program and the camera respectively.
 * onAfterRender - (*function*, optional) Called after rendering an object. The first two formal parameters are the program and the camera respectively.
 
+### Notes:
+
+**New in version 1.3:** 
+
+ * Attribute arrays are implemented as getters and
+setters, and may not return the same information they've been set with. 
+Internally, attribute arrays are transformed into [typed arrays](https://developer.mozilla.org/en/JavaScript_typed_arrays), 
+a much faster data structure to use with this type of data.
+ * Attribute arrays only accept plain arrays and not nested arrays
+   anymore. Forcing the data structure to be this way gives us a big
+performance gain.
+ * If you set a `color` attribute as a single color, then the array will
+   be cloned to match the number of components for the model and will be
+served as an attribute. The getter for this property will return the
+cloned typed array.
+ * `toFloat32Array` and `toUint16Array` methods are not used anymore since the typed array can
+   now be fetched when accessing the model property directly.
 
 ### Examples:
 
@@ -74,31 +93,31 @@ Create a pyramid model (used in lesson 4 of learning WebGL examples).
 
 {% highlight js %}
 var pyramid = new PhiloGL.O3D.Model({
-    vertices: [[ 0,  1,  0],
-               [-1, -1,  1],
-               [ 1, -1,  1],
-               [ 0,  1,  0],
-               [ 1, -1,  1],
-               [ 1, -1, -1],
-               [ 0,  1,  0],
-               [ 1, -1, -1],
-               [-1, -1, -1],
-               [ 0,  1,  0],
-               [-1, -1, -1],
-               [-1, -1,  1]],
+    vertices: [ 0,  1,  0,
+               -1, -1,  1,
+                1, -1,  1,
+                0,  1,  0,
+                1, -1,  1,
+                1, -1, -1,
+                0,  1,  0,
+                1, -1, -1,
+               -1, -1, -1,
+                0,  1,  0,
+               -1, -1, -1,
+               -1, -1,  1],
     
-    colors: [[1, 0, 0, 1],
-             [0, 1, 0, 1],
-             [0, 0, 1, 1],
-             [1, 0, 0, 1],
-             [0, 0, 1, 1],
-             [0, 1, 0, 1],
-             [1, 0, 0, 1],
-             [0, 1, 0, 1],
-             [0, 0, 1, 1],
-             [1, 0, 0, 1],
-             [0, 0, 1, 1],
-             [0, 1, 0, 1]]
+    colors: [1, 0, 0, 1,
+             0, 1, 0, 1,
+             0, 0, 1, 1,
+             1, 0, 0, 1,
+             0, 0, 1, 1,
+             0, 1, 0, 1,
+             1, 0, 0, 1,
+             0, 1, 0, 1,
+             0, 0, 1, 1,
+             1, 0, 0, 1,
+             0, 0, 1, 1,
+             0, 1, 0, 1]
   });
 {% endhighlight %}
 
@@ -163,49 +182,6 @@ Change the position of the pyramid model and update its matrix.
   };
   
   pyramid.update();
-{% endhighlight %}
-
-O3D.Model Method: toFloat32Array {#O3D:Model:toFloat32Array}
--------------------------------------------------------------
-
-Returns a `Float32Array` version of the named property.
-
-### Syntax:
-
-	model.toFloat32Array(name);
-
-### Arguments:
-
-1. name - (*string*) The name of the property to be converted into a `Float32Array`. Can be `vertices`, `normals`, `colors`, etc.
-
-### Examples:
-
-Make the pyramid model return a `Float32Array` of the vertices array.
-
-{% highlight js %}
-  pyramid.toFloat32Array('vertices'); //returns the Float32Array of the vertices array.
-{% endhighlight %}
-
-
-O3D.Model Method: toUint16Array {#O3D:Model:toUint16Array}
--------------------------------------------------------------
-
-Returns a `Uint16Array` version of the named property.
-
-### Syntax:
-
-	model.toUint16Array(name);
-
-### Arguments:
-
-1. name - (*string*) The name of the property to be converted into a `Uint16Array`. Can be `indices`, etc.
-
-### Examples:
-
-Make the pyramid model return a `Uint16Array` of the indices array.
-
-{% highlight js %}
-  pyramid.toUint16Array('indices'); //returns the Uint16Array of the indices array.
 {% endhighlight %}
 
 

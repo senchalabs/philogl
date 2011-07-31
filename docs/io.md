@@ -37,6 +37,7 @@ Initializes a new XHR instance.
 * async - (*boolean*, optional) Whether to make the request asynchronous or not. Default's `true`.
 * noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
 Default's `false`.
+* responseType - (*string*, optional) The format/type of data to be retrieved. Set this to `arraybuffer` to get binary data. More info [here](https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data).
 * sendAsBinary - (*boolean*, optional) Whether the content should be sent as binary or not. Default's false. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
 * body - (*mixed*, optional) To be used when `sendAsBinary` is `true`. The binary content to be sent. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
 * onProgress - (*function*, optional) A callback executed while the data is being downloaded. The first parameter of the callback is the percentage downloaded.
@@ -62,6 +63,7 @@ Creating a request object to a specific url.
   });
 {% endhighlight %}
 
+
 IO.XHR Method: send {#IO:XHR:send}
 -----------------------------------
 
@@ -86,6 +88,97 @@ Note the `send` call at the end of the instanciation.
 
     onError: function() {
       alert("An error ocurred");
+    }
+  }).send();
+{% endhighlight %}
+
+
+IO Class: IO.XHR.Group {#IO:XHR:Group}
+---------------------------------------
+
+The XHR Group class creates parallel XHR requests and returns the
+information in an array. Callbacks for when a single resquest is
+succesfull and also for when all requests are completed are provided.
+
+
+IO.XHR.Group Method: constructor {#IO:XHR:Group:constructor}
+-------------------------------------------------------------
+
+Initializes a new XHR Group instance.
+
+### Syntax:
+
+	var xhr = new PhiloGL.IO.XHR.Group(options);
+
+### Arguments:
+
+1. options - (*object*) An object containing the following options:
+
+### Options:
+
+* urls - (*array*) The urls to make the requests to.
+* method - (*string*, optional) The request method. Possible values are `GET` or `POST`. Default's `GET`.
+* async - (*boolean*, optional) Whether to make the request asynchronous or not. Default's `true`.
+* noCache - (*boolean*, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. 
+Default's `false`.
+* responseType - (*string*, optional) The format/type of data to be retrieved. Set this to `arraybuffer` to get binary data. More info [here](https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data).
+* sendAsBinary - (*boolean*, optional) Whether the content should be sent as binary or not. Default's false. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
+* body - (*mixed*, optional) To be used when `sendAsBinary` is `true`. The binary content to be sent. More info [here](https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary()).
+* onSuccess - (*function*, optional) A callback executed once the connection was successful and the information completely sent. This callback is called for each individual 
+request.
+* onError - (*function*, optional) A callback executed if there's an error while making the connection or sending the data. This callback will be called for each unsuccesfull request.
+* onComplete - (*function*, optional) Called when all the requests are
+  done. The first argument of this function will be an array with the
+answers for each request.
+
+
+### Examples:
+
+Creating a request object to a specific url.
+
+{% highlight js %}
+  var req = new PhiloGL.IO.XHR({
+    urls: ['/mydomain/1/' '/mydomain/2/'],
+
+    onError: function() {
+      alert("An error ocurred in one request");
+    },
+
+    onComplete: function(arr) {
+        alert("responses: " + arr);
+    }
+  });
+{% endhighlight %}
+
+
+IO.XHR.Group Method: send {#IO:XHR:Group:send}
+------------------------------------------------
+
+Creates parallel connections for each url and sends the information.
+
+### Syntax:
+
+	xhr.send();
+
+### Examples:
+
+Creating a request object to a specific url and making the request. 
+Note the `send` call at the end of the instanciation.
+
+{% highlight js %}
+  var req = new PhiloGL.IO.XHR({
+    urls: ['/mydomain/1/', '/mydomain/2/'],
+    
+    onSuccess: function(text) {
+      alert(text);
+    },
+
+    onError: function() {
+      alert("An error ocurred");
+    },
+
+    onComplete: function(arr) {
+      alert("answer array: " + arr);
     }
   }).send();
 {% endhighlight %}
