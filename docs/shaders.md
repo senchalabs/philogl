@@ -49,9 +49,9 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
     uniform vec3 pointColor[LIGHT_MAX];
     uniform int numberPoints;
     //reflection / refraction configuration
-		uniform bool useReflection;
+    uniform bool useReflection;
     //varyings
-		varying vec3 vReflection;
+    varying vec3 vReflection;
     varying vec4 vColor;
     varying vec4 vPickingColor;
     varying vec2 vTexCoord;
@@ -124,14 +124,14 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
     uniform bool hasTexture1;
     uniform sampler2D sampler1;
     uniform bool hasTextureCube1;
-		uniform samplerCube samplerCube1;
+    uniform samplerCube samplerCube1;
     //picking configs
     uniform bool enablePicking;
     uniform bool hasPickingColors;
     uniform vec3 pickColor;
-		//reflection / refraction configs
-		uniform float reflection;
-		uniform float refraction;
+    //reflection / refraction configs
+    uniform float reflection;
+    uniform float refraction;
     //fog configuration
     uniform bool hasFog;
     uniform vec3 fogColor;
