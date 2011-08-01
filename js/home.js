@@ -1,13 +1,14 @@
 PhiloGL.unpack();
 
 function init() {
-  var imageUrls = ['worldflights', 'marching-cubes', 'histogram', 'fractal', 'explorer', 'tanomalies'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
+  var imageUrls = ['worldflights', 'metaballs', 'histogram', 'fractal', 'explorer', 'tanomalies', 'quaternion'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
       descriptions = ['World Airline Routes',
-                      'Marching Cubes Algorithm using Web Workers', 
+                      'Reflective Metaballs', 
                       'Real-time 3D Color Histogram Analysis',
                       'Animating Fractals',
                       '3D Surface Explorer',
-                      'World Temperature Anomalies from 1880 to 2010'];
+                      'World Temperature Anomalies from 1880 to 2010',
+                      'Quaternion Fractal Raymarching'];
 
   var images = new IO.Images({
     src: imageUrls,

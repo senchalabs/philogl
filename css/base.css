@@ -207,6 +207,10 @@ p {
     margin:7px;
 }
 
+#more .col div.title.other {
+  margin-top: 43px;
+}
+
 .featured-title {
     font-size:1.1em;
     text-indent: 2px;
@@ -229,7 +233,7 @@ p {
 }
 
 #col2 {
-    left:280px;
+    left:300px;
 }
 
 #col2 li {
@@ -237,11 +241,11 @@ p {
 }
 
 #col3.col {
-    left:575px;
-    width:326px;
+    left:600px;
+    width:306px;
 }
 
-#col3 img {
+#col3 img, #col2 img {
   width: 270px;
   margin-left: 10px;
   -webkit-box-shadow: #000 0 0 5px;
@@ -251,13 +255,13 @@ p {
   box-shadow: #000 0 0 5px;
 }
 
-#col3 ul {
+#col3 ul, #col2 ul {
   margin: 15px 0 0 10px;
   padding: 0;
   list-style: none;
 }
 
-#col3 a {
+#col3 a, #col2 a {
   font-size: 0.9em;
 }
 
