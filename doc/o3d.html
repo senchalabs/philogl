@@ -31,7 +31,7 @@
   
   <div id="sidebar">
     <div class="box help">
-      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+      <b>Found a typo?</b> <a href="https://github.com/philogb/philogl/tree/master/docs">Help making the docs better!</a>
     </div>
     <div class="box" id="modules">
       <b>Modules:</b>
@@ -145,6 +145,10 @@
 
 <li>shininess - (<em>number</em>, optional) A number between <span>0.1, 200</span> describing how shiny an object is.</li>
 
+<li>reflection - (<em>number</em>, optional) A number between <span>0, 1</span> describing the reflectivity of an object.</li>
+
+<li>refraction - (<em>number</em>, optional) A number between <span>0, 1</span> describing the refraction index of an object.</li>
+
 <li>attributes - (<em>object</em>, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more about attribute descriptors you can find a description of them in <a href='program.html#Program:setBuffer'>program.setBuffer</a>.</li>
 
 <li>uniforms - (<em>object</em>, optional) An object with uniform names and values to be set before rendering the model.</li>
@@ -166,35 +170,49 @@
 <li>onAfterRender - (<em>function</em>, optional) Called after rendering an object. The first two formal parameters are the program and the camera respectively.</li>
 </ul>
 
+<h3 id='notes'>Notes:</h3>
+
+<p><strong>New in version 1.3:</strong></p>
+
+<ul>
+<li>Attribute arrays are implemented as getters and setters, and may not return the same information they&#8217;ve been set with. Internally, attribute arrays are transformed into <a href='https://developer.mozilla.org/en/JavaScript_typed_arrays'>typed arrays</a>, a much faster data structure to use with this type of data.</li>
+
+<li>Attribute arrays only accept plain arrays and not nested arrays anymore. Forcing the data structure to be this way gives us a big performance gain.</li>
+
+<li>If you set a <code>color</code> attribute as a single color, then the array will be cloned to match the number of components for the model and will be served as an attribute. The getter for this property will return the cloned typed array.</li>
+
+<li><code>toFloat32Array</code> and <code>toUint16Array</code> methods are not used anymore since the typed array can now be fetched when accessing the model property directly.</li>
+</ul>
+
 <h3 id='examples'>Examples:</h3>
 
 <p>Create a pyramid model (used in lesson 4 of learning WebGL examples).</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>pyramid</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>O3D</span><span class='p'>.</span><span class='nx'>Model</span><span class='p'>({</span>
-    <span class='nx'>vertices</span><span class='o'>:</span> <span class='p'>[[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
-               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>],</span>
-               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>],</span>
-               <span class='p'>[</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>]],</span>
+    <span class='nx'>vertices</span><span class='o'>:</span> <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>,</span>
+               <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>
+                <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>
+                <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>,</span>
+                <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>
+                <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>
+                <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>,</span>
+                <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>
+               <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>
+                <span class='mi'>0</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>0</span><span class='p'>,</span>
+               <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>
+               <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span>  <span class='mi'>1</span><span class='p'>],</span>
     
-    <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>],</span>
-             <span class='p'>[</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]]</span>
+    <span class='nx'>colors</span><span class='o'>:</span> <span class='p'>[</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span>
+             <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>]</span>
   <span class='p'>});</span>
 </code></pre>
 </div>
@@ -250,46 +268,6 @@
   <span class='p'>};</span>
   
   <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>update</span><span class='p'>();</span>
-</code></pre>
-</div>
-<h2 id='O3D:Model:toFloat32Array'>O3D.Model Method: toFloat32Array</h2>
-
-<p>Returns a <code>Float32Array</code> version of the named property.</p>
-
-<h3 id='syntax'>Syntax:</h3>
-
-<pre><code>model.toFloat32Array(name);</code></pre>
-
-<h3 id='arguments'>Arguments:</h3>
-
-<ol>
-<li>name - (<em>string</em>) The name of the property to be converted into a <code>Float32Array</code>. Can be <code>vertices</code>, <code>normals</code>, <code>colors</code>, etc.</li>
-</ol>
-
-<h3 id='examples'>Examples:</h3>
-
-<p>Make the pyramid model return a <code>Float32Array</code> of the vertices array.</p>
-<div class='highlight'><pre><code class='js'>  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>toFloat32Array</span><span class='p'>(</span><span class='s1'>&#39;vertices&#39;</span><span class='p'>);</span> <span class='c1'>//returns the Float32Array of the vertices array.</span>
-</code></pre>
-</div>
-<h2 id='O3D:Model:toUint16Array'>O3D.Model Method: toUint16Array</h2>
-
-<p>Returns a <code>Uint16Array</code> version of the named property.</p>
-
-<h3 id='syntax'>Syntax:</h3>
-
-<pre><code>model.toUint16Array(name);</code></pre>
-
-<h3 id='arguments'>Arguments:</h3>
-
-<ol>
-<li>name - (<em>string</em>) The name of the property to be converted into a <code>Uint16Array</code>. Can be <code>indices</code>, etc.</li>
-</ol>
-
-<h3 id='examples'>Examples:</h3>
-
-<p>Make the pyramid model return a <code>Uint16Array</code> of the indices array.</p>
-<div class='highlight'><pre><code class='js'>  <span class='nx'>pyramid</span><span class='p'>.</span><span class='nx'>toUint16Array</span><span class='p'>(</span><span class='s1'>&#39;indices&#39;</span><span class='p'>);</span> <span class='c1'>//returns the Uint16Array of the indices array.</span>
 </code></pre>
 </div>
 <h2 id='O3D:Cube'>O3D Class: O3D.Cube</h2>
@@ -550,7 +528,7 @@
 
   
 <div class="footer">
-  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+  Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
 </div>
 </div>
 

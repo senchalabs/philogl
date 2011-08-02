@@ -31,7 +31,7 @@
   
   <div id="sidebar">
     <div class="box help">
-      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+      <b>Found a typo?</b> <a href="https://github.com/philogb/philogl/tree/master/docs">Help making the docs better!</a>
     </div>
     <div class="box" id="modules">
       <b>Modules:</b>
@@ -88,11 +88,11 @@
 
 <h1 id='Math'>Script: Math</h1>
 
-<p>The Math script provides <code>Vec3</code> and <code>Mat4</code> classes to manage three dimensional vectors and four by four matrices respectively.</p>
+<p>The Math script provides <code>Vec3</code>, <code>Mat4</code> and <code>Quat</code> classes to manage three dimensional vectors, four by four matrices and quaternions respectively.</p>
 
 <h3 id='generics'>Generics:</h3>
 
-<p>One very interesting thing to point about the Math script is that all <code>Vec3</code> and <code>Mat4</code> methods are generics. This means that all instance methods of <code>Vec3</code> and <code>Mat4</code> can also be accessed as static methods in which the first parameter of the static method is the receiver. The receiver does not <em>have to be</em> an instance of the class but can instead be a <code>Vec3</code>-like or <code>Mat4</code>-like object. This means that a simple object (i.e <code>{}</code>) can be used as the receiver for these methods.</p>
+<p>One very interesting thing to point about the Math script is that all <code>Vec3</code>, <code>Mat4</code> and <code>Quat</code> methods are generics. This means that all instance methods of <code>Vec3</code>, <code>Mat4</code>, and <code>Quat</code> can also be accessed as static methods in which the first parameter of the static method is the receiver. The receiver does not <em>have to be</em> an instance of the class but can instead be a <code>Vec3</code>-like, <code>Mat4</code>-like or <code>Quat</code>-like object. This means that a simple array (i.e <code>[]</code>) can be used as the receiver for these methods.</p>
 
 <p>Although the <em>syntax</em> section for each method will include the generic and non-generic one, the arguments for each method will be described as with the instance method syntax.</p>
 
@@ -113,6 +113,14 @@
 </ol>
 
 <p>These are the conventions we will be using for method naming. Methods altering the receiver will have a dollar sign (i.e. <code>$</code>), as opposed to methods creating a new instance with the result. Methods requiring a receiver <em>and</em> the instances involved in the operation as formal parameters will be suffixed with the number <code>2</code>.</p>
+
+<h3 id='notes'>Notes:</h3>
+
+<p><strong>New from version 1.3:</strong></p>
+
+<p>All classes now extend from <code>Array</code> or some <code>DataView</code> class (i.e. some typed array). This means that <code>Vec3</code>, <code>Mat4</code> and <code>Quat</code>-like objects are now plain arrays and not plain objects. I have added getters for all properties in <code>Vec3</code>, <code>Mat4</code> and <code>Quat</code> classes so you can still access them via <code>vec.x</code>, etc, but remember that the inner implementation is now an array, so <code>vec3[0]</code> will also work. The examples have been updated to reflect this.</p>
+
+<p>This implementation changes the signature for some methods and probably if you used object literals for <code>Vec3</code>, <code>Mat4</code> and <code>Quat</code> classes these things will have to be changed into arrays. The good thing about this is a noticeable boost in performance everywhere in the library, and in particular in the math functions. More information about this can be found in <a href='http://blog.thejit.org/'>my blog</a>.</p>
 
 <h1 id='Vec3'>Class: Vec3</h1>
 
@@ -193,14 +201,10 @@ PhiloGL.Vec3.setVec3(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code> components to another object.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>setVec3</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 now has (x=4, y=5, z=6)</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>setVec3</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 now has [4, 5, 6]</span>
 </code></pre>
 </div>
 <h2 id='Vec3:set'>Vec3 Method: set</h2>
@@ -233,14 +237,10 @@ PhiloGL.Vec3.set(v1, x, y, z);</code></pre>
 </code></pre>
 </div>
 <p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code> components to another object.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>);</span> <span class='c1'>//v1 now has (x=4, y=5, z=6)</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>);</span> <span class='c1'>//v1 now has [4, 5, 6]</span>
 </code></pre>
 </div>
 <h2 id='Vec3:add'>Vec3 Method: add</h2>
@@ -269,16 +269,8 @@ PhiloGL.Vec3.add(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(5, 7, 9) was created.</span>
 </code></pre>
@@ -309,18 +301,10 @@ PhiloGL.Vec3.$add(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: 5, y: 7, z: 9 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now [ 5, 7, 9 ].</span>
 </code></pre>
 </div>
 <h2 id='Vec3:add2'>Vec3 Method: add2</h2>
@@ -352,19 +336,11 @@ PhiloGL.Vec3.add2(v1, v2, v3);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>add2</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v2 and v3 are still the same but v1 is { x: 5, y: 7, z: 9 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>add2</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v2 and v3 are still the same but v1 is [ 5, 7, 9 ].</span>
 </code></pre>
 </div>
 <h2 id='Vec3:sub'>Vec3 Method: sub</h2>
@@ -393,16 +369,8 @@ PhiloGL.Vec3.sub(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and substract them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 and v2 are still the same but a new Vec3(-3, -3, -3) was created.</span>
 </code></pre>
@@ -433,18 +401,10 @@ PhiloGL.Vec3.$sub(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: -3, y: -3, z: -3 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span> <span class='c1'>//v1 is now [ -3, -3, -3 ].</span>
 </code></pre>
 </div>
 <h2 id='Vec3:sub2'>Vec3 Method: sub2</h2>
@@ -476,17 +436,9 @@ PhiloGL.Vec3.sub2(v1, v2, v3);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and substract them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v3</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>sub2</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>,</span> <span class='nx'>v3</span><span class='p'>);</span> <span class='c1'>//v2 and v3 are still the same but v1 is { x: -3, y: -3, z: -3 }.</span>
 </code></pre>
@@ -516,11 +468,7 @@ PhiloGL.Vec3.scale(v1, s);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and scale it by 2.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3(2, 4, 6) was created.</span>
 </code></pre>
@@ -550,13 +498,9 @@ PhiloGL.Vec3.$scale(v1, s);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and scale it by 2.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: 2, y: 4, z: 6 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//v1 is now [ 2, 4, 6 ].</span>
 </code></pre>
 </div>
 <h2 id='Vec3:neg'>Vec3 Method: neg</h2>
@@ -578,11 +522,7 @@ PhiloGL.Vec3.neg(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and negate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3(-1, -2, -3).</span>
 </code></pre>
@@ -606,13 +546,9 @@ PhiloGL.Vec3.$neg(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and negate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is now { x: -1, y: -2, z: -3).</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is now [ -1, -2, -3 ].</span>
 </code></pre>
 </div>
 <h2 id='Vec3:unit'>Vec3 Method: unit</h2>
@@ -634,11 +570,7 @@ PhiloGL.Vec3.unit(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and make a unit vector from it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is still the same but a new Vec3 that is a unit vector is created.</span>
 </code></pre>
@@ -662,11 +594,7 @@ PhiloGL.Vec3.$unit(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object make a unit vector from it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span> <span class='c1'>//v1 is now a unit vector object.</span>
 </code></pre>
@@ -697,16 +625,8 @@ PhiloGL.Vec3.cross(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and make a cross product.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='c1'>//v1 and v2 are still the same but a new Vec3 with the result was created.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>cross</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
@@ -738,16 +658,8 @@ PhiloGL.Vec3.$cross(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and make a cross product.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='c1'>//v1 contains now the result.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>$cross</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
@@ -779,16 +691,8 @@ PhiloGL.Vec3.distTo(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate their distance.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='c1'>//a real number with the distance is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>distTo</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
@@ -820,16 +724,8 @@ PhiloGL.Vec3.distToSq(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate their squared distance.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='c1'>//a real number with the squared distance is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>distToSq</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
@@ -854,11 +750,7 @@ PhiloGL.Vec3.norm(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and calculate its norm.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='c1'>//A real number with the norm is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span>
@@ -883,11 +775,7 @@ PhiloGL.Vec3.normSq(v1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code> object and calculate its squared norm.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>];</span>
 
   <span class='c1'>//A real number with the squared norm is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>);</span>
@@ -919,16 +807,8 @@ PhiloGL.Vec3.dot(v1, v2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code> objects and calculate the dot product.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span>
-      <span class='p'>},</span>
-      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>v1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span> <span class='p'>],</span>
+      <span class='nx'>v2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span> <span class='p'>];</span>
 
   <span class='c1'>//a real number with the dot product is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>dot</span><span class='p'>(</span><span class='nx'>v1</span><span class='p'>,</span> <span class='nx'>v2</span><span class='p'>);</span>
@@ -995,10 +875,10 @@ var m = new PhiloGL.Mat4(n11, n12, n13, n14,
 </code></pre>
 </div>
 <p>Create a null matrix.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='mi'>0</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
-                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
-                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
-                          <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>);</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                            <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                            <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span>
+                            <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>);</span>
 </code></pre>
 </div>
 <h2 id='Mat4:id'>Mat4 Method: id</h2>
@@ -1023,7 +903,7 @@ PhiloGL.Mat4.id(m);</code></pre>
 </code></pre>
 </div>
 <p>Create an identity matrix object.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span> <span class='c1'>//m object components are the Identity matrix ones.</span>
 </code></pre>
@@ -1062,7 +942,7 @@ PhiloGL.Mat4.set(m, n11, n12, n13, n14,
 </code></pre>
 </div>
 <p>Set an empty object matrix coordinates onto some values.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
                       <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>,</span>
@@ -1096,8 +976,8 @@ PhiloGL.Mat4.mulVec3(m, v);</code></pre>
 </code></pre>
 </div>
 <p>Create a matrix object and a vector object and multiply them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
@@ -1131,8 +1011,8 @@ PhiloGL.Mat4.$mulVec3(m, v);</code></pre>
 </code></pre>
 </div>
 <p>Create a matrix object and a vector object and multiply them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Vec3</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>v</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>);</span>
@@ -1166,8 +1046,8 @@ PhiloGL.Mat4.mulMat4(m, m1);</code></pre>
 </code></pre>
 </div>
 <p>Create a two matrices objects and multiply them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
@@ -1200,8 +1080,8 @@ PhiloGL.Mat4.$mulMat4(m, m1);</code></pre>
 </code></pre>
 </div>
 <p>Create a two matrices objects and multiply them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
@@ -1237,9 +1117,9 @@ PhiloGL.Mat4.mulMat42(m, m1, m2);</code></pre>
 </code></pre>
 </div>
 <p>Create a two matrices objects and multiply them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m2</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m2</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m2</span><span class='p'>);</span>
@@ -1272,8 +1152,8 @@ PhiloGL.Mat4.add(m, m1);</code></pre>
 </code></pre>
 </div>
 <p>Create a two matrices objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
@@ -1306,8 +1186,8 @@ PhiloGL.Mat4.$add(m, m1);</code></pre>
 </code></pre>
 </div>
 <p>Create a two matrices objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>m1</span> <span class='o'>=</span> <span class='p'>[];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m1</span><span class='p'>);</span>
@@ -1365,7 +1245,7 @@ PhiloGL.Mat4.rotateAxis(m, theta, vec);</code></pre>
 <ol>
 <li>theta - (<em>number</em>) An angle in radians.</li>
 
-<li>vec - (<em>object</em>) A <code>Vec3</code> (or x, y, z object).</li>
+<li>vec - (<em>object</em>) A <code>Vec3</code> (or array).</li>
 </ol>
 
 <h3 id='examples'>Examples:</h3>
@@ -1379,7 +1259,7 @@ PhiloGL.Mat4.rotateAxis(m, theta, vec);</code></pre>
 </div>
 <p>Another way of doing the same thing without creating a <code>Vec3</code>.</p>
 <div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
-      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>};</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span> <span class='p'>];</span>
   
   <span class='nx'>m</span><span class='p'>.</span><span class='nx'>rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is a new matrix</span>
 </code></pre>
@@ -1399,7 +1279,7 @@ PhiloGL.Mat4.$rotateAxis(m, theta, vec);</code></pre>
 <ol>
 <li>theta - (<em>number</em>) An angle in radians.</li>
 
-<li>vec - (<em>object</em>) A <code>Vec3</code> (or x, y, z object).</li>
+<li>vec - (<em>object</em>) A <code>Vec3</code> (or array).</li>
 </ol>
 
 <h3 id='examples'>Examples:</h3>
@@ -1413,7 +1293,7 @@ PhiloGL.Mat4.$rotateAxis(m, theta, vec);</code></pre>
 </div>
 <p>Another way of doing the same thing without creating a <code>Vec3</code>.</p>
 <div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
-      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>};</span>
+      <span class='nx'>v</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span> <span class='p'>];</span>
   
   <span class='nx'>m</span><span class='p'>.</span><span class='nx'>$rotateAxis</span><span class='p'>(</span><span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='nx'>v</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
 </code></pre>
@@ -1447,7 +1327,7 @@ PhiloGL.Mat4.rotateXYZ(m, rx, ry, rz);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>rotateXYZ</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
@@ -1482,7 +1362,7 @@ PhiloGL.Mat4.$rotateXYZ(m, rx, ry, rz);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$rotateXYZ</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nb'>Math</span><span class='p'>.</span><span class='nx'>PI</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//alters m</span>
@@ -1517,7 +1397,7 @@ PhiloGL.Mat4.translate(m, x, y, z);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>translate</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
@@ -1552,7 +1432,7 @@ PhiloGL.Mat4.$translate(m, x, y, z);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$translate</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
@@ -1587,7 +1467,7 @@ PhiloGL.Mat4.scale(m, x, y, z);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//creates a new Mat4 with the result.</span>
@@ -1622,7 +1502,7 @@ PhiloGL.Mat4.$scale(m, x, y, z);</code></pre>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[];</span>
   
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>id</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>);</span>
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='mi'>10</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>);</span> <span class='c1'>//the result is in m</span>
@@ -1688,18 +1568,18 @@ PhiloGL.Mat4.lookAt(m, eye, center, up);</code></pre>
 
 <p>Create a lookAt matrix. The eye is looking at the origin.</p>
 <div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>(),</span>
-      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>},</span>
-      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>},</span>
-      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>};</span>
+      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span> <span class='p'>],</span>
+      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>],</span>
+      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>];</span>
 
   <span class='nx'>m</span><span class='p'>.</span><span class='nx'>lookAt</span><span class='p'>(</span><span class='nx'>eye</span><span class='p'>,</span> <span class='nx'>center</span><span class='p'>,</span> <span class='nx'>up</span><span class='p'>);</span> <span class='c1'>//the original matrix is modified.</span>
 </code></pre>
 </div>
 <p>Another way of doing it with generics:</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>1</span> <span class='p'>},</span>
-      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>},</span>
-      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>{</span> <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>,</span> <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span> <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>0</span><span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>m</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>eye</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span> <span class='p'>],</span>
+      <span class='nx'>center</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>],</span>
+      <span class='nx'>up</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Mat4</span><span class='p'>.</span><span class='nx'>lookAt</span><span class='p'>(</span><span class='nx'>m</span><span class='p'>,</span> <span class='nx'>eye</span><span class='p'>,</span> <span class='nx'>center</span><span class='p'>,</span> <span class='nx'>up</span><span class='p'>);</span> <span class='c1'>//the original object is modified.</span>
 </code></pre>
@@ -1784,9 +1664,7 @@ PhiloGL.Mat4.perspective(m, fov, aspect, near, far);</code></pre>
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>m.toFloat32Array();
-
-PhiloGL.Mat4.toFloat32Array(m);</code></pre>
+<pre><code>m.toFloat32Array();</code></pre>
 
 <h2 id='Mat4:clone'>Mat4 Method: clone</h2>
 
@@ -1800,7 +1678,7 @@ PhiloGL.Mat4.clone(m);</code></pre>
 
 <h1 id='Quat'>Class: Quat</h1>
 
-<p>A class to handle Quaternions. More information on quternions can be found <a href='http://en.wikipedia.org/wiki/Quaternion'>here</a>. The quaternion will be represented by an instance with <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components that make a quaterion like: <code>xi + yj + zk + w</code>.</p>
+<p>A class to handle Quaternions. More information on quternions can be found <a href='http://en.wikipedia.org/wiki/Quaternion'>here</a>. The quaternion will be represented by an instance with <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components that make a quaternion like: <code>xi + yj + zk + w</code>.</p>
 
 <h2 id='Quat:fromVec3'>Quat Static Method: fromVec3</h2>
 
@@ -1917,7 +1795,7 @@ PhiloGL.Mat4.clone(m);</code></pre>
 <h3 id='arguments'>Arguments:</h3>
 
 <ol>
-<li>v - (<em>object</em>) A <code>Vec3</code>-like object.</li>
+<li>v - (<em>object</em>) A <code>Vec3</code>-like object (i.e an array of three components).</li>
 
 <li>angle - (<em>number</em>) The angle in radians.</li>
 </ol>
@@ -1981,19 +1859,14 @@ PhiloGL.Quat.setQuat(q1, q2);</code></pre>
 <div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
       <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
 
-  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//v1 now contains (x=4, y=5, z=6, w=7)</span>
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//v1 now contains [ 4, 5, 6, 7 ]</span>
 </code></pre>
 </div>
 <p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components to another object.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 now has (x=4, y=5, z=6, w=7)</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>setQuat</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 now has [ 4, 5, 6, 7 ]</span>
 </code></pre>
 </div>
 <h2 id='Quat:set'>Quat Method: set</h2>
@@ -2024,19 +1897,14 @@ PhiloGL.Quat.set(q1, x, y, z, w);</code></pre>
 <div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span><span class='p'>),</span>
       <span class='nx'>q2</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>(</span><span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span><span class='p'>);</span>
 
-  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now contains (x=4, y=5, z=6, w=7)</span>
+  <span class='nx'>q1</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now contains [ 4, 5, 6, 7 ]</span>
 </code></pre>
 </div>
 <p>Set an object&#8217;s <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> components to another object.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[],</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now has (x=4, y=5, z=6, w=7)</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>set</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>x</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>y</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>z</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>.</span><span class='nx'>w</span><span class='p'>);</span> <span class='c1'>//q1 now has [ 4, 5, 6, 7 ]</span>
 </code></pre>
 </div>
 <h2 id='Quat:add'>Quat Method: add</h2>
@@ -2065,18 +1933,8 @@ PhiloGL.Quat.add(q1, q2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>],</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(5, 7, 9, 11) was created.</span>
 </code></pre>
@@ -2107,20 +1965,10 @@ PhiloGL.Quat.$add(q1, q2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>],</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: 5, y: 7, z: 9, w: 11 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$add</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now [ 5, 7, 9, 11 ].</span>
 </code></pre>
 </div>
 <h2 id='Quat:sub'>Quat Method: sub</h2>
@@ -2155,12 +2003,7 @@ PhiloGL.Quat.sub(q1, q2);</code></pre>
         <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
         <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
       <span class='p'>},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>sub</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 and q2 are still the same but a new Quat(-3, -3, -3, -3) was created.</span>
 </code></pre>
@@ -2191,20 +2034,10 @@ PhiloGL.Quat.$sub(q1, q2);</code></pre>
 </code></pre>
 </div>
 <p>Create two <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> objects and add them.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>},</span>
-      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>4</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>5</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>6</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>7</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>],</span>
+      <span class='nx'>q2</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>4</span><span class='p'>,</span> <span class='mi'>5</span><span class='p'>,</span> <span class='mi'>6</span><span class='p'>,</span> <span class='mi'>7</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -3, y: -3, z: -3, w: -3 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$sub</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='nx'>q2</span><span class='p'>);</span> <span class='c1'>//q1 is now [ -3, -3, -3, -3 ].</span>
 </code></pre>
 </div>
 <h2 id='Quat:mulQuat'>Quat Method: mulQuat</h2>
@@ -2332,12 +2165,7 @@ PhiloGL.Quat.scale(q1, s);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and scale it by 2.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>scale</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(2, 4, 6, 8) was created.</span>
 </code></pre>
@@ -2367,14 +2195,9 @@ PhiloGL.Quat.$scale(q1, s);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and scale it by 2.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: 2, y: 4, z: 6, w: 8 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$scale</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>);</span> <span class='c1'>//q1 is now [ 2, 4, 6, 8 ].</span>
 </code></pre>
 </div>
 <h2 id='Quat:conjugate'>Quat Method: conjugate</h2>
@@ -2396,12 +2219,7 @@ PhiloGL.Quat.conjugate(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and conjugate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(-1, -2, -3, 4).</span>
 </code></pre>
@@ -2425,14 +2243,9 @@ PhiloGL.Quat.$conjugate(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and conjugate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -1, y: -2, z: -3, w: 4 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>conjugate</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now [ -1, -2, -3, 4 ].</span>
 </code></pre>
 </div>
 <h2 id='Quat:neg'>Quat Method: neg</h2>
@@ -2454,12 +2267,7 @@ PhiloGL.Quat.neg(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and negate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat(-1, -2, -3, -4).</span>
 </code></pre>
@@ -2483,14 +2291,9 @@ PhiloGL.Quat.$neg(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and negate it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now { x: -1, y: -2, z: -3, w: -4 }.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>neg</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now [ -1, -2, -3, -4 ].</span>
 </code></pre>
 </div>
 <h2 id='Quat:unit'>Quat Method: unit</h2>
@@ -2512,12 +2315,7 @@ PhiloGL.Quat.unit(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and make a unit quaternion from it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>unit</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is still the same but a new Quat that is a unit quaternion is created.</span>
 </code></pre>
@@ -2541,14 +2339,9 @@ PhiloGL.Quat.$unit(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and make a unit quaternion from it.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
-  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now a unit quaternion object.</span>
+  <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>$unit</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span> <span class='c1'>//q1 is now a unit quaternion vector.</span>
 </code></pre>
 </div>
 <h2 id='Quat:norm'>Quat Method: norm</h2>
@@ -2570,12 +2363,7 @@ PhiloGL.Quat.norm(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and calculate its norm.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='c1'>//A real number with the norm is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>norm</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span>
@@ -2600,12 +2388,7 @@ PhiloGL.Quat.normSq(q1);</code></pre>
 </code></pre>
 </div>
 <p>Create an <code>x</code>, <code>y</code>, <code>z</code>, <code>w</code> object and calculate its squared norm.</p>
-<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>{</span>
-        <span class='nx'>x</span><span class='o'>:</span> <span class='mi'>1</span><span class='p'>,</span>
-        <span class='nx'>y</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
-        <span class='nx'>z</span><span class='o'>:</span> <span class='mi'>3</span><span class='p'>,</span>
-        <span class='nx'>w</span><span class='o'>:</span> <span class='mi'>4</span>
-      <span class='p'>};</span>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>q1</span> <span class='o'>=</span> <span class='p'>[</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>2</span><span class='p'>,</span> <span class='mi'>3</span><span class='p'>,</span> <span class='mi'>4</span> <span class='p'>];</span>
 
   <span class='c1'>//A real number with the squared norm is returned.</span>
   <span class='kd'>var</span> <span class='nx'>ans</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Quat</span><span class='p'>.</span><span class='nx'>normSq</span><span class='p'>(</span><span class='nx'>q1</span><span class='p'>);</span>
@@ -2623,7 +2406,7 @@ PhiloGL.Quat.clone(q1);</code></pre>
 
   
 <div class="footer">
-  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+  Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
 </div>
 </div>
 

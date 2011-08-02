@@ -31,7 +31,7 @@
   
   <div id="sidebar">
     <div class="box help">
-      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+      <b>Found a typo?</b> <a href="https://github.com/philogb/philogl/tree/master/docs">Help making the docs better!</a>
     </div>
     <div class="box" id="modules">
       <b>Modules:</b>
@@ -258,7 +258,7 @@ void main(void) {
 </div>
 <h2 id='Program:fromDefaultShaders'>Program Static Method: fromDefaultShaders</h2>
 
-<p>Creates a new program by using the sources taken from <a href='http://senchalabs.github.com/philogl/doc/shaders.html#Shaders:Vertex'>Shaders.Vertex</a> and <a href='http://senchalabs.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a>.</p>
+<p>Creates a new program by using the sources taken from <a href='http://philogb.github.com/philogl/doc/shaders.html#Shaders:Vertex'>Shaders.Vertex</a> and <a href='http://philogb.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a>.</p>
 
 <h3 id='syntax'>Syntax:</h3>
 
@@ -267,14 +267,14 @@ void main(void) {
 <h3 id='arguments'>Arguments:</h3>
 
 <ol>
-<li>vertexDefaultShaderId - (<em>string</em>, optional) The vertex shader id from <a href='http://senchalabs.github.com/philogl/doc/shaders.html#Shaders:Vertex'>Shaders.Vertex</a>. Default&#8217;s <code>Default</code>.</li>
+<li>vertexDefaultShaderId - (<em>string</em>, optional) The vertex shader id from <a href='http://philogb.github.com/philogl/doc/shaders.html#Shaders:Vertex'>Shaders.Vertex</a>. Default&#8217;s <code>Default</code>.</li>
 
-<li>fragmentShaderSource - (<em>string</em>) The fragment shader id from <a href='http://senchalabs.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a>. Default&#8217;s <code>Default</code>.</li>
+<li>fragmentShaderSource - (<em>string</em>) The fragment shader id from <a href='http://philogb.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a>. Default&#8217;s <code>Default</code>.</li>
 </ol>
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Extend <a href='http://senchalabs.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a> with a default shader and create a Program from defaults. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/8/'>lesson 8</a> example.</p>
+<p>Extend <a href='http://philogb.github.com/philogl/doc/shaders.html#Shaders:Fragment'>Shaders.Fragment</a> with a default shader and create a Program from defaults. Taken from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/8/'>lesson 8</a> example.</p>
 <div class='highlight'><pre><code class='js'><span class='c1'>//Add Blend Fragment Shader</span>
 <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Shaders</span><span class='p'>.</span><span class='nx'>Fragment</span><span class='p'>.</span><span class='nx'>Blend</span> <span class='o'>=</span> <span class='p'>[</span>
 
@@ -327,7 +327,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Set matrix information for the projection matrix and element matrix of the camera and world. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/3/'>here</a>.</p>
+<p>Set matrix information for the projection matrix and element matrix of the camera and world. The context of this example can be seen <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/3/'>here</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='nx'>program</span><span class='p'>.</span><span class='nx'>setUniform</span><span class='p'>(</span><span class='s1'>&#39;uMVMatrix&#39;</span><span class='p'>,</span> <span class='nx'>view</span><span class='p'>);</span>
 <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setUniform</span><span class='p'>(</span><span class='s1'>&#39;uPMatrix&#39;</span><span class='p'>,</span> <span class='nx'>camera</span><span class='p'>.</span><span class='nx'>projection</span><span class='p'>);</span>
 </code></pre>
@@ -348,7 +348,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Set matrix information for the projection matrix and element matrix of the camera and world. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/3/'>here</a>.</p>
+<p>Set matrix information for the projection matrix and element matrix of the camera and world. The context of this example can be seen <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/3/'>here</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='nx'>program</span><span class='p'>.</span><span class='nx'>setUniforms</span><span class='p'>({</span>
   <span class='s1'>&#39;uMVMatrix&#39;</span><span class='o'>:</span> <span class='nx'>view</span><span class='p'>,</span>
   <span class='s1'>&#39;uPMatrix&#39;</span><span class='o'>:</span> <span class='nx'>camera</span><span class='p'>.</span><span class='nx'>projection</span>
@@ -391,7 +391,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Set buffer values for the vertices of a triangle. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
+<p>Set buffer values for the vertices of a triangle. The context of this example can be seen <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='nx'>program</span><span class='p'>.</span><span class='nx'>setBuffer</span><span class='p'>(</span><span class='s1'>&#39;triangle&#39;</span><span class='p'>,</span> <span class='p'>{</span>
   <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
   <span class='nx'>value</span><span class='o'>:</span> <span class='k'>new</span> <span class='nx'>Float32Array</span><span class='p'>([</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>]),</span>
@@ -415,7 +415,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Set buffer values for the vertices of a triangle and a square. The context of this example can be seen <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
+<p>Set buffer values for the vertices of a triangle and a square. The context of this example can be seen <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/1/'>here</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='nx'>program</span><span class='p'>.</span><span class='nx'>setBuffers</span><span class='p'>({</span>
   <span class='s1'>&#39;triangle&#39;</span><span class='o'>:</span> <span class='p'>{</span>
     <span class='nx'>attribute</span><span class='o'>:</span> <span class='s1'>&#39;aVertexPosition&#39;</span><span class='p'>,</span>
@@ -465,7 +465,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Using a frambuffer to render a scene into a texture. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<p>Using a frambuffer to render a scene into a texture. Taken from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='c1'>//create framebuffer</span>
 <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='p'>{</span>
   <span class='nx'>width</span><span class='o'>:</span> <span class='nx'>screenWidth</span><span class='p'>,</span>
@@ -588,7 +588,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Setting a texture for a box. Adapted from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
+<p>Setting a texture for a box. Adapted from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>img</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>Image</span><span class='p'>();</span>
 
 <span class='nx'>img</span><span class='p'>.</span><span class='nx'>onload</span> <span class='o'>=</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
@@ -618,7 +618,7 @@ void main(void) {
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Set multiple type of textures from the same image. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
+<p>Set multiple type of textures from the same image. Taken from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/6/'>lesson 6</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='c1'>//load textures from image</span>
 <span class='kd'>var</span> <span class='nx'>img</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>Image</span><span class='p'>();</span>
 <span class='nx'>img</span><span class='p'>.</span><span class='nx'>onload</span> <span class='o'>=</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
@@ -671,7 +671,7 @@ void main(void) {
 
   
 <div class="footer">
-  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+  Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
 </div>
 </div>
 

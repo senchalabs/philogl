@@ -31,7 +31,7 @@
   
   <div id="sidebar">
     <div class="box help">
-      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+      <b>Found a typo?</b> <a href="https://github.com/philogb/philogl/tree/master/docs">Help making the docs better!</a>
     </div>
     <div class="box" id="modules">
       <b>Modules:</b>
@@ -88,7 +88,7 @@
 
 <h1 id='Scene'>Class: Scene</h1>
 
-<p>The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that plays well with objects created with <a href='o3d.html'>O3D</a> and the default shaders in <a href='shaders.html'>Shaders</a> to enable rendering of multiple models in the scene with different options. The Scene role is to connect the properties set in the <a href='o3d.html'>O3D</a> models to the attributes defined in the shaders so that the buffer creation and updating is transparent to the user. The good thing about the design though is that the Scene provides many callback functions that can be executed at different stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you to create your own shader files that are compatible with the <a href='scene.html'>Scene</a> class. Some examples of <a href='scene.html'>Scene</a> compatible shader files can be found <a href='https://github.com/senchalabs/philogl/tree/master/shaders'>here</a>. Also, for more information about the default shaders take a look at the <a href='shaders.html'>Shaders</a> class. The <a href='o3d.html'>O3D</a> options describe how to override or set callbacks when rendering objects with a default scene.</p>
+<p>The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that plays well with objects created with <a href='o3d.html'>O3D</a> and the default shaders in <a href='shaders.html'>Shaders</a> to enable rendering of multiple models in the scene with different options. The Scene role is to connect the properties set in the <a href='o3d.html'>O3D</a> models to the attributes defined in the shaders so that the buffer creation and updating is transparent to the user. The good thing about the design though is that the Scene provides many callback functions that can be executed at different stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you to create your own shader files that are compatible with the <a href='scene.html'>Scene</a> class. Some examples of <a href='scene.html'>Scene</a> compatible shader files can be found <a href='https://github.com/philogb/philogl/tree/master/shaders'>here</a>. Also, for more information about the default shaders take a look at the <a href='shaders.html'>Shaders</a> class. The <a href='o3d.html'>O3D</a> options describe how to override or set callbacks when rendering objects with a default scene.</p>
 
 <h2 id='Scene:constructor'>Scene Method: constructor</h2>
 
@@ -168,7 +168,7 @@
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Create a new Scene instance. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<p>Create a new Scene instance. Taken from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>innerScene</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Scene</span><span class='p'>(</span><span class='nx'>program</span><span class='p'>,</span> <span class='nx'>innerCamera</span><span class='p'>,</span> <span class='p'>{</span>
   <span class='nx'>lights</span><span class='o'>:</span> <span class='p'>{</span>
     <span class='nx'>enable</span><span class='o'>:</span> <span class='kc'>true</span><span class='p'>,</span>
@@ -231,7 +231,7 @@
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Add a moon and a box models to the scene. Taken from <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/12/'>lesson 12</a>.</p>
+<p>Add a moon and a box models to the scene. Taken from <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/12/'>lesson 12</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='c1'>//Add objects to the scene</span>
 <span class='nx'>scene</span><span class='p'>.</span><span class='nx'>add</span><span class='p'>(</span><span class='nx'>moon</span><span class='p'>,</span> <span class='nx'>box</span><span class='p'>);</span>
 </code></pre>
@@ -288,7 +288,7 @@
 
 <h3 id='examples'>Examples:</h3>
 
-<p>Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done to render the inner scene in the laptop example on <a href='http://senchalabs.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
+<p>Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done to render the inner scene in the laptop example on <a href='http://philogb.github.com/philogl/PhiloGL/examples/lessons/16/'>lesson 16</a>.</p>
 <div class='highlight'><pre><code class='js'><span class='kd'>function</span> <span class='nx'>drawInnerScene</span><span class='p'>()</span> <span class='p'>{</span>
   <span class='nx'>program</span><span class='p'>.</span><span class='nx'>setFrameBuffer</span><span class='p'>(</span><span class='s1'>&#39;monitor&#39;</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>);</span>
   
@@ -319,7 +319,7 @@
 </div>
 <h2 id='Scene:pick'>Scene Method: pick</h2>
 
-<p>Returns an <a href='o3d.html'>O3D</a> object under the given <code>x</code> and <code>y</code> coordinates. The object must have <code>pickable</code> set to <code>true</code> (which is the default O3D constructor value).</p>
+<p>Returns an <a href='o3d.html'>O3D</a> object under the given <code>x</code> and <code>y</code> coordinates. The object must have <code>pickable</code> set to <code>true</code>.</p>
 
 <h3 id='about_the_picking_algorithm'>About the picking algorithm</h3>
 
@@ -362,7 +362,7 @@
 
   
 <div class="footer">
-  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+  Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
 </div>
 </div>
 

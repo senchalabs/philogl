@@ -31,7 +31,7 @@
   
   <div id="sidebar">
     <div class="box help">
-      <b>Found a typo?</b> <a href="https://github.com/senchalabs/philogl/tree/master/docs">Help making the docs better!</a>
+      <b>Found a typo?</b> <a href="https://github.com/philogb/philogl/tree/master/docs">Help making the docs better!</a>
     </div>
     <div class="box" id="modules">
       <b>Modules:</b>
@@ -119,6 +119,8 @@
 
 <li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
 
+<li>responseType - (<em>string</em>, optional) The format/type of data to be retrieved. Set this to <code>arraybuffer</code> to get binary data. More info <a href='https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data'>here</a>.</li>
+
 <li>sendAsBinary - (<em>boolean</em>, optional) Whether the content should be sent as binary or not. Default&#8217;s false. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
 
 <li>body - (<em>mixed</em>, optional) To be used when <code>sendAsBinary</code> is <code>true</code>. The binary content to be sent. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
@@ -166,6 +168,92 @@
 
     <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
       <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;An error ocurred&quot;</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>}).</span><span class='nx'>send</span><span class='p'>();</span>
+</code></pre>
+</div>
+<h2 id='IO:XHR:Group'>IO Class: IO.XHR.Group</h2>
+
+<p>The XHR Group class creates parallel XHR requests and returns the information in an array. Callbacks for when a single resquest is succesfull and also for when all requests are completed are provided.</p>
+
+<h2 id='IO:XHR:Group:constructor'>IO.XHR.Group Method: constructor</h2>
+
+<p>Initializes a new XHR Group instance.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>var xhr = new PhiloGL.IO.XHR.Group(options);</code></pre>
+
+<h3 id='arguments'>Arguments:</h3>
+
+<ol>
+<li>options - (<em>object</em>) An object containing the following options:</li>
+</ol>
+
+<h3 id='options'>Options:</h3>
+
+<ul>
+<li>urls - (<em>array</em>) The urls to make the requests to.</li>
+
+<li>method - (<em>string</em>, optional) The request method. Possible values are <code>GET</code> or <code>POST</code>. Default&#8217;s <code>GET</code>.</li>
+
+<li>async - (<em>boolean</em>, optional) Whether to make the request asynchronous or not. Default&#8217;s <code>true</code>.</li>
+
+<li>noCache - (<em>boolean</em>, optional) If true a random number will be appended to the url in order to force the reload of the file and avoid the use of the cache. Default&#8217;s <code>false</code>.</li>
+
+<li>responseType - (<em>string</em>, optional) The format/type of data to be retrieved. Set this to <code>arraybuffer</code> to get binary data. More info <a href='https://developer.mozilla.org/En/Using_XMLHttpRequest#Handling_binary_data'>here</a>.</li>
+
+<li>sendAsBinary - (<em>boolean</em>, optional) Whether the content should be sent as binary or not. Default&#8217;s false. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
+
+<li>body - (<em>mixed</em>, optional) To be used when <code>sendAsBinary</code> is <code>true</code>. The binary content to be sent. More info <a href='https://developer.mozilla.org/en/xmlhttprequest#sendAsBinary('>here</a>).</li>
+
+<li>onSuccess - (<em>function</em>, optional) A callback executed once the connection was successful and the information completely sent. This callback is called for each individual request.</li>
+
+<li>onError - (<em>function</em>, optional) A callback executed if there&#8217;s an error while making the connection or sending the data. This callback will be called for each unsuccesfull request.</li>
+
+<li>onComplete - (<em>function</em>, optional) Called when all the requests are done. The first argument of this function will be an array with the answers for each request.</li>
+</ul>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request object to a specific url.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>req</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>XHR</span><span class='p'>({</span>
+    <span class='nx'>urls</span><span class='o'>:</span> <span class='p'>[</span><span class='s1'>&#39;/mydomain/1/&#39;</span> <span class='s1'>&#39;/mydomain/2/&#39;</span><span class='p'>],</span>
+
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;An error ocurred in one request&quot;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>arr</span><span class='p'>)</span> <span class='p'>{</span>
+        <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;responses: &quot;</span> <span class='o'>+</span> <span class='nx'>arr</span><span class='p'>);</span>
+    <span class='p'>}</span>
+  <span class='p'>});</span>
+</code></pre>
+</div>
+<h2 id='IO:XHR:Group:send'>IO.XHR.Group Method: send</h2>
+
+<p>Creates parallel connections for each url and sends the information.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>xhr.send();</code></pre>
+
+<h3 id='examples'>Examples:</h3>
+
+<p>Creating a request object to a specific url and making the request. Note the <code>send</code> call at the end of the instanciation.</p>
+<div class='highlight'><pre><code class='js'>  <span class='kd'>var</span> <span class='nx'>req</span> <span class='o'>=</span> <span class='k'>new</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>IO</span><span class='p'>.</span><span class='nx'>XHR</span><span class='p'>({</span>
+    <span class='nx'>urls</span><span class='o'>:</span> <span class='p'>[</span><span class='s1'>&#39;/mydomain/1/&#39;</span><span class='p'>,</span> <span class='s1'>&#39;/mydomain/2/&#39;</span><span class='p'>],</span>
+    
+    <span class='nx'>onSuccess</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='nx'>text</span><span class='p'>);</span>
+    <span class='p'>},</span>
+
+    <span class='nx'>onError</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>()</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;An error ocurred&quot;</span><span class='p'>);</span>
+    <span class='p'>},</span>
+
+    <span class='nx'>onComplete</span><span class='o'>:</span> <span class='kd'>function</span><span class='p'>(</span><span class='nx'>arr</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='nx'>alert</span><span class='p'>(</span><span class='s2'>&quot;answer array: &quot;</span> <span class='o'>+</span> <span class='nx'>arr</span><span class='p'>);</span>
     <span class='p'>}</span>
   <span class='p'>}).</span><span class='nx'>send</span><span class='p'>();</span>
 </code></pre>
@@ -310,7 +398,7 @@
 
   
 <div class="footer">
-  Copyright &copy; <a href="http://sencha.com/">Sencha Inc.</a> - Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
+  Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.
 </div>
 </div>
 
