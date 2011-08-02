@@ -2,10 +2,9 @@
 <html>
   <head>
     <title>PhiloGL - World Flights</title>
-    <meta name="author" content="Nicolas Garcia Belmonte" /> 
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
     <script type="text/javascript" src="../../build/PhiloGL.js"></script>
-    <script type="text/javascript" src="index.js?1"></script>
+    <script type="text/javascript" src="index.js"></script>
   </head>
   <body>
     <div id="log-panel" style="display:none;">
@@ -21,7 +20,6 @@
       </div>
 
       <div class="canvas-container">
-        <div id="loading-text">Loading data, please wait...</div>
         <canvas id="map-canvas" width="800" height="500"></canvas>
         <div id="list-wrapper" class="list-wrapper" style="display:none;">
           <input type="text" id="search" placeholder="Search for an Airline" />
@@ -37,7 +35,7 @@
   
   <div class="footer">
     Author: <a href="http://philogb.github.com/">Nicolas Garcia
-      Belmonte</a> - Source: <a href="http://openflights.org/data.html">OpenFlights</a>.
+      Belmonte</a>.
   </div>
   <script>
     if (!PhiloGL.hasWebGL()) {

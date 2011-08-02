@@ -99,8 +99,7 @@ function webGLStart() {
         from: 'uris',
         path: '../../../shaders/',
         vs: 'render-tex.vs.glsl',
-        fs: 'render-tex.fs.glsl',
-        noCache: true
+        fs: 'render-tex.fs.glsl'
       },
       scene: {
         lights: {
@@ -201,7 +200,7 @@ function webGLStart() {
         outerCamera.update();
         innerCamera.update();
       
-        outerCamera.modelView.$translate(0, -0.5, 0);
+        outerCamera.view.$translate(0, -0.5, 0);
         
         function drawInnerScene() {
           program.setFrameBuffer('monitor', true);

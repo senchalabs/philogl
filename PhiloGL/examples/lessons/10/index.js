@@ -140,7 +140,7 @@ function webGLStart() {
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
           //Update Camera Position 
-          camera.modelView.id()
+          camera.view.id()
                           .$rotateXYZ(-pitch, -yaw, 0)
                           .$translate(-xPos, -yPos, -zPos);
                           

@@ -1,25 +1,25 @@
 function webGLStart() {
   //Load models
   var triangle = new PhiloGL.O3D.Model({
-    vertices: [[ 0,  1, 0],
-               [-1, -1, 0],
-               [ 1, -1, 0]],
+    vertices: [ 0,  1, 0,
+               -1, -1, 0,
+                1, -1, 0],
 
-    colors: [[1, 0, 0, 1],
-              [0, 1, 0, 1],
-              [0, 0, 1, 1]]
+    colors: [1, 0, 0, 1,
+             0, 1, 0, 1,
+             0, 0, 1, 1]
   });
 
   var square = new PhiloGL.O3D.Model({
-    vertices: [[ 1,  1, 0],
-                [-1,  1, 0],
-                [ 1, -1, 0],
-                [-1, -1, 0]],
+    vertices: [ 1,  1, 0,
+               -1,  1, 0,
+                1, -1, 0,
+               -1, -1, 0],
 
-    colors: [[0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1],
-              [0.5, 0.5, 1, 1]]
+    colors: [0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1,
+             0.5, 0.5, 1, 1]
   });
 
   //Create App
@@ -46,22 +46,22 @@ function webGLStart() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      camera.modelView.id();
+      camera.view.id();
       
       function setupElement(elem) {
         //update element matrix
         elem.update();
         //get new view matrix out of element and camera matrices
-        view.mulMat42(camera.modelView, elem.matrix);
+        view.mulMat42(camera.view, elem.matrix);
         //set buffers with element data
         program.setBuffers({
           'aVertexPosition': {
-            value: elem.toFloat32Array('vertices'),
+            value: elem.vertices,
             size: 3
           },
 
           'aVertexColor': {
-            value: elem.toFloat32Array('colors'),
+            value: elem.colors,
             size: 4
           }
         });

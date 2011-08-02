@@ -7,17 +7,28 @@ function webGLStart() {
     nlong: 30,
     radius: 2,
     textures: 'moon.gif',
+    program: 'vertex',
     colors: [1, 1, 1, 1]
   });
   //Create box
   var box = new PhiloGL.O3D.Cube({
     textures: 'crate.gif',
+    program: 'vertex',
     colors: [1, 1, 1, 1]
   });
   box.scale.set(2, 2, 2);
 
   //Create application
   PhiloGL('lesson13-canvas', {
+    program: [{
+      id: 'vertex',
+      from: 'defaults'
+    }, {
+      id: 'fragment',
+      from: 'ids',
+      vs: 'per-fragment-lighting-vs',
+      fs: 'per-fragment-lighting-fs'
+    }],
     camera: {
       position: {
         x: 0, y: 0, z: -30
@@ -61,10 +72,7 @@ function webGLStart() {
     onLoad: function(app) {
       //Unpack app properties
       var gl = app.gl,
-          vertexProgram = app.program,
-          fragmentProgram = PhiloGL.Program.fromShaderIds('per-fragment-lighting-vs', 'per-fragment-lighting-fs'),
           scene = app.scene,
-          currentProgram,
           canvas = app.canvas,
           camera = app.camera,
           //get light config from forms
@@ -96,7 +104,7 @@ function webGLStart() {
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, +canvas.width, +canvas.height);
       //Add objects to the scene
-      scene.add(moon, box);
+      scene.add(box, moon);
       //Animate
       setInterval(draw, 1000/60);
 
@@ -126,12 +134,12 @@ function webGLStart() {
         
         //Set program
         if (program.checked) {
-          currentProgram = fragmentProgram;
+          moon.program = 'fragment';
+          box.program = 'fragment';
         } else {
-          currentProgram = vertexProgram;
+          moon.program = 'vertex';
+          box.program = 'vertex';
         }
-        currentProgram.use();
-        scene.program = currentProgram;
         
         //Set textures
         if (textures.checked) {

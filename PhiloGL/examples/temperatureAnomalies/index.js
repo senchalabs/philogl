@@ -299,9 +299,9 @@ function init() {
         //First map
         fx.start({
           from: {
-            vertices: (currentTempMap.vertices || []).slice(),
-            normals: (currentTempMap.normals || []).slice(),
-            colors: (currentTempMap.colors || []).slice()
+            vertices: new Float32Array(currentTempMap.vertices || []),
+            normals: new Float32Array(currentTempMap.normals || []),
+            colors: new Float32Array(currentTempMap.colors || [])
           },
           to: tempMaps[0]
         });

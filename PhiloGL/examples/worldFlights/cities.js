@@ -21,7 +21,8 @@ function createCitiesLayer(cities) {
       pickingColors = [],
       indices = [],
       vertexCount = 0,
-      step = Object.keys(cities).length / 5 >> 0;
+      step = Object.keys(cities).length / 5 >> 0,
+      slice = Array.prototype.slice;
 
   for (var prop in cities) {
     var city = cities[prop],
@@ -44,12 +45,12 @@ function createCitiesLayer(cities) {
           radius: 1 / 200,
           pickingColors: [0, g / 255, b / 255, 1]
         }),
-        tvertices = sphere.vertices.map(function(v, i) { return coords[i % 3] + v; });
+        tvertices = slice.call(sphere.vertices).map(function(v, i) { return coords[i % 3] + v; });
 
     vertices.push.apply(vertices, tvertices);
-    normals.push.apply(normals, sphere.normals);
-    pickingColors.push.apply(pickingColors, sphere.pickingColors);
-    indices.push.apply(indices, sphere.indices.map(function(index) { return index + vertexCount; }));
+    normals.push.apply(normals, slice.call(sphere.normals));
+    pickingColors.push.apply(pickingColors, slice.call(sphere.pickingColors));
+    indices.push.apply(indices, slice.call(sphere.indices).map(function(index) { return index + vertexCount; }));
     cityIndex[index++] = prop;
 
     vertexCount += tvertices.length / 3;

@@ -49,7 +49,7 @@ void main(void) {
     vec3  diffuseLight = vec3(0.0, 0.0, 0.0);
     
     vec3 transformedPointLocation;
-    vec3 normal = vTransformedNormal.xyz;
+    vec3 normal = normalize(vTransformedNormal.xyz);
     
     vec3 eyeDirection = normalize(-vPosition.xyz);
     vec3 reflectionDirection;

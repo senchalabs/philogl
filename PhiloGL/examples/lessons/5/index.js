@@ -3,35 +3,35 @@ function webGLStart() {
   var cube = new PhiloGL.O3D.Model({
     texture: 'nehe.gif',
 
-    vertices: [[-1, -1,  1],
-               [ 1, -1,  1],
-               [ 1,  1,  1],
-               [-1,  1,  1],
+    vertices: [-1, -1,  1,
+                1, -1,  1,
+                1,  1,  1,
+               -1,  1,  1,
 
-               [-1, -1, -1],
-               [-1,  1, -1],
-               [ 1,  1, -1],
-               [ 1, -1, -1],
+               -1, -1, -1,
+               -1,  1, -1,
+                1,  1, -1,
+                1, -1, -1,
 
-               [-1,  1, -1],
-               [-1,  1,  1],
-               [ 1,  1,  1],
-               [ 1,  1, -1],
+               -1,  1, -1,
+               -1,  1,  1,
+                1,  1,  1,
+                1,  1, -1,
 
-               [-1, -1, -1],
-               [ 1, -1, -1],
-               [ 1, -1,  1],
-               [-1, -1,  1],
+               -1, -1, -1,
+                1, -1, -1,
+                1, -1,  1,
+               -1, -1,  1,
 
-               [ 1, -1, -1],
-               [ 1,  1, -1],
-               [ 1,  1,  1],
-               [ 1, -1,  1],
+                1, -1, -1,
+                1,  1, -1,
+                1,  1,  1,
+                1, -1,  1,
 
-               [-1, -1, -1],
-               [-1, -1,  1],
-               [-1,  1,  1],
-               [-1,  1, -1]],
+               -1, -1, -1,
+               -1, -1,  1,
+               -1,  1,  1,
+               -1,  1, -1],
 
     texCoords: [
             // Front face
@@ -105,20 +105,20 @@ function webGLStart() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      camera.modelView.id();
+      camera.view.id();
 
       //set buffers with cube data
       program.setBuffers({
         'aVertexPosition': {
-          value: cube.toFloat32Array('vertices'),
+          value: cube.vertices,
           size: 3
         },
         'aTextureCoord': {
-          value: cube.toFloat32Array('texCoords'),
+          value: cube.texCoords,
           size: 2
         },
         'indices': {
-          value: cube.toUint16Array('indices'),
+          value: cube.indices,
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           size: 1
         }
@@ -133,7 +133,7 @@ function webGLStart() {
         //update element matrix
         cube.update();
         //get new view matrix out of element and camera matrices
-        view.mulMat42(camera.modelView, cube.matrix);
+        view.mulMat42(camera.view, cube.matrix);
         //set attributes, indices and textures
         program.setBuffer('aVertexPosition')
               .setBuffer('aTextureCoord')

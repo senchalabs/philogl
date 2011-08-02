@@ -35,17 +35,18 @@ function webGLStart() {
       });
       
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      camera.modelView.id();
+      camera.view.id();
+      console.log('view', camera.view, camera.view.toFloat32Array());
       //Draw Triangle
-      camera.modelView.$translate(-1.5, 0, -7);
-      program.setUniform('uMVMatrix', camera.modelView);
+      camera.view.$translate(-1.5, 0, -7);
+      program.setUniform('uMVMatrix', camera.view);
       program.setUniform('uPMatrix', camera.projection);
       program.setBuffer('triangle');
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       
       //Draw Square
-      camera.modelView.$translate(3, 0, 0);
-      program.setUniform('uMVMatrix', camera.modelView);
+      camera.view.$translate(3, 0, 0);
+      program.setUniform('uMVMatrix', camera.view);
       program.setUniform('uPMatrix', camera.projection);
       program.setBuffer('square');
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

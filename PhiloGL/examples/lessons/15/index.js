@@ -17,8 +17,7 @@ function webGLStart() {
       from: 'uris',
       path: '../../../shaders/',
       vs: 'spec-map.vs.glsl',
-      fs: 'spec-map.fs.glsl',
-      noCache: true
+      fs: 'spec-map.fs.glsl'
     },
     camera: {
       position: {

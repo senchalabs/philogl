@@ -81,7 +81,7 @@ div.tooltip.hide {
   color: white;
   background-color: red;
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: 0.6em;
   z-index: 4000;
 }
 

@@ -23,9 +23,8 @@
   uniform bool enableLights;
   uniform vec3 ambientColor;
 
-  uniform bool enablePoint1;
-  uniform vec3 pointLocation1;
-  uniform vec3 pointColor1;
+  uniform vec3 pointLocation[1];
+  uniform vec3 pointColor[1];
 
   uniform sampler2D sampler1;
 
@@ -34,10 +33,10 @@
     if (!enableLights) {
       lightWeighting = vec3(1.0, 1.0, 1.0);
     } else {
-      vec3 lightDirection = normalize((viewMatrix * vec4(pointLocation1, 1.0)).xyz - vPosition.xyz);
+      vec3 lightDirection = normalize((viewMatrix * vec4(pointLocation[0], 1.0)).xyz - vPosition.xyz);
 
       float directionalLightWeighting = max(dot(normalize(vTransformedNormal.xyz), lightDirection), 0.0);
-      lightWeighting = ambientColor + pointColor1 * directionalLightWeighting;
+      lightWeighting = ambientColor + pointColor[0] * directionalLightWeighting;
     }
 
     vec4 fragmentColor;
@@ -55,9 +54,9 @@
   attribute vec3 normal;
   attribute vec2 texCoord1;
 
-  uniform mat4 modelViewMatrix;
+  uniform mat4 worldMatrix;
   uniform mat4 projectionMatrix;
-  uniform mat4 normalMatrix;
+  uniform mat4 worldInverseTransposeMatrix;
 
   varying vec2 vTextureCoord;
   varying vec4 vTransformedNormal;
@@ -65,25 +64,12 @@
 
 
   void main(void) {
-    vPosition = modelViewMatrix * vec4(position, 1.0);
+    vPosition = worldMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * vPosition;
     vTextureCoord = texCoord1;
-    vTransformedNormal = normalMatrix * vec4(normal, 1.0);
+    vTransformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
   }
 </script>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-1601691-8']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script> 
 
 </head>
 

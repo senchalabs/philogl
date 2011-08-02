@@ -1,5 +1,3 @@
-(function() {
-
 //Unpack modules
 PhiloGL.unpack();
 
@@ -47,8 +45,7 @@ document.onreadystatechange = function() {
 };
 
 //some locals
-var isWindows = !!navigator.userAgent.toLowerCase().match(/windows/),
-    $ = function(id) { return document.getElementById(id); },
+var $ = function(id) { return document.getElementById(id); },
     $$ = function(selector) { return document.querySelectorAll(selector); },
     citiesWorker = new Worker('cities.js'),
     data = { citiesRoutes: {}, airlinesRoutes: {} },
@@ -62,7 +59,7 @@ var Log = {
   
   getElem: function() {
     if (!this.elem) {
-      return (this.elem = [$('log-message'), $('loading-text')]);
+      return (this.elem = $('log-message'));
     }
     return this.elem;
   },
@@ -73,10 +70,9 @@ var Log = {
     }
     
     var elem = this.getElem(),
-        style = elem[0].parentNode.style;
+        style = elem.parentNode.style;
 
-    elem[0].innerHTML = text;
-    elem[1].innerHTML = text;
+    elem.innerHTML = text;
     style.display = '';
 
     if (hide) {
@@ -93,7 +89,7 @@ models.earth = new O3D.Sphere({
   nlong: 50,
   radius: 1,
   shininess: 10,
-  textures: ['img/earth3-specular.jpg'],
+  textures: ['img/earth3-specular.gif'],
   program: 'earth'
 });
 models.earth.rotation.set(Math.PI - 0.3, 0,  0);
@@ -162,7 +158,7 @@ function loadData() {
       Log.write('Building models...');
     },
     onProgress: function(e) {
-      Log.write('Loading airports data, ' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : 'please wait...'));
+      Log.write('Loading airports data, please wait...' + (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
     },
     onError: function() {
       Log.write('There was an error while fetching cities data.', true);
@@ -207,9 +203,6 @@ function loadData() {
               callback();
               Log.write('Done.', true);
             },
-            onProgress: function(e) {
-              Log.write('Fetching data for airline ' + (e.total ? (Math.round(e.loaded / e.total * 100) + '%') : '...'));
-            },
             onError: function() {
               Log.write('There was an error while fetching data for airline: ' + airlineId, true);
             }
@@ -232,8 +225,9 @@ var airlineManager = {
     var airlineIds = this.airlineIds,
         routes = data.airlinesRoutes[airline],
         airlines = models.airlines,
-        vertices = airlines.vertices || [],
-        indices = airlines.indices || [],
+        slice = Array.prototype.slice,
+        vertices = slice.call(airlines.vertices || []),
+        indices = slice.call(airlines.indices || []),
         offset = vertices.length / 3,
         samplings = 10;
 
@@ -253,8 +247,9 @@ var airlineManager = {
     var airlines = models.airlines,
         routes = data.airlinesRoutes[airline],
         nroutes = routes.length,
-        vertices = airlines.vertices,
-        indices = airlines.indices,
+        slice = Array.prototype.slice,
+        vertices = slice.call(airlines.vertices),
+        indices = slice.call(airlines.indices),
         airlineIds = this.airlineIds,
         index = airlineIds.indexOf(airline),
         samplings = 10;
@@ -270,6 +265,8 @@ var airlineManager = {
     for (var i = (samplings - 1) * 2 * nacum, l = indices.length; i < l; i++) {
       indices[i] -= (samplings * nroutes);
     }
+    airlines.vertices = vertices;
+    airlines.indices = indices;
     airlines.dynamic = true;
   },
 
@@ -348,7 +345,7 @@ function createApp() {
       from: 'uris',
       path: 'shaders/',
       vs: 'glow.vs.glsl',
-      fs: 'glow.' + (isWindows ? 'windows.' : '') + 'fs.glsl',
+      fs: 'glow.fs.glsl',
       noCache: true
     }],
     camera: {
@@ -411,21 +408,9 @@ function createApp() {
         cities.update();
         airlines.update();
         
-        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(erot.y), 
-          y: 0, 
-          z: - sin(erot.y) 
-        });
-        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(crot.y), 
-          y: 0, 
-          z: sin(crot.y) 
-        });
-        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, { 
-          x: cos(arot.y), 
-          y: 0, 
-          z: sin(arot.y) 
-        });
+        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, -sin(erot.y)]);
+        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(crot.y), 0, sin(crot.y)]);
+        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(arot.y), 0, sin(arot.y)]);
         
         pos.x = e.x;
       },
@@ -434,7 +419,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/earth3-specular.jpg'],
+      src: ['img/earth3-specular.gif'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -523,10 +508,7 @@ function createApp() {
                     models.airlines);
      
       draw();
-     
-     //Remove central log panel 
-      var loadingText = $('loading-text');
-      loadingText.parentNode.removeChild(loadingText);
+      
       //Select first airline
       $$('#airline-list li input')[0].click();
       $('list-wrapper').style.display = '';
@@ -569,4 +551,4 @@ function createApp() {
   });
 }
 
-})();
+
