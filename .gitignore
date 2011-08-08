@@ -1,8 +1,6 @@
 .project
 .DS_Store
 *.zip
-*.csv
-*.dat
 *.rar
 TODO
 _docs
