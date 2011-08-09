@@ -11,7 +11,7 @@
       typedArray = this.Float32Array,
       //As of version 12 Chrome does not support call/apply on typed array constructors.
       ArrayImpl = (function() {
-        if (!typedArray.call) {
+        if (!typedArray || !typedArray.call) {
           return Array;
         }
         try {
