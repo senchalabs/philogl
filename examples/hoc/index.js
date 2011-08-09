@@ -106,7 +106,7 @@
                 value: 'LINEAR'
               }, {
                 name: 'TEXTURE_MIN_FILTER',
-                value: 'LINEAR',
+                value: 'LINEAR_MIPMAP_NEAREST',
                 generateMipmap: false
               }]
             },
@@ -120,7 +120,6 @@
               ++index;
               updateModel(index);
             }
-//            scene.render();
             //render to a texture
             app.setFrameBuffer('face1', true);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
