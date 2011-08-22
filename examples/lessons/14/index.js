@@ -20,7 +20,8 @@ function webGLStart() {
         from: 'uris',
         path: '../../../shaders/',
         vs: 'frag-lighting.vs.glsl',
-        fs: 'frag-lighting.fs.glsl'
+        fs: 'frag-lighting.fs.glsl',
+        noCache: true
       },
       camera: {
         position: {

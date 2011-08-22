@@ -9,7 +9,7 @@
   //and vertex shader.
   Image.postProcess = function(opt) {
     var program = app.program[opt.program],
-        textures = Array.isArray(opt.fromTexture) ? opt.fromTexture : [opt.fromTexture],
+        textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
         framebuffer = opt.toFrameBuffer,
         screen = !!opt.toScreen,
         width = opt.width || app.canvas.width,
