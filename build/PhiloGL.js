@@ -683,7 +683,7 @@ $.splat = (function() {
       typedArray = this.Float32Array,
       //As of version 12 Chrome does not support call/apply on typed array constructors.
       ArrayImpl = (function() {
-        if (!typedArray.call) {
+        if (!typedArray || !typedArray.call) {
           return Array;
         }
         try {
@@ -4444,8 +4444,8 @@ $.splat = (function() {
       var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: 1,
-        height: 1,
+        width: app.canvas.width / 4,
+        height: app.canvas.height / 4,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -4493,7 +4493,7 @@ $.splat = (function() {
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(-x, y - height, width, height);
+      gl.viewport(0, 0, width/4, height/4);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -4524,7 +4524,7 @@ $.splat = (function() {
       });
       
       //grab the color of the pointed pixel in the texture
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      gl.readPixels((x / 4) >> 0, ((height - y) / 4) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
@@ -4791,7 +4791,7 @@ $.splat = (function() {
   //and vertex shader.
   Image.postProcess = function(opt) {
     var program = app.program[opt.program],
-        textures = Array.isArray(opt.fromTexture) ? opt.fromTexture : [opt.fromTexture],
+        textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
         framebuffer = opt.toFrameBuffer,
         screen = !!opt.toScreen,
         width = opt.width || app.canvas.width,

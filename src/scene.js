@@ -295,8 +295,8 @@
       var program = PhiloGL.Program.fromDefaultShaders();
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: 1,
-        height: 1,
+        width: app.canvas.width / 4,
+        height: app.canvas.height / 4,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -344,7 +344,7 @@
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(-x, y - height, width, height);
+      gl.viewport(0, 0, width/4, height/4);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -375,7 +375,7 @@
       });
       
       //grab the color of the pointed pixel in the texture
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      gl.readPixels((x / 4) >> 0, ((height - y) / 4) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
