@@ -292,11 +292,12 @@
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
-      var program = PhiloGL.Program.fromDefaultShaders();
+      var program = PhiloGL.Program.fromDefaultShaders(),
+          pickingRes = Scene.PICKING_RES;
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: app.canvas.width / 4,
-        height: app.canvas.height / 4,
+        width: app.canvas.width / pickingRes >> 0,
+        height: app.canvas.height / pickingRes >> 0,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -323,6 +324,7 @@
           o3dList = [],
           program = app.usedProgram,
           pickingProgram = this.pickingProgram,
+          pickingRes = Scene.PICKING_RES,
           camera = this.camera,
           config = this.config,
           memoLightEnable = config.lights.enable,
@@ -331,7 +333,8 @@
           height = gl.canvas.height,
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
-          index = 0, backgroundColor;
+          index = 0, 
+          backgroundColor;
 
       //setup the scene for picking
       config.lights.enable = false;
@@ -344,7 +347,7 @@
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(0, 0, width/4, height/4);
+      gl.viewport(0, 0, width / pickingRes >> 0, height / pickingRes >> 0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -375,7 +378,7 @@
       });
       
       //grab the color of the pointed pixel in the texture
-      gl.readPixels((x / 4) >> 0, ((height - y) / 4) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      gl.readPixels((x / pickingRes) >> 0, ((height - y) / pickingRes) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
@@ -407,6 +410,7 @@
   
   Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
+  Scene.PICKING_RES = 4;
 
   PhiloGL.Scene = Scene;
 

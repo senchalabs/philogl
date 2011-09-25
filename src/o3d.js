@@ -298,7 +298,11 @@
   O3D.Model.prototype = Object.create(null, {
     vertices: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$vertices;
+            delete this.$verticesLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$vertices = val;
@@ -318,7 +322,11 @@
     
     normals: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$normals;
+            delete this.$normalsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$normals = val;
@@ -338,7 +346,11 @@
     
     colors: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$colors;
+            delete this.$colorsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$colors = val;
@@ -361,7 +373,11 @@
     
     pickingColors: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$pickingColors;
+            delete this.$pickingColorsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$pickingColors = val;
@@ -384,7 +400,11 @@
     
     texCoords: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$texCoords;
+            delete this.$texCoordsLength;
+            return;
+        } 
         if ($.type(val) == 'object') {
           var ans = {};
           for (var prop in val) {
@@ -413,7 +433,11 @@
 
     indices: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$indices;
+            delete this.$indicesLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$indices = val;

@@ -80,7 +80,7 @@
     model.update();
     models.push(model);
     if (i % 2) {
-      delete model.texCoords;
+      model.texCoords = false;
     }
   }
 

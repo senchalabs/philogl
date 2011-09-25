@@ -86,7 +86,9 @@
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
             loc = program.attributes[attributeName];
-        if (loc !== undefined) {
+        //disable the attribute array only if it was previously enabled
+        if (loc !== undefined && program.attributeEnabled[attributeName]) {
+          program.attributeEnabled[attributeName] = false;
           gl.disableVertexAttribArray(loc);
         }
         return;
@@ -120,14 +122,20 @@
         this.buffers[name] = buffer;
       }
       
-      isAttribute && gl.enableVertexAttribArray(loc);
+      if (isAttribute && !program.attributeEnabled[attributeName]) {
+        program.attributeEnabled[attributeName] = true;
+        gl.enableVertexAttribArray(loc);
+      }
+
       gl.bindBuffer(bufferType, buffer);
       
       if (hasValue) {
         gl.bufferData(bufferType, value, drawType);
       }
       
-      isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+      if (isAttribute) {
+        gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+      }
       
       //set default options so we don't have to next time.
       //set them under the buffer name and attribute name (if an
