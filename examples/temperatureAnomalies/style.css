@@ -131,12 +131,17 @@ canvas {
   font-size: 13px;
 }
 
-#loading {
-  background-color: #550000;
-  color: #fff;
-  font-style: italic;
-  position: absolute;
+#log-panel {
+  font-family: Arial;
+  margin: 0;
+  position: fixed;
   top: 0;
   right: 0;
-  font-size: 12px;
+  padding: 5px;
+  color: white;
+  background-color: red;
+  font-weight: bold;
+  font-size: 1em;
+  z-index: 4000;
 }
+

@@ -74,7 +74,7 @@
 
         //Add control listeners.
         shadows.addEventListener('change', function() {
-          program.setUniform('renderShadows', !!shadows.value);
+          program.setUniform('renderShadows', !!shadows.checked);
         }, false);
 
         maxIterations.addEventListener('change', function() {
@@ -86,12 +86,12 @@
         }, false);
 
         animate.addEventListener('change', function() {
-          panel1.style.display = animate.value ? 'none' : '';
+          panel1.style.display = animate.checked ? 'none' : '';
           region1 = panel1.getBoundingClientRect();
-          panel2.style.display = animate.value ? 'none' : '';
+          panel2.style.display = animate.checked ? 'none' : '';
           region2 = panel2.getBoundingClientRect();
           
-          if (!animate.value) {
+          if (!animate.checked) {
             var delta = (Fx.animationTime() - t) / 5000,
                 style1 = pointer1.style,
                 style2 = pointer2.style,
@@ -210,7 +210,7 @@
           gl.clearColor(colorArray[0], colorArray[1], colorArray[2], colorArray[3]);
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
           
-          if (animate.value) {
+          if (animate.checked) {
             program.setUniforms({
               mu: [Math.sin(delta), Math.cos(delta)/2, Math.sin(2 * delta)/2, Math.cos(4 * delta)/2]
             });
