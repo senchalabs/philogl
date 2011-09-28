@@ -3,15 +3,45 @@ function init() {
   PhiloGL.unpack();
   
   //Shortcut for getElementById
-  var $id = function(d) { return document.getElementById(d); };
+  var $ = function(d) { return document.getElementById(d); };
   
   //Get controls
-  var year = $id('year'),
-      mapImg = $id('current-map'),
+  var year = $('year'),
+      mapImg = $('current-map'),
       squares = document.querySelectorAll('#controls .square'),
-      lis = document.querySelectorAll('#controls ul li'),
-      loading = $id('loading');
+      lis = document.querySelectorAll('#controls ul li');
 
+  //Log singleton
+  var Log = {
+    elem: null,
+    timer: null,
+    
+    getElem: function() {
+      if (!this.elem) {
+        return (this.elem = $('log-message'));
+      }
+      return this.elem;
+    },
+    
+    write: function(text, hide) {
+      if (this.timer) {
+        this.timer = clearTimeout(this.timer);
+      }
+      
+      var elem = this.getElem(),
+          style = elem.parentNode.style;
+
+      elem.innerHTML = text;
+      style.display = '';
+
+      if (hide) {
+        this.timer = setTimeout(function() {
+          style.display = 'none';
+        }, 2000);
+      }
+    }
+  };
+  
   //Create earth
   var earth = new PhiloGL.O3D.Sphere({
     nlat: 30,
@@ -25,7 +55,7 @@ function init() {
   });
 
   //Create Temperature Maps
-  var imageCanvas = $id('image-data').getContext('2d'),
+  var imageCanvas = $('image-data').getContext('2d'),
       tempMaps = [],
       currentTempMap = new PhiloGL.O3D.Sphere({
         nlat: 60,
@@ -46,10 +76,10 @@ function init() {
   var images = new IO.Images({
     src: imageUrls.reverse(),
     onProgress: function(a) {
-      loading.innerHTML = a + '%';
+      Log.write('Loading... ' + a + '%');
     },
     onComplete: function() {
-      loading.style.display = 'none';
+      Log.write('done', true);
 
       //Load Temperature Maps
       images.forEach(function(img, i) {

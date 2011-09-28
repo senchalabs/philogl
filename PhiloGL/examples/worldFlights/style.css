@@ -73,6 +73,7 @@ div.tooltip.hide {
 }
 
 #log-panel {
+  font-family: Arial;
   margin: 0;
   position: fixed;
   top: 0;
@@ -81,7 +82,7 @@ div.tooltip.hide {
   color: white;
   background-color: red;
   font-weight: bold;
-  font-size: 0.6em;
+  font-size: 1em;
   z-index: 4000;
 }
 
