@@ -370,8 +370,7 @@ $.splat = (function() {
         var attributeName = opt && opt.attribute || name,
             loc = program.attributes[attributeName];
         //disable the attribute array only if it was previously enabled
-        if (loc !== undefined && program.attributeEnabled[attributeName]) {
-          program.attributeEnabled[attributeName] = false;
+        if (loc !== undefined) {
           gl.disableVertexAttribArray(loc);
         }
         return;
@@ -405,8 +404,7 @@ $.splat = (function() {
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute && !program.attributeEnabled[attributeName]) {
-        program.attributeEnabled[attributeName] = true;
+      if (isAttribute) {
         gl.enableVertexAttribArray(loc);
       }
 
@@ -2398,7 +2396,6 @@ $.splat = (function() {
     if (!program) return false;
     
     var attributes = {},
-        attributeEnabled = {},
         uniforms = {};
   
     //fill attribute locations
@@ -2408,7 +2405,6 @@ $.splat = (function() {
           name = info.name,
           index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
-      attributeEnabled[name] = false;
     }
     
     //create uniform setters
@@ -2424,7 +2420,6 @@ $.splat = (function() {
     this.program = program;
     //handle attributes and uniforms
     this.attributes = attributes;
-    this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
   };
 
@@ -3039,36 +3034,36 @@ $.splat = (function() {
       if (!this.vertices) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('vertices-' + this.id, {
+        program.setBuffer('position-' + this.id, {
           attribute: 'position',
           value: this.vertices,
           size: 3
         });
       } else {
-        program.setBuffer('vertices-' + this.id);
+        program.setBuffer('position-' + this.id);
       }
     },
 
     unsetVertices: function(program) {
-      program.setBuffer('vertices-' + this.id, false);
+      program.setBuffer('position-' + this.id, false);
     },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('normals-' + this.id, {
+        program.setBuffer('normal-' + this.id, {
           attribute: 'normal',
           value: this.normals,
           size: 3
         });
       } else {
-        program.setBuffer('normals-' + this.id);
+        program.setBuffer('normal-' + this.id);
       }
     },
 
     unsetNormals: function(program) {
-      program.setBuffer('normals-' + this.id, false);
+      program.setBuffer('normal-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -3094,36 +3089,36 @@ $.splat = (function() {
       if (!this.pickingColors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('pickingColors-' + this.id, {
+        program.setBuffer('pickingColor-' + this.id, {
           attribute: 'pickingColor',
           value: this.pickingColors,
           size: 4
         });
       } else {
-        program.setBuffer('pickingColors-' + this.id);
+        program.setBuffer('pickingColor-' + this.id);
       }
     },
 
     unsetPickingColors: function(program) {
-      program.setBuffer('pickingColors-' + this.id, false);
+      program.setBuffer('pickingColor-' + this.id, false);
     },
     
     setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('colors-' + this.id, {
+        program.setBuffer('color-' + this.id, {
           attribute: 'color',
           value: this.colors,
           size: 4
         });
       } else {
-        program.setBuffer('colors-' + this.id);
+        program.setBuffer('color-' + this.id);
       }
     },
 
     unsetColors: function(program) {
-      program.setBuffer('colors-' + this.id, false);
+      program.setBuffer('color-' + this.id, false);
     },
 
     setTexCoords: function(program, force) {
@@ -3136,7 +3131,7 @@ $.splat = (function() {
         //Set all textures, samplers and textureCoords.
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id, {
+            program.setBuffer('texCoord-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
               value: this.texCoords[tex],
               size: 2
@@ -3144,7 +3139,7 @@ $.splat = (function() {
           });
         //An array of textureCoordinates
         } else {
-          program.setBuffer('texCoords-' + id, {
+          program.setBuffer('texCoord-' + id, {
             attribute: 'texCoord1',
             value: this.texCoords,
             size: 2
@@ -3153,16 +3148,16 @@ $.splat = (function() {
       } else {
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id);
+            program.setBuffer('texCoord-' + i + '-' + id);
           });
         } else {
-          program.setBuffer('texCoords-' + id);
+          program.setBuffer('texCoord-' + id);
         }
       }
     },
 
     unsetTexCoords: function(program) {
-      program.setBuffer('texCoords-' + this.id, false);
+      program.setBuffer('texCoord-' + this.id, false);
     },
 
     setTextures: function(program, force) {
@@ -4431,6 +4426,7 @@ $.splat = (function() {
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
+
       obj.setUniforms(program);
       obj.setAttributes(program);
       obj.setShininess(program);
@@ -4465,7 +4461,6 @@ $.splat = (function() {
       }
       
       obj.unsetAttributes(program);
-      
       obj.unsetVertices(program);
       obj.unsetColors(program);
       obj.unsetPickingColors(program);
@@ -4532,7 +4527,7 @@ $.splat = (function() {
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(0, 0, width / pickingRes, height / pickingRes);
+      gl.viewport(0, 0, width / pickingRes >> 0, height / pickingRes >> 0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);

@@ -87,8 +87,7 @@
         var attributeName = opt && opt.attribute || name,
             loc = program.attributes[attributeName];
         //disable the attribute array only if it was previously enabled
-        if (loc !== undefined && program.attributeEnabled[attributeName]) {
-          program.attributeEnabled[attributeName] = false;
+        if (loc !== undefined) {
           gl.disableVertexAttribArray(loc);
         }
         return;
@@ -122,8 +121,7 @@
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute && !program.attributeEnabled[attributeName]) {
-        program.attributeEnabled[attributeName] = true;
+      if (isAttribute) {
         gl.enableVertexAttribArray(loc);
       }
 

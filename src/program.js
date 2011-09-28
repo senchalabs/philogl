@@ -164,7 +164,6 @@
     if (!program) return false;
     
     var attributes = {},
-        attributeEnabled = {},
         uniforms = {};
   
     //fill attribute locations
@@ -174,7 +173,6 @@
           name = info.name,
           index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
-      attributeEnabled[name] = false;
     }
     
     //create uniform setters
@@ -190,7 +188,6 @@
     this.program = program;
     //handle attributes and uniforms
     this.attributes = attributes;
-    this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
   };
 

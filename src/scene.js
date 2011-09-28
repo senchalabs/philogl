@@ -247,6 +247,7 @@
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
+
       obj.setUniforms(program);
       obj.setAttributes(program);
       obj.setShininess(program);

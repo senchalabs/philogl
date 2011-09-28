@@ -145,36 +145,36 @@
       if (!this.vertices) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('vertices-' + this.id, {
+        program.setBuffer('position-' + this.id, {
           attribute: 'position',
           value: this.vertices,
           size: 3
         });
       } else {
-        program.setBuffer('vertices-' + this.id);
+        program.setBuffer('position-' + this.id);
       }
     },
 
     unsetVertices: function(program) {
-      program.setBuffer('vertices-' + this.id, false);
+      program.setBuffer('position-' + this.id, false);
     },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('normals-' + this.id, {
+        program.setBuffer('normal-' + this.id, {
           attribute: 'normal',
           value: this.normals,
           size: 3
         });
       } else {
-        program.setBuffer('normals-' + this.id);
+        program.setBuffer('normal-' + this.id);
       }
     },
 
     unsetNormals: function(program) {
-      program.setBuffer('normals-' + this.id, false);
+      program.setBuffer('normal-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -200,36 +200,36 @@
       if (!this.pickingColors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('pickingColors-' + this.id, {
+        program.setBuffer('pickingColor-' + this.id, {
           attribute: 'pickingColor',
           value: this.pickingColors,
           size: 4
         });
       } else {
-        program.setBuffer('pickingColors-' + this.id);
+        program.setBuffer('pickingColor-' + this.id);
       }
     },
 
     unsetPickingColors: function(program) {
-      program.setBuffer('pickingColors-' + this.id, false);
+      program.setBuffer('pickingColor-' + this.id, false);
     },
     
     setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('colors-' + this.id, {
+        program.setBuffer('color-' + this.id, {
           attribute: 'color',
           value: this.colors,
           size: 4
         });
       } else {
-        program.setBuffer('colors-' + this.id);
+        program.setBuffer('color-' + this.id);
       }
     },
 
     unsetColors: function(program) {
-      program.setBuffer('colors-' + this.id, false);
+      program.setBuffer('color-' + this.id, false);
     },
 
     setTexCoords: function(program, force) {
@@ -242,7 +242,7 @@
         //Set all textures, samplers and textureCoords.
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id, {
+            program.setBuffer('texCoord-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
               value: this.texCoords[tex],
               size: 2
@@ -250,7 +250,7 @@
           });
         //An array of textureCoordinates
         } else {
-          program.setBuffer('texCoords-' + id, {
+          program.setBuffer('texCoord-' + id, {
             attribute: 'texCoord1',
             value: this.texCoords,
             size: 2
@@ -259,16 +259,16 @@
       } else {
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id);
+            program.setBuffer('texCoord-' + i + '-' + id);
           });
         } else {
-          program.setBuffer('texCoords-' + id);
+          program.setBuffer('texCoord-' + id);
         }
       }
     },
 
     unsetTexCoords: function(program) {
-      program.setBuffer('texCoords-' + this.id, false);
+      program.setBuffer('texCoord-' + this.id, false);
     },
 
     setTextures: function(program, force) {
