@@ -1,6 +1,6 @@
 /**
 @preserve
-Copyright (c) 2011 Nicolas Garcia Belmonte (http://philogb.github.com/)
+Copyright (c) 2011 Sencha Labs - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -187,7 +187,7 @@ PhiloGL.unpack = function(branch) {
 };
 
 //Version
-PhiloGL.version = '1.3.0';
+PhiloGL.version = '1.3.1';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -369,6 +369,7 @@ $.splat = (function() {
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
             loc = program.attributes[attributeName];
+        //disable the attribute array only if it was previously enabled
         if (loc !== undefined) {
           gl.disableVertexAttribArray(loc);
         }
@@ -403,14 +404,19 @@ $.splat = (function() {
         this.buffers[name] = buffer;
       }
       
-      isAttribute && gl.enableVertexAttribArray(loc);
+      if (isAttribute) {
+        gl.enableVertexAttribArray(loc);
+      }
+
       gl.bindBuffer(bufferType, buffer);
       
       if (hasValue) {
         gl.bufferData(bufferType, value, drawType);
       }
       
-      isAttribute && gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+      if (isAttribute) {
+        gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+      }
       
       //set default options so we don't have to next time.
       //set them under the buffer name and attribute name (if an
@@ -683,7 +689,7 @@ $.splat = (function() {
       typedArray = this.Float32Array,
       //As of version 12 Chrome does not support call/apply on typed array constructors.
       ArrayImpl = (function() {
-        if (!typedArray.call) {
+        if (!typedArray || !typedArray.call) {
           return Array;
         }
         try {
@@ -3028,36 +3034,36 @@ $.splat = (function() {
       if (!this.vertices) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('vertices-' + this.id, {
+        program.setBuffer('position-' + this.id, {
           attribute: 'position',
           value: this.vertices,
           size: 3
         });
       } else {
-        program.setBuffer('vertices-' + this.id);
+        program.setBuffer('position-' + this.id);
       }
     },
 
     unsetVertices: function(program) {
-      program.setBuffer('vertices-' + this.id, false);
+      program.setBuffer('position-' + this.id, false);
     },
     
     setNormals: function(program, force) {
       if (!this.normals) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('normals-' + this.id, {
+        program.setBuffer('normal-' + this.id, {
           attribute: 'normal',
           value: this.normals,
           size: 3
         });
       } else {
-        program.setBuffer('normals-' + this.id);
+        program.setBuffer('normal-' + this.id);
       }
     },
 
     unsetNormals: function(program) {
-      program.setBuffer('normals-' + this.id, false);
+      program.setBuffer('normal-' + this.id, false);
     },
 
     setIndices: function(program, force) {
@@ -3083,36 +3089,36 @@ $.splat = (function() {
       if (!this.pickingColors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('pickingColors-' + this.id, {
+        program.setBuffer('pickingColor-' + this.id, {
           attribute: 'pickingColor',
           value: this.pickingColors,
           size: 4
         });
       } else {
-        program.setBuffer('pickingColors-' + this.id);
+        program.setBuffer('pickingColor-' + this.id);
       }
     },
 
     unsetPickingColors: function(program) {
-      program.setBuffer('pickingColors-' + this.id, false);
+      program.setBuffer('pickingColor-' + this.id, false);
     },
     
     setColors: function(program, force) {
       if (!this.colors) return;
 
       if (force || this.dynamic) {
-        program.setBuffer('colors-' + this.id, {
+        program.setBuffer('color-' + this.id, {
           attribute: 'color',
           value: this.colors,
           size: 4
         });
       } else {
-        program.setBuffer('colors-' + this.id);
+        program.setBuffer('color-' + this.id);
       }
     },
 
     unsetColors: function(program) {
-      program.setBuffer('colors-' + this.id, false);
+      program.setBuffer('color-' + this.id, false);
     },
 
     setTexCoords: function(program, force) {
@@ -3125,7 +3131,7 @@ $.splat = (function() {
         //Set all textures, samplers and textureCoords.
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id, {
+            program.setBuffer('texCoord-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
               value: this.texCoords[tex],
               size: 2
@@ -3133,7 +3139,7 @@ $.splat = (function() {
           });
         //An array of textureCoordinates
         } else {
-          program.setBuffer('texCoords-' + id, {
+          program.setBuffer('texCoord-' + id, {
             attribute: 'texCoord1',
             value: this.texCoords,
             size: 2
@@ -3142,16 +3148,16 @@ $.splat = (function() {
       } else {
         if ($.type(this.texCoords) == 'object') {
           this.textures.forEach(function(tex, i) {
-            program.setBuffer('texCoords-' + i + '-' + id);
+            program.setBuffer('texCoord-' + i + '-' + id);
           });
         } else {
-          program.setBuffer('texCoords-' + id);
+          program.setBuffer('texCoord-' + id);
         }
       }
     },
 
     unsetTexCoords: function(program) {
-      program.setBuffer('texCoords-' + this.id, false);
+      program.setBuffer('texCoord-' + this.id, false);
     },
 
     setTextures: function(program, force) {
@@ -3181,7 +3187,11 @@ $.splat = (function() {
   O3D.Model.prototype = Object.create(null, {
     vertices: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$vertices;
+            delete this.$verticesLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$vertices = val;
@@ -3201,7 +3211,11 @@ $.splat = (function() {
     
     normals: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$normals;
+            delete this.$normalsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$normals = val;
@@ -3221,7 +3235,11 @@ $.splat = (function() {
     
     colors: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$colors;
+            delete this.$colorsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$colors = val;
@@ -3244,7 +3262,11 @@ $.splat = (function() {
     
     pickingColors: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$pickingColors;
+            delete this.$pickingColorsLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$pickingColors = val;
@@ -3267,7 +3289,11 @@ $.splat = (function() {
     
     texCoords: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$texCoords;
+            delete this.$texCoordsLength;
+            return;
+        } 
         if ($.type(val) == 'object') {
           var ans = {};
           for (var prop in val) {
@@ -3296,7 +3322,11 @@ $.splat = (function() {
 
     indices: {
       set: function(val) {
-        if (!val) return;
+        if (!val) {
+            delete this.$indices;
+            delete this.$indicesLength;
+            return;
+        } 
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$indices = val;
@@ -4396,6 +4426,7 @@ $.splat = (function() {
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
+
       obj.setUniforms(program);
       obj.setAttributes(program);
       obj.setShininess(program);
@@ -4441,11 +4472,12 @@ $.splat = (function() {
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
-      var program = PhiloGL.Program.fromDefaultShaders();
+      var program = PhiloGL.Program.fromDefaultShaders(),
+          pickingRes = Scene.PICKING_RES;
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: 1,
-        height: 1,
+        width: app.canvas.width / pickingRes >> 0,
+        height: app.canvas.height / pickingRes >> 0,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -4472,6 +4504,7 @@ $.splat = (function() {
           o3dList = [],
           program = app.usedProgram,
           pickingProgram = this.pickingProgram,
+          pickingRes = Scene.PICKING_RES,
           camera = this.camera,
           config = this.config,
           memoLightEnable = config.lights.enable,
@@ -4480,7 +4513,8 @@ $.splat = (function() {
           height = gl.canvas.height,
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
-          index = 0, backgroundColor;
+          index = 0, 
+          backgroundColor;
 
       //setup the scene for picking
       config.lights.enable = false;
@@ -4493,7 +4527,7 @@ $.splat = (function() {
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(-x, y - height, width, height);
+      gl.viewport(0, 0, width / pickingRes >> 0, height / pickingRes >> 0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -4524,7 +4558,7 @@ $.splat = (function() {
       });
       
       //grab the color of the pointed pixel in the texture
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      gl.readPixels((x / pickingRes) >> 0, ((height - y) / pickingRes) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
@@ -4556,6 +4590,7 @@ $.splat = (function() {
   
   Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
+  Scene.PICKING_RES = 4;
 
   PhiloGL.Scene = Scene;
 
@@ -4791,7 +4826,7 @@ $.splat = (function() {
   //and vertex shader.
   Image.postProcess = function(opt) {
     var program = app.program[opt.program],
-        textures = Array.isArray(opt.fromTexture) ? opt.fromTexture : [opt.fromTexture],
+        textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
         framebuffer = opt.toFrameBuffer,
         screen = !!opt.toScreen,
         width = opt.width || app.canvas.width,
@@ -4823,7 +4858,7 @@ $.splat = (function() {
               value: 'LINEAR'
             }, {
               name: 'TEXTURE_MIN_FILTER',
-              value: 'LINEAR',
+              value: 'LINEAR_MIPMAP_NEAREST',
               generateMipmap: false
             }]
           },
