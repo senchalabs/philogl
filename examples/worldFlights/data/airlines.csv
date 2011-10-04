@@ -1,598 +1,193 @@
-4296,"Ryanair",2186
-5209,"United Airlines",2126
-2009,"Delta Air Lines",2031
-1881,"Continental Airlines",1491
-5265,"US Airways",1377
-24,"American Airlines",1244
-751,"Air China",1022
-3320,"Lufthansa",1021
-1758,"China Eastern Airlines",1006
-1767,"China Southern Airlines",994
-4547,"Southwest Airlines",954
-2297,"easyJet",804
-596,"Alitalia",767
-214,"Air Berlin",734
-137,"Air France",730
-330,"Air Canada",684
-2822,"Iberia Airlines",610
-4867,"TAM Brazilian Airlines",579
-1355,"British Airways",471
-4319,"Scandinavian Airlines System",446
-324,"All Nippon Airways",446
-4951,"Turkish Airlines",445
-439,"Alaska Airlines",429
-4533,"Saudi Arabian Airlines",408
-218,"Air India Limited",404
-2660,"Hainan Airlines",404
-5461,"Wizz Air",382
-3000,"Jet Airways",370
-5416,"WestJet",366
-4089,"Qantas",351
-3737,"Norwegian Air Shuttle",350
-1316,"AirTran Airways",348
-1790,"City Connexion Airlines",347
-5013,"Thomsonfly",345
-3090,"KLM Royal Dutch Airlines",339
-4559,"Swiss International Air Lines",319
-130,"Aeroflot Russian Airlines",314
-5484,"Xiamen Airlines",310
-2987,"Japan Airlines",310
-3378,"Malaysia Airlines",308
-3029,"JetBlue Airways",300
-35,"Allegiant Air",298
-4611,"Shenzhen Airlines",290
-4608,"Sichuan Airlines",284
-3871,"Pakistan International Airlines",284
-2421,"Flybe",283
-321,"AeroMéxico",277
-2747,"Hellas Jet",277
-1437,"bmi",271
-4248,"Royal Air Maroc",261
-4652,"Spanair",259
-1868,"Condor Flugdienst",257
-3163,"Korean Air",248
-491,"Austrian Airlines",243
-3142,"Kingfisher Airlines",237
-4609,"Shanghai Airlines",236
-28,"Asiana Airlines",234
-2548,"Germanwings",228
-2468,"Frontier Airlines",223
-3200,"LAN Airlines",222
-4599,"Shandong Airlines",220
-4869,"TAP Portugal",220
-2183,"Emirates Airline",219
-4940,"Thai Airways International",217
-3854,"Pacific Blue",214
-8745,"Transavia France",213
-837,"Aer Lingus",208
-2220,"Ethiopian Airlines",207
-90,"Air Europa",203
-4329,"S7 Airlines",200
-3290,"Lion Mentari Airlines",200
-345,"Air New Zealand",198
-4435,"Singapore Airlines",193
-5188,"TRIP Linhas A",192
-690,"Air Foyle",192
-4091,"Qatar Airways",192
-2681,"TUIfly",189
-1531,"Brussels Airlines",187
-4897,"Thomas Cook Airlines",183
-794,"Air Algerie",183
-2439,"Formosa Airlines",183
-4305,"South African Airways",182
-5439,"Widerøe",177
-1680,"Cathay Pacific",175
-3926,"Pegasus Airlines",174
-641,"Pulkovo Aviation Enterprise",174
-5309,"Vietnam Airlines",174
-2143,"Egyptair",172
-2922,"Iran Air",171
-3052,"Jetstar Airways",164
-576,"AirAsia",162
-3210,"LOT Polish Airlines",160
-114,"Aerosvit Airlines",156
-1889,"Copa Airlines",156
-515,"Avianca - Aerovias Nacionales de Colombia",156
-3952,"Philippine Airlines",154
-3026,"Jet2.com",152
-5039,"Transavia Holland",151
-2222,"Etihad Airways",147
-5281,"Uzbekistan Airways",146
-2923,"Iran Aseman Airlines",145
-1683,"Cebu Pacific",144
-4870,"Tunisair",140
-2350,"Finnair",139
-2520,"Garuda Indonesia",138
-2850,"IndiGo Airlines",138
-5067,"Transaero Airlines",137
-3126,"Kenya Airways",135
-412,"Aerolineas Argentinas",134
-2622,"Grupo TACA",132
-1946,"Czech Airlines",131
-3463,"Meridiana",130
-333,"Air Baltic",129
-4687,"Spirit Airlines",126
-1066,"Air Madagascar",124
-1756,"China Airlines",121
-4573,"SunExpress",120
-4259,"Royal Jordanian",119
-2607,"Great Lakes Airlines",118
-10646,"Birmingham European",118
-3389,"Malév",112
-3776,"Olympic Airlines",109
-5282,"Ukraine International Airlines",106
-6557,"Japan Air System",104
-5496,"Yemenia",104
-1156,"Air Paradise International",104
-569,"Air India Express",103
-1006,"Air Astana",102
-3778,"Oman Air",101
-4375,"Spicejet",99
-4691,"SATENA",97
-5325,"Volaris",96
-2638,"Gulf Air Bahrain",94
-692,"Air Tahiti",93
-3258,"Libyan Arab Airlines",93
-4349,"SriLankan Airlines",92
-524,"Air Vanuatu",92
-1441,"bmibaby",92
-3329,"Luxair",90
-96,"Aegean Airlines",90
-220,"Air Bourbon",90
-2091,"EVA Air",89
-5179,"Tarom",88
-1925,"Croatia Airlines",88
-4586,"Syrian Arab Airlines",87
-328,"Air Niugini",87
-329,"Air Arabia",87
-5234,"Ural Airlines",85
-1781,"Cimber Air",84
-5353,"Vladivostok Air",84
-241,"Air Sahara",84
-1764,"China Northwest Airlines",83
-2150,"El Al Israel Airlines",83
-4178,"Regional Express",82
-3754,"Nas Air",81
-1427,"Blue1",81
-15814,"UTair-Express",80
-2354,"First Air",80
-3251,"Leeward Islands Air Transport",79
-805,"Antinea Airlines",78
-15999,"China SSS",78
-21,"Aigle Azur",76
-2942,"Cargo Plus Aviation",76
-3661,"Niki",76
-1472,"Bering Air",75
-3197,"LACSA",74
-3179,"Kuwait Airways",73
-4750,"SilkAir",73
-4304,"SATA International",73
-1216,"Armavia",72
-1629,"Cape Air",72
-1829,"Comair",71
-242,"Air Malta",70
-5347,"Virgin Atlantic Airways",70
-3370,"Mahan Air",69
-2429,"Flyhy Cargo Airlines",69
-5133,"TAAG Angola Airlines",68
-921,"Air Greenland",67
-4947,"Thai AirAsia",66
-2991,"Jat Airways",65
-879,"Air Pacific",65
-3764,"Oceanair",64
-3569,"Myanma Airways",64
-1287,"Aircompany Yakutia",63
-2056,"Dragonair",63
-4797,"Solomon Airlines",63
-1669,"Carpatair",62
-2193,"Empresa Ecuatoriana De Aviacion",62
-2688,"Hawaiian Airlines",61
-5447,"Wind Jet",61
-1936,"Cubana de Aviación",61
-1422,"Bangkok Airways",61
-4737,"Sky Airline",61
-411,"Aires",60
-1231,"Aerosur",60
-1403,"Bahamasair",60
-14485,"Fly Dubai",60
-1057,"Air Mauritius",59
-1317,"Air Transat",59
-1478,"Belavia Belarusian Airlines",58
-8576,"Fly540",58
-4026,"Potomac Air",58
-1299,"Arkefly",58
-197,"Azerbaijan Airlines",57
-10741,"China United",56
-1548,"Bulgaria Air",56
-3490,"Middle East Airlines",56
-503,"Aeroflot-Nord",55
-4840,"Scat Air",55
-2575,"Go Air",54
-9818,"Air Arabia Maroc",54
-2926,"Iraqi Airways",54
-1942,"Cyprus Airways",54
-83,"Adria Airways",53
-2857,"Indonesia AirAsia",52
-32,"Afriqiyah Airways",52
-1359,"Biman Bangladesh Airlines",52
-4356,"Sun Country Airlines",52
-1308,"Airlines PNG",51
-753,"Aero Condor Peru",51
-543,"Air Bangladesh",50
-316,"Air Macau",48
-2353,"Firefly",48
-5038,"TransAsia Airways",48
-9082,"Uni Air",48
-9541,"Air Mozambique",47
-4454,"Sriwijaya Air",46
-1290,"Aeromar",46
-2117,"Eastern Airways",45
-1406,"Balkan Bulgarian Airlines",44
-3884,"Pan American Airways",44
-3392,"Mandarin Airlines",44
-9764,"Zest Air",44
-1623,"Canadian North",44
-1434,"Bearskin Lake Air Service",43
-502,"Abu Dhabi Amiri Flight",43
-4937,"Tiger Airways Australia",42
-1191,"Air Austral",42
-5331,"Virgin America",42
-3935,"Peninsula Airways",42
-1173,"Airbus France",42
-4936,"Tiger Airways",42
-4311,"Shaheen Air International",41
-816,"Aeroflot-Don",40
-3027,"Jet4You",40
-4740,"Skymark Airlines",40
-3102,"Karat",40
-5016,"Tropic Air",40
-5335,"Virgin Nigeria Airways",40
-5041,"TACV",40
-5399,"WebJet Linhas A",38
-2293,"Express One International",38
-476,"Airlines Of Tasmania",38
-240,"Air One",38
-3021,"Jetstar Asia Airways",38
-3233,"Lao Airlines",38
-5207,"USA3000 Airlines",38
-1469,"BRA-Transportes Aereos",38
-1908,"Corsairfly",37
-1663,"Caribbean Airlines",36
-1188,"Aer Arann",36
-8359,"Star Peru (2I)",36
-4255,"Royal Brunei Airlines",36
-1073,"Air Moldova",36
-3391,"Mandala Airlines",36
-2782,"Horizon Airlines",36
-338,"Airnorth",36
-2774,"Hong Kong Express Airways",36
-1581,"CAL Cargo Air Lines",35
-1789,"City Airline",34
-3674,"Nok Air",34
-3574,"NHT Lineas Aereas",34
-1886,"Conviasa",34
-1626,"Canadian Western Airlines",33
-55,"Astral Aviation",33
-13254,"Avianova (Russia)",33
-4429,"SATA Air Acores",32
-4739,"Skyways Express",32
-622,"Aserca Airlines",32
-5501,"Yuzhmashavia",32
-10765,"SeaPort Airlines",32
-567,"Air Caraïbes",32
-2835,"Icelandair",31
-9828,"Ciel Canadien",31
-410,"Aerocondor",30
-116,"Air Italy",30
-1909,"Corse-Mediterranee",30
-3175,"Kuban Airlines",30
-3597,"National Airlines",30
-3865,"Pacific Wings",30
-5494,"Yangtze River Express",30
-2417,"AirAsia X",30
-2993,"Jazeera Airways",30
-603,"Amaszonas",29
-4031,"Precision Air",29
-2218,"Estonian Air",28
-470,"Air Burkina",28
-318,"Air Midwest",28
-3856,"Pacific Coastal Airline",28
-3839,"PLUNA",28
-1203,"Airlinair",28
-2538,"Georgian Airways",27
-1682,"Cayman Airways",27
-3302,"Logan Air",27
-4521,"Sudan Airways",27
-153,"Air Namibia",27
-3097,"Kam Air",27
-2901,"International Business Air",26
-3148,"Kish Air",26
-1500,"Metro Batavia",26
-3539,"Montenegro Airlines",26
-16136,"Caucasus Airlines",26
-897,"Air Philippines",26
-4021,"Porter Airlines",26
-2351,"Finncomm Airlines",26
-1539,"Binter Canarias",26
-2990,"Japan Transocean Air",25
-9531,"Tajik Air",24
-1675,"Caspian Airlines",24
-2420,"Flybaboo",24
-683,"Air Botswana",24
-10122,"Salzburg arrows",24
-2524,"Gazpromavia",24
-16120,"ZABAIKAL AIRLINES",24
-1463,"Blue Panorama Airlines",24
-139,"Air Caledonie International",24
-3386,"Malmö Aviation",24
-4808,"Sat Airlines",24
-4550,"Southern Winds Airlines",23
-4292,"Rwandair Express",23
-3637,"Nepal Airlines",23
-8463,"United Airways",22
-970,"Air Bagan",22
-5097,"Travel Service",22
-2048,"Domodedovo Airlines",22
-496,"AirBridge Cargo",22
-2826,"Ibex Airlines",22
-16264,"Trans Pas Air",22
-5584,"Sky Express",22
-2058,"Druk Air",22
-1492,"Big Sky Airlines",21
-5156,"TAM Mercosur",21
-5288,"V Australia Airlines",21
-4863,"TAME",20
-2226,"Euro Exec Express",20
-2765,"Hokkaido International Airlines",20
-4965,"Twin Jet",20
-2155,"El-Buraq Air Transport",20
-5479,"XL Airways France",20
-11804,"Halcyonair",20
-132,"Air Bosna",20
-125,"Ariana Afghan Airlines",20
-508,"Aurigny Air Services",20
-14849,"Aereonautica militare",20
-3545,"Moskovia Airlines",20
-286,"Tatarstan Airlines",20
-2994,"Jeju Air",20
-1876,"Consorcio Aviaxsa",20
-3840,"PMTair",20
-319,"Air Seychelles",19
-10776,"Salmon Air",19
-909,"Air Guinee Express",19
-4619,"Sun D'Or",19
-10650,"Pal airlines",19
-5813,"Air Mandalay",19
-896,"Air Iceland",19
-11823,"Elysian Airlines",18
-3822,"Ostfriesische Lufttransport",18
-995,"Atlasjet",18
-3498,"Midwest Airlines (Egypt)",18
-11948,"Viking Hellas",18
-462,"Astrakhan Airlines",18
-2047,"Dominicana de Aviaci",18
-8809,"Island Air (WP)",18
-5982,"Air Busan",18
-231,"Arkia Israel Airlines",18
-16103,"Air Mekong",18
-13178,"Strategic Airlines",18
-13106,"MDLR Airlines",18
-2825,"Iberworld",17
-1401,"Belair Airlines",17
-9620,"Gabon Airlines",17
-2881,"Interair South Africa",16
-3734,"Northwestern Air",16
-9666,"Virgin Pacific",16
-13200,"Fuji Dream Airlines",16
-2948,"Islas Airways",16
-4735,"Santa Barbara Airlines",16
-1784,"Cirrus Airlines",16
-239,"Air Jamaica",16
-4438,"Skynet Airlines",16
-3811,"Orient Thai Airlines",16
-1688,"Centavia",16
-3437,"Maya Island Air",16
-3466,"Mesa Airlines",16
-3123,"Kenmore Air",15
-11873,"Euroline",15
-4822,"Shuttle America",15
-4781,"Skynet Asia Airways",15
-2748,"Hello",15
-1143,"Aeropelican Air Services",14
-2916,"Intersky",14
-3589,"Nasair",14
-3411,"Martinair",14
-10675,"Sharp Airlines",14
-5083,"Turkmenistan Airlines",14
-76,"ADC Airlines",14
-112,"Astraeus",14
-3432,"Maxair",14
-16133,"Yeti Airways",14
-4475,"South East Asian Airlines",14
-876,"Air Finland",14
-2954,"Israir",14
-10737,"ALAK",14
-3110,"Kavminvodyavia",14
-2409,"Fly Air",13
-4752,"Surinam Airways",13
-5085,"Tuninter",13
-13108,"Maldivian",13
-341,"Air North Charter - Canada",13
-3721,"Northern Dene Airways",13
-246,"Amerijet International",13
-3342,"L",13
-3465,"Merpati Nusantara Airlines",13
-5134,"Tassili Airlines",13
-10094,"Voronezhskie Airlanes",12
-1266,"Avient Aviation",12
-1844,"Comores Airlines",12
-817,"Air Madrid",12
-3781,"Omni Air International",12
-306,"Air Malawi",12
-2750,"Helvetic Airways",12
-11741,"Air Antilles Express",12
-3850,"Pacific Airlines",12
-3349,"MasAir",12
-3618,"Nauru Air Corporation",12
-4234,"Air Rarotonga",12
-4896,"Thomas Cook Airlines",12
-3857,"Pacific East Asia Cargo Airlines",12
-227,"Aero Services Executive",12
-4596,"Samara Airlines",12
-16149,"Windward Islands Airways",12
-11814,"SmartLynx Airlines",12
-1034,"Aerolane",12
-4751,"Slovak Airlines",12
-2418,"FlyLal",11
-1338,"Aerolineas Galapagos (Aerogal)",11
-146,"Air Salone",11
-179,"Aeroper",10
-881,"Atlantic Airways",10
-13088,"NordStar Airlines",10
-9018,"1-2-go",10
-225,"Air Tahiti Nui",10
-5002,"Tiara Air",10
-1508,"Berjaya Air",10
-4742,"Sierra National Airlines",10
-2950,"Islena De Inversiones",10
-4066,"Proflight Commuter Services",10
-4720,"Skybus Airlines",10
-2320,"Falcon Aviation",10
-11763,"Peruvian Airlines",10
-3805,"Orenburg Airlines",10
-386,"Aero Flight",10
-3393,"Mango",10
-13089,"Joy Air",10
-3354,"MIAT Mongolian Airlines",10
-15953,"JobAir",10
-3701,"North Coast Aviation",10
-4270,"Royal Phnom Penh Airways",10
-2958,"Itek Air",10
-3201,"Aero 2000",10
-11794,"Catovair",10
-1666,"Caribbean Star Airlines",10
-9829,"Canadian National Airways",10
-16415,"Camair-co",9
-3199,"LAI - Linea Aerea IAACA",9
-16262,"Fly Colombia ( Interliging Flights )",9
-3783,"Omskavia Airline",8
-2692,"Hawkair",8
-4411,"Skagway Air Service",8
-10912,"Alaska Seaplane Service",8
-106,"Air Europe",8
-1729,"Changan Airlines",8
-5254,"Ukrainian Cargo Airways",8
-998,"Air Koryo",8
-10739,"Air Choice One",8
-16116,"Air Hamburg (AHO)",8
-465,"Air Tanzania",8
-5297,"Valuair",8
-4513,"Servicios de Transportes A",8
-3157,"Kogalymavia Air Company",8
-68,"Air Tindi",8
-3613,"Nationwide Airlines",8
-3765,"Oceanic Airlines",8
-1966,"Daallo Airlines",8
-1109,"Astair",7
-4805,"Saratov Aviation Division",6
-13734,"SOCHI AIR",6
-3205,"LAN Peru",6
-4188,"Republic Express Airlines",6
-13899,"Cambodia Angkor Air (K6)",6
-9809,"Eastar Jet",6
-1973,"Dalavia",6
-644,"Aviaexpress",6
-4335,"Seaborne Airlines",6
-11811,"AlMasria Universal Airlines",6
-11761,"VIP Ecuador",6
-2683,"Harbor Airlines",6
-1008,"Albanian Airlines",6
-5187,"Turan Air",6
-315,"ATA Airlines",6
-3680,"Nordic Regional",6
-2454,"Freedom Air",6
-3547,"Motor Sich",6
-477,"Air Saint Pierre",6
-2104,"East African",6
-4198,"Rico Linhas A",5
-2757,"Hex'Air",5
-4908,"Teamline Air",5
-10758,"Safi Airlines",4
-1769,"China United Airlines",4
-5358,"Viaggio Air",4
-1200,"Asian Spirit",4
-1442,"Bemidji Airlines",4
-10,"40-Mile Air",4
-2556,"Ghana International Airlines",4
-3834,"PAN Air",4
-12961,"Gryphon Airlines",4
-4388,"Star Flyer",4
-1040,"Air Alps Aviation",4
-3845,"Pace Airlines",4
-2799,"Héli Sécurité Helicopter Airlines",4
-1411,"British International Helicopters",4
-1910,"Cosmic Air",4
-1048,"Atlantis European Airways",4
-682,"Air Ivoire",4
-42,"ABSA - Aerolinhas Brasileiras",4
-5401,"Welcome Air",4
-1322,"Avialeasing Aviation Company",4
-1206,"Aero Lanka",4
-2585,"Golden Air",4
-4106,"RACSA",4
-3172,"Krylo Airlines",4
-3529,"Moldavian Airlines",4
-13218,"SGA Airlines",4
-2395,"Flightline",4
-72,"Ada Air",4
-1750,"Chicago Express",4
-4044,"Primaris Airlines",4
-3550,"Mountain Air Company",3
-5251,"UM Airlines",3
-43,"Abaet",3
-608,"Air Zimbabwe",3
-1230,"Aero-Service",3
-2951,"Isles of Scilly Skybus",2
-2731,"Helijet",2
-2094,"Eagle Air",2
-2264,"Excel Airways",2
-442,"Air Sinai",2
-4436,"Sibaviatrans",2
-839,"Alpi Eagles",2
-2937,"Island Airlines",2
-5098,"Trans World Airlines",2
-10674,"Danube Wings (V5)",2
-3740,"Nouvel Air Tunisie",2
-828,"Aero Airlines",2
-724,"ATRAN Cargo Airlines",2
-3272,"Linea Aerea de Servicio Ejecutivo Regional",2
-1954,"DAT Danish Air Transport",2
-12965,"Spirit of Manila Airlines",2
-10123,"Texas Wings",2
-563,"Aeroline GmbH",2
-792,"Access Air",2
-3644,"New England Airlines",2
-3976,"Pinnacle Airlines",2
-1967,"Dagestan Airlines",2
-4637,"Superior Aviation",2
-1021,"Alidaunia",2
-807,"Air Dolomiti",2
-2917,"Interstate Airline",2
-2969,"JAL Express",2
-4165,"Reem Air",2
-11840,"STP Airways",2
-3220,"Lagun Air",2
-349,"AVCOM",2
-1543,"British Mediterranean Airways",2
-3878,"Pamir Airways",2
-3421,"Mastertop Linhas Aereas",2
-29,"Askari Aviation",2
-16093,"Transportes Aéreos Nacionales de Selva",2
-16150,"TransHolding System",2
-1052,"Air Luxor",2
-1550,"Barents AirLink",2
-3326,"Lufttransport",2
-2246,"Euromanx Airways",2
-565,"Air Wales",1
-4013,"Polynesian Airlines",1
-2260,"Eurowings",1
+4296,"Ryanair",2186,53.0000,-8.0000
+5209,"United Airlines",2126,38.0000,-97.0000
+2009,"Delta Air Lines",2031,38.0000,-97.0000
+1881,"Continental Airlines",1491,38.0000,-97.0000
+5265,"US Airways",1377,38.0000,-97.0000
+24,"American Airlines",1244,38.0000,-97.0000
+751,"Air China",1022,35.0000,105.0000
+3320,"Lufthansa",1021,51.0000,9.0000
+1758,"China Eastern Airlines",1006,35.0000,105.0000
+1767,"China Southern Airlines",994,35.0000,105.0000
+4547,"Southwest Airlines",954,38.0000,-97.0000
+2297,"easyJet",804,54.0000,-2.0000
+596,"Alitalia",767,42.8333,12.8333
+214,"Air Berlin",734,51.0000,9.0000
+137,"Air France",730,46.0000,2.0000
+330,"Air Canada",684,60.0000,-95.0000
+2822,"Iberia Airlines",610,40.0000,-4.0000
+4867,"TAM Brazilian Airlines",579,-10.0000,-55.0000
+1355,"British Airways",471,54.0000,-2.0000
+4319,"Scandinavian Airlines System",446,62.0000,15.0000
+324,"All Nippon Airways",446,36.0000,138.0000
+4951,"Turkish Airlines",445,39.0000,35.0000
+439,"Alaska Airlines",429,38.0000,-97.0000
+4533,"Saudi Arabian Airlines",408,25.0000,45.0000
+218,"Air India Limited",404,20.0000,77.0000
+2660,"Hainan Airlines",404,35.0000,105.0000
+5461,"Wizz Air",382,43.0000,25.0000
+3000,"Jet Airways",370,20.0000,77.0000
+5416,"WestJet",366,60.0000,-95.0000
+4089,"Qantas",351,-27.0000,133.0000
+3737,"Norwegian Air Shuttle",350,62.0000,10.0000
+1316,"AirTran Airways",348,38.0000,-97.0000
+1790,"City Connexion Airlines",347,-3.5000,30.0000
+5013,"Thomsonfly",345,54.0000,-2.0000
+3090,"KLM Royal Dutch Airlines",339,52.5000,5.7500
+4559,"Swiss International Air Lines",319,47.0000,8.0000
+130,"Aeroflot Russian Airlines",314,60.0000,100.0000
+5484,"Xiamen Airlines",310,35.0000,105.0000
+2987,"Japan Airlines",310,36.0000,138.0000
+3378,"Malaysia Airlines",308,2.5000,112.5000
+3029,"JetBlue Airways",300,38.0000,-97.0000
+35,"Allegiant Air",298,38.0000,-97.0000
+4611,"Shenzhen Airlines",290,35.0000,105.0000
+4608,"Sichuan Airlines",284,35.0000,105.0000
+3871,"Pakistan International Airlines",284,30.0000,70.0000
+2421,"Flybe",283,54.0000,-2.0000
+321,"AeroMéxico",277,23.0000,-102.0000
+2747,"Hellas Jet",277,39.0000,22.0000
+1437,"bmi",271,54.0000,-2.0000
+4248,"Royal Air Maroc",261,32.0000,-5.0000
+4652,"Spanair",259,40.0000,-4.0000
+1868,"Condor Flugdienst",257,51.0000,9.0000
+3163,"Korean Air",248,37.0000,127.5000
+491,"Austrian Airlines",243,47.3333,13.3333
+3142,"Kingfisher Airlines",237,20.0000,77.0000
+4609,"Shanghai Airlines",236,35.0000,105.0000
+28,"Asiana Airlines",234,37.0000,127.5000
+2548,"Germanwings",228,51.0000,9.0000
+2468,"Frontier Airlines",223,38.0000,-97.0000
+3200,"LAN Airlines",222,-30.0000,-71.0000
+4599,"Shandong Airlines",220,35.0000,105.0000
+4869,"TAP Portugal",220,39.5000,-8.0000
+2183,"Emirates Airline",219,24.0000,54.0000
+4940,"Thai Airways International",217,15.0000,100.0000
+3854,"Pacific Blue",214,-41.0000,174.0000
+8745,"Transavia France",213,46.0000,2.0000
+837,"Aer Lingus",208,53.0000,-8.0000
+2220,"Ethiopian Airlines",207,8.0000,38.0000
+90,"Air Europa",203,40.0000,-4.0000
+4329,"S7 Airlines",200,60.0000,100.0000
+3290,"Lion Mentari Airlines",200,-5.0000,120.0000
+345,"Air New Zealand",198,-41.0000,174.0000
+4435,"Singapore Airlines",193,1.3667,103.8000
+5188,"TRIP Linhas A",192,-10.0000,-55.0000
+690,"Air Foyle",192,54.0000,-2.0000
+4091,"Qatar Airways",192,25.5000,51.2500
+2681,"TUIfly",189,51.0000,9.0000
+1531,"Brussels Airlines",187,50.8333,4.0000
+4897,"Thomas Cook Airlines",183,54.0000,-2.0000
+794,"Air Algerie",183,28.0000,3.0000
+2439,"Formosa Airlines",183,23.5000,121.0000
+4305,"South African Airways",182,-29.0000,24.0000
+5439,"Widerøe",177,62.0000,10.0000
+1680,"Cathay Pacific",175,22.2500,114.1667
+3926,"Pegasus Airlines",174,39.0000,35.0000
+641,"Pulkovo Aviation Enterprise",174,60.0000,100.0000
+5309,"Vietnam Airlines",174,16.0000,106.0000
+2143,"Egyptair",172,27.0000,30.0000
+2922,"Iran Air",171,32.0000,53.0000
+3052,"Jetstar Airways",164,-27.0000,133.0000
+576,"AirAsia",162,2.5000,112.5000
+3210,"LOT Polish Airlines",160,52.0000,20.0000
+114,"Aerosvit Airlines",156,49.0000,32.0000
+1889,"Copa Airlines",156,9.0000,-80.0000
+515,"Avianca - Aerovias Nacionales de Colombia",156,4.0000,-72.0000
+3952,"Philippine Airlines",154,13.0000,122.0000
+3026,"Jet2.com",152,54.0000,-2.0000
+5039,"Transavia Holland",151,52.5000,5.7500
+2222,"Etihad Airways",147,24.0000,54.0000
+5281,"Uzbekistan Airways",146,41.0000,64.0000
+2923,"Iran Aseman Airlines",145,32.0000,53.0000
+1683,"Cebu Pacific",144,13.0000,122.0000
+4870,"Tunisair",140,34.0000,9.0000
+2350,"Finnair",139,64.0000,26.0000
+2520,"Garuda Indonesia",138,-5.0000,120.0000
+2850,"IndiGo Airlines",138,20.0000,77.0000
+5067,"Transaero Airlines",137,60.0000,100.0000
+3126,"Kenya Airways",135,1.0000,38.0000
+412,"Aerolineas Argentinas",134,-34.0000,-64.0000
+2622,"Grupo TACA",132,10.0000,-84.0000
+1946,"Czech Airlines",131,49.7500,15.5000
+3463,"Meridiana",130,42.8333,12.8333
+333,"Air Baltic",129,57.0000,25.0000
+4687,"Spirit Airlines",126,38.0000,-97.0000
+1066,"Air Madagascar",124,-20.0000,47.0000
+1756,"China Airlines",121,23.5000,121.0000
+4573,"SunExpress",120,39.0000,35.0000
+4259,"Royal Jordanian",119,31.0000,36.0000
+2607,"Great Lakes Airlines",118,38.0000,-97.0000
+10646,"Birmingham European",118,54.0000,-2.0000
+3389,"Malév",112,47.0000,20.0000
+3776,"Olympic Airlines",109,39.0000,22.0000
+5282,"Ukraine International Airlines",106,49.0000,32.0000
+6557,"Japan Air System",104,36.0000,138.0000
+5496,"Yemenia",104,15.0000,48.0000
+1156,"Air Paradise International",104,-5.0000,120.0000
+569,"Air India Express",103,20.0000,77.0000
+1006,"Air Astana",102,48.0000,68.0000
+3778,"Oman Air",101,21.0000,57.0000
+4375,"Spicejet",99,20.0000,77.0000
+4691,"SATENA",97,4.0000,-72.0000
+5325,"Volaris",96,23.0000,-102.0000
+2638,"Gulf Air Bahrain",94,26.0000,50.5500
+692,"Air Tahiti",93,-15.0000,-140.0000
+3258,"Libyan Arab Airlines",93,25.0000,17.0000
+4349,"SriLankan Airlines",92,7.0000,81.0000
+524,"Air Vanuatu",92,-16.0000,167.0000
+1441,"bmibaby",92,54.0000,-2.0000
+3329,"Luxair",90,49.7500,6.1667
+96,"Aegean Airlines",90,39.0000,22.0000
+220,"Air Bourbon",90,-21.1000,55.6000
+2091,"EVA Air",89,23.5000,121.0000
+5179,"Tarom",88,46.0000,25.0000
+1925,"Croatia Airlines",88,45.1667,15.5000
+4586,"Syrian Arab Airlines",87,35.0000,38.0000
+328,"Air Niugini",87,-6.0000,147.0000
+329,"Air Arabia",87,24.0000,54.0000
+5234,"Ural Airlines",85,60.0000,100.0000
+1781,"Cimber Air",84,56.0000,10.0000
+5353,"Vladivostok Air",84,60.0000,100.0000
+241,"Air Sahara",84,20.0000,77.0000
+1764,"China Northwest Airlines",83,35.0000,105.0000
+2150,"El Al Israel Airlines",83,31.5000,34.7500
+4178,"Regional Express",82,-27.0000,133.0000
+3754,"Nas Air",81,25.0000,45.0000
+1427,"Blue1",81,64.0000,26.0000
+15814,"UTair-Express",80,60.0000,100.0000
+2354,"First Air",80,60.0000,-95.0000
+3251,"Leeward Islands Air Transport",79,17.0500,-61.8000
+805,"Antinea Airlines",78,28.0000,3.0000
+15999,"China SSS",78,35.0000,105.0000
+21,"Aigle Azur",76,46.0000,2.0000
+2942,"Cargo Plus Aviation",76,24.0000,54.0000
+3661,"Niki",76,47.3333,13.3333
+1472,"Bering Air",75,38.0000,-97.0000
+3197,"LACSA",74,10.0000,-84.0000
+3179,"Kuwait Airways",73,29.3375,47.6581
+4750,"SilkAir",73,1.3667,103.8000
+4304,"SATA International",73,39.5000,-8.0000
+1216,"Armavia",72,40.0000,45.0000
+1629,"Cape Air",72,38.0000,-97.0000
+1829,"Comair",71,-29.0000,24.0000
+242,"Air Malta",70,35.8333,14.5833
+5347,"Virgin Atlantic Airways",70,54.0000,-2.0000
+3370,"Mahan Air",69,32.0000,53.0000
+2429,"Flyhy Cargo Airlines",69,15.0000,100.0000
+5133,"TAAG Angola Airlines",68,-12.5000,18.5000
+921,"Air Greenland",67,56.0000,10.0000
+4947,"Thai AirAsia",66,15.0000,100.0000
+2991,"Jat Airways",65,44.0000,21.0000
+879,"Air Pacific",65,-18.0000,175.0000
+3764,"Oceanair",64,-10.0000,-55.0000
+3569,"Myanma Airways",64,22.0000,98.0000
+1287,"Aircompany Yakutia",63,60.0000,100.0000
+2056,"Dragonair",63,22.2500,114.1667
+4797,"Solomon Airlines",63,-8.0000,159.0000
+1669,"Carpatair",62,46.0000,25.0000
+2193,"Empresa Ecuatoriana De Aviacion",62,-2.0000,-77.5000
+2688,"Hawaiian Airlines",61,38.0000,-97.0000
+5447,"Wind Jet",61,42.8333,12.8333
+1936,"Cubana de Aviación",61,21.5000,-80.0000
+1422,"Bangkok Airways",61,15.0000,100.0000
+4737,"Sky Airline",61,-30.0000,-71.0000
