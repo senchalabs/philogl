@@ -42,7 +42,7 @@ function createCitiesLayer(cities) {
         sphere = new O3D.Sphere({
           nlat: 3,
           nlong: 3,
-          radius: 1 / 200,
+          radius: 1 / 140,
           pickingColors: [0, g / 255, b / 255, 1]
         }),
         tvertices = slice.call(sphere.vertices).map(function(v, i) { return coords[i % 3] + v; });

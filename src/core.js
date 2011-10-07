@@ -175,9 +175,7 @@ function $(d) {
 
 $.empty = function() {};
 
-$.time = Date.now || function() {
-  return +new Date;
-};
+$.time = Date.now;
 
 $.uid = (function() {
   var t = $.time();

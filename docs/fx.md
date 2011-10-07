@@ -27,7 +27,8 @@ The main constructor function for the Fx class. Use this to create a new animati
 ### Options:
 
 * duration - (*numer*, optional) The duration of the animation in milliseconds. Default's 1000.
-* transition - (*object*, optional) One of the tweening functions in Fx.Transition (described below). Default's Fx.Transition.Quart.easeInOut.
+* delay - (*numer*, optional) The delay before triggering the animation in milliseconds. Default's 0.
+* transition - (*object*, optional) One of the tweening functions in Fx.Transitions (described below). Default's Fx.Transition.Quart.easeInOut.
 * onCompute - (*function*) A callback for each step of the animation. The first parameter of the callback is *delta* a number between [0, 1].
 * onComplete - (*function*) A callback executed when the animation is finished.
 
@@ -140,6 +141,14 @@ In this example we also use `PhiloGL.Fx.compute` method to do linear interpolati
   }, 1000 / 60);
 
 {% endhighlight %}
+
+### Notes:
+
+When using `Fx.requestAnimationFrame` there's no need to use this
+method, since an internal queue that calls animations steps is used
+automatically. The only methods generally used are then the `Fx`
+constructor and the `start` method.
+
 
 Fx Method: compute {#Fx:compute}
 ------------------------------------

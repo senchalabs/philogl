@@ -6,8 +6,12 @@ var $ = function(id) { return document.getElementById(id); },
     $$ = function(selector) { return document.querySelectorAll(selector); },
     citiesWorker = new Worker('cities.js'),
     data = { citiesRoutes: {}, airlinesRoutes: {} },
-    models = {},
+    models = {}, geom = {},
     airlineMgr = new AirlineManager(data, models),
+    fx = new Fx({
+      duration: 1000,
+      transition: Fx.Transition.Expo.easeInOut
+    }),
     airlineList, pos, tooltip;
 
 //Get handles when document is ready
@@ -60,7 +64,7 @@ models.earth = new O3D.Sphere({
   textures: ['img/earth3-specular.gif'],
   program: 'earth'
 });
-models.earth.rotation.set(Math.PI - 0.3, 0,  0);
+models.earth.rotation.set(Math.PI, 0,  0);
 models.earth.update();
 
 //Create airline routes model
@@ -77,7 +81,7 @@ models.airlines = new O3D.Model({
     }
   }
 });
-models.airlines.rotation.set(-0.3, 0, 0);
+// models.airlines.rotation.set(-0.3, 0, 0);
 models.airlines.update();
 
 //Create cities layer model and create PhiloGL app.
@@ -107,7 +111,7 @@ citiesWorker.onmessage = function(e) {
         }
       }
     }));
-    models.cities.rotation.set(-0.3, 0, 0);
+    // models.cities.rotation.set(-0.3, 0, 0);
     models.cities.update();
 
     Log.write('Loading assets...');
@@ -139,26 +143,98 @@ function loadData() {
     url: 'data/airlines.json',
     onSuccess: function(json) {
       var airlines = data.airlines = JSON.parse(json),
-          html = [];
-      console.log(data);
+          airlinePos = data.airlinePos = {},
+          html = [],
+          pi = Math.PI,
+          pi2 = pi * 2,
+          sin = Math.sin,
+          cos = Math.cos,
+          phi, theta, sinTheta, cosTheta, sinPhi, cosPhi;
       //assuming the data will be available after the document is ready...
-      for (var i = 0, l = airlines.length; i < l; i++) {
-        var airlineId = airlines[i][0],
-            airlineName = airlines[i][1];
+      for (var i = 0, l = airlines.length -1; i < l; i++) {
+        var airline = airlines[i],
+            airlineId = airline[0],
+            airlineName = airline[1];
+
+        phi = pi - (+airline[3] + 90) / 180 * pi;
+        theta = pi2 - (+airline[4] + 180) / 360 * pi2;
+        sinTheta = sin(theta);
+        cosTheta = cos(theta);
+        sinPhi = sin(phi);
+        cosPhi = cos(phi);
+        
+        airlinePos[airlineId] = [ cosTheta * sinPhi, cosPhi, sinTheta * sinPhi, phi, theta ];
+
         html.push('<label for=\'checkbox-' + 
                   airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' + 
                       airlineId + '\' /> ' + airlineName + '</label>');
       }
+
       //append all elements
       airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
       //when an airline is selected show all paths for that airline
       airlineList.addEventListener('change', function(e) {
         var target = e.target,
-            airlineId = target.id.split('-')[1];
+            airlineId = target.id.split('-')[1],
+            pos = data.airlinePos[airlineId];
         
         function callback() {
           if (target.checked) {
             airlineMgr.add(airlineId);
+            var earth = models.earth,
+                cities = models.cities,
+                airlines = models.airlines,
+                phi = pos[3],
+                theta = pos[4],
+                phiPrev = geom.phi || Math.PI / 2,
+                thetaPrev = geom.theta || (3 * Math.PI / 2),
+                phiDiff = phi - phiPrev,
+                thetaDiff = theta - thetaPrev,
+                mat = new Mat4(),
+                xVec = [1, 0, 0],
+                yVec = [0, 1, 0],
+                yVec2 =[0, -1, 0];
+            
+            geom.matEarth = earth.matrix.clone();
+            geom.matCities = cities.matrix.clone();
+            geom.matAirlines = airlines.matrix.clone();
+
+            fx.start({
+              onCompute: function(delta) {
+
+                earth.matrix = geom.matEarth.clone();
+                cities.matrix = geom.matCities.clone();
+                airlines.matrix = geom.matAirlines.clone();
+                
+                var m1 = new Mat4(),
+                    m2 = new Mat4();
+                
+                m1.$rotateAxis(phiDiff * delta, xVec);
+                m2.$rotateAxis(phiDiff * delta, xVec);
+
+                m1.$mulMat4(earth.matrix);
+                m2.$mulMat4(cities.matrix);
+
+                var m3 = new Mat4(),
+                    m4 = new Mat4();
+                
+                m3.$rotateAxis(thetaDiff * delta, yVec2);
+                m4.$rotateAxis(thetaDiff * delta, yVec);
+
+                m1.$mulMat4(m3);
+                m2.$mulMat4(m4);
+
+                earth.matrix = m1;
+                cities.matrix = m2;
+                airlines.matrix = m2;
+              },
+
+              onComplete: function() {
+                geom.phi = phi;
+                geom.theta = theta;
+              }
+            });
+
           } else {
             airlineMgr.remove(airlineId);
           }

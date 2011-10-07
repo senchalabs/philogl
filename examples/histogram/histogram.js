@@ -320,9 +320,6 @@
           loop();
           
           function loop() { 
-            //update animation options
-            fx.step();
-            fxSize.step();
             program.setUniform('size', sizeValue);
             if (played) {
               if (movie.paused || movie.ended) {

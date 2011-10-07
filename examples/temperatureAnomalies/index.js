@@ -341,8 +341,6 @@ function init() {
         function draw() {
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
      
-          //Update position
-          fx.step();
           if (!app.dragging && theta == 0) {
             theta += 0.0005;
             earth.rotation.set(Math.PI, theta,  0.1);
