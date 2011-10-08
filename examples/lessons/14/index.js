@@ -119,7 +119,7 @@ function webGLStart() {
             delete lights.points.specular;
           }
           //Set shininess
-          teapot.shininess = +shininess.value;
+          teapot.uniforms.shininess = +shininess.value;
           //Set texture
           if (texture.value == 'none') {
             delete teapot.textures;

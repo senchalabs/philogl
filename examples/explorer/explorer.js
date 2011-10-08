@@ -58,9 +58,9 @@
 
   //Surface Model
   var surface = new O3D.Model({
-    shininess: 10,
     indices: meshIndices,
     uniforms: {
+      shininess: 10,
       'colorUfm': [0.5, 0.3, 0.7, 1]
     }
   });

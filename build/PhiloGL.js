@@ -363,13 +363,17 @@ $.splat = (function() {
       if (opt === false || opt === null) {
         opt = this.bufferMemo[name];
         //reset buffer
-        opt && gl.bindBuffer(opt.bufferType, null);
+        if(opt) {
+          gl.bindBuffer(opt.bufferType, null);
+        }
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
-            loc = program.attributes[attributeName];
+            loc = program.attributes[attributeName],
+            enabled = program.attributeEnabled[attributeName];
         //disable the attribute array only if it was previously enabled
-        if (loc !== undefined) {
+        if (loc !== undefined && enabled) {
           gl.disableVertexAttribArray(loc);
+          program.attributeEnabled[attributeName] = false;
         }
         return;
       }
@@ -385,6 +389,7 @@ $.splat = (function() {
       }, this.bufferMemo[name] || {}, opt || {});
 
       var attributeName = opt.attribute || name,
+          enabled = program.attributeEnabled[attributeName],
           bufferType = opt.bufferType,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
@@ -402,8 +407,9 @@ $.splat = (function() {
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute) {
+      if (isAttribute && !enabled) {
         gl.enableVertexAttribArray(loc);
+        program.attributeEnabled[attributeName] = true;
       }
 
       gl.bindBuffer(bufferType, buffer);
@@ -2394,14 +2400,17 @@ $.splat = (function() {
     if (!program) return false;
     
     var attributes = {},
-        uniforms = {};
+        attributeEnabled = {},
+        uniforms = {},
+        uniformCache = {},
+        info, name, index;
   
     //fill attribute locations
     var len = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < len; i++) {
-      var info = gl.getActiveAttrib(program, i),
-          name = info.name,
-          index = gl.getAttribLocation(program, info.name);
+      info = gl.getActiveAttrib(program, i);
+      name = info.name;
+      index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
     }
     
@@ -2418,22 +2427,34 @@ $.splat = (function() {
     this.program = program;
     //handle attributes and uniforms
     this.attributes = attributes;
+    this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
+    this.uniformCache = uniformCache;
   };
 
   Program.prototype = {
     
     $$family: 'program',
 
-    setUniform: function(name, val) {
-      if (this.uniforms[name])
-        this.uniforms[name](val);
-      return this;
-    },
+    setUniform: (function() {
+      var join = Array.prototype.join;
+
+      return function(name, val) {
+        var cachedVal, array;
+        if (this.uniforms[name]) {
+          //check for cache values.
+          cachedVal = val.splice || val.BYTES_PER_ELEMENT ? join.call(val) : val;
+          if (this.uniformCache[name] != cachedVal) {
+            this.uniforms[name](val);
+            this.uniformCache[name] = cachedVal;
+          }
+        }
+        return this;
+      };
+    })(),
 
     setUniforms: function(obj) {
       for (var name in obj) {
-        //this.uniforms[name](obj[name]);
         this.setUniform(name, obj[name]);
       }
       return this;
@@ -2923,7 +2944,16 @@ $.splat = (function() {
   }
   
   //Model repository
-  var O3D = {};
+  var O3D = {
+      //map attribute names to property names
+      //TODO(nico): textures are treated separately.
+      attributeMap: {
+        'position': 'vertices',
+        'normal': 'normals',
+        'pickingColor': 'pickingColors',
+        'colors': 'color'
+      }
+  };
 
   //Model abstract O3D Class
   O3D.Model = function(opt) {
@@ -3011,10 +3041,6 @@ $.splat = (function() {
         program.setBuffer(bufferId, false);
       }
     },
-
-    setShininess: function(program) {
-      program.setUniform('shininess', this.shininess || 0);
-    },
     
     setReflection: function(program) {
       if (this.reflection || this.refraction) {
@@ -3028,13 +3054,13 @@ $.splat = (function() {
       }
     },
     
-    setVertices: function(program, force) {
-      if (!this.vertices) return;
+    setVertices: function(program) {
+      if (!this.$vertices) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('position-' + this.id, {
           attribute: 'position',
-          value: this.vertices,
+          value: this.$vertices,
           size: 3
         });
       } else {
@@ -3046,13 +3072,13 @@ $.splat = (function() {
       program.setBuffer('position-' + this.id, false);
     },
     
-    setNormals: function(program, force) {
-      if (!this.normals) return;
+    setNormals: function(program) {
+      if (!this.$normals) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('normal-' + this.id, {
           attribute: 'normal',
-          value: this.normals,
+          value: this.$normals,
           size: 3
         });
       } else {
@@ -3064,14 +3090,14 @@ $.splat = (function() {
       program.setBuffer('normal-' + this.id, false);
     },
 
-    setIndices: function(program, force) {
-      if (!this.indices) return;
+    setIndices: function(program) {
+      if (!this.$indices) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('indices-' + this.id, {
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           drawType: gl.STATIC_DRAW,
-          value: this.indices,
+          value: this.$indices,
           size: 1
         });
       } else {
@@ -3083,13 +3109,13 @@ $.splat = (function() {
       program.setBuffer('indices-' + this.id, false);
     },
 
-    setPickingColors: function(program, force) {
-      if (!this.pickingColors) return;
+    setPickingColors: function(program) {
+      if (!this.$pickingColors) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('pickingColor-' + this.id, {
           attribute: 'pickingColor',
-          value: this.pickingColors,
+          value: this.$pickingColors,
           size: 4
         });
       } else {
@@ -3101,13 +3127,13 @@ $.splat = (function() {
       program.setBuffer('pickingColor-' + this.id, false);
     },
     
-    setColors: function(program, force) {
-      if (!this.colors) return;
+    setColors: function(program) {
+      if (!this.$colors) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('color-' + this.id, {
           attribute: 'color',
-          value: this.colors,
+          value: this.$colors,
           size: 4
         });
       } else {
@@ -3119,35 +3145,37 @@ $.splat = (function() {
       program.setBuffer('color-' + this.id, false);
     },
 
-    setTexCoords: function(program, force) {
-      if (!this.texCoords) return; 
+    setTexCoords: function(program) {
+      if (!this.$texCoords) return; 
 
-      var id = this.id;
+      var id = this.id,
+          i, txs, l, tex;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         //If is an object containing textureName -> textureCoordArray
         //Set all textures, samplers and textureCoords.
-        if ($.type(this.texCoords) == 'object') {
-          this.textures.forEach(function(tex, i) {
+        if ($.type(this.$texCoords) == 'object') {
+          for (i = 0, txs = this.textures, l = txs.length; i < l; i++) {
+            tex = txs[i];
             program.setBuffer('texCoord-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
-              value: this.texCoords[tex],
+              value: this.$texCoords[tex],
               size: 2
             });
-          });
+          }
         //An array of textureCoordinates
         } else {
           program.setBuffer('texCoord-' + id, {
             attribute: 'texCoord1',
-            value: this.texCoords,
+            value: this.$texCoords,
             size: 2
           });
         }
       } else {
-        if ($.type(this.texCoords) == 'object') {
-          this.textures.forEach(function(tex, i) {
+        if ($.type(this.$texCoords) == 'object') {
+          for (i = 0, txs = this.textures, l = txs.length; i < l; i++) {
             program.setBuffer('texCoord-' + i + '-' + id);
-          });
+          }
         } else {
           program.setBuffer('texCoord-' + id);
         }
@@ -3177,6 +3205,58 @@ $.splat = (function() {
         }
         program.setUniform('sampler' + (i + 1), i);
         program.setUniform('samplerCube' + (i + 1), i + dist);
+      }
+    },
+
+    setState: function(program) {
+      var attr = program.attributes,
+          enabled = program.attributeEnabled,
+          gl = app.gl,
+          map = O3D.attributeMap,
+          texCoordCount = 0;
+
+      //enable/disable all mapped attributes
+      for (var name in attr) {
+        var key = map[name];
+        if (key) {
+          var val = this[key];
+          if (val && !enabled[name]) {
+            gl.enableVertexAttribArray(attr[name]);
+            enabled[name] = true;
+          } else if (!val && enabled[name]) {
+            gl.disableVertexAttribArray(attr[name]);
+            enabled[name] = false;
+          }
+        } else {
+          if (name.indexOf('texCoord') > -1) {
+            texCoordCount++;
+            continue;
+          }
+          if (this.attributes[name] && !enabled[name]) {
+            gl.enableVertexAttribArray(attr[name]);
+            enabled[name] = true;
+          } else if (!this.attributes[name] && enabled[name]) {
+            gl.disableVertexAttribArray(attr[name]);
+            enabled[name] = false;
+          }
+        }
+      }
+
+      //use textures
+      for (var i = 0, txts = this.textures, l = txts && txts.length || 0; i < l && i < texCoordCount; i++) {
+        name = 'texCoord' + (i + 1);
+        if (!enabled[name]) {
+          gl.enableVertexAttribArray(attr[name]);
+          enabled[name] = true;
+        }
+      }
+
+      for (; i < texCoordCount; i++) {
+        name = 'texCoord' + (i + 1);
+        if (enabled[name]) {
+          gl.disableVertexAttribArray(attr[name]);
+          enabled[name] = false;
+        }
       }
     }
  };
@@ -4255,16 +4335,21 @@ $.splat = (function() {
     },
 
     defineBuffers: function(obj) {
-      var program = this.getProgram(obj);
+      var program = this.getProgram(obj),
+          prevDynamic = obj.dynamic;
+
+      obj.dynamic = true;
       
-      obj.setAttributes(program, true);
-      obj.setVertices(program, true);
-      obj.setColors(program, true);
-      obj.setPickingColors(program, true);
-      obj.setNormals(program, true);
+      obj.setAttributes(program);
+      obj.setVertices(program);
+      obj.setColors(program);
+      obj.setPickingColors(program);
+      obj.setNormals(program);
       //obj.setTextures(program, true);
-      obj.setTexCoords(program, true);
-      obj.setIndices(program, true);
+      obj.setTexCoords(program);
+      obj.setIndices(program);
+
+      obj.dynamic = prevDynamic;
     },
 
     beforeRender: function(program) {
@@ -4424,10 +4509,11 @@ $.splat = (function() {
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
+      // obj.setState(program);
 
       obj.setUniforms(program);
       obj.setAttributes(program);
-      obj.setShininess(program);
+      // obj.setShininess(program);
       obj.setReflection(program);
       obj.setVertices(program);
       obj.setColors(program);
@@ -4451,10 +4537,10 @@ $.splat = (function() {
       if (obj.render) {
         obj.render(gl, program, camera);
       } else {
-        if (obj.indices) {
-          gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+        if (obj.$indicesLength) {
+          gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.$indicesLength, gl.UNSIGNED_SHORT, 0);
         } else {
-          gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.vertices.length / 3);
+          gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.$verticesLength / 3);
         }
       }
       

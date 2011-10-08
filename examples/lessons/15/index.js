@@ -6,7 +6,9 @@ function webGLStart() {
     nlat: 30,
     nlong: 30,
     radius: 2,
-    shininess: 32,
+    uniforms: {
+      shininess: 32
+    },
     textures: ['earth.jpg', 'earth-specular.gif'],
     colors: [1, 1, 1, 1]
   });

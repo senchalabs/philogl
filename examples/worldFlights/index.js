@@ -60,7 +60,9 @@ models.earth = new O3D.Sphere({
   nlat: 50,
   nlong: 50,
   radius: 1,
-  shininess: 10,
+  uniforms: {
+    shininess: 10
+  },
   textures: ['img/earth3-specular.gif'],
   program: 'earth'
 });
@@ -70,6 +72,7 @@ models.earth.update();
 //Create airline routes model
 models.airlines = new O3D.Model({
   program: 'layer',
+  drawType: 'DYNAIMC_DRAW',
   uniforms: {
     colorUfm: [0.3, 0.3, 0.6, 1]
   },

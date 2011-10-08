@@ -201,14 +201,13 @@
     $$family: 'program',
 
     setUniform: (function() {
-      var isArray = Array.isArray,
-          join = Array.prototype.join;
+      var join = Array.prototype.join;
 
       return function(name, val) {
         var cachedVal, array;
         if (this.uniforms[name]) {
           //check for cache values.
-          cachedVal = isArray(val) || val.BYTES_PER_ELEMENT ? join.call(val) : val;
+          cachedVal = val.splice || val.BYTES_PER_ELEMENT ? join.call(val) : val;
           if (this.uniformCache[name] != cachedVal) {
             this.uniforms[name](val);
             this.uniformCache[name] = cachedVal;

@@ -47,9 +47,9 @@ function init() {
     nlat: 30,
     nlong: 30,
     radius: 2,
-    shininess: 32,
     textures: ['img/earth.jpg'],
     uniforms: {
+      shininess: 32,
       alphaUfm: 1
     }
   });
@@ -61,8 +61,8 @@ function init() {
         nlat: 60,
         nlong: 60,
         radius: 2,
-        shininess: 2,
         uniforms: {
+          shininess: 2,
           alphaUfm: 0.25
         }
       }), 
@@ -91,7 +91,9 @@ function init() {
         tempMaps[i] = new O3D.Sphere({
           nlat: 60,
           nlong: 60,
-          shininess: 32,
+          uniforms: {
+            shininess: 32
+          },
           radius: function(n1, n2, n3, u, v) {
             u = (u * (width -1)) >> 0;
             v = (v * (height -1)) >> 0;

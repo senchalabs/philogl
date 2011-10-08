@@ -11,9 +11,9 @@ function webGLStart() {
     nlat: 30,
     nlong: 30,
     radius: 2,
-    shininess: 5,
     textures: 'moon.gif',
     uniforms: {
+      shininess: 5,
       'enableSpecularHighlights': false,
       'materialAmbientColor': [1, 1, 1],
       'materialDiffuseColor': [1, 1, 1],
@@ -24,8 +24,8 @@ function webGLStart() {
   //Create box
   models.box = new O3D.Cube({
     textures: 'crate.gif',
-    shininess: 5,
     uniforms: {
+      shininess: 5,
       'enableSpecularHighlights': false,
       'materialAmbientColor': [1, 1, 1],
       'materialDiffuseColor': [1, 1, 1],
@@ -57,8 +57,8 @@ function webGLStart() {
     ],
     textures: 'monitor-texture',
     drawType: 'TRIANGLE_STRIP',
-    shininess: 0.2,
     uniforms: {
+      shininess: 0.2,
       'enableSpecularHighlights': false,
       'materialAmbientColor': [0, 0, 0],
       'materialDiffuseColor': [0, 0, 0],
