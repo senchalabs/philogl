@@ -72,7 +72,6 @@ models.earth.update();
 //Create airline routes model
 models.airlines = new O3D.Model({
   program: 'layer',
-  drawType: 'DYNAIMC_DRAW',
   uniforms: {
     colorUfm: [0.3, 0.3, 0.6, 1]
   },

@@ -205,7 +205,7 @@
           renderProgram = opt.renderProgram,
           pType = $.type(program),
           multiplePrograms = !renderProgram && pType == 'object',
-          options = $.merge({
+          options = $.extend({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
           }, opt || {});
@@ -252,19 +252,7 @@
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
-      // obj.setState(program);
-
-      obj.setUniforms(program);
-      obj.setAttributes(program);
-      // obj.setShininess(program);
-      obj.setReflection(program);
-      obj.setVertices(program);
-      obj.setColors(program);
-      obj.setPickingColors(program);
-      obj.setNormals(program);
-      obj.setTextures(program);
-      obj.setTexCoords(program);
-      obj.setIndices(program);
+      obj.setState(program);
 
       //Now set view and normal matrices
       program.setUniforms({
@@ -287,13 +275,7 @@
         }
       }
       
-      obj.unsetAttributes(program);
-      obj.unsetVertices(program);
-      obj.unsetColors(program);
-      obj.unsetPickingColors(program);
-      obj.unsetNormals(program);
-      obj.unsetTexCoords(program);
-      obj.unsetIndices(program);
+      obj.unsetState(program);
     },
     
     //setup picking framebuffer

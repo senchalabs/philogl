@@ -53,9 +53,6 @@ The main constructor function for the Model class. Use this to create a new Mode
 * texCoords - (*mixed*, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and 
 * colors - (*array*, optional) An array of colors in RGBA. If just one color is specified that color will be used for all faces.
 * indices - (*array*, optional) An array of numbers describing the vertex indices for each face.
-* shininess - (*number*, optional) A number between [0.1, 200] describing how shiny an object is.
-* reflection - (*number*, optional) A number between [0, 1] describing the reflectivity of an object.
-* refraction - (*number*, optional) A number between [0, 1] describing the refraction index of an object.
 * attributes - (*object*, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more 
 about attribute descriptors you can find a description of them in [program.setBuffer](program.html#Program:setBuffer). 
 * uniforms - (*object*, optional) An object with uniform names and values to be set before rendering the model.
@@ -86,6 +83,11 @@ served as an attribute. The getter for this property will return the
 cloned typed array.
  * `toFloat32Array` and `toUint16Array` methods are not used anymore since the typed array can
    now be fetched when accessing the model property directly.
+ * `shininess`, `reflection` and `refraction` properties are now set in the `uniforms` object. Below is a description 
+of the attributes.
+ * shininess - (*number*, optional) A number between [0.1, 200] describing how shiny an object is.
+ * reflection - (*number*, optional) A number between [0, 1] describing the reflectivity of an object.
+ * refraction - (*number*, optional) A number between [0, 1] describing the refraction index of an object.
 
 ### Examples:
 

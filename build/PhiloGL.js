@@ -368,28 +368,25 @@ $.splat = (function() {
         }
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
-            loc = program.attributes[attributeName],
-            enabled = program.attributeEnabled[attributeName];
-        //disable the attribute array only if it was previously enabled
-        if (loc !== undefined && enabled) {
+            loc = program.attributes[attributeName];
+        //disable the attribute array
+        if (loc !== undefined) {
           gl.disableVertexAttribArray(loc);
-          program.attributeEnabled[attributeName] = false;
         }
         return;
       }
       
       //set defaults
-      opt = $.merge({
+      opt = $.extend(this.bufferMemo[name] || {
         bufferType: gl.ARRAY_BUFFER,
         size: 1,
         dataType: gl.FLOAT,
         stride: 0,
         offset: 0,
         drawType: gl.STATIC_DRAW
-      }, this.bufferMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var attributeName = opt.attribute || name,
-          enabled = program.attributeEnabled[attributeName],
           bufferType = opt.bufferType,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
@@ -407,9 +404,8 @@ $.splat = (function() {
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute && !enabled) {
+      if (isAttribute) {
         gl.enableVertexAttribArray(loc);
-        program.attributeEnabled[attributeName] = true;
       }
 
       gl.bindBuffer(bufferType, buffer);
@@ -448,7 +444,7 @@ $.splat = (function() {
         return;
       }
       //get options
-      opt = $.merge({
+      opt = $.merge(this.frameBufferMemo[name] || {
         width: 0,
         height: 0,
         //All texture params
@@ -461,7 +457,7 @@ $.splat = (function() {
         renderBufferOptions: {
           attachment: gl.DEPTH_ATTACHMENT
         }
-      }, this.frameBufferMemo[name] || {}, opt || {});
+      }, opt || {});
       
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
@@ -490,7 +486,7 @@ $.splat = (function() {
       }
 
       if (bindToRenderBuffer) {
-        var rbBindOpt = $.merge({
+        var rbBindOpt = $.extend({
               width: opt.width,
               height: opt.height
             }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
@@ -524,11 +520,11 @@ $.splat = (function() {
         return;
       }
 
-      opt = $.merge({
+      opt = $.extend(this.renderBufferMemo[name] || {
         storageType: gl.DEPTH_COMPONENT16,
         width: 0,
         height: 0
-      }, this.renderBufferMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var hasBuffer = name in this.renderBuffers,
           renderBuffer = hasBuffer? this.renderBuffers[name] : gl.createRenderbuffer(gl.RENDERBUFFER);
@@ -561,7 +557,7 @@ $.splat = (function() {
         return;
       }
       //get defaults
-      opt = $.merge({
+      opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
         pixelStore: [{
           name: gl.UNPACK_FLIP_Y_WEBGL,
@@ -583,7 +579,7 @@ $.splat = (function() {
           border: 0
         }
 
-      }, this.textureMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var textureType = ('textureType' in opt)? gl.get(opt.textureType) : gl.TEXTURE_2D,
           textureTarget = ('textureTarget' in opt)? gl.get(opt.textureTarget) : textureType,
@@ -2402,7 +2398,6 @@ $.splat = (function() {
     var attributes = {},
         attributeEnabled = {},
         uniforms = {},
-        uniformCache = {},
         info, name, index;
   
     //fill attribute locations
@@ -2429,29 +2424,18 @@ $.splat = (function() {
     this.attributes = attributes;
     this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
-    this.uniformCache = uniformCache;
   };
 
   Program.prototype = {
     
     $$family: 'program',
 
-    setUniform: (function() {
-      var join = Array.prototype.join;
-
-      return function(name, val) {
-        var cachedVal, array;
-        if (this.uniforms[name]) {
-          //check for cache values.
-          cachedVal = val.splice || val.BYTES_PER_ELEMENT ? join.call(val) : val;
-          if (this.uniformCache[name] != cachedVal) {
-            this.uniforms[name](val);
-            this.uniformCache[name] = cachedVal;
-          }
-        }
-        return this;
-      };
-    })(),
+    setUniform: function(name, val) {
+      if (this.uniforms[name]) {
+        this.uniforms[name](val);
+      }
+      return this;
+    },
 
     setUniforms: function(obj) {
       for (var name in obj) {
@@ -3209,55 +3193,28 @@ $.splat = (function() {
     },
 
     setState: function(program) {
-      var attr = program.attributes,
-          enabled = program.attributeEnabled,
-          gl = app.gl,
-          map = O3D.attributeMap,
-          texCoordCount = 0;
+      this.setUniforms(program);
+      this.setAttributes(program);
+      this.setVertices(program);
+      this.setColors(program);
+      this.setPickingColors(program);
+      this.setNormals(program);
+      this.setTextures(program);
+      this.setTexCoords(program);
+      this.setIndices(program);
+    },
 
-      //enable/disable all mapped attributes
-      for (var name in attr) {
-        var key = map[name];
-        if (key) {
-          var val = this[key];
-          if (val && !enabled[name]) {
-            gl.enableVertexAttribArray(attr[name]);
-            enabled[name] = true;
-          } else if (!val && enabled[name]) {
-            gl.disableVertexAttribArray(attr[name]);
-            enabled[name] = false;
-          }
-        } else {
-          if (name.indexOf('texCoord') > -1) {
-            texCoordCount++;
-            continue;
-          }
-          if (this.attributes[name] && !enabled[name]) {
-            gl.enableVertexAttribArray(attr[name]);
-            enabled[name] = true;
-          } else if (!this.attributes[name] && enabled[name]) {
-            gl.disableVertexAttribArray(attr[name]);
-            enabled[name] = false;
-          }
-        }
-      }
+    unsetState: function(program) {
+      var attributes = program.attributes;
+      
+      //unbind the array and element buffers
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-      //use textures
-      for (var i = 0, txts = this.textures, l = txts && txts.length || 0; i < l && i < texCoordCount; i++) {
-        name = 'texCoord' + (i + 1);
-        if (!enabled[name]) {
-          gl.enableVertexAttribArray(attr[name]);
-          enabled[name] = true;
-        }
+      for (var name in attributes) {
+        gl.disableVertexAttribArray(attributes[name]);
       }
-
-      for (; i < texCoordCount; i++) {
-        name = 'texCoord' + (i + 1);
-        if (enabled[name]) {
-          gl.disableVertexAttribArray(attr[name]);
-          enabled[name] = false;
-        }
-      }
+      
     }
  };
   
@@ -4462,7 +4419,7 @@ $.splat = (function() {
           renderProgram = opt.renderProgram,
           pType = $.type(program),
           multiplePrograms = !renderProgram && pType == 'object',
-          options = $.merge({
+          options = $.extend({
             onBeforeRender: $.empty,
             onAfterRender: $.empty
           }, opt || {});
@@ -4509,19 +4466,7 @@ $.splat = (function() {
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
-      // obj.setState(program);
-
-      obj.setUniforms(program);
-      obj.setAttributes(program);
-      // obj.setShininess(program);
-      obj.setReflection(program);
-      obj.setVertices(program);
-      obj.setColors(program);
-      obj.setPickingColors(program);
-      obj.setNormals(program);
-      obj.setTextures(program);
-      obj.setTexCoords(program);
-      obj.setIndices(program);
+      obj.setState(program);
 
       //Now set view and normal matrices
       program.setUniforms({
@@ -4544,13 +4489,7 @@ $.splat = (function() {
         }
       }
       
-      obj.unsetAttributes(program);
-      obj.unsetVertices(program);
-      obj.unsetColors(program);
-      obj.unsetPickingColors(program);
-      obj.unsetNormals(program);
-      obj.unsetTexCoords(program);
-      obj.unsetIndices(program);
+      obj.unsetState(program);
     },
     
     //setup picking framebuffer

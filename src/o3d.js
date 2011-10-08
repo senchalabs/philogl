@@ -301,55 +301,28 @@
     },
 
     setState: function(program) {
-      var attr = program.attributes,
-          enabled = program.attributeEnabled,
-          gl = app.gl,
-          map = O3D.attributeMap,
-          texCoordCount = 0;
+      this.setUniforms(program);
+      this.setAttributes(program);
+      this.setVertices(program);
+      this.setColors(program);
+      this.setPickingColors(program);
+      this.setNormals(program);
+      this.setTextures(program);
+      this.setTexCoords(program);
+      this.setIndices(program);
+    },
 
-      //enable/disable all mapped attributes
-      for (var name in attr) {
-        var key = map[name];
-        if (key) {
-          var val = this[key];
-          if (val && !enabled[name]) {
-            gl.enableVertexAttribArray(attr[name]);
-            enabled[name] = true;
-          } else if (!val && enabled[name]) {
-            gl.disableVertexAttribArray(attr[name]);
-            enabled[name] = false;
-          }
-        } else {
-          if (name.indexOf('texCoord') > -1) {
-            texCoordCount++;
-            continue;
-          }
-          if (this.attributes[name] && !enabled[name]) {
-            gl.enableVertexAttribArray(attr[name]);
-            enabled[name] = true;
-          } else if (!this.attributes[name] && enabled[name]) {
-            gl.disableVertexAttribArray(attr[name]);
-            enabled[name] = false;
-          }
-        }
-      }
+    unsetState: function(program) {
+      var attributes = program.attributes;
+      
+      //unbind the array and element buffers
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-      //use textures
-      for (var i = 0, txts = this.textures, l = txts && txts.length || 0; i < l && i < texCoordCount; i++) {
-        name = 'texCoord' + (i + 1);
-        if (!enabled[name]) {
-          gl.enableVertexAttribArray(attr[name]);
-          enabled[name] = true;
-        }
+      for (var name in attributes) {
+        gl.disableVertexAttribArray(attributes[name]);
       }
-
-      for (; i < texCoordCount; i++) {
-        name = 'texCoord' + (i + 1);
-        if (enabled[name]) {
-          gl.disableVertexAttribArray(attr[name]);
-          enabled[name] = false;
-        }
-      }
+      
     }
  };
   

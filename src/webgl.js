@@ -87,28 +87,25 @@
         }
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
-            loc = program.attributes[attributeName],
-            enabled = program.attributeEnabled[attributeName];
-        //disable the attribute array only if it was previously enabled
-        if (loc !== undefined && enabled) {
+            loc = program.attributes[attributeName];
+        //disable the attribute array
+        if (loc !== undefined) {
           gl.disableVertexAttribArray(loc);
-          program.attributeEnabled[attributeName] = false;
         }
         return;
       }
       
       //set defaults
-      opt = $.merge({
+      opt = $.extend(this.bufferMemo[name] || {
         bufferType: gl.ARRAY_BUFFER,
         size: 1,
         dataType: gl.FLOAT,
         stride: 0,
         offset: 0,
         drawType: gl.STATIC_DRAW
-      }, this.bufferMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var attributeName = opt.attribute || name,
-          enabled = program.attributeEnabled[attributeName],
           bufferType = opt.bufferType,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
@@ -126,9 +123,8 @@
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute && !enabled) {
+      if (isAttribute) {
         gl.enableVertexAttribArray(loc);
-        program.attributeEnabled[attributeName] = true;
       }
 
       gl.bindBuffer(bufferType, buffer);
@@ -167,7 +163,7 @@
         return;
       }
       //get options
-      opt = $.merge({
+      opt = $.merge(this.frameBufferMemo[name] || {
         width: 0,
         height: 0,
         //All texture params
@@ -180,7 +176,7 @@
         renderBufferOptions: {
           attachment: gl.DEPTH_ATTACHMENT
         }
-      }, this.frameBufferMemo[name] || {}, opt || {});
+      }, opt || {});
       
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
@@ -209,7 +205,7 @@
       }
 
       if (bindToRenderBuffer) {
-        var rbBindOpt = $.merge({
+        var rbBindOpt = $.extend({
               width: opt.width,
               height: opt.height
             }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
@@ -243,11 +239,11 @@
         return;
       }
 
-      opt = $.merge({
+      opt = $.extend(this.renderBufferMemo[name] || {
         storageType: gl.DEPTH_COMPONENT16,
         width: 0,
         height: 0
-      }, this.renderBufferMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var hasBuffer = name in this.renderBuffers,
           renderBuffer = hasBuffer? this.renderBuffers[name] : gl.createRenderbuffer(gl.RENDERBUFFER);
@@ -280,7 +276,7 @@
         return;
       }
       //get defaults
-      opt = $.merge({
+      opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
         pixelStore: [{
           name: gl.UNPACK_FLIP_Y_WEBGL,
@@ -302,7 +298,7 @@
           border: 0
         }
 
-      }, this.textureMemo[name] || {}, opt || {});
+      }, opt || {});
 
       var textureType = ('textureType' in opt)? gl.get(opt.textureType) : gl.TEXTURE_2D,
           textureTarget = ('textureTarget' in opt)? gl.get(opt.textureTarget) : textureType,

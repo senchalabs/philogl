@@ -32,7 +32,10 @@
       ylen: len,
       offset: offset,
       program: 'cubemap',
-      textures: [currentTexture + '-cubemap']
+      textures: [currentTexture + '-cubemap'],
+      uniforms: {
+        useReflection: false
+      }
     }),
     plane2 = new O3D.Plane({
       type: 'x,z',
@@ -40,7 +43,10 @@
       zlen: len,
       offset: -offset,
       program: 'cubemap',
-      textures: [currentTexture + '-cubemap']
+      textures: [currentTexture + '-cubemap'],
+      uniforms: {
+        useReflection: false
+      }
     }),
     plane3 = new O3D.Plane({
       type: 'x,z',
@@ -48,7 +54,10 @@
       zlen: len,
       offset: offset,
       program: 'cubemap',
-      textures: [currentTexture + '-cubemap']
+      textures: [currentTexture + '-cubemap'],
+      uniforms: {
+        useReflection: false
+      }
     }),
     plane4 = new O3D.Plane({
       type: 'y,z',
@@ -56,7 +65,10 @@
       zlen: len,
       offset: -offset,
       program: 'cubemap',
-      textures: [currentTexture + '-cubemap']
+      textures: [currentTexture + '-cubemap'],
+      uniforms: {
+        useReflection: false
+      }
     }),
     plane5 = new O3D.Plane({
       type: 'y,z',
@@ -64,7 +76,10 @@
       zlen: len,
       offset: offset,
       program: 'cubemap',
-      textures: [currentTexture + '-cubemap']
+      textures: [currentTexture + '-cubemap'],
+      uniforms: {
+        useReflection: false
+      }
     }),
     planes = [plane1, plane2, plane3, plane4, plane5];
 
@@ -79,32 +94,24 @@
       if (model) {
         model.uniforms = { delta: delta };
       }
-    },
-    onComplete: function() {
-      fx.animating = false;
     }
   });
 
   function animate(toTexture) {
-    if (fx.animating) {
-      return;
-    }
-    fx.animating = true;
-
     var env = [currentTexture, toTexture],
         planeEnv = env.map(function(n) { return n + '-cubemap'; }),
         modelEnv = env.map(function(n) { return n + '-cube'; });
 
     for (var i = 0; i < 5; ++i) {
       planes[i].textures = planeEnv;
+      planes[i].uniforms = { delta: 0 };
     }
 
     if (model) {
       model.textures = modelEnv;
+      model.uniforms = { delta: 0 };
     }
-    
     currentTexture = toTexture;
-
     fx.start();
   }
 
@@ -240,9 +247,6 @@
   
   //Render the scene and perform a new loop
   function render() {
-    if (fx.animating) {
-      fx.step();
-    }
     var gl = app.gl;
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     app.scene.render();
@@ -315,13 +319,17 @@
   function updateModel(data) {
     if (!model) {
       model = new O3D.Model({
+        // drawType: 'DYNAMIC_DRAW',
         vertices: data.vertices,
         normals: data.normals,
         dynamic: true,
         textures: [currentTexture + '-cube'],
         program: 'default',
-        reflection: 0.8,
-        refraction: 0
+        uniforms: {
+          useReflection: true,
+          reflection: 0.8,
+          refraction: 0
+        }
       });
       model.position.set(0, 0, -0.6);
       model.update();

@@ -166,7 +166,6 @@
     var attributes = {},
         attributeEnabled = {},
         uniforms = {},
-        uniformCache = {},
         info, name, index;
   
     //fill attribute locations
@@ -193,29 +192,18 @@
     this.attributes = attributes;
     this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
-    this.uniformCache = uniformCache;
   };
 
   Program.prototype = {
     
     $$family: 'program',
 
-    setUniform: (function() {
-      var join = Array.prototype.join;
-
-      return function(name, val) {
-        var cachedVal, array;
-        if (this.uniforms[name]) {
-          //check for cache values.
-          cachedVal = val.splice || val.BYTES_PER_ELEMENT ? join.call(val) : val;
-          if (this.uniformCache[name] != cachedVal) {
-            this.uniforms[name](val);
-            this.uniformCache[name] = cachedVal;
-          }
-        }
-        return this;
-      };
-    })(),
+    setUniform: function(name, val) {
+      if (this.uniforms[name]) {
+        this.uniforms[name](val);
+      }
+      return this;
+    },
 
     setUniforms: function(obj) {
       for (var name in obj) {

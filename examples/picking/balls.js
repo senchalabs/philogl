@@ -85,6 +85,9 @@
   }
 
   window.init = function() {
+    var stats = new xStats();
+    document.body.appendChild(stats.element);
+
     //Create App
     PhiloGL('surface-explorer-canvas', {
       program: {
