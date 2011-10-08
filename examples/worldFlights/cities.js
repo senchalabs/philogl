@@ -40,8 +40,8 @@ function createCitiesLayer(cities) {
         g = ((index / 256) >> 0) % 256,
         b = index % 256,
         sphere = new O3D.Sphere({
-          nlat: 3,
-          nlong: 3,
+          nlat: 5,
+          nlong: 5,
           radius: 1 / 140,
           pickingColors: [0, g / 255, b / 255, 1]
         }),

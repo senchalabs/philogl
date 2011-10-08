@@ -81,8 +81,6 @@ models.airlines = new O3D.Model({
     }
   }
 });
-// models.airlines.rotation.set(-0.3, 0, 0);
-models.airlines.update();
 
 //Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
@@ -111,8 +109,6 @@ citiesWorker.onmessage = function(e) {
         }
       }
     }));
-    // models.cities.rotation.set(-0.3, 0, 0);
-    models.cities.update();
 
     Log.write('Loading assets...');
     createApp();
@@ -189,11 +185,7 @@ function loadData() {
                 phiPrev = geom.phi || Math.PI / 2,
                 thetaPrev = geom.theta || (3 * Math.PI / 2),
                 phiDiff = phi - phiPrev,
-                thetaDiff = theta - thetaPrev,
-                mat = new Mat4(),
-                xVec = [1, 0, 0],
-                yVec = [0, 1, 0],
-                yVec2 =[0, -1, 0];
+                thetaDiff = theta - thetaPrev;
             
             geom.matEarth = earth.matrix.clone();
             geom.matCities = cities.matrix.clone();
@@ -201,32 +193,7 @@ function loadData() {
 
             fx.start({
               onCompute: function(delta) {
-
-                earth.matrix = geom.matEarth.clone();
-                cities.matrix = geom.matCities.clone();
-                airlines.matrix = geom.matAirlines.clone();
-                
-                var m1 = new Mat4(),
-                    m2 = new Mat4();
-                
-                m1.$rotateAxis(phiDiff * delta, xVec);
-                m2.$rotateAxis(phiDiff * delta, xVec);
-
-                m1.$mulMat4(earth.matrix);
-                m2.$mulMat4(cities.matrix);
-
-                var m3 = new Mat4(),
-                    m4 = new Mat4();
-                
-                m3.$rotateAxis(thetaDiff * delta, yVec2);
-                m4.$rotateAxis(thetaDiff * delta, yVec);
-
-                m1.$mulMat4(m3);
-                m2.$mulMat4(m4);
-
-                earth.matrix = m1;
-                cities.matrix = m2;
-                airlines.matrix = m2;
+                rotateXY(phiDiff * delta, thetaDiff * delta);
               },
 
               onComplete: function() {
@@ -262,6 +229,42 @@ function loadData() {
       Log.write('There was an error while fetching airlines data.', true);
     }
   }).send();
+}
+
+//rotate the planet of phi and theta angles
+function rotateXY(phi, theta) {
+  var earth = models.earth,
+      cities = models.cities,
+      airlines = models.airlines,
+      xVec = [1, 0, 0],
+      yVec = [0, 1, 0],
+      yVec2 =[0, -1, 0];
+  
+  earth.matrix = geom.matEarth.clone();
+  cities.matrix = geom.matCities.clone();
+  airlines.matrix = geom.matAirlines.clone();
+      
+  var m1 = new Mat4(),
+      m2 = new Mat4();
+  
+  m1.$rotateAxis(phi, xVec);
+  m2.$rotateAxis(phi, xVec);
+
+  m1.$mulMat4(earth.matrix);
+  m2.$mulMat4(cities.matrix);
+
+  var m3 = new Mat4(),
+      m4 = new Mat4();
+  
+  m3.$rotateAxis(theta, yVec2);
+  m4.$rotateAxis(theta, yVec);
+
+  m1.$mulMat4(m3);
+  m2.$mulMat4(m4);
+
+  earth.matrix = m1;
+  cities.matrix = m2;
+  airlines.matrix = m2;
 }
 
 function createApp() {
@@ -307,9 +310,9 @@ function createApp() {
         },
         points: {
           diffuse: { 
-            r: 0.7, 
-            g: 0.7, 
-            b: 0.7 
+            r: 0.9, 
+            g: 0.9, 
+            b: 0.9 
           },
           specular: { 
             r: 0.5, 
