@@ -78,16 +78,21 @@
     },
 
     defineBuffers: function(obj) {
-      var program = this.getProgram(obj);
+      var program = this.getProgram(obj),
+          prevDynamic = obj.dynamic;
+
+      obj.dynamic = true;
       
-      obj.setAttributes(program, true);
-      obj.setVertices(program, true);
-      obj.setColors(program, true);
-      obj.setPickingColors(program, true);
-      obj.setNormals(program, true);
+      obj.setAttributes(program);
+      obj.setVertices(program);
+      obj.setColors(program);
+      obj.setPickingColors(program);
+      obj.setNormals(program);
       //obj.setTextures(program, true);
-      obj.setTexCoords(program, true);
-      obj.setIndices(program, true);
+      obj.setTexCoords(program);
+      obj.setIndices(program);
+
+      obj.dynamic = prevDynamic;
     },
 
     beforeRender: function(program) {
@@ -247,10 +252,11 @@
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
 
+      // obj.setState(program);
 
       obj.setUniforms(program);
       obj.setAttributes(program);
-      obj.setShininess(program);
+      // obj.setShininess(program);
       obj.setReflection(program);
       obj.setVertices(program);
       obj.setColors(program);
@@ -274,10 +280,10 @@
       if (obj.render) {
         obj.render(gl, program, camera);
       } else {
-        if (obj.indices) {
-          gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+        if (obj.$indicesLength) {
+          gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.$indicesLength, gl.UNSIGNED_SHORT, 0);
         } else {
-          gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.vertices.length / 3);
+          gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.$verticesLength / 3);
         }
       }
       

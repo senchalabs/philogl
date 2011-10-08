@@ -36,7 +36,16 @@
   }
   
   //Model repository
-  var O3D = {};
+  var O3D = {
+      //map attribute names to property names
+      //TODO(nico): textures are treated separately.
+      attributeMap: {
+        'position': 'vertices',
+        'normal': 'normals',
+        'pickingColor': 'pickingColors',
+        'colors': 'color'
+      }
+  };
 
   //Model abstract O3D Class
   O3D.Model = function(opt) {
@@ -124,10 +133,6 @@
         program.setBuffer(bufferId, false);
       }
     },
-
-    setShininess: function(program) {
-      program.setUniform('shininess', this.shininess || 0);
-    },
     
     setReflection: function(program) {
       if (this.reflection || this.refraction) {
@@ -141,13 +146,13 @@
       }
     },
     
-    setVertices: function(program, force) {
-      if (!this.vertices) return;
+    setVertices: function(program) {
+      if (!this.$vertices) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('position-' + this.id, {
           attribute: 'position',
-          value: this.vertices,
+          value: this.$vertices,
           size: 3
         });
       } else {
@@ -159,13 +164,13 @@
       program.setBuffer('position-' + this.id, false);
     },
     
-    setNormals: function(program, force) {
-      if (!this.normals) return;
+    setNormals: function(program) {
+      if (!this.$normals) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('normal-' + this.id, {
           attribute: 'normal',
-          value: this.normals,
+          value: this.$normals,
           size: 3
         });
       } else {
@@ -177,14 +182,14 @@
       program.setBuffer('normal-' + this.id, false);
     },
 
-    setIndices: function(program, force) {
-      if (!this.indices) return;
+    setIndices: function(program) {
+      if (!this.$indices) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('indices-' + this.id, {
           bufferType: gl.ELEMENT_ARRAY_BUFFER,
           drawType: gl.STATIC_DRAW,
-          value: this.indices,
+          value: this.$indices,
           size: 1
         });
       } else {
@@ -196,13 +201,13 @@
       program.setBuffer('indices-' + this.id, false);
     },
 
-    setPickingColors: function(program, force) {
-      if (!this.pickingColors) return;
+    setPickingColors: function(program) {
+      if (!this.$pickingColors) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('pickingColor-' + this.id, {
           attribute: 'pickingColor',
-          value: this.pickingColors,
+          value: this.$pickingColors,
           size: 4
         });
       } else {
@@ -214,13 +219,13 @@
       program.setBuffer('pickingColor-' + this.id, false);
     },
     
-    setColors: function(program, force) {
-      if (!this.colors) return;
+    setColors: function(program) {
+      if (!this.$colors) return;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         program.setBuffer('color-' + this.id, {
           attribute: 'color',
-          value: this.colors,
+          value: this.$colors,
           size: 4
         });
       } else {
@@ -232,35 +237,37 @@
       program.setBuffer('color-' + this.id, false);
     },
 
-    setTexCoords: function(program, force) {
-      if (!this.texCoords) return; 
+    setTexCoords: function(program) {
+      if (!this.$texCoords) return; 
 
-      var id = this.id;
+      var id = this.id,
+          i, txs, l, tex;
 
-      if (force || this.dynamic) {
+      if (this.dynamic) {
         //If is an object containing textureName -> textureCoordArray
         //Set all textures, samplers and textureCoords.
-        if ($.type(this.texCoords) == 'object') {
-          this.textures.forEach(function(tex, i) {
+        if ($.type(this.$texCoords) == 'object') {
+          for (i = 0, txs = this.textures, l = txs.length; i < l; i++) {
+            tex = txs[i];
             program.setBuffer('texCoord-' + i + '-' + id, {
               attribute: 'texCoord' + (i + 1),
-              value: this.texCoords[tex],
+              value: this.$texCoords[tex],
               size: 2
             });
-          });
+          }
         //An array of textureCoordinates
         } else {
           program.setBuffer('texCoord-' + id, {
             attribute: 'texCoord1',
-            value: this.texCoords,
+            value: this.$texCoords,
             size: 2
           });
         }
       } else {
-        if ($.type(this.texCoords) == 'object') {
-          this.textures.forEach(function(tex, i) {
+        if ($.type(this.$texCoords) == 'object') {
+          for (i = 0, txs = this.textures, l = txs.length; i < l; i++) {
             program.setBuffer('texCoord-' + i + '-' + id);
-          });
+          }
         } else {
           program.setBuffer('texCoord-' + id);
         }
@@ -290,6 +297,58 @@
         }
         program.setUniform('sampler' + (i + 1), i);
         program.setUniform('samplerCube' + (i + 1), i + dist);
+      }
+    },
+
+    setState: function(program) {
+      var attr = program.attributes,
+          enabled = program.attributeEnabled,
+          gl = app.gl,
+          map = O3D.attributeMap,
+          texCoordCount = 0;
+
+      //enable/disable all mapped attributes
+      for (var name in attr) {
+        var key = map[name];
+        if (key) {
+          var val = this[key];
+          if (val && !enabled[name]) {
+            gl.enableVertexAttribArray(attr[name]);
+            enabled[name] = true;
+          } else if (!val && enabled[name]) {
+            gl.disableVertexAttribArray(attr[name]);
+            enabled[name] = false;
+          }
+        } else {
+          if (name.indexOf('texCoord') > -1) {
+            texCoordCount++;
+            continue;
+          }
+          if (this.attributes[name] && !enabled[name]) {
+            gl.enableVertexAttribArray(attr[name]);
+            enabled[name] = true;
+          } else if (!this.attributes[name] && enabled[name]) {
+            gl.disableVertexAttribArray(attr[name]);
+            enabled[name] = false;
+          }
+        }
+      }
+
+      //use textures
+      for (var i = 0, txts = this.textures, l = txts && txts.length || 0; i < l && i < texCoordCount; i++) {
+        name = 'texCoord' + (i + 1);
+        if (!enabled[name]) {
+          gl.enableVertexAttribArray(attr[name]);
+          enabled[name] = true;
+        }
+      }
+
+      for (; i < texCoordCount; i++) {
+        name = 'texCoord' + (i + 1);
+        if (enabled[name]) {
+          gl.disableVertexAttribArray(attr[name]);
+          enabled[name] = false;
+        }
       }
     }
  };

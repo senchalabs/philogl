@@ -85,10 +85,12 @@
         opt && gl.bindBuffer(opt.bufferType, null);
         //disable vertex attrib array if the buffer maps to an attribute.
         var attributeName = opt && opt.attribute || name,
-            loc = program.attributes[attributeName];
+            loc = program.attributes[attributeName],
+            enabled = program.attributeEnabled[attributeName];
         //disable the attribute array only if it was previously enabled
-        if (loc !== undefined) {
+        if (loc !== undefined && enabled) {
           gl.disableVertexAttribArray(loc);
+          program.attributeEnabled[attributeName] = false;
         }
         return;
       }
@@ -100,10 +102,11 @@
         dataType: gl.FLOAT,
         stride: 0,
         offset: 0,
-        drawType: gl.STATIC_DRAW
+        drawType: gl.DYNAMIC_DRAW
       }, this.bufferMemo[name] || {}, opt || {});
 
       var attributeName = opt.attribute || name,
+          enabled = program.attributeEnabled[attributeName],
           bufferType = opt.bufferType,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
@@ -121,8 +124,9 @@
         this.buffers[name] = buffer;
       }
       
-      if (isAttribute) {
+      if (isAttribute && !enabled) {
         gl.enableVertexAttribArray(loc);
+        program.attributeEnabled[attributeName] = true;
       }
 
       gl.bindBuffer(bufferType, buffer);
@@ -131,7 +135,7 @@
         gl.bufferData(bufferType, value, drawType);
       }
       
-      if (isAttribute) {
+      if (isAttribute && !enabled) {
         gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       }
       

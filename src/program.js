@@ -164,14 +164,17 @@
     if (!program) return false;
     
     var attributes = {},
-        uniforms = {};
+        attributeEnabled = {},
+        uniforms = {},
+        uniformCache = {},
+        info, name, index;
   
     //fill attribute locations
     var len = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < len; i++) {
-      var info = gl.getActiveAttrib(program, i),
-          name = info.name,
-          index = gl.getAttribLocation(program, info.name);
+      info = gl.getActiveAttrib(program, i);
+      name = info.name;
+      index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
     }
     
@@ -188,22 +191,35 @@
     this.program = program;
     //handle attributes and uniforms
     this.attributes = attributes;
+    this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
+    this.uniformCache = uniformCache;
   };
 
   Program.prototype = {
     
     $$family: 'program',
 
-    setUniform: function(name, val) {
-      if (this.uniforms[name])
-        this.uniforms[name](val);
-      return this;
-    },
+    setUniform: (function() {
+      var isArray = Array.isArray,
+          join = Array.prototype.join;
+
+      return function(name, val) {
+        var cachedVal, array;
+        if (this.uniforms[name]) {
+          //check for cache values.
+          cachedVal = isArray(val) || val.BYTES_PER_ELEMENT ? join.call(val) : val;
+          if (this.uniformCache[name] != cachedVal) {
+            this.uniforms[name](val);
+            this.uniformCache[name] = cachedVal;
+          }
+        }
+        return this;
+      };
+    })(),
 
     setUniforms: function(obj) {
       for (var name in obj) {
-        //this.uniforms[name](obj[name]);
         this.setUniform(name, obj[name]);
       }
       return this;
