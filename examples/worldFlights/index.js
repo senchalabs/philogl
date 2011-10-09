@@ -335,36 +335,37 @@ function createApp() {
         pos = pos || {};
         pos.x = e.x;
         pos.y = e.y;
-        pos.ycache = pos.ycache || 0;
+        pos.started = true;
+        
+        geom.matEarth = models.earth.matrix.clone();
+        geom.matCities = models.cities.matrix.clone();
+        geom.matAirlines = models.airlines.matrix.clone();
       },
       onDragMove: function(e) {
-        var z = this.camera.position.z,
-            sign = Math.abs(z) / z,
-            earth = models.earth,
-            erot = earth.rotation,
-            cities = models.cities,
-            crot = cities.rotation,
-            airlines = models.airlines,
-            arot = airlines.rotation,
-            cos = Math.cos,
-            sin = Math.sin;
+        var phi = geom.phi,
+            theta = geom.theta,
+            clamp = function(val, min, max) {
+                return Math.max(Math.min(val, max), min);
+            },
+            y = -(e.y - pos.y) / 100,
+            x = (e.x - pos.x) / 100;
 
-        erot.y += -(pos.x - e.x) / 100;
-        crot.y += -(pos.x - e.x) / 100;
-        arot.y += -(pos.x - e.x) / 100;
+        rotateXY(y, x);
         
-        earth.update();
-        cities.update();
-        airlines.update();
-        
-        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, -sin(erot.y)]);
-        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(crot.y), 0, sin(crot.y)]);
-        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(arot.y), 0, sin(arot.y)]);
-        
-        pos.x = e.x;
       },
       onDragEnd: function(e) {
-        pos.ycache += (pos.y - e.y) / 300;
+        var y = -(e.y - pos.y) / 100,
+            x = (e.x - pos.x) / 100,
+            newPhi = (geom.phi + y) % Math.PI,
+            newTheta = (geom.theta + x) % (Math.PI * 2);
+
+        newPhi = newPhi < 0 ? (Math.PI + newPhi) : newPhi;
+        newTheta = newTheta < 0 ? (Math.PI * 2 + newTheta) : newTheta;
+        
+        geom.phi = newPhi;
+        geom.theta = newTheta;
+        
+        pos.started = false;
       },
       onMouseWheel: function(e) {
         var camera = this.camera,

@@ -256,6 +256,10 @@
         this.callbacks.onMouseLeave(e, this.hovered);
         this.hovered = false;
       }
+      if (this.pressed && this.moved) {
+        this.callbacks.onDragEnd(e);
+        this.pressed = this.moved = false;
+      }
     },
     
     mouseover: function(e) {},
@@ -332,7 +336,7 @@
   var Events = {};
 
   Events.create = function(app, opt) {
-    opt = $.merge({
+    opt = $.extend({
       cachePosition: true,
       cacheSize: true,
       relative: true,
@@ -375,6 +379,8 @@
     }
 
     new EventsProxy(app, opt);
+    //assign event handler to app.
+    app.events = opt;
   };
 
   Events.Keys = {
