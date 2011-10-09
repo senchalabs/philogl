@@ -84,6 +84,7 @@ div.tooltip.hide {
   font-weight: bold;
   font-size: 1em;
   z-index: 4000;
+  border-bottom-left-radius: 0.5em;
 }
 
 
@@ -119,10 +120,12 @@ h1 {
   position: relative;
 }
 
-.mask {
+.list-wrapper::after {
+  content: '';
+
   position: absolute;
   bottom: 0;
-  width: 185px;
+  width: 250px;
   height: 30px;
   
   background: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
@@ -132,22 +135,39 @@ h1 {
 }
 
 input#search {
-  width: 180px;
+  width: 240px;
 }
 
-.list-wrapper, 
 .list-container {
   height: 512px;
 }
 
 .list-container {
   overflow: auto;
-  width: 200px;
+  width: 270px;
 }
 
 .list-wrapper {
   overflow: hidden;
-  width: 185px;
+  width: 250px;
+  height: 520px;
+  -webkit-transition: height 500ms;
+  -o-transition: height 500ms;
+  -moz-transition: height 500ms;
+  transition: height 500ms;
+}
+
+.list-wrapper:hover {
+  height: 592px;
+}
+
+#tip {
+  font-size: 0.8em;
+  font-style: italic;
+  color: white;
+  padding-top: 15px;
+  text-align: left;
+  text-indent: 5px;
 }
 
 ul#airline-list {
@@ -156,11 +176,15 @@ ul#airline-list {
   padding: 0;
 }
 
-ul#airline-list li {
+ul#airline-list > li {
   list-style: none;
   display: block;
   text-align: left;
   color: white;
+}
+
+ul#airline-list > li > label {
+  cursor: pointer;
 }
 
 canvas {

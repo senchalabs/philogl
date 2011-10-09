@@ -170,6 +170,59 @@ function loadData() {
 
       //append all elements
       airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
+
+      airlineList.addEventListener('mousemove', function(e) {
+        var target = e.target,
+            nodeName = target.nodeName;
+
+        if (nodeName == 'INPUT') {
+          target = target.parentNode;
+        }
+
+        if (nodeName == 'LABEL') {
+          target = target.parentNode;
+        }
+
+        if (target.nodeName == 'LI') {
+          var elem = target,
+              prev = elem,
+              next = elem.nextSibling,
+              x = e.pageX,
+              y = e.pageY,
+              tol = 30,
+              box, elemY, style, lerp;
+
+          // console.log(x, y, elem.innerHTML);
+          while (prev || next) {
+            if (prev) {
+              style = prev.style;
+              box = prev.getBoundingClientRect();
+              elemY = (box.top + box.bottom) / 2;
+              lerp = (1 + Math.min(Math.abs(y - elemY), tol) / tol * -1);
+              prev = prev.previousSibling;
+              style.fontSize = (1 + (1.6 - 1) * lerp) + 'em';
+            }
+            if (next) {
+              style = next.style;
+              box = next.getBoundingClientRect();
+              elemY = (box.top + box.bottom) / 2;
+              lerp = (1 + Math.min(Math.abs(y - elemY), tol) / tol  * -1);
+              next = next.nextSibling;
+              style.fontSize = (1 + (1.6 - 1) * lerp) + 'em';
+            }
+          }
+        }
+      }, false);
+
+      airlineList.addEventListener('mouseout', function(e) {
+        var nodeName = e.relatedTarget.nodeName;
+        if ('INPUT|LI|LABEL'.indexOf(nodeName) == -1) {
+          Array.prototype.slice.call(airlineList.getElementsByTagName('li')).forEach(function(elem) {
+            elem.style.fontSize = '1em';
+          });
+        }
+      }, false);
+
       //when an airline is selected show all paths for that airline
       airlineList.addEventListener('change', function(e) {
         var target = e.target,
