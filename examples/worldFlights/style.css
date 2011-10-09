@@ -170,6 +170,34 @@ input#search {
   text-indent: 5px;
 }
 
+ul#selected-airlines {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0.8em;
+}
+
+ul#selected-airlines > li {
+  list-style: none;
+  display: block;
+  color: white;
+  border-radius: 0.5em;
+  padding: 3px;
+  margin: 2px;
+  color: black;
+  cursor: pointer;
+  text-indent: 5px;
+}
+
+ul#selected-airlines > li::before {
+  content: 'x';
+  color: red;
+  font-weight: bold;
+  text-shadow: 0 0 1px #555;
+  font-size: 1.3em;
+  padding: 3px;
+}
+
 ul#airline-list {
   font-size: 0.8em;
   list-style: none;

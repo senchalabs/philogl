@@ -57,13 +57,14 @@ document.onreadystatechange = function() {
 
 //Create earth
 models.earth = new O3D.Sphere({
-  nlat: 50,
-  nlong: 50,
+  nlat: 150,
+  nlong: 150,
   radius: 1,
   uniforms: {
-    shininess: 10
+    shininess: 32
   },
-  textures: ['img/earth3-specular.gif'],
+  textures: ['img/earth3-specular.gif', 'img/topographic.jpg'],
+  // textures: ['img/topographic.jpg'],
   program: 'earth'
 });
 models.earth.rotation.set(Math.PI, 0,  0);
@@ -71,14 +72,11 @@ models.earth.update();
 
 //Create airline routes model
 models.airlines = new O3D.Model({
-  program: 'layer',
-  uniforms: {
-    colorUfm: [0.3, 0.3, 0.6, 1]
-  },
+  program: 'airline_layer',
   render: function(gl, program, camera) {
     if (this.indices) {
       gl.lineWidth(1);
-      gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(gl.LINES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
       this.dynamic = false;
     }
   }
@@ -168,95 +166,15 @@ function loadData() {
                       airlineId + '\' /> ' + airlineName + '</label>');
       }
 
-      //append all elements
-      airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
-
-      airlineList.addEventListener('mousemove', function(e) {
-        var target = e.target,
-            nodeName = target.nodeName;
-
-        if (nodeName == 'INPUT') {
-          target = target.parentNode;
-        }
-
-        if (nodeName == 'LABEL') {
-          target = target.parentNode;
-        }
-
-        if (target.nodeName == 'LI') {
-          var elem = target,
-              prev = elem,
-              next = elem.nextSibling,
-              x = e.pageX,
-              y = e.pageY,
-              tol = 30,
-              box, elemY, style, lerp;
-
-          // console.log(x, y, elem.innerHTML);
-          while (prev || next) {
-            if (prev) {
-              style = prev.style;
-              box = prev.getBoundingClientRect();
-              elemY = (box.top + box.bottom) / 2;
-              lerp = (1 + Math.min(Math.abs(y - elemY), tol) / tol * -1);
-              prev = prev.previousSibling;
-              style.fontSize = (1 + (1.6 - 1) * lerp) + 'em';
-            }
-            if (next) {
-              style = next.style;
-              box = next.getBoundingClientRect();
-              elemY = (box.top + box.bottom) / 2;
-              lerp = (1 + Math.min(Math.abs(y - elemY), tol) / tol  * -1);
-              next = next.nextSibling;
-              style.fontSize = (1 + (1.6 - 1) * lerp) + 'em';
-            }
-          }
-        }
-      }, false);
-
-      airlineList.addEventListener('mouseout', function(e) {
-        var nodeName = e.relatedTarget.nodeName;
-        if ('INPUT|LI|LABEL'.indexOf(nodeName) == -1) {
-          Array.prototype.slice.call(airlineList.getElementsByTagName('li')).forEach(function(elem) {
-            elem.style.fontSize = '1em';
-          });
-        }
-      }, false);
-
       //when an airline is selected show all paths for that airline
       airlineList.addEventListener('change', function(e) {
         var target = e.target,
-            airlineId = target.id.split('-')[1],
-            pos = data.airlinePos[airlineId];
+            airlineId = target.id.split('-')[1];
         
         function callback() {
           if (target.checked) {
             airlineMgr.add(airlineId);
-            var earth = models.earth,
-                cities = models.cities,
-                airlines = models.airlines,
-                phi = pos[3],
-                theta = pos[4],
-                phiPrev = geom.phi || Math.PI / 2,
-                thetaPrev = geom.theta || (3 * Math.PI / 2),
-                phiDiff = phi - phiPrev,
-                thetaDiff = theta - thetaPrev;
-            
-            geom.matEarth = earth.matrix.clone();
-            geom.matCities = cities.matrix.clone();
-            geom.matAirlines = airlines.matrix.clone();
-
-            fx.start({
-              onCompute: function(delta) {
-                rotateXY(phiDiff * delta, thetaDiff * delta);
-              },
-
-              onComplete: function() {
-                geom.phi = phi;
-                geom.theta = theta;
-              }
-            });
-
+            centerAirline(airlineId);
           } else {
             airlineMgr.remove(airlineId);
           }
@@ -279,6 +197,11 @@ function loadData() {
           }).send();
         }
       }, false);
+      
+      //create right menu
+      var rightMenu = new RightMenu(airlineList, airlineMgr);
+      rightMenu.load('<li>' + html.join('</li><li>') + '</li>');
+    
     },
     onError: function() {
       Log.write('There was an error while fetching airlines data.', true);
@@ -286,6 +209,34 @@ function loadData() {
   }).send();
 }
 
+//center the airline
+function centerAirline(airlineId) {
+  var pos = data.airlinePos[airlineId],
+      earth = models.earth,
+      cities = models.cities,
+      airlines = models.airlines,
+      phi = pos[3],
+      theta = pos[4],
+      phiPrev = geom.phi || Math.PI / 2,
+      thetaPrev = geom.theta || (3 * Math.PI / 2),
+      phiDiff = phi - phiPrev,
+      thetaDiff = theta - thetaPrev;
+    
+  geom.matEarth = earth.matrix.clone();
+  geom.matCities = cities.matrix.clone();
+  geom.matAirlines = airlines.matrix.clone();
+
+  fx.start({
+    onCompute: function(delta) {
+      rotateXY(phiDiff * delta, thetaDiff * delta);
+    },
+
+    onComplete: function() {
+      geom.phi = phi;
+      geom.theta = theta;
+    }
+  });
+}
 //rotate the planet of phi and theta angles
 function rotateXY(phi, theta) {
   var earth = models.earth,
@@ -327,6 +278,14 @@ function createApp() {
   PhiloGL('map-canvas', {
     program: [{
       //to render cities and routes
+      id: 'airline_layer',
+      from: 'uris',
+      path: 'shaders/',
+      vs: 'airline_layer.vs.glsl',
+      fs: 'airline_layer.fs.glsl',
+      noCache: true
+    }, {
+      //to render cities and routes
       id: 'layer',
       from: 'uris',
       path: 'shaders/',
@@ -365,19 +324,19 @@ function createApp() {
         },
         points: {
           diffuse: { 
+            r: 0.8, 
+            g: 0.8, 
+            b: 0.8 
+          },
+          specular: { 
             r: 0.9, 
             g: 0.9, 
             b: 0.9 
           },
-          specular: { 
-            r: 0.5, 
-            g: 0.5, 
-            b: 0.5 
-          },
           position: { 
-            x: 3, 
-            y: 3, 
-            z: -5 
+            x: 2, 
+            y: 2, 
+            z: -4 
           }
         }
       }
@@ -440,7 +399,8 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/earth3-specular.gif'],
+      src: ['img/earth3-specular.gif', 'img/topographic.jpg'],
+      // src: ['img/topographic.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
