@@ -92,8 +92,8 @@ RightMenu.prototype = {
   },
 
   onMouseOut: function(e) {
-    var nodeName = e.relatedTarget.nodeName;
-    if ('INPUT|LI|LABEL'.indexOf(nodeName) == -1) {
+    var nodeName = e.relatedTarget && e.relatedTarget.nodeName;
+    if (nodeName && 'INPUT|LI|LABEL'.indexOf(nodeName) == -1) {
       Array.prototype.slice.call(airlineList.getElementsByTagName('li')).forEach(function(elem) {
         elem.style.fontSize = '1em';
       });
@@ -105,10 +105,14 @@ RightMenu.prototype = {
         label = checkbox.parentNode,
         airlineId = checkbox.id.split('-')[1],
         name = label.textContent,
-        color = this.airlineMgr.getColor(airlineId) || this.airlineMgr.getAvailableColor();
+        airlineMgr = this.airlineMgr,
+        color = airlineMgr.getColor(airlineId) || airlineMgr.getAvailableColor();
 
     if (checkbox.checked) {
-      this.selectedAirlines.innerHTML += '<li id=\'' + airlineId + '-selected\' style=\'background-color:rgb(' + color + ');\' >' + name + '</li>';
+      this.selectedAirlines.innerHTML += '<li id=\'' + airlineId + '-selected\'>' +
+        '<input type=\'checkbox\' checked id=\'' + airlineId + '-checkbox-selected\' />' + 
+        '<div class=\'square\' style=\'background-color:rgb(' + color + ');\' ></div>' + 
+        name + '</li>';
     } else {
       var node = $(airlineId + '-selected');
       node.parentNode.removeChild(node);
@@ -116,7 +120,24 @@ RightMenu.prototype = {
   },
 
   onClick: function(e) {
-  
+    var target = e.target, node;
+    if (target.nodeName == 'INPUT') {
+      var airlineId = target.parentNode.id.split('-')[0];
+      var checkbox = $('checkbox-' + airlineId);
+      checkbox.checked = false;
+      airlineMgr.remove(airlineId);
+      target = target.parentNode;
+      node = target.nextSibling || target.previousSibling;
+      target.parentNode.removeChild(target);
+      if (node) {
+        centerAirline(node.id.split('-')[0]);
+      }
+    } else {
+      if (target.nodeName == 'DIV') {
+        target = target.parentNode;
+      }
+      centerAirline(target.id.split('-')[0]);
+    }
   }
 };
 
