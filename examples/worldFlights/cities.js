@@ -69,7 +69,7 @@ function createCitiesLayer(cities) {
     citiesIndex: cityIndex,
     program: 'layer',
     uniforms: {
-      colorUfm: [1, 0.1, 0.1, 1]
+      colorUfm: [1, 1, 0.5, 1]
     }
   };
 }

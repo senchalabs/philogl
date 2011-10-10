@@ -109,11 +109,16 @@ h1 {
 
 .canvas-container {
   margin: auto;
+  overflow: visible;
 }
 
 .canvas-container canvas, 
 .canvas-container .list-wrapper {
   float: left;
+}
+
+.canvas-container canvas {
+  margin-top: -70px;
 }
 
 .list-wrapper {

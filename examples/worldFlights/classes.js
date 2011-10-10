@@ -278,7 +278,7 @@ var AirlineManager = function(data, models) {
       //transform color to webgl format.
       color = color.split(',');
       for (var i = 0; i < 3; i++) {
-        color[i] /= (255 * 1.5);
+        color[i] /= (255 * 1.7);
       }
       color[3] = 1;
       

@@ -18,8 +18,8 @@ var $ = function(id) { return document.getElementById(id); },
 //Get handles when document is ready
 document.onreadystatechange = function() {
   if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
-    var stats = new xStats();
-    document.body.appendChild(stats.element);
+    // var stats = new xStats();
+    // document.body.appendChild(stats.element);
     
     airlineList = $('airline-list');
     tooltip = $('tooltip');
@@ -67,7 +67,7 @@ models.earth = new O3D.Sphere({
   uniforms: {
     shininess: 32
   },
-  textures: ['img/earth3-specular.gif', 'img/topographic.jpg'],
+  textures: ['img/lala.jpg', 'img/topographic.jpg'],
   // textures: ['img/topographic.jpg'],
   program: 'earth'
 });
@@ -317,7 +317,7 @@ function createApp() {
     }],
     camera: {
       position: {
-        x: 0, y: 0, z: -4
+        x: 0, y: 0, z: -4.2
       }
     },
     scene: {
@@ -420,6 +420,7 @@ function createApp() {
         }
       },
       onMouseLeave: function(e, model) {
+        console.log('mouseleave');
         // this.timer = setTimeout(function() {
         //   tooltip.className = 'tooltip hide';
         // }, 500);
@@ -429,7 +430,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/earth3-specular.gif', 'img/topographic.jpg'],
+      src: ['img/lala.jpg', 'img/topographic.jpg'],
       // src: ['img/topographic.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
@@ -454,37 +455,15 @@ function createApp() {
           width = canvas.width,
           height = canvas.height,
           program = app.program,
-          renderCamera = new Camera(camera.fov, 
-                                    camera.aspect, 
-                                    camera.near, 
-                                    camera.far, {
-            position: { x: 0, y: 0, z: -4.125 }
-          }),
-          renderScene = new Scene(program, renderCamera),
-          glowScene = new Scene(program, camera, scene.config),
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
 
-      renderCamera.update();
-      app.renderCamera = renderCamera;
-       
       gl.clearColor(0.1, 0.1, 0.1, 1);
       gl.clearDepth(1);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      models.frontPlane = new O3D.Plane({
-        type: 'x,y',
-        xlen: width / 100,
-        ylen: height / 100,
-        nx: 5,
-        ny: 5,
-        offset: 0,
-        textures: ['glow-texture', 'render-texture'],
-        program: 'glow'
-      });
-
       //create shadow, glow and image framebuffers
-      var framebufferOptions = {
+      app.setFrameBuffer('world', {
         width: 1024,
         height: 1024,
         bindToTexture: {
@@ -498,11 +477,20 @@ function createApp() {
           }]
         },
         bindToRenderBuffer: true
-      };
-
-      app.setFrameBuffers({
-        glow: framebufferOptions,
-        render:framebufferOptions
+      }).setFrameBuffer('world2', {
+        width: 1024,
+        height: 1024,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR_MIPMAP_NEAREST',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
       });
 
       //picking scene
@@ -510,14 +498,6 @@ function createApp() {
                 models.cities,
                 models.airlines);
 
-      //rendered on-screen scene
-      renderScene.add(models.frontPlane);
-
-      //post processing glow scene
-      glowScene.add(models.earth,
-                    models.cities,
-                    models.airlines);
-     
       draw();
       
       //Select first airline
@@ -526,36 +506,41 @@ function createApp() {
 
       function draw() {
         gl.clearColor(0.1, 0.1, 0.1, 1);
-        gl.viewport(0, 0, 1024, 1024);
-        drawTextures();
-        
-        gl.viewport(0, 0, width, height);
         drawEarth();
-      }
-
-      function drawTextures() {
-        var earthProg = program.earth;
-        //render to a texture to be blurred
-        app.setFrameBuffer('glow', true);
-        gl.clear(clearOpt);
-        earthProg.use();
-        earthProg.setUniform('renderType',  0);
-        glowScene.renderToTexture('glow');
-        app.setFrameBuffer('glow', false);
-        
-        //render the actual picture with the planet and all
-        app.setFrameBuffer('render', true);
-        gl.clear(clearOpt);
-        earthProg.use();
-        earthProg.setUniform('renderType', -1);
-        scene.renderToTexture('render');
-        app.setFrameBuffer('render', false);
       }
 
       //Draw to screen
       function drawEarth() {
+        // render to a texture
+        app.setFrameBuffer('world', true);
+        program.earth.use();
         gl.clear(clearOpt);
-        renderScene.render();
+        gl.viewport(0, 0, 1024, 1024);
+        program.earth.setUniform('renderType',  0);
+        scene.renderToTexture('world');
+        app.setFrameBuffer('world', false);
+
+        app.setFrameBuffer('world2', true);
+        program.earth.use();
+        gl.clear(clearOpt);
+        gl.viewport(0, 0, 1024, 1024);
+        program.earth.setUniform('renderType',  -1);
+        scene.renderToTexture('world2');
+        app.setFrameBuffer('world2', false);
+        
+        Media.Image.postProcess({
+          fromTexture: ['world-texture', 'world2-texture'],
+          toScreen: true,
+          program: 'glow',
+          width: 700,
+          height: 700,
+          uniforms: {
+            horizontal: false,
+            width: 1024,
+            height: 1024
+          }
+        });
+
         Fx.requestAnimationFrame(draw);
       }
     }

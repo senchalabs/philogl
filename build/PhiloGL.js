@@ -4865,7 +4865,7 @@ $.splat = (function() {
           textures: textures,
           program: opt.program
         }),
-        camera = new PhiloGL.Camera(45, 1, 0.1, 100, {
+        camera = new PhiloGL.Camera(45, height / width, 0.1, 500, {
           position: { x: 0, y: 0, z: 1 }
         }),
         scene = new PhiloGL.Scene(program, camera);
