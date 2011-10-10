@@ -4,6 +4,7 @@ build/compiler.jar export-ignore
 build/build.py export-ignore
 build.sh export-ignore
 examples/explorer export-ignore
+examples/brain export-ignore
 examples/metaballs export-ignore
 examples/quaternion export-ignore
 examples/hoc export-ignore
