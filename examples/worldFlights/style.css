@@ -151,14 +151,6 @@ input#search {
   overflow: hidden;
   width: 250px;
   height: 520px;
-  -webkit-transition: height 500ms;
-  -o-transition: height 500ms;
-  -moz-transition: height 500ms;
-  transition: height 500ms;
-}
-
-.list-wrapper:hover {
-  height: 592px;
 }
 
 #tip {

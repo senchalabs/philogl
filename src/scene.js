@@ -392,7 +392,7 @@
       
       //If there was another program then set to reuse that program.
       if (program) program.use();
-      
+
       return elem && elem.pickable && elem;
     }
   };

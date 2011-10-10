@@ -2952,9 +2952,6 @@ $.splat = (function() {
     //picking options
     this.pickable = !!opt.pickable;
     this.pick = opt.pick || function() { return false; };
-    if (opt.pickingColors) {
-      this.pickingColors = opt.pickingColors;
-    }
 
     this.vertices = opt.vertices;
     this.normals = opt.normals;
@@ -2965,6 +2962,10 @@ $.splat = (function() {
     this.reflection = opt.reflection || 0;
     this.refraction = opt.refraction || 0;
 
+    if (opt.pickingColors) {
+      this.pickingColors = opt.pickingColors;
+    }
+    
     if (opt.texCoords) {
       this.texCoords = opt.texCoords;
     }
@@ -4612,7 +4613,7 @@ $.splat = (function() {
       
       //If there was another program then set to reuse that program.
       if (program) program.use();
-      
+
       return elem && elem.pickable && elem;
     }
   };

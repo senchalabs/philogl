@@ -8,7 +8,6 @@ varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
 varying vec2 vTexCoord3;
 varying vec4 vColor;
-varying float vAlpha;
 varying vec4 vTransformedNormal;
 varying vec4 vEndTransformedNormal;
 varying vec4 vPosition;
@@ -31,6 +30,8 @@ uniform int numberPoints;
 uniform bool hasTexture1;
 uniform sampler2D sampler1;
 
+uniform bool hasTexture2;
+uniform sampler2D sampler2;
 
 uniform bool hasTexture3;
 uniform sampler2D sampler3;
@@ -67,7 +68,7 @@ void main(void) {
         
         if (enableSpecular[i] > 0.0) {
           reflectionDirection = reflect(-lightDirection, normal);
-          specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), vAlpha * 30.0);
+          specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
           specularLight += specularLightWeighting * pointSpecularColor[i];
         }
 
@@ -80,16 +81,19 @@ void main(void) {
     lightWeighting = ambientColor + diffuseLight + specularLight;
   }
 
-  vec4 fragmentColor = vec4(vAlpha, vAlpha, vAlpha, vAlpha);//vColor;//vec4(0.2, 0.2, 0.2, 1.0);
+  vec4 fragmentColor = vColor;//vec4(0.2, 0.2, 0.2, 1.0);
   if (renderType != 0 && (hasTexture1 || hasTexture2 || hasTexture3)) {
     //atmospheric
-    # if (hasTexture1) {
-    #   fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s, vTexCoord1.t));
-    # }
+    if (hasTexture1) {
+      fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s, vTexCoord1.t));
+    }
     //clouds
-    # if (hasTexture3) {
-    #   fragmentColor += texture2D(sampler3, vec2(vTexCoord3.s, vTexCoord3.t));
-    # }
+    if (hasTexture2) {
+      fragmentColor += vec4(texture2D(sampler2, vec2(vTexCoord1.s + cloudOffset, vTexCoord1.t)).rgb, 1.0);
+    }
+    if (hasTexture3) {
+      fragmentColor += texture2D(sampler3, vec2(vTexCoord3.s, vTexCoord3.t));
+    }
   }
   gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, 1.0);
 }

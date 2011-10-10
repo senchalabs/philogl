@@ -1,5 +1,6 @@
 //Unpack modules
 PhiloGL.unpack();
+Scene.PICKING_RES = 1;
 
 //some locals
 var $ = function(id) { return document.getElementById(id); },
@@ -17,6 +18,9 @@ var $ = function(id) { return document.getElementById(id); },
 //Get handles when document is ready
 document.onreadystatechange = function() {
   if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
+    var stats = new xStats();
+    document.body.appendChild(stats.element);
+    
     airlineList = $('airline-list');
     tooltip = $('tooltip');
 
@@ -44,7 +48,7 @@ document.onreadystatechange = function() {
           timer = setTimeout(function() { 
             search(trimmed.toLowerCase()); 
             previousText = trimmed;
-          }, 300);
+          }, 100);
         }
       };
 
@@ -91,6 +95,9 @@ citiesWorker.onmessage = function(e) {
   } else {
     data.citiesIndex = modelInfo.citiesIndex;
     models.cities = new O3D.Model(Object.create(modelInfo, {
+      pickable: { 
+        value: true
+      },
       //Add a custom picking method
       pick: {
         value: function(pixel) {
@@ -105,11 +112,11 @@ citiesWorker.onmessage = function(e) {
 
       render: {
         value: function(gl, program, camera) {
-          gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+          gl.drawElements(gl.TRIANGLES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
         }
       }
     }));
-
+    console.log(models.cities);
     Log.write('Loading assets...');
     createApp();
   }
@@ -342,6 +349,7 @@ function createApp() {
       }
     },
     events: {
+      picking: true,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
@@ -396,6 +404,26 @@ function createApp() {
         }
         
         camera.update();
+      },
+      onMouseEnter: function(e, model) {
+        if (model) {
+              console.log(data.citiesIndex[model.$pickingIndex].split('^'));
+          // clearTimeout(this.timer);
+          // var style = tooltip.style,
+          //     name = data.citiesIndex[model.$pickingIndex].split('^'),
+          //     textName = name[1] + ', ' + name[0];
+
+          // style.top = (e.y + 10) + 'px';
+          // style.left = (e.x + 5) + 'px';
+          // tooltip.className = 'tooltip show';
+
+          // tooltip.innerHTML = textName;
+        }
+      },
+      onMouseLeave: function(e, model) {
+        // this.timer = setTimeout(function() {
+        //   tooltip.className = 'tooltip hide';
+        // }, 500);
       }
     },
     textures: {
