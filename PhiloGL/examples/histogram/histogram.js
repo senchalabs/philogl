@@ -11,7 +11,9 @@
   var dim = 8, histogram, photos, video, 
       worker = new WorkerGroup('histogram-models.js', 1),
       histogramModel = new O3D.Model({
-        shininess: 20,
+        uniforms: {
+          shininess: 20
+        },
         render: function(gl) {
            gl.drawElements(gl.TRIANGLES, histogram.indices.length, gl.UNSIGNED_SHORT, 0);
         },
@@ -320,9 +322,6 @@
           loop();
           
           function loop() { 
-            //update animation options
-            fx.step();
-            fxSize.step();
             program.setUniform('size', sizeValue);
             if (played) {
               if (movie.paused || movie.ended) {
