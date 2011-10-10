@@ -2549,9 +2549,15 @@ $.splat = (function() {
           that = this;
 
       ['Progress', 'Error', 'Abort', 'Load'].forEach(function(event) {
-        req.addEventListener(event.toLowerCase(), function(e) {
-          that['handle' + event](e);
-        }, false);
+        if (req.addEventListener) {
+          req.addEventListener(event.toLowerCase(), function(e) {
+            that['handle' + event](e);
+          }, false);
+        } else {
+          req['on' + event.toLowerCase()] = function(e) {
+            that['handle' + event](e);
+          };
+        }
       });
     },
     
