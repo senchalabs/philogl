@@ -1,6 +1,6 @@
 //Unpack modules
 PhiloGL.unpack();
-Scene.PICKING_RES = 1;
+// Scene.PICKING_RES = 1;
 
 //some locals
 var $ = function(id) { return document.getElementById(id); },
@@ -116,7 +116,6 @@ citiesWorker.onmessage = function(e) {
         }
       }
     }));
-    console.log(models.cities);
     Log.write('Loading assets...');
     createApp();
   }
@@ -424,6 +423,9 @@ function createApp() {
         // this.timer = setTimeout(function() {
         //   tooltip.className = 'tooltip hide';
         // }, 500);
+      },
+      onMouseMove: function(e) {
+      
       }
     },
     textures: {

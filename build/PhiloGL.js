@@ -1837,42 +1837,12 @@ $.splat = (function() {
   
   //Returns an element position
   var getPos = function(elem) {
-    var offset = getOffsets(elem);
-    var scroll = getScrolls(elem);
+    var bbox = elem.getBoundingClientRect();
     return {
-      x: offset.x - scroll.x,
-      y: offset.y - scroll.y
+      x: bbox.left,
+      y: bbox.top,
+      bbox: bbox
     };
-
-    function getOffsets(elem) {
-      var position = {
-        x: 0,
-        y: 0
-      };
-      while (elem && !isBody(elem)) {
-        position.x += elem.offsetLeft;
-        position.y += elem.offsetTop;
-        elem = elem.offsetParent;
-      }
-      return position;
-    }
-
-    function getScrolls(elem) {
-      var position = {
-        x: 0,
-        y: 0
-      };
-      while (elem && !isBody(elem)) {
-        position.x += elem.scrollLeft;
-        position.y += elem.scrollTop;
-        elem = elem.parentNode;
-      }
-      return position;
-    }
-
-    function isBody(element) {
-      return (/^(?:body|html)$/i).test(element.tagName);
-    }
   };
 
   //event object wrapper

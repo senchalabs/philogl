@@ -129,7 +129,7 @@ RightMenu.prototype = {
       target = target.parentNode;
       node = target.nextSibling || target.previousSibling;
       target.parentNode.removeChild(target);
-      if (node) {
+      if (node && node.id) {
         centerAirline(node.id.split('-')[0]);
       }
     } else {
