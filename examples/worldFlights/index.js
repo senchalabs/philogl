@@ -1,6 +1,6 @@
 //Unpack modules
 PhiloGL.unpack();
-Scene.PICKING_RES = 4;
+Scene.PICKING_RES = 1;
 
 //some locals
 var $ = function(id) { return document.getElementById(id); },
@@ -240,6 +240,7 @@ function centerAirline(airlineId) {
     onComplete: function() {
       geom.phi = phi;
       geom.theta = theta;
+      centerAirline.app.scene.resetPicking();
     }
   });
 }
@@ -349,6 +350,7 @@ function createApp() {
     },
     events: {
       picking: true,
+      lazyPicking: true,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
@@ -385,6 +387,8 @@ function createApp() {
         geom.theta = newTheta;
         
         pos.started = false;
+        
+        this.scene.resetPicking();
       },
       onMouseWheel: function(e) {
         var camera = this.camera,
@@ -392,7 +396,7 @@ function createApp() {
             to = -2.95,
             pos = camera.position,
             pz = pos.z;
-            speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001; 
+            speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001;
 
         pos.z += e.wheel * speed;
         
@@ -402,6 +406,11 @@ function createApp() {
             pos.z = from;
         }
         
+        clearTimeout(this.resetTimer);
+        this.resetTimer = setTimeout(function(me) {
+          me.scene.resetPicking();
+        }, 500, this);
+
         camera.update();
       },
       onMouseEnter: function(e, model) {
@@ -421,12 +430,10 @@ function createApp() {
         }
       },
       onMouseLeave: function(e, model) {
+        console.log('leave');
         this.timer = setTimeout(function(me) {
           me.tooltip.className = 'tooltip hide';
         }, 500, this);
-      },
-      onMouseMove: function(e) {
-      
       }
     },
     textures: {
@@ -458,6 +465,8 @@ function createApp() {
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
 
       app.tooltip = $('tooltip');
+      //nasty
+      centerAirline.app = app;
 
       gl.clearColor(0.1, 0.1, 0.1, 1);
       gl.clearDepth(1);

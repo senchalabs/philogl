@@ -150,7 +150,10 @@ var AirlineManager = function(data, models) {
   var availableColors = {
     '171, 217, 233': 0,
     '253, 174, 97': 0,
-    '244, 109, 67': 0
+    '244, 109, 67': 0,
+    '255, 115, 136': 0,
+    '186, 247, 86': 0,
+    '220, 50, 50': 0
   };
 
   var getAvailableColor = function() {

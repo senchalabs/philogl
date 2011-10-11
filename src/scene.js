@@ -304,11 +304,20 @@
     },
     
     //returns an element at the given position
-    pick: function(x, y) {
+    pick: function(x, y, lazy) {
+      //setup the picking program if this is
+      //the first time we enter the method.
       if (!this.pickingProgram) {
         this.setupPicking();
       }
 
+      //if lazy picking and we have a previous
+      //image capture, then use lazy pick
+      if (lazy && this.capture) {
+        return this.lazyPick(x, y);
+      }
+
+      //normal picking
       var o3dHash = {},
           o3dList = [],
           program = app.usedProgram,
@@ -320,6 +329,8 @@
           memoFog = config.effects.fog,
           width = gl.canvas.width,
           height = gl.canvas.height,
+          resWidth = width / pickingRes >> 0,
+          resHeight = height / pickingRes >> 0,
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, 
@@ -336,7 +347,7 @@
       
       //render the scene to a texture
       gl.disable(gl.BLEND);
-      gl.viewport(0, 0, width / pickingRes >> 0, height / pickingRes >> 0);
+      gl.viewport(0, 0, resWidth, resHeight);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //read the background color so we don't step on it
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -367,7 +378,11 @@
       });
       
       //grab the color of the pointed pixel in the texture
-      gl.readPixels((x / pickingRes) >> 0, ((height - y) / pickingRes) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      var capture = new Uint8Array(4 * resWidth * resHeight);
+      gl.readPixels(0, 0, resWidth, resHeight, gl.RGBA, gl.UNSIGNED_BYTE, capture);
+      var pindex = (((x + (height - y) * resWidth) / pickingRes) >> 0) * 4;
+      pixel = [capture[pindex], capture[pindex + 1], capture[pindex + 2], capture[pindex + 3]];
+      // gl.readPixels((x / pickingRes) >> 0, ((height - y) / pickingRes) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
@@ -393,7 +408,48 @@
       //If there was another program then set to reuse that program.
       if (program) program.use();
 
+      //store model hash and pixel array
+      this.o3dHash = o3dHash;
+      this.o3dList = o3dList;
+      this.pixel = pixel;
+      this.capture = capture;
+
       return elem && elem.pickable && elem;
+    },
+
+    lazyPick: function(x, y) {
+      var canvas = app.canvas,
+          width = canvas.width,
+          height = canvas.height,
+          pickingRes = Scene.PICKING_RES,
+          resWidth = width / pickingRes >> 0,
+          resHeight = height / pickingRes >> 0,
+          index = (((x + (height - y) * resWidth) / pickingRes) >> 0) * 4,
+          capture = this.capture,
+          pixel = [capture[index], capture[index + 1], capture[index + 2], capture[index + 3]],
+          stringColor = [pixel[0], pixel[1], pixel[2]].join(),
+          o3dHash = this.o3dHash,
+          o3dList = this.o3dList,
+          elem = o3dHash[stringColor],
+          pick;
+
+      if (!elem) {
+        for (var i = 0, l = o3dList.length; i < l; i++) {
+          elem = o3dList[i];
+          pick = elem.pick(pixel);
+          if (pick !== false) {
+            elem.$pickingIndex = pick;
+          } else {
+            elem = false;
+          }
+        }
+      }
+
+      return elem && elem.pickable && elem;
+    },
+
+    resetPicking: function() {
+      this.capture = false;
     }
   };
   

@@ -128,10 +128,6 @@ h1 {
   margin-left: -162px;
 }
 
-.list-wrapper {
-  position: relative;
-}
-
 .list-wrapper::after {
   content: '';
 
@@ -160,9 +156,10 @@ input#search {
 }
 
 .list-wrapper {
+  position: relative;
   overflow: hidden;
   width: 250px;
-  height: 520px;
+  height: 560px;
 }
 
 #tip {

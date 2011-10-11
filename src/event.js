@@ -176,7 +176,7 @@
         //get the target element of the event
         getTarget: function() {
           if (cacheTarget) return cacheTarget;
-          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y) || true);
+          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y, opt.lazyPicking) || true);
         }
       });
       //wrap native event
@@ -314,6 +314,7 @@
       disableContextMenu: true,
       bind: false,
       picking: false,
+      lazyPicking: false,
       
       onClick: $.empty,
       onRightClick: $.empty,
