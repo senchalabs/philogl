@@ -430,7 +430,6 @@ function createApp() {
         }
       },
       onMouseLeave: function(e, model) {
-        console.log('leave');
         this.timer = setTimeout(function(me) {
           me.tooltip.className = 'tooltip hide';
         }, 500, this);
