@@ -47,9 +47,10 @@ body.no-webgl div.fallback {
 
 div.tooltip {
   position: absolute;
-  color: white;
+  color: black;
   padding: 5px;
-  background-color: #111;
+  background-color: #fff;
+  border: 1px solid #555;
   /*
   border-radius: 0.5em;
   border: 1px solid #ccc;
@@ -61,15 +62,14 @@ div.tooltip {
   -o-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   */
   font-size: 0.8em;
-  opacity: 0;
 }
 
 div.tooltip.show {
-  opacity: 1;
+  display: block;
 }
 
 div.tooltip.hide {
-  opacity: 0;
+  display: none;
 }
 
 #log-panel {
@@ -112,13 +112,20 @@ h1 {
   overflow: visible;
 }
 
-.canvas-container canvas, 
+.canvas-container #canvas-wrapper, 
 .canvas-container .list-wrapper {
   float: left;
 }
 
-.canvas-container canvas {
-  margin-top: -70px;
+#canvas-wrapper {
+  width: 700px;
+  height: 600px;
+  overflow: hidden;
+}
+
+#canvas-wrapper > canvas {
+  margin-top: -212px;
+  margin-left: -162px;
 }
 
 .list-wrapper {
@@ -180,7 +187,7 @@ ul#selected-airlines > li {
   display: block;
   color: white;
   padding: 0;
-  margin: 6px 0;
+  margin: 8px 0;
   cursor: pointer;
 }
 

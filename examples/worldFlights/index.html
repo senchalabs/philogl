@@ -22,7 +22,9 @@
       </div>
 
       <div class="canvas-container">
-        <canvas id="map-canvas" width="700" height="700"></canvas>
+        <div id="canvas-wrapper">
+          <canvas id="map-canvas" width="1024" height="1024"></canvas>
+        </div>
         <div id="list-wrapper" class="list-wrapper" style="display:none;">
           <input type="text" id="search" placeholder="Search for an Airline" />
           <ul id="selected-airlines">
@@ -30,12 +32,13 @@
           <div class="list-container">
             <ul id="airline-list"></ul>
           </div>
-          <div id="tip">Tip: Scroll to see more Airlines</div>
         </div>
         <div style="clear:both;"></div>
       </div>
     </div>
   </div>
+  
+   <div class="tooltip" id="tooltip" style="width:auto;"></div>
   
   <div class="footer">
     Author: <a href="http://philogb.github.com/">Nicolas Garcia

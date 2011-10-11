@@ -1,6 +1,6 @@
 //Unpack modules
 PhiloGL.unpack();
-// Scene.PICKING_RES = 1;
+Scene.PICKING_RES = 4;
 
 //some locals
 var $ = function(id) { return document.getElementById(id); },
@@ -317,7 +317,7 @@ function createApp() {
     }],
     camera: {
       position: {
-        x: 0, y: 0, z: -4.2
+        x: 0, y: 0, z: -5.125
       }
     },
     scene: {
@@ -388,18 +388,18 @@ function createApp() {
       },
       onMouseWheel: function(e) {
         var camera = this.camera,
-            from = -4.2,
-            to = -2.275,
+            from = -5.125,
+            to = -2.95,
             pos = camera.position,
-            pz = pos.z,
+            pz = pos.z;
             speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001; 
 
         pos.z += e.wheel * speed;
         
-        if (pos.z > -2.275) {
-            pos.z = -2.275;
-        } else if (pos.z < -4.2) {
-            pos.z = -4.2;
+        if (pos.z > to) {
+            pos.z = to;
+        } else if (pos.z < from) {
+            pos.z = from;
         }
         
         camera.update();
@@ -407,23 +407,23 @@ function createApp() {
       onMouseEnter: function(e, model) {
         if (model) {
               console.log(data.citiesIndex[model.$pickingIndex].split('^'));
-          // clearTimeout(this.timer);
-          // var style = tooltip.style,
-          //     name = data.citiesIndex[model.$pickingIndex].split('^'),
-          //     textName = name[1] + ', ' + name[0];
+          clearTimeout(this.timer);
+          var style = tooltip.style,
+              name = data.citiesIndex[model.$pickingIndex].split('^'),
+              textName = name[1] + ', ' + name[0],
+              bbox = this.canvas.getBoundingClientRect();
 
-          // style.top = (e.y + 10) + 'px';
-          // style.left = (e.x + 5) + 'px';
-          // tooltip.className = 'tooltip show';
+          style.top = (e.y + 10 + bbox.top) + 'px';
+          style.left = (e.x + 5 - bbox.left) + 'px';
+          this.tooltip.className = 'tooltip show';
 
-          // tooltip.innerHTML = textName;
+          this.tooltip.innerHTML = textName;
         }
       },
       onMouseLeave: function(e, model) {
-        console.log('mouseleave');
-        // this.timer = setTimeout(function() {
-        //   tooltip.className = 'tooltip hide';
-        // }, 500);
+        this.timer = setTimeout(function(me) {
+          me.tooltip.className = 'tooltip hide';
+        }, 500, this);
       },
       onMouseMove: function(e) {
       
@@ -456,6 +456,8 @@ function createApp() {
           height = canvas.height,
           program = app.program,
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
+
+      app.tooltip = $('tooltip');
 
       gl.clearColor(0.1, 0.1, 0.1, 1);
       gl.clearDepth(1);
@@ -532,8 +534,8 @@ function createApp() {
           fromTexture: ['world-texture', 'world2-texture'],
           toScreen: true,
           program: 'glow',
-          width: 700,
-          height: 700,
+          width: 1024,
+          height: 1024,
           uniforms: {
             horizontal: false,
             width: 1024,
