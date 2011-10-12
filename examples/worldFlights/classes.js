@@ -329,8 +329,18 @@ var AirlineManager = function(data, models) {
           sin = Math.sin,
           cos = Math.cos,
           city1 = data.cities[route[2] + '^' + route[1]],
-          city2 = data.cities[route[4] + '^' + route[3]],
-          city = [city1[2], city1[3], city2[2], city2[3]],
+          city2 = data.cities[route[4] + '^' + route[3]];
+
+      if (!city1 || !city2) {
+        return {
+          vertices: [],
+          from: [],
+          to: [],
+          indices: []
+        };
+      }
+
+      var city = [city1[2], city1[3], city2[2], city2[3]],
           theta1 = pi2 - (+city[1] + 180) / 360 * pi2,
           phi1 = pi - (+city[0] + 90) / 180 * pi,
           sinTheta1 = sin(theta1),
