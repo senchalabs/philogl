@@ -501,7 +501,6 @@ function createApp() {
       $('list-wrapper').style.display = '';
 
       function draw() {
-        gl.clearColor(0.1, 0.1, 0.1, 1);
         drawEarth();
       }
 
