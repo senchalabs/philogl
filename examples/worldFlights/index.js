@@ -7,7 +7,7 @@ var $ = function(id) { return document.getElementById(id); },
     $$ = function(selector) { return document.querySelectorAll(selector); },
     citiesWorker = new Worker('cities.js'),
     data = { citiesRoutes: {}, airlinesRoutes: {} },
-    models = {}, geom = {},
+    models = { airlines: {} }, geom = {},
     airlineMgr = new AirlineManager(data, models),
     fx = new Fx({
       duration: 1000,
@@ -73,18 +73,6 @@ models.earth = new O3D.Sphere({
 });
 models.earth.rotation.set(Math.PI, 0,  0);
 models.earth.update();
-
-//Create airline routes model
-models.airlines = new O3D.Model({
-  program: 'airline_layer',
-  render: function(gl, program, camera) {
-    if (this.indices) {
-      gl.lineWidth(1);
-      gl.drawElements(gl.LINES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
-      this.dynamic = false;
-    }
-  }
-});
 
 //Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
@@ -220,7 +208,6 @@ function centerAirline(airlineId) {
   var pos = data.airlinePos[airlineId],
       earth = models.earth,
       cities = models.cities,
-      airlines = models.airlines,
       phi = pos[3],
       theta = pos[4],
       phiPrev = geom.phi || Math.PI / 2,
@@ -230,7 +217,6 @@ function centerAirline(airlineId) {
     
   geom.matEarth = earth.matrix.clone();
   geom.matCities = cities.matrix.clone();
-  geom.matAirlines = airlines.matrix.clone();
 
   fx.start({
     onCompute: function(delta) {
@@ -255,7 +241,6 @@ function rotateXY(phi, theta) {
   
   earth.matrix = geom.matEarth.clone();
   cities.matrix = geom.matCities.clone();
-  airlines.matrix = geom.matAirlines.clone();
       
   var m1 = new Mat4(),
       m2 = new Mat4();
@@ -277,7 +262,9 @@ function rotateXY(phi, theta) {
 
   earth.matrix = m1;
   cities.matrix = m2;
-  airlines.matrix = m2;
+  for (var name in airlines) {
+    airlines[name].matrix = m2;
+  }
 }
 
 function createApp() {
@@ -360,7 +347,6 @@ function createApp() {
         
         geom.matEarth = models.earth.matrix.clone();
         geom.matCities = models.cities.matrix.clone();
-        geom.matAirlines = models.airlines.matrix.clone();
       },
       onDragMove: function(e) {
         var phi = geom.phi,
@@ -466,6 +452,7 @@ function createApp() {
       app.tooltip = $('tooltip');
       //nasty
       centerAirline.app = app;
+      airlineMgr.app = app;
 
       gl.clearColor(0.1, 0.1, 0.1, 1);
       gl.clearDepth(1);
@@ -505,8 +492,7 @@ function createApp() {
 
       //picking scene
       scene.add(models.earth,
-                models.cities,
-                models.airlines);
+                models.cities);
 
       draw();
       

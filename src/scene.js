@@ -82,17 +82,9 @@
           prevDynamic = obj.dynamic;
 
       obj.dynamic = true;
-      
-      obj.setAttributes(program);
-      obj.setVertices(program);
-      obj.setColors(program);
-      obj.setPickingColors(program);
-      obj.setNormals(program);
-      //obj.setTextures(program, true);
-      obj.setTexCoords(program);
-      obj.setIndices(program);
-
+      obj.setState(program);
       obj.dynamic = prevDynamic;
+      obj.unsetState(program);
     },
 
     beforeRender: function(program) {

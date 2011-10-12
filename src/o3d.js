@@ -127,26 +127,6 @@
       }
     },
     
-    unsetAttributes: function(program) {
-      var attributes = this.attributes;
-      for (var name in attributes) {
-        var bufferId = this.id + '-' + name;
-        program.setBuffer(bufferId, false);
-      }
-    },
-    
-    setReflection: function(program) {
-      if (this.reflection || this.refraction) {
-        program.setUniforms({
-          useReflection: true,
-          refraction: this.refraction,
-          reflection: this.reflection
-        });
-      } else {
-        program.setUniform('useReflection', false);
-      }
-    },
-    
     setVertices: function(program) {
       if (!this.$vertices) return;
 
@@ -161,10 +141,6 @@
       }
     },
 
-    unsetVertices: function(program) {
-      program.setBuffer('position-' + this.id, false);
-    },
-    
     setNormals: function(program) {
       if (!this.$normals) return;
 
@@ -177,10 +153,6 @@
       } else {
         program.setBuffer('normal-' + this.id);
       }
-    },
-
-    unsetNormals: function(program) {
-      program.setBuffer('normal-' + this.id, false);
     },
 
     setIndices: function(program) {
@@ -198,10 +170,6 @@
       }
     },
 
-    unsetIndices: function(program) {
-      program.setBuffer('indices-' + this.id, false);
-    },
-
     setPickingColors: function(program) {
       if (!this.$pickingColors) return;
 
@@ -216,10 +184,6 @@
       }
     },
 
-    unsetPickingColors: function(program) {
-      program.setBuffer('pickingColor-' + this.id, false);
-    },
-    
     setColors: function(program) {
       if (!this.$colors) return;
 
@@ -232,10 +196,6 @@
       } else {
         program.setBuffer('color-' + this.id);
       }
-    },
-
-    unsetColors: function(program) {
-      program.setBuffer('color-' + this.id, false);
     },
 
     setTexCoords: function(program) {
@@ -273,10 +233,6 @@
           program.setBuffer('texCoord-' + id);
         }
       }
-    },
-
-    unsetTexCoords: function(program) {
-      program.setBuffer('texCoord-' + this.id, false);
     },
 
     setTextures: function(program, force) {

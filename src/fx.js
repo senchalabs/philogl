@@ -13,7 +13,6 @@
   var Queue = Fx.Queue = [];
 
   Fx.prototype = {
-    timer:null,
     time:null,
     
     start: function(options) {
@@ -31,12 +30,16 @@
           time = this.time,
           opt = this.opt,
           delay = opt.delay,
-          duration = opt.duration;
+          duration = opt.duration,
+          delta = 0;
       //hold animation for the delay
-      if (currentTime < time + delay) return;
+      if (currentTime < time + delay) {
+        opt.onCompute.call(this, delta);
+        return;
+      }
       //if in our time window, then execute animation
       if (currentTime < time + delay + duration) {
-        var delta = opt.transition((currentTime - time) / (duration + delay));
+        delta = opt.transition((currentTime - time - delay) / duration);
         opt.onCompute.call(this, delta);
       } else {
         this.animating = false;

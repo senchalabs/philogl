@@ -3002,26 +3002,6 @@ $.splat = (function() {
       }
     },
     
-    unsetAttributes: function(program) {
-      var attributes = this.attributes;
-      for (var name in attributes) {
-        var bufferId = this.id + '-' + name;
-        program.setBuffer(bufferId, false);
-      }
-    },
-    
-    setReflection: function(program) {
-      if (this.reflection || this.refraction) {
-        program.setUniforms({
-          useReflection: true,
-          refraction: this.refraction,
-          reflection: this.reflection
-        });
-      } else {
-        program.setUniform('useReflection', false);
-      }
-    },
-    
     setVertices: function(program) {
       if (!this.$vertices) return;
 
@@ -3036,10 +3016,6 @@ $.splat = (function() {
       }
     },
 
-    unsetVertices: function(program) {
-      program.setBuffer('position-' + this.id, false);
-    },
-    
     setNormals: function(program) {
       if (!this.$normals) return;
 
@@ -3052,10 +3028,6 @@ $.splat = (function() {
       } else {
         program.setBuffer('normal-' + this.id);
       }
-    },
-
-    unsetNormals: function(program) {
-      program.setBuffer('normal-' + this.id, false);
     },
 
     setIndices: function(program) {
@@ -3073,10 +3045,6 @@ $.splat = (function() {
       }
     },
 
-    unsetIndices: function(program) {
-      program.setBuffer('indices-' + this.id, false);
-    },
-
     setPickingColors: function(program) {
       if (!this.$pickingColors) return;
 
@@ -3091,10 +3059,6 @@ $.splat = (function() {
       }
     },
 
-    unsetPickingColors: function(program) {
-      program.setBuffer('pickingColor-' + this.id, false);
-    },
-    
     setColors: function(program) {
       if (!this.$colors) return;
 
@@ -3107,10 +3071,6 @@ $.splat = (function() {
       } else {
         program.setBuffer('color-' + this.id);
       }
-    },
-
-    unsetColors: function(program) {
-      program.setBuffer('color-' + this.id, false);
     },
 
     setTexCoords: function(program) {
@@ -3148,10 +3108,6 @@ $.splat = (function() {
           program.setBuffer('texCoord-' + id);
         }
       }
-    },
-
-    unsetTexCoords: function(program) {
-      program.setBuffer('texCoord-' + this.id, false);
     },
 
     setTextures: function(program, force) {
@@ -4280,17 +4236,9 @@ $.splat = (function() {
           prevDynamic = obj.dynamic;
 
       obj.dynamic = true;
-      
-      obj.setAttributes(program);
-      obj.setVertices(program);
-      obj.setColors(program);
-      obj.setPickingColors(program);
-      obj.setNormals(program);
-      //obj.setTextures(program, true);
-      obj.setTexCoords(program);
-      obj.setIndices(program);
-
+      obj.setState(program);
       obj.dynamic = prevDynamic;
+      obj.unsetState(program);
     },
 
     beforeRender: function(program) {
@@ -4729,7 +4677,6 @@ $.splat = (function() {
   var Queue = Fx.Queue = [];
 
   Fx.prototype = {
-    timer:null,
     time:null,
     
     start: function(options) {
@@ -4747,12 +4694,16 @@ $.splat = (function() {
           time = this.time,
           opt = this.opt,
           delay = opt.delay,
-          duration = opt.duration;
+          duration = opt.duration,
+          delta = 0;
       //hold animation for the delay
-      if (currentTime < time + delay) return;
+      if (currentTime < time + delay) {
+        opt.onCompute.call(this, delta);
+        return;
+      }
       //if in our time window, then execute animation
       if (currentTime < time + delay + duration) {
-        var delta = opt.transition((currentTime - time) / (duration + delay));
+        delta = opt.transition((currentTime - time - delay) / duration);
         opt.onCompute.call(this, delta);
       } else {
         this.animating = false;

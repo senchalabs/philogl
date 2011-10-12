@@ -1,15 +1,20 @@
-#define LIGHT_MAX 40
+uniform bool animate;
+uniform float delta;
 
 attribute vec3 position;
-attribute vec4 color;
+attribute vec3 from;
+attribute vec3 to;
 
 uniform mat4 worldMatrix;
 uniform mat4 projectionMatrix;
 
-varying vec4 vColor;
-
 void main(void) {
-  vColor = color;
-  gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
+  vec3 pos;
+  if (animate) {
+    pos = from + (position - from) * delta;
+  } else {
+    pos = position;
+  }
+  gl_Position = projectionMatrix * worldMatrix * vec4(pos, 1.0);
 }
 

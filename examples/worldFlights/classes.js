@@ -42,6 +42,8 @@ var RightMenu = function(airlineList, airlineMgr) {
   airlineList.addEventListener('change', this.onChange.bind(this), false);
 
   this.selectedAirlines.addEventListener('click', this.onClick.bind(this), false);
+  this.selectedAirlines.addEventListener('mousemove', this.onHover.bind(this), false);
+  this.selectedAirlines.addEventListener('mouseout', this.onLeave.bind(this), false);
 };
 
 RightMenu.prototype = {
@@ -138,6 +140,36 @@ RightMenu.prototype = {
       }
       centerAirline(target.id.split('-')[0]);
     }
+  },
+
+  onHover: function(e) {
+    var target = e.target, airlineId;
+    if (target.nodeName == 'INPUT') {
+      airlineId = target.parentNode.id.split('-')[0];
+    } else {
+      if (target.nodeName == 'DIV') {
+        target = target.parentNode;
+      }
+      airlineId = target.id.split('-')[0];
+    }
+    for (var name in models.airlines) {
+      models.airlines[name].lineWidth = name == airlineId ? 2 : 1;
+    }
+  },
+  
+  onLeave: function(e) {
+    var rt = e.relatedTarget,
+        pn = rt && rt.parentNode,
+        pn2 = pn && pn.parentNode;
+
+    if (rt != this.selectedAirlines && 
+        pn != this.selectedAirlines &&
+       pn2 != this.selectedAirlines) {
+      
+      for (var name in models.airlines) {
+        models.airlines[name].lineWidth = 1;
+      }
+    }
   }
 };
 
@@ -145,7 +177,14 @@ RightMenu.prototype = {
 //Takes care of adding and removing routes
 //for the selected airlines
 var AirlineManager = function(data, models) {
+
   var airlineIdColor = {};
+
+  var fx = new Fx({
+    delay: 800,
+    duration: 1000,
+    transition: Fx.Transition.Quart.easeOut
+  });
   
   var availableColors = {
     '171, 217, 233': 0,
@@ -184,27 +223,58 @@ var AirlineManager = function(data, models) {
           color = getAvailableColor(),
           routes = data.airlinesRoutes[airline],
           airlines = models.airlines,
-          slice = Array.prototype.slice,
-          vertices = slice.call(airlines.vertices || []),
-          colors = slice.call(airlines.colors || []),
-          indices = slice.call(airlines.indices || []),
-          offset = vertices.length / 3,
-          samplings = 10;
+          model = airlines[airline],
+          samplings = 10,
+          vertices = [],
+          indices = [],
+          from = [],
+          to = [],
+          parsedColor;
 
+      parsedColor = color.split(',');
+      parsedColor = [parsedColor[0] / (255 * 1.3), 
+                     parsedColor[1] / (255 * 1.3), 
+                     parsedColor[2] / (255 * 1.3)];
+      
+      if (model) {
+        model.uniforms.color = parsedColor;
+      } else {
 
-      for (var i = 0, l = routes.length; i < l; i++) {
-        var ans = this.createRoute(routes[i], i * samplings + offset, color);
-        vertices.push.apply(vertices, ans.vertices);
-        colors.push.apply(colors, ans.colors);
-        indices.push.apply(indices, ans.indices);
+        for (var i = 0, l = routes.length; i < l; i++) {
+          var ans = this.createRoute(routes[i], i * samplings);
+          vertices.push.apply(vertices, ans.vertices);
+          from.push.apply(from, ans.from);
+          to.push.apply(to, ans.to);
+          indices.push.apply(indices, ans.indices);
+        }
+
+        airlines[airline] = model = new O3D.Model({
+          vertices: vertices,
+          indices: indices,
+          program: 'airline_layer',
+          uniforms: {
+            color: parsedColor
+          },
+          render: function(gl, program, camera) {
+              gl.lineWidth(this.lineWidth || 1);
+              gl.drawElements(gl.LINES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
+          },
+          attributes: {
+            from: {
+              size: 3,
+              value: new Float32Array(from)
+            },
+            to: {
+              size: 3,
+              value: new Float32Array(to)
+            }
+          }
+        });
       }
       
-      airlines.vertices = vertices;
-      airlines.colors = colors;
-      airlines.indices = indices;
-      airlines.dynamic = true;
-      airlineIds.push(airline);
+      this.show(model);
 
+      airlineIds.push(airline);
       //set color for airline Id
       availableColors[color]++;
       airlineIdColor[airline] = color;
@@ -212,41 +282,47 @@ var AirlineManager = function(data, models) {
     
     remove: function(airline) {
       var airlines = models.airlines,
-          color = airlineIdColor[airline],
-          routes = data.airlinesRoutes[airline],
-          nroutes = routes.length,
-          slice = Array.prototype.slice,
-          vertices = slice.call(airlines.vertices),
-          colors = slice.call(airlines.colors),
-          indices = slice.call(airlines.indices),
-          airlineIds = this.airlineIds,
-          index = airlineIds.indexOf(airline),
-          samplings = 10;
+          model = airlines[airline],
+          color = airlineIdColor[airline];
 
-      for (var i = 0, nacum = 0; i < index; i++) {
-        nacum += data.airlinesRoutes[airlineIds[i]].length;
-      }
-
-      airlineIds.splice(index, 1);
-      vertices.splice(samplings * 3 * nacum, nroutes * samplings * 3);
-      colors.splice(samplings * 4 * nacum, nroutes * samplings * 4);
-      indices.splice((samplings - 1) * 2 * nacum, nroutes * (samplings - 1) * 2);
-
-      for (var i = (samplings - 1) * 2 * nacum, l = indices.length; i < l; i++) {
-        indices[i] -= (samplings * nroutes);
-      }
-      airlines.vertices = vertices;
-      airlines.colors = colors;
-      airlines.indices = indices;
-      airlines.dynamic = true;
+      this.hide(model);
 
       //unset color for airline Id.
       availableColors[color]--;
       delete airlineIdColor[airline];
     },
 
+    show: function(model) {
+      model.uniforms.animate = true;
+      this.app.scene.add(model);
+      fx.start({
+        delay: 500,
+        onCompute: function(delta) {
+          model.uniforms.delta = delta;
+        },
+        onComplete: function() {
+          model.uniforms.animate = false;
+        }
+      });
+    },
+
+    hide: function(model) {
+      var me = this;
+      model.uniforms.animate = true;
+      fx.start({
+        delay: 0,
+        onCompute: function(delta) {
+          model.uniforms.delta = (1 - delta);
+        },
+        onComplete: function() {
+          model.uniforms.animate = false;
+          me.app.scene.remove(model);
+        }
+      });
+    },
+
     //creates a quadratic bezier curve as a route
-    createRoute: function(route, offset, color) {
+    createRoute: function(route, offset) {
       var pi = Math.PI,
           pi2 = pi * 2,
           sin = Math.sin,
@@ -270,27 +346,23 @@ var AirlineManager = function(data, models) {
           p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
           p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.5),
           pArray = [],
-          pColor = [],
           pIndices = [],
+          from = [],
+          to = [],
           t = 0,
           count = 0,
           samplings = 10,
           deltat = 1 / samplings,
           pt;
 
-      //transform color to webgl format.
-      color = color.split(',');
-      for (var i = 0; i < 3; i++) {
-        color[i] /= (255 * 1.7);
-      }
-      color[3] = 1;
-      
       while(samplings--) {
         //quadratic bezier curve
         pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
         pArray.push(pt.x, pt.y, pt.z);
-        pColor.push.apply(pColor, color);
-        if (t != 0) {
+        from.push(p1[0], p1[1], p1[2]);
+        to.push(p2[0], p2[1], p2[2]);
+
+        if (t !== 0) {
           pIndices.push(count, count + 1);
           count++;
         }
@@ -299,7 +371,8 @@ var AirlineManager = function(data, models) {
 
       return {
         vertices: pArray,
-        colors: pColor,
+        from: from,
+        to: to,
         indices: pIndices.map(function(i) { return i + offset; }),
         p1: p1,
         p2: p2
