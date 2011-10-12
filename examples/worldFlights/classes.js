@@ -33,17 +33,18 @@ var Log = {
 
 //RightMenu
 var RightMenu = function(airlineList, airlineMgr) {
-  this.airlineList = airlineList;
-  this.airlineMgr = airlineMgr;
-  this.selectedAirlines = $('selected-airlines');
+  var me = this;
+  me.airlineList = airlineList;
+  me.airlineMgr = airlineMgr;
+  me.selectedAirlines = $('selected-airlines');
   
-  airlineList.addEventListener('mousemove', this.onMouseMove.bind(this), false);
-  airlineList.addEventListener('mouseout', this.onMouseOut.bind(this), false);
-  airlineList.addEventListener('change', this.onChange.bind(this), false);
+  airlineList.addEventListener('mousemove', function(e) { me.onMouseMove(e); }, false);
+  airlineList.addEventListener('mouseout', function(e) { me.onMouseOut(e); }, false);
+  airlineList.addEventListener('change', function(e) { me.onChange(e); }, false);
 
-  this.selectedAirlines.addEventListener('click', this.onClick.bind(this), false);
-  this.selectedAirlines.addEventListener('mousemove', this.onHover.bind(this), false);
-  this.selectedAirlines.addEventListener('mouseout', this.onLeave.bind(this), false);
+  me.selectedAirlines.addEventListener('click', function(e) { me.onClick(e); }, false);
+  me.selectedAirlines.addEventListener('mousemove', function(e) { me.onHover(e); }, false);
+  me.selectedAirlines.addEventListener('mouseout', function (e) { me.onLeave(e); }, false);
 };
 
 RightMenu.prototype = {
