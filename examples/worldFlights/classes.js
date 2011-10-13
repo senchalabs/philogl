@@ -183,7 +183,7 @@ var AirlineManager = function(data, models) {
 
   var fx = new Fx({
     delay: 800,
-    duration: 1000,
+    duration: 1500,
     transition: Fx.Transition.Quart.easeOut
   });
   
@@ -228,8 +228,8 @@ var AirlineManager = function(data, models) {
           samplings = 10,
           vertices = [],
           indices = [],
-          from = [],
-          to = [],
+          fromTo = [],
+          sample = [],
           parsedColor;
 
       parsedColor = color.split(',');
@@ -242,10 +242,10 @@ var AirlineManager = function(data, models) {
       } else {
 
         for (var i = 0, l = routes.length; i < l; i++) {
-          var ans = this.createRoute(routes[i], i * samplings);
+          var ans = this.createRoute(routes[i], i * (samplings + 1));
           vertices.push.apply(vertices, ans.vertices);
-          from.push.apply(from, ans.from);
-          to.push.apply(to, ans.to);
+          fromTo.push.apply(fromTo, ans.fromTo);
+          sample.push.apply(sample, ans.sample);
           indices.push.apply(indices, ans.indices);
         }
 
@@ -261,13 +261,13 @@ var AirlineManager = function(data, models) {
               gl.drawElements(gl.LINES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
           },
           attributes: {
-            from: {
-              size: 3,
-              value: new Float32Array(from)
+            fromTo: {
+              size: 4,
+              value: new Float32Array(fromTo)
             },
-            to: {
-              size: 3,
-              value: new Float32Array(to)
+            sample: {
+              size: 1,
+              value: new Float32Array(sample)
             }
           }
         });
@@ -322,13 +322,29 @@ var AirlineManager = function(data, models) {
       });
     },
 
-    //creates a quadratic bezier curve as a route
-    createRoute: function(route, offset) {
+    getCoordinates: function(from, to) {
       var pi = Math.PI,
           pi2 = pi * 2,
           sin = Math.sin,
           cos = Math.cos,
-          city1 = data.cities[route[2] + '^' + route[1]],
+          theta = pi2 - (+to + 180) / 360 * pi2,
+          phi = pi - (+from + 90) / 180 * pi,
+          sinTheta = sin(theta),
+          cosTheta = cos(theta),
+          sinPhi = sin(phi),
+          cosPhi = cos(phi),
+          p = new Vec3(cosTheta * sinPhi, cosPhi, sinTheta * sinPhi);
+
+      return {
+        theta: theta,
+        phi: phi,
+        p: p
+      };
+    },
+
+    //creates a quadratic bezier curve as a route
+    createRoute: function(route, offset) {
+      var city1 = data.cities[route[2] + '^' + route[1]],
           city2 = data.cities[route[4] + '^' + route[3]];
 
       if (!city1 || !city2) {
@@ -340,50 +356,42 @@ var AirlineManager = function(data, models) {
         };
       }
 
-      var city = [city1[2], city1[3], city2[2], city2[3]],
-          theta1 = pi2 - (+city[1] + 180) / 360 * pi2,
-          phi1 = pi - (+city[0] + 90) / 180 * pi,
-          sinTheta1 = sin(theta1),
-          cosTheta1 = cos(theta1),
-          sinPhi1 = sin(phi1),
-          cosPhi1 = cos(phi1),
-          p1 = new Vec3(cosTheta1 * sinPhi1, cosPhi1, sinTheta1 * sinPhi1),
-          theta2 = pi2 - (+city[3] + 180) / 360 * pi2,
-          phi2 = pi - (+city[2] + 90) / 180 * pi,
-          sinTheta2 = sin(theta2),
-          cosTheta2 = cos(theta2),
-          sinPhi2 = sin(phi2),
-          cosPhi2 = cos(phi2),
-          p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
-          p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.5),
+      var c1 = this.getCoordinates(city1[2], city1[3]),
+          c2 = this.getCoordinates(city2[2], city2[3]),
+          p1 = c1.p,
+          p2 = c2.p,
+          p3 = p2.add(p1).$scale(0.5).$unit().$scale(p1.distTo(p2) / 3 + 1.2),
+          theta1 = c1.theta,
+          theta2 = c2.theta,
+          phi1 = c1.phi,
+          phi2 = c2.phi,
           pArray = [],
           pIndices = [],
-          from = [],
-          to = [],
+          fromTo = [],
+          sample = [],
           t = 0,
           count = 0,
           samplings = 10,
-          deltat = 1 / samplings,
-          pt;
+          deltat = 1 / samplings;
 
-      while(samplings--) {
-        //quadratic bezier curve
-        pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
-        pArray.push(pt.x, pt.y, pt.z);
-        from.push(p1[0], p1[1], p1[2]);
-        to.push(p2[0], p2[1], p2[2]);
+      for (var i = 0; i <= samplings; i++) {
+        pArray.push(p3[0], p3[1], p3[2]);
+        fromTo.push(theta1, phi1, theta2, phi2);
+        sample.push(i);
 
-        if (t !== 0) {
-          pIndices.push(count, count + 1);
-          count++;
+        if (i !== 0) {
+          pIndices.push(i -1, i);
         }
-        t += deltat;
       }
+      // while(samplings--) {
+        //quadratic bezier curve
+        // pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
+      // }
 
       return {
         vertices: pArray,
-        from: from,
-        to: to,
+        fromTo: fromTo,
+        sample: sample,
         indices: pIndices.map(function(i) { return i + offset; }),
         p1: p1,
         p2: p2
