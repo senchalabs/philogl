@@ -43,8 +43,8 @@ void main(void) {
   vec3 p2 = vec3( cos(theta2) * sin(phi2), cos(phi2), sin(phi2) * sin(theta2) );
 
   vec3 pT = p1 * oneMinusDeltaTSample * oneMinusDeltaTSample + position * 2.0 * oneMinusDeltaTSample * deltaTSample + p2 * deltaTSample * deltaTSample;
-  vec3 pN = slerp( p1, p2, deltaT * sample / SAMPLES );
+  vec3 pN = slerp( p1, p2, deltaTSample );
 
-  gl_Position = projectionMatrix * worldMatrix * vec4(pN * max(length(pT), 1.02), 1.0);
+  gl_Position = projectionMatrix * worldMatrix * vec4(pN * max(length(pT), 1.000001), 1.0);
 }
 

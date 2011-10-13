@@ -19,7 +19,7 @@ def cities():
       if i > 0:
         split_line = line.replace('"', '').split(',')
         try:
-          ans[split_line[0].lower() + '^' + split_line[1].lower()] = split_line
+          ans[split_line[0].lower() + '^' + split_line[1].lower() + '^' + split_line[2].lower()] = split_line
         except:
           pass
   

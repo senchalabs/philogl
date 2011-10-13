@@ -182,7 +182,7 @@ var AirlineManager = function(data, models) {
   var airlineIdColor = {};
 
   var fx = new Fx({
-    delay: 800,
+    delay: 500,
     duration: 1500,
     transition: Fx.Transition.Quart.easeOut
   });
@@ -242,7 +242,7 @@ var AirlineManager = function(data, models) {
       } else {
 
         for (var i = 0, l = routes.length; i < l; i++) {
-          var ans = this.createRoute(routes[i], i * (samplings + 1));
+          var ans = this.createRoute(routes[i], vertices.length / 3);
           vertices.push.apply(vertices, ans.vertices);
           fromTo.push.apply(fromTo, ans.fromTo);
           sample.push.apply(sample, ans.sample);
@@ -297,7 +297,8 @@ var AirlineManager = function(data, models) {
       model.uniforms.animate = true;
       this.app.scene.add(model);
       fx.start({
-        delay: 500,
+        delay: 0,
+        duration: 1800,
         onCompute: function(delta) {
           model.uniforms.delta = delta;
         },
@@ -312,6 +313,7 @@ var AirlineManager = function(data, models) {
       model.uniforms.animate = true;
       fx.start({
         delay: 0,
+        duration: 900,
         onCompute: function(delta) {
           model.uniforms.delta = (1 - delta);
         },
@@ -344,8 +346,10 @@ var AirlineManager = function(data, models) {
 
     //creates a quadratic bezier curve as a route
     createRoute: function(route, offset) {
-      var city1 = data.cities[route[2] + '^' + route[1]],
-          city2 = data.cities[route[4] + '^' + route[3]];
+      var key1 = route[2] + '^' + route[1],
+          city1 = data.cities[key1],
+          key2 = route[4] + '^' + route[3],
+          city2 = data.cities[key2];
 
       if (!city1 || !city2) {
         return {
@@ -383,10 +387,6 @@ var AirlineManager = function(data, models) {
           pIndices.push(i -1, i);
         }
       }
-      // while(samplings--) {
-        //quadratic bezier curve
-        // pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
-      // }
 
       return {
         vertices: pArray,

@@ -67,8 +67,7 @@ models.earth = new O3D.Sphere({
   uniforms: {
     shininess: 32
   },
-  textures: ['img/lala.jpg', 'img/topographic.jpg'],
-  // textures: ['img/topographic.jpg'],
+  textures: ['img/lala.jpg'],
   program: 'earth'
 });
 models.earth.rotation.set(Math.PI, 0,  0);
@@ -336,7 +335,7 @@ function createApp() {
       }
     },
     events: {
-      picking: true,
+      picking: !(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
       lazyPicking: true,
       centerOrigin: false,
       onDragStart: function(e) {
@@ -401,15 +400,14 @@ function createApp() {
       },
       onMouseEnter: function(e, model) {
         if (model) {
-              console.log(data.citiesIndex[model.$pickingIndex].split('^'));
           clearTimeout(this.timer);
           var style = tooltip.style,
               name = data.citiesIndex[model.$pickingIndex].split('^'),
-              textName = name[1] + ', ' + name[0],
+              textName = name[1][0].toUpperCase() + name[1].slice(1) + ', ' + name[0][0].toUpperCase() + name[0].slice(1),
               bbox = this.canvas.getBoundingClientRect();
 
           style.top = (e.y + 10 + bbox.top) + 'px';
-          style.left = (e.x + 5 - bbox.left) + 'px';
+          style.left = (e.x + 5 + bbox.left) + 'px';
           this.tooltip.className = 'tooltip show';
 
           this.tooltip.innerHTML = textName;
@@ -422,8 +420,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/lala.jpg', 'img/topographic.jpg'],
-      // src: ['img/topographic.jpg'],
+      src: ['img/lala.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -528,12 +525,7 @@ function createApp() {
           toScreen: true,
           program: 'glow',
           width: 1024,
-          height: 1024,
-          uniforms: {
-            horizontal: false,
-            width: 1024,
-            height: 1024
-          }
+          height: 1024
         });
 
         Fx.requestAnimationFrame(draw);

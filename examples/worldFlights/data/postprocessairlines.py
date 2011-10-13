@@ -1,3 +1,14 @@
+def cities(): 
+    ans = []
+    with open('airports.dat', 'r') as f_in:
+        with open('cities.csv', 'w') as f_out:
+            for line in f_in:
+                fields = line.split(',')
+                print fields
+                ans.append(','.join([fields[1], fields[2], fields[3], fields[-5], fields[-4]]))
+
+            f_out.write('\n'.join(ans))
+
 def airlines():
   ans = []
   with open('airlines.csv', 'r') as f_airline_csv:
@@ -64,5 +75,5 @@ def get_country_lat_lon(country_code, text_country_lat):
     return False, False
 
 if __name__ == '__main__':
-  airlines()
-
+  # airlines()
+    cities()
