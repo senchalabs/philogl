@@ -13,6 +13,7 @@ var $ = function(id) { return document.getElementById(id); },
       duration: 1000,
       transition: Fx.Transition.Expo.easeInOut
     }),
+    isFirefox = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
     airlineList, pos, tooltip;
 
 //Get handles when document is ready
@@ -335,8 +336,8 @@ function createApp() {
       }
     },
     events: {
-      picking: !(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
-      lazyPicking: true,
+      picking: true,
+      lazyPicking: !isFirefox,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};

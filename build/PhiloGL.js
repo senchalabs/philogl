@@ -4158,7 +4158,9 @@ $.splat = (function() {
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+      Mat4 = PhiloGL.Mat4,
+      //don't ask why, it just works
+      generateMipmap = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/));
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -4428,11 +4430,12 @@ $.splat = (function() {
     setupPicking: function() {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
-          pickingRes = Scene.PICKING_RES;
+          pickingRes = Scene.PICKING_RES,
+          floor = Math.floor;
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: app.canvas.width / pickingRes >> 0,
-        height: app.canvas.height / pickingRes >> 0,
+        width: floor(app.canvas.width / pickingRes),
+        height: floor(app.canvas.height / pickingRes),
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -4440,7 +4443,7 @@ $.splat = (function() {
           }, {
             name: 'TEXTURE_MIN_FILTER',
             value: 'LINEAR',
-            generateMipmap: false
+            generateMipmap: generateMipmap
           }]
         },
         bindToRenderBuffer: true
@@ -4475,20 +4478,21 @@ $.splat = (function() {
           memoFog = config.effects.fog,
           width = gl.canvas.width,
           height = gl.canvas.height,
-          resWidth = width / pickingRes >> 0,
-          resHeight = height / pickingRes >> 0,
+          floor = Math.floor,
+          resWidth = floor(width / pickingRes),
+          resHeight = floor(height / pickingRes),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, 
-          backgroundColor;
+          backgroundColor, capture, pindex;
 
       //setup the scene for picking
       config.lights.enable = false;
       config.effects.fog = false;
       
       //enable picking and render to texture
-      pickingProgram.use();
       app.setFrameBuffer('$picking', true);
+      pickingProgram.use();
       pickingProgram.setUniform('enablePicking', true);
       
       //render the scene to a texture
@@ -4522,13 +4526,17 @@ $.splat = (function() {
           }
         }
       });
-      
-      //grab the color of the pointed pixel in the texture
-      var capture = new Uint8Array(4 * resWidth * resHeight);
-      gl.readPixels(0, 0, resWidth, resHeight, gl.RGBA, gl.UNSIGNED_BYTE, capture);
-      var pindex = (((x + (height - y) * resWidth) / pickingRes) >> 0) * 4;
-      pixel = [capture[pindex], capture[pindex + 1], capture[pindex + 2], capture[pindex + 3]];
-      // gl.readPixels((x / pickingRes) >> 0, ((height - y) / pickingRes) >> 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+     
+      if (lazy) {
+        //grab the color of the pointed pixel in the texture
+        capture = new Uint8Array(4 * resWidth * resHeight);
+        gl.readPixels(0, 0, resWidth, resHeight, gl.RGBA, gl.UNSIGNED_BYTE, capture);
+        pindex = floor((x + (height - y) * resWidth) / pickingRes) * 4;
+        pixel = [capture[pindex], capture[pindex + 1], capture[pindex + 2], capture[pindex + 3]];
+      } else {
+        gl.readPixels(floor(x / pickingRes), floor((height - y) / pickingRes), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      } 
+
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
           pick;
@@ -4547,6 +4555,7 @@ $.splat = (function() {
 
       //restore all values and unbind buffers
       app.setFrameBuffer('$picking', false);
+      app.setTexture('$picking-texture', false);
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
@@ -4568,9 +4577,10 @@ $.splat = (function() {
           width = canvas.width,
           height = canvas.height,
           pickingRes = Scene.PICKING_RES,
+          floor = Math.floor,
           resWidth = width / pickingRes >> 0,
           resHeight = height / pickingRes >> 0,
-          index = (((x + (height - y) * resWidth) / pickingRes) >> 0) * 4,
+          index = floor((x + (height - y) * resWidth) / pickingRes) * 4,
           capture = this.capture,
           pixel = [capture[index], capture[index + 1], capture[index + 2], capture[index + 3]],
           stringColor = [pixel[0], pixel[1], pixel[2]].join(),
