@@ -7,7 +7,6 @@ examples/explorer export-ignore
 examples/brain export-ignore
 examples/metaballs export-ignore
 examples/quaternion export-ignore
-examples/hoc export-ignore
 examples/histogram export-ignore
 examples/worldFlights export-ignore
 examples/mapProjections export-ignore
