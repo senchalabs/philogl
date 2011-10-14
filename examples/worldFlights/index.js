@@ -19,8 +19,6 @@ var $ = function(id) { return document.getElementById(id); },
 //Get handles when document is ready
 document.onreadystatechange = function() {
   if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
-    // var stats = new xStats();
-    // document.body.appendChild(stats.element);
     
     airlineList = $('airline-list');
     tooltip = $('tooltip');
@@ -221,11 +219,11 @@ function centerAirline(airlineId) {
   fx.start({
     onCompute: function(delta) {
       rotateXY(phiDiff * delta, thetaDiff * delta);
+      geom.phi = phiPrev + phiDiff * delta;
+      geom.theta = thetaPrev + thetaDiff * delta;
     },
 
     onComplete: function() {
-      geom.phi = phi;
-      geom.theta = theta;
       centerAirline.app.scene.resetPicking();
     }
   });

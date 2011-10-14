@@ -180,12 +180,6 @@ RightMenu.prototype = {
 var AirlineManager = function(data, models) {
 
   var airlineIdColor = {};
-
-  var fx = new Fx({
-    delay: 500,
-    duration: 1500,
-    transition: Fx.Transition.Quart.easeOut
-  });
   
   var availableColors = {
     '171, 217, 233': 0,
@@ -271,6 +265,10 @@ var AirlineManager = function(data, models) {
             }
           }
         });
+
+        model.fx = new Fx({
+          transition: Fx.Transition.Quart.easeOut
+        });
       }
       
       this.show(model);
@@ -296,7 +294,7 @@ var AirlineManager = function(data, models) {
     show: function(model) {
       model.uniforms.animate = true;
       this.app.scene.add(model);
-      fx.start({
+      model.fx.start({
         delay: 0,
         duration: 1800,
         onCompute: function(delta) {
@@ -311,7 +309,7 @@ var AirlineManager = function(data, models) {
     hide: function(model) {
       var me = this;
       model.uniforms.animate = true;
-      fx.start({
+      model.fx.start({
         delay: 0,
         duration: 900,
         onCompute: function(delta) {
