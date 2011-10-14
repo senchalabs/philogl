@@ -70,6 +70,9 @@
           <a href="io.html">IO</a>
         </li>
        <li>
+          <a href="media.html">Media</a>
+        </li>
+       <li>
           <a href="workers.html">Workers</a>
         </li>
      </ul>
@@ -89,6 +92,16 @@
 <h1 id='Scene'>Class: Scene</h1>
 
 <p>The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that plays well with objects created with <a href='o3d.html'>O3D</a> and the default shaders in <a href='shaders.html'>Shaders</a> to enable rendering of multiple models in the scene with different options. The Scene role is to connect the properties set in the <a href='o3d.html'>O3D</a> models to the attributes defined in the shaders so that the buffer creation and updating is transparent to the user. The good thing about the design though is that the Scene provides many callback functions that can be executed at different stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you to create your own shader files that are compatible with the <a href='scene.html'>Scene</a> class. Some examples of <a href='scene.html'>Scene</a> compatible shader files can be found <a href='https://github.com/philogb/philogl/tree/master/shaders'>here</a>. Also, for more information about the default shaders take a look at the <a href='shaders.html'>Shaders</a> class. The <a href='o3d.html'>O3D</a> options describe how to override or set callbacks when rendering objects with a default scene.</p>
+
+<h3 id='scene_static_properties'>Scene Static Properties</h3>
+
+<ul>
+<li>PICKING_RES - Used to set the default resolution for the texture / image used for color picking. Default value is <code>4</code>. For best picking precision use <code>1</code>.</li>
+</ul>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>PhiloGL.Scene.PICKING_RES = 1;</code></pre>
 
 <h2 id='Scene:constructor'>Scene Method: constructor</h2>
 
@@ -359,6 +372,13 @@
 <span class='p'>}</span>
 </code></pre>
 </div>
+<h2 id='Scene:resetPicking'>Scene Method: resetPicking</h2>
+
+<p>Clear framebuffers and previous scene captures and restart the picking routine without any cached values. Generally used when <code>lazyPicking</code> is set to <code>true</code> in <a href='event.html#Events:create'>Events.create</a>.</p>
+
+<h3 id='syntax'>Syntax:</h3>
+
+<pre><code>scene.resetPicking();</code></pre>
 
   
 <div class="footer">

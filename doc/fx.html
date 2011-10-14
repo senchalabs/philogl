@@ -70,6 +70,9 @@
           <a href="io.html">IO</a>
         </li>
        <li>
+          <a href="media.html">Media</a>
+        </li>
+       <li>
           <a href="workers.html">Workers</a>
         </li>
      </ul>
@@ -109,7 +112,9 @@
 <ul>
 <li>duration - (<em>numer</em>, optional) The duration of the animation in milliseconds. Default&#8217;s 1000.</li>
 
-<li>transition - (<em>object</em>, optional) One of the tweening functions in Fx.Transition (described below). Default&#8217;s Fx.Transition.Quart.easeInOut.</li>
+<li>delay - (<em>numer</em>, optional) The delay before triggering the animation in milliseconds. Default&#8217;s 0.</li>
+
+<li>transition - (<em>object</em>, optional) One of the tweening functions in Fx.Transitions (described below). Default&#8217;s Fx.Transition.Quart.easeInOut.</li>
 
 <li>onCompute - (<em>function</em>) A callback for each step of the animation. The first parameter of the callback is <em>delta</em> a number between <span>0, 1</span>.</li>
 
@@ -214,6 +219,10 @@
   <span class='p'>},</span> <span class='mi'>1000</span> <span class='o'>/</span> <span class='mi'>60</span><span class='p'>);</span>
 </code></pre>
 </div>
+<h3 id='notes'>Notes:</h3>
+
+<p>When using <code>Fx.requestAnimationFrame</code> there&#8217;s no need to use this method, since an internal queue that calls animations steps is used automatically. The only methods generally used are then the <code>Fx</code> constructor and the <code>start</code> method.</p>
+
 <h2 id='Fx:compute'>Fx Method: compute</h2>
 
 <p><code>Fx.compute</code> is a static method that performs a linear number interpolation (lerp) for a given delta value.</p>

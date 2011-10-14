@@ -4,7 +4,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-size: 0.9em;
-  background-color: rgb(50, 50, 50);
+  background-color: rgb(51, 51, 51);
   color: white;
 }
 
@@ -47,9 +47,10 @@ body.no-webgl div.fallback {
 
 div.tooltip {
   position: absolute;
-  color: white;
+  color: black;
   padding: 5px;
-  background-color: #111;
+  background-color: #fff;
+  border: 1px solid #555;
   /*
   border-radius: 0.5em;
   border: 1px solid #ccc;
@@ -61,15 +62,14 @@ div.tooltip {
   -o-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   */
   font-size: 0.8em;
-  opacity: 0;
 }
 
 div.tooltip.show {
-  opacity: 1;
+  display: block;
 }
 
 div.tooltip.hide {
-  opacity: 0;
+  display: none;
 }
 
 #log-panel {
@@ -84,6 +84,7 @@ div.tooltip.hide {
   font-weight: bold;
   font-size: 1em;
   z-index: 4000;
+  border-bottom-left-radius: 0.5em;
 }
 
 
@@ -108,59 +109,123 @@ h1 {
 
 .canvas-container {
   margin: auto;
+  overflow: visible;
 }
 
-.canvas-container canvas, 
+.canvas-container #canvas-wrapper, 
 .canvas-container .list-wrapper {
   float: left;
 }
 
-.list-wrapper {
-  position: relative;
+#canvas-wrapper {
+  width: 700px;
+  height: 600px;
+  overflow: hidden;
 }
 
-.mask {
+#canvas-wrapper > canvas {
+  margin-top: -212px;
+  margin-left: -162px;
+}
+
+.list-wrapper::after {
+  content: '';
+
   position: absolute;
   bottom: 0;
-  width: 185px;
+  width: 250px;
   height: 30px;
   
-  background: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
-  background: -moz-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
-  background: -o-linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
-  background: linear-gradient(top, rgba(50, 50, 50, 0.3), rgba(50, 50, 50, 1));
+  background: -webkit-linear-gradient(top, rgba(51, 51, 51, 0.3), rgba(51, 51, 51, 1));
+  background: -moz-linear-gradient(top, rgba(51, 51, 51, 0.3), rgba(51, 51, 51, 1));
+  background: -o-linear-gradient(top, rgba(51, 51, 51, 0.3), rgba(51, 51, 51, 1));
+  background: linear-gradient(top, rgba(51, 51, 51, 0.3), rgba(51, 51, 51, 1));
 }
 
 input#search {
-  width: 180px;
+  width: 240px;
 }
 
-.list-wrapper, 
 .list-container {
   height: 512px;
 }
 
 .list-container {
   overflow: auto;
-  width: 200px;
+  width: 270px;
 }
 
 .list-wrapper {
+  position: relative;
   overflow: hidden;
-  width: 185px;
+  width: 250px;
+  height: 560px;
+}
+
+#tip {
+  font-size: 0.8em;
+  font-style: italic;
+  color: white;
+  padding-top: 15px;
+  text-align: left;
+  text-indent: 5px;
+}
+
+ul#selected-airlines {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0.8em;
+}
+
+ul#selected-airlines > li {
+  position: relative;
+  list-style: none;
+  display: block;
+  color: white;
+  padding: 0;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+ul#selected-airlines > li:hover {
+  text-decoration: underline;
+}
+
+ul#selected-airlines > li:nth-last-child(1) {
+  border-bottom: 1px solid white;
+  padding-bottom: 10px;
+}
+
+ul#selected-airlines > li .square {
+  float: left;
+  width: 10px;
+  height: 10px;
+  margin: 1px 4px 0 2px;
+  border: 1px solid #555;
+  border-radius: 1em;
+}
+
+ul#selected-airlines > li > input {
+  float: left;
 }
 
 ul#airline-list {
   font-size: 0.8em;
   list-style: none;
   padding: 0;
+  margin-top: 1px;
 }
 
-ul#airline-list li {
+ul#airline-list > li {
   list-style: none;
   display: block;
   text-align: left;
   color: white;
+}
+
+ul#airline-list > li > label {
+  cursor: pointer;
 }
 
 canvas {

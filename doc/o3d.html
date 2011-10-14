@@ -70,6 +70,9 @@
           <a href="io.html">IO</a>
         </li>
        <li>
+          <a href="media.html">Media</a>
+        </li>
+       <li>
           <a href="workers.html">Workers</a>
         </li>
      </ul>
@@ -143,12 +146,6 @@
 
 <li>indices - (<em>array</em>, optional) An array of numbers describing the vertex indices for each face.</li>
 
-<li>shininess - (<em>number</em>, optional) A number between <span>0.1, 200</span> describing how shiny an object is.</li>
-
-<li>reflection - (<em>number</em>, optional) A number between <span>0, 1</span> describing the reflectivity of an object.</li>
-
-<li>refraction - (<em>number</em>, optional) A number between <span>0, 1</span> describing the refraction index of an object.</li>
-
 <li>attributes - (<em>object</em>, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more about attribute descriptors you can find a description of them in <a href='program.html#Program:setBuffer'>program.setBuffer</a>.</li>
 
 <li>uniforms - (<em>object</em>, optional) An object with uniform names and values to be set before rendering the model.</li>
@@ -182,6 +179,14 @@
 <li>If you set a <code>color</code> attribute as a single color, then the array will be cloned to match the number of components for the model and will be served as an attribute. The getter for this property will return the cloned typed array.</li>
 
 <li><code>toFloat32Array</code> and <code>toUint16Array</code> methods are not used anymore since the typed array can now be fetched when accessing the model property directly.</li>
+
+<li><code>shininess</code>, <code>reflection</code> and <code>refraction</code> properties are now set in the <code>uniforms</code> object. Below is a description of the attributes.</li>
+
+<li>shininess - (<em>number</em>, optional) A number between <span>0.1, 200</span> describing how shiny an object is.</li>
+
+<li>reflection - (<em>number</em>, optional) A number between <span>0, 1</span> describing the reflectivity of an object.</li>
+
+<li>refraction - (<em>number</em>, optional) A number between <span>0, 1</span> describing the refraction index of an object.</li>
 </ul>
 
 <h3 id='examples'>Examples:</h3>

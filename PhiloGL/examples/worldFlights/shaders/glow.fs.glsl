@@ -25,14 +25,14 @@ void main(void) {
   if (hasTexture1 && hasTexture2) {
     //Add glow
     for (int i = - BLUR_LIMIT; i < BLUR_LIMIT; i++) {
-      dx = float(i) / 1024.0;
+      dx = float(i) / 512.0;
       for (int j = - BLUR_LIMIT; j < BLUR_LIMIT; j++) {
-        dy = float(j) / 1024.0;
-        fragmentColor += texture2D(sampler1, vec2((1.0 - vTexCoord1.s) + dx, vTexCoord1.t + dy)) / BLUR_LIMIT_SQ;
+        dy = float(j) / 512.0;
+        fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s + dx, vTexCoord1.t + dy)) / BLUR_LIMIT_SQ;
       }
     }
     //Add real image
-    fragmentColor += texture2D(sampler2, vec2((1.0 - vTexCoord1.s), vTexCoord1.t));
+    fragmentColor += texture2D(sampler2, vec2(vTexCoord1.s, vTexCoord1.t));
   }
   gl_FragColor = vec4(fragmentColor.rgb, 1.0);
 }

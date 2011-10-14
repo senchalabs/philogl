@@ -1,11 +1,25 @@
 //Unpack modules
 PhiloGL.unpack();
+Scene.PICKING_RES = 1;
+
+//some locals
+var $ = function(id) { return document.getElementById(id); },
+    $$ = function(selector) { return document.querySelectorAll(selector); },
+    citiesWorker = new Worker('cities.js'),
+    data = { citiesRoutes: {}, airlinesRoutes: {} },
+    models = { airlines: {} }, geom = {},
+    airlineMgr = new AirlineManager(data, models),
+    fx = new Fx({
+      duration: 1000,
+      transition: Fx.Transition.Expo.easeInOut
+    }),
+    isFirefox = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
+    airlineList, pos, tooltip;
 
 //Get handles when document is ready
 document.onreadystatechange = function() {
   if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
-    logPanel = $('log-panel');
-    logMessage = $('log-message');
+    
     airlineList = $('airline-list');
     tooltip = $('tooltip');
 
@@ -33,7 +47,7 @@ document.onreadystatechange = function() {
           timer = setTimeout(function() { 
             search(trimmed.toLowerCase()); 
             previousText = trimmed;
-          }, 300);
+          }, 100);
         }
       };
 
@@ -44,73 +58,19 @@ document.onreadystatechange = function() {
   }
 };
 
-//some locals
-var $ = function(id) { return document.getElementById(id); },
-    $$ = function(selector) { return document.querySelectorAll(selector); },
-    citiesWorker = new Worker('cities.js'),
-    data = { citiesRoutes: {}, airlinesRoutes: {} },
-    models = {},
-    logPanel, logMessage, airlineList, pos, tooltip, mapCanvas;
-
-//Log singleton
-var Log = {
-  elem: null,
-  timer: null,
-  
-  getElem: function() {
-    if (!this.elem) {
-      return (this.elem = $('log-message'));
-    }
-    return this.elem;
-  },
-  
-  write: function(text, hide) {
-    if (this.timer) {
-      this.timer = clearTimeout(this.timer);
-    }
-    
-    var elem = this.getElem(),
-        style = elem.parentNode.style;
-
-    elem.innerHTML = text;
-    style.display = '';
-
-    if (hide) {
-      this.timer = setTimeout(function() {
-        style.display = 'none';
-      }, 2000);
-    }
-  }
-};
-
 //Create earth
 models.earth = new O3D.Sphere({
-  nlat: 50,
-  nlong: 50,
+  nlat: 150,
+  nlong: 150,
   radius: 1,
-  shininess: 10,
-  textures: ['img/earth3-specular.gif'],
+  uniforms: {
+    shininess: 32
+  },
+  textures: ['img/lala.jpg'],
   program: 'earth'
 });
-models.earth.rotation.set(Math.PI - 0.3, 0,  0);
+models.earth.rotation.set(Math.PI, 0,  0);
 models.earth.update();
-
-//Create airline routes model
-models.airlines = new O3D.Model({
-  program: 'layer',
-  uniforms: {
-    colorUfm: [0.3, 0.3, 0.6, 1]
-  },
-  render: function(gl, program, camera) {
-    if (this.indices && this.indices.length) {
-      gl.lineWidth(1);
-      gl.drawElements(gl.LINES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-      this.dynamic = false;
-    }
-  }
-});
-models.airlines.rotation.set(-0.3, 0, 0);
-models.airlines.update();
 
 //Create cities layer model and create PhiloGL app.
 citiesWorker.onmessage = function(e) {
@@ -121,6 +81,9 @@ citiesWorker.onmessage = function(e) {
   } else {
     data.citiesIndex = modelInfo.citiesIndex;
     models.cities = new O3D.Model(Object.create(modelInfo, {
+      pickable: { 
+        value: true
+      },
       //Add a custom picking method
       pick: {
         value: function(pixel) {
@@ -135,13 +98,10 @@ citiesWorker.onmessage = function(e) {
 
       render: {
         value: function(gl, program, camera) {
-          gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+          gl.drawElements(gl.TRIANGLES, this.$indicesLength, gl.UNSIGNED_SHORT, 0);
         }
       }
     }));
-    models.cities.rotation.set(-0.3, 0, 0);
-    models.cities.update();
-
     Log.write('Loading assets...');
     createApp();
   }
@@ -158,7 +118,8 @@ function loadData() {
       Log.write('Building models...');
     },
     onProgress: function(e) {
-      Log.write('Loading airports data, please wait...' + (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
+      Log.write('Loading airports data, please wait...' + 
+                (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
     },
     onError: function() {
       Log.write('There was an error while fetching cities data.', true);
@@ -170,15 +131,33 @@ function loadData() {
     url: 'data/airlines.json',
     onSuccess: function(json) {
       var airlines = data.airlines = JSON.parse(json),
-          html = [];
+          airlinePos = data.airlinePos = {},
+          html = [],
+          pi = Math.PI,
+          pi2 = pi * 2,
+          sin = Math.sin,
+          cos = Math.cos,
+          phi, theta, sinTheta, cosTheta, sinPhi, cosPhi;
       //assuming the data will be available after the document is ready...
-      for (var i = 0, l = airlines.length; i < l; i++) {
-        var airlineId = airlines[i][0],
-            airlineName = airlines[i][1];
-        html.push('<label for=\'checkbox-' + airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' + airlineId + '\' /> ' + airlineName + '</label>');
+      for (var i = 0, l = airlines.length -1; i < l; i++) {
+        var airline = airlines[i],
+            airlineId = airline[0],
+            airlineName = airline[1];
+
+        phi = pi - (+airline[3] + 90) / 180 * pi;
+        theta = pi2 - (+airline[4] + 180) / 360 * pi2;
+        sinTheta = sin(theta);
+        cosTheta = cos(theta);
+        sinPhi = sin(phi);
+        cosPhi = cos(phi);
+        
+        airlinePos[airlineId] = [ cosTheta * sinPhi, cosPhi, sinTheta * sinPhi, phi, theta ];
+
+        html.push('<label for=\'checkbox-' + 
+                  airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' + 
+                      airlineId + '\' /> ' + airlineName + '</label>');
       }
-      //append all elements
-      airlineList.innerHTML = '<li>' + html.join('</li><li>') + '</li>';
+
       //when an airline is selected show all paths for that airline
       airlineList.addEventListener('change', function(e) {
         var target = e.target,
@@ -186,9 +165,10 @@ function loadData() {
         
         function callback() {
           if (target.checked) {
-            airlineManager.add(airlineId);
+            airlineMgr.add(airlineId);
+            centerAirline(airlineId);
           } else {
-            airlineManager.remove(airlineId);
+            airlineMgr.remove(airlineId);
           }
         }
 
@@ -209,6 +189,11 @@ function loadData() {
           }).send();
         }
       }, false);
+      
+      //create right menu
+      var rightMenu = new RightMenu(airlineList, airlineMgr);
+      rightMenu.load('<li>' + html.join('</li><li>') + '</li>');
+    
     },
     onError: function() {
       Log.write('There was an error while fetching airlines data.', true);
@@ -216,114 +201,82 @@ function loadData() {
   }).send();
 }
 
-//Takes care of adding and removing routes
-//for the selected airlines
-var airlineManager = {
-  airlineIds: [],
-
-  add: function(airline) {
-    var airlineIds = this.airlineIds,
-        routes = data.airlinesRoutes[airline],
-        airlines = models.airlines,
-        slice = Array.prototype.slice,
-        vertices = slice.call(airlines.vertices || []),
-        indices = slice.call(airlines.indices || []),
-        offset = vertices.length / 3,
-        samplings = 10;
-
-    for (var i = 0, l = routes.length; i < l; i++) {
-      var ans = this.createRoute(routes[i], i * samplings + offset);
-      vertices.push.apply(vertices, ans.vertices);
-      indices.push.apply(indices, ans.indices);
-    }
+//center the airline
+function centerAirline(airlineId) {
+  var pos = data.airlinePos[airlineId],
+      earth = models.earth,
+      cities = models.cities,
+      phi = pos[3],
+      theta = pos[4],
+      phiPrev = geom.phi || Math.PI / 2,
+      thetaPrev = geom.theta || (3 * Math.PI / 2),
+      phiDiff = phi - phiPrev,
+      thetaDiff = theta - thetaPrev;
     
-    airlines.vertices = vertices;
-    airlines.indices = indices;
-    airlines.dynamic = true;
-    airlineIds.push(airline);
-  },
+  geom.matEarth = earth.matrix.clone();
+  geom.matCities = cities.matrix.clone();
+
+  fx.start({
+    onCompute: function(delta) {
+      rotateXY(phiDiff * delta, thetaDiff * delta);
+      geom.phi = phiPrev + phiDiff * delta;
+      geom.theta = thetaPrev + thetaDiff * delta;
+    },
+
+    onComplete: function() {
+      centerAirline.app.scene.resetPicking();
+    }
+  });
+}
+//rotate the planet of phi and theta angles
+function rotateXY(phi, theta) {
+  var earth = models.earth,
+      cities = models.cities,
+      airlines = models.airlines,
+      xVec = [1, 0, 0],
+      yVec = [0, 1, 0],
+      yVec2 =[0, -1, 0];
   
-  remove: function(airline) {
-    var airlines = models.airlines,
-        routes = data.airlinesRoutes[airline],
-        nroutes = routes.length,
-        slice = Array.prototype.slice,
-        vertices = slice.call(airlines.vertices),
-        indices = slice.call(airlines.indices),
-        airlineIds = this.airlineIds,
-        index = airlineIds.indexOf(airline),
-        samplings = 10;
+  earth.matrix = geom.matEarth.clone();
+  cities.matrix = geom.matCities.clone();
+      
+  var m1 = new Mat4(),
+      m2 = new Mat4();
+  
+  m1.$rotateAxis(phi, xVec);
+  m2.$rotateAxis(phi, xVec);
 
-    for (var i = 0, nacum = 0; i < index; i++) {
-      nacum += data.airlinesRoutes[airlineIds[i]].length;
-    }
+  m1.$mulMat4(earth.matrix);
+  m2.$mulMat4(cities.matrix);
 
-    airlineIds.splice(index, 1);
-    vertices.splice(samplings * 3 * nacum, nroutes * samplings * 3);
-    indices.splice((samplings - 1) * 2 * nacum, nroutes * (samplings - 1) * 2);
+  var m3 = new Mat4(),
+      m4 = new Mat4();
+  
+  m3.$rotateAxis(theta, yVec2);
+  m4.$rotateAxis(theta, yVec);
 
-    for (var i = (samplings - 1) * 2 * nacum, l = indices.length; i < l; i++) {
-      indices[i] -= (samplings * nroutes);
-    }
-    airlines.vertices = vertices;
-    airlines.indices = indices;
-    airlines.dynamic = true;
-  },
+  m1.$mulMat4(m3);
+  m2.$mulMat4(m4);
 
-  //creates a quadratic bezier curve as a route
-  createRoute: function(route, offset) {
-    var pi = Math.PI,
-        pi2 = pi * 2,
-        sin = Math.sin,
-        cos = Math.cos,
-        city1 = data.cities[route[2] + '^' + route[1]],
-        city2 = data.cities[route[4] + '^' + route[3]],
-        city = [city1[2], city1[3], city2[2], city2[3]],
-        theta1 = pi2 - (+city[1] + 180) / 360 * pi2,
-        phi1 = pi - (+city[0] + 90) / 180 * pi,
-        sinTheta1 = sin(theta1),
-        cosTheta1 = cos(theta1),
-        sinPhi1 = sin(phi1),
-        cosPhi1 = cos(phi1),
-        p1 = new Vec3(cosTheta1 * sinPhi1, cosPhi1, sinTheta1 * sinPhi1),
-        theta2 = pi2 - (+city[3] + 180) / 360 * pi2,
-        phi2 = pi - (+city[2] + 90) / 180 * pi,
-        sinTheta2 = sin(theta2),
-        cosTheta2 = cos(theta2),
-        sinPhi2 = sin(phi2),
-        cosPhi2 = cos(phi2),
-        p2 = new Vec3(cosTheta2 * sinPhi2, cosPhi2, sinTheta2 * sinPhi2),
-        p3 = p2.add(p1).$scale(0.5).$unit().$scale(1.5),
-        pArray = [],
-        pIndices = [],
-        t = 0,
-        count = 0,
-        samplings = 10,
-        deltat = 1 / samplings,
-        pt, offset;
-
-    while(samplings--) {
-      pt = p1.scale((1 - t) * (1 - t)).$add(p3.scale(2 * (1 - t) * t)).$add(p2.scale(t * t));
-      pArray.push(pt.x, pt.y, pt.z);
-      if (t != 0) {
-        pIndices.push(count, count + 1);
-        count++;
-      }
-      t += deltat;
-    }
-
-    return {
-      vertices: pArray,
-      indices: pIndices.map(function(i) { return i + offset; })
-    };
+  earth.matrix = m1;
+  cities.matrix = m2;
+  for (var name in airlines) {
+    airlines[name].matrix = m2;
   }
-};
-
+}
 
 function createApp() {
   //Create application
   PhiloGL('map-canvas', {
     program: [{
+      //to render cities and routes
+      id: 'airline_layer',
+      from: 'uris',
+      path: 'shaders/',
+      vs: 'airline_layer.vs.glsl',
+      fs: 'airline_layer.fs.glsl',
+      noCache: true
+    }, {
       //to render cities and routes
       id: 'layer',
       from: 'uris',
@@ -350,7 +303,7 @@ function createApp() {
     }],
     camera: {
       position: {
-        x: 0, y: 0, z: -4
+        x: 0, y: 0, z: -5.125
       }
     },
     scene: {
@@ -363,63 +316,110 @@ function createApp() {
         },
         points: {
           diffuse: { 
-            r: 0.7, 
-            g: 0.7, 
-            b: 0.7 
+            r: 0.8, 
+            g: 0.8, 
+            b: 0.8 
           },
           specular: { 
-            r: 0.5, 
-            g: 0.5, 
-            b: 0.5 
+            r: 0.9, 
+            g: 0.9, 
+            b: 0.9 
           },
           position: { 
-            x: 3, 
-            y: 3, 
-            z: -5 
+            x: 2, 
+            y: 2, 
+            z: -4 
           }
         }
       }
     },
     events: {
+      picking: true,
+      lazyPicking: !isFirefox,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
         pos.x = e.x;
         pos.y = e.y;
-        pos.ycache = pos.ycache || 0;
+        pos.started = true;
+        
+        geom.matEarth = models.earth.matrix.clone();
+        geom.matCities = models.cities.matrix.clone();
       },
       onDragMove: function(e) {
-        var z = this.camera.position.z,
-            sign = Math.abs(z) / z,
-            earth = models.earth,
-            erot = earth.rotation,
-            cities = models.cities,
-            crot = cities.rotation,
-            airlines = models.airlines,
-            arot = airlines.rotation,
-            cos = Math.cos,
-            sin = Math.sin;
+        var phi = geom.phi,
+            theta = geom.theta,
+            clamp = function(val, min, max) {
+                return Math.max(Math.min(val, max), min);
+            },
+            y = -(e.y - pos.y) / 100,
+            x = (e.x - pos.x) / 100;
 
-        erot.y += -(pos.x - e.x) / 100;
-        crot.y += -(pos.x - e.x) / 100;
-        arot.y += -(pos.x - e.x) / 100;
+        rotateXY(y, x);
         
-        earth.update();
-        cities.update();
-        airlines.update();
-        
-        earth.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(erot.y), 0, -sin(erot.y)]);
-        cities.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(crot.y), 0, sin(crot.y)]);
-        airlines.matrix.$rotateAxis(pos.ycache + (pos.y - e.y) / 300, [cos(arot.y), 0, sin(arot.y)]);
-        
-        pos.x = e.x;
       },
       onDragEnd: function(e) {
-        pos.ycache += (pos.y - e.y) / 300;
+        var y = -(e.y - pos.y) / 100,
+            x = (e.x - pos.x) / 100,
+            newPhi = (geom.phi + y) % Math.PI,
+            newTheta = (geom.theta + x) % (Math.PI * 2);
+
+        newPhi = newPhi < 0 ? (Math.PI + newPhi) : newPhi;
+        newTheta = newTheta < 0 ? (Math.PI * 2 + newTheta) : newTheta;
+        
+        geom.phi = newPhi;
+        geom.theta = newTheta;
+        
+        pos.started = false;
+        
+        this.scene.resetPicking();
+      },
+      onMouseWheel: function(e) {
+        var camera = this.camera,
+            from = -5.125,
+            to = -2.95,
+            pos = camera.position,
+            pz = pos.z;
+            speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001;
+
+        pos.z += e.wheel * speed;
+        
+        if (pos.z > to) {
+            pos.z = to;
+        } else if (pos.z < from) {
+            pos.z = from;
+        }
+        
+        clearTimeout(this.resetTimer);
+        this.resetTimer = setTimeout(function(me) {
+          me.scene.resetPicking();
+        }, 500, this);
+
+        camera.update();
+      },
+      onMouseEnter: function(e, model) {
+        if (model) {
+          clearTimeout(this.timer);
+          var style = tooltip.style,
+              name = data.citiesIndex[model.$pickingIndex].split('^'),
+              textName = name[1][0].toUpperCase() + name[1].slice(1) + ', ' + name[0][0].toUpperCase() + name[0].slice(1),
+              bbox = this.canvas.getBoundingClientRect();
+
+          style.top = (e.y + 10 + bbox.top) + 'px';
+          style.left = (e.x + 5 + bbox.left) + 'px';
+          this.tooltip.className = 'tooltip show';
+
+          this.tooltip.innerHTML = textName;
+        }
+      },
+      onMouseLeave: function(e, model) {
+        this.timer = setTimeout(function(me) {
+          me.tooltip.className = 'tooltip hide';
+        }, 500, this);
       }
     },
     textures: {
-      src: ['img/earth3-specular.gif'],
+      src: ['img/lala.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -443,37 +443,20 @@ function createApp() {
           width = canvas.width,
           height = canvas.height,
           program = app.program,
-          renderCamera = new Camera(camera.fov, 
-                                    camera.aspect, 
-                                    camera.near, 
-                                    camera.far, {
-            position: { x: 0, y: 0, z: -4.125 }
-          }),
-          renderScene = new Scene(program, renderCamera),
-          glowScene = new Scene(program, camera, scene.config),
           clearOpt = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
 
-      renderCamera.update();
-      app.renderCamera = renderCamera;
-       
+      app.tooltip = $('tooltip');
+      //nasty
+      centerAirline.app = app;
+      airlineMgr.app = app;
+
       gl.clearColor(0.1, 0.1, 0.1, 1);
       gl.clearDepth(1);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       
-      models.frontPlane = new O3D.Plane({
-        type: 'x,y',
-        xlen: width / 100,
-        ylen: height / 100,
-        nx: 5,
-        ny: 5,
-        offset: 0,
-        textures: ['glow-texture', 'render-texture'],
-        program: 'glow'
-      });
-
       //create shadow, glow and image framebuffers
-      var framebufferOptions = {
+      app.setFrameBuffer('world', {
         width: 1024,
         height: 1024,
         bindToTexture: {
@@ -487,64 +470,59 @@ function createApp() {
           }]
         },
         bindToRenderBuffer: true
-      };
-
-      app.setFrameBuffers({
-        glow: framebufferOptions,
-        render:framebufferOptions
+      }).setFrameBuffer('world2', {
+        width: 1024,
+        height: 1024,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR_MIPMAP_NEAREST',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
       });
 
       //picking scene
       scene.add(models.earth,
-                models.cities,
-                models.airlines);
+                models.cities);
 
-      //rendered on-screen scene
-      renderScene.add(models.frontPlane);
-
-      //post processing glow scene
-      glowScene.add(models.earth,
-                    models.cities,
-                    models.airlines);
-     
       draw();
       
       //Select first airline
       $$('#airline-list li input')[0].click();
       $('list-wrapper').style.display = '';
 
-      function draw() {
-        gl.clearColor(0.1, 0.1, 0.1, 1);
-        gl.viewport(0, 0, 1024, 1024);
-        drawTextures();
-        
-        gl.viewport(0, 0, width, height);
-        drawEarth();
-      }
-
-      function drawTextures() {
-        var earthProg = program.earth;
-        //render to a texture to be blurred
-        app.setFrameBuffer('glow', true);
-        gl.clear(clearOpt);
-        earthProg.use();
-        earthProg.setUniform('renderType',  0);
-        glowScene.renderToTexture('glow');
-        app.setFrameBuffer('glow', false);
-        
-        //render the actual picture with the planet and all
-        app.setFrameBuffer('render', true);
-        gl.clear(clearOpt);
-        earthProg.use();
-        earthProg.setUniform('renderType', -1);
-        scene.renderToTexture('render');
-        app.setFrameBuffer('render', false);
-      }
-
       //Draw to screen
-      function drawEarth() {
+      function draw() {
+        // render to a texture
+        app.setFrameBuffer('world', true);
+        program.earth.use();
         gl.clear(clearOpt);
-        renderScene.render();
+        gl.viewport(0, 0, 1024, 1024);
+        program.earth.setUniform('renderType',  0);
+        scene.renderToTexture('world');
+        app.setFrameBuffer('world', false);
+
+        app.setFrameBuffer('world2', true);
+        program.earth.use();
+        gl.clear(clearOpt);
+        gl.viewport(0, 0, 1024, 1024);
+        program.earth.setUniform('renderType',  -1);
+        scene.renderToTexture('world2');
+        app.setFrameBuffer('world2', false);
+        
+        Media.Image.postProcess({
+          fromTexture: ['world-texture', 'world2-texture'],
+          toScreen: true,
+          program: 'glow',
+          width: 1024,
+          height: 1024
+        });
+
         Fx.requestAnimationFrame(draw);
       }
     }
