@@ -19,14 +19,14 @@ default shaders take a look at the [Shaders](shaders.html) class. The [O3D](o3d.
 objects with a default scene.
 
 
-Scene Static Properties
-------------------------
 
- * PICKING\_RES - Used to set the default resolution for the texture / image used for color picking. Default value is `4`. For best picking precision use `1`.
+### Scene Static Properties
+
+* PICKING\_RES - Used to set the default resolution for the texture / image used for color picking. Default value is `4`. For best picking precision use `1`.
 
 ### Syntax:
 
-    PhiloGL.Scene.PICKING\_RES = 1;
+    PhiloGL.Scene.PICKING_RES = 1;
 
 
 Scene Method: constructor {#Scene:constructor}
@@ -294,3 +294,17 @@ if (model) {
   model.uniforms.colorUfm = [1, 1, 1, 1];
 }
 {% endhighlight %}
+
+
+Scene Method: resetPicking {#Scene:resetPicking}
+------------------------------------------------
+
+Clear framebuffers and previous scene captures and restart the picking
+routine without any cached values. Generally used when `lazyPicking` is set to
+`true` in [Events.create](event.html#Events:create).
+
+### Syntax:
+
+    scene.resetPicking();
+
+

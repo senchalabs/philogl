@@ -23,7 +23,7 @@ Image Method: postProcess {#Media:Image:postProcess}
 -----------------------------------------------------
 
 Creates a temporary scene with a plane, used to post-process textures and render the
-job to others texture(s) or to the main screen.
+job to other texture(s) or to the main screen.
 
 ### Syntax:
 
