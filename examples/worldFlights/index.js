@@ -496,12 +496,8 @@ function createApp() {
       $$('#airline-list li input')[0].click();
       $('list-wrapper').style.display = '';
 
-      function draw() {
-        drawEarth();
-      }
-
       //Draw to screen
-      function drawEarth() {
+      function draw() {
         // render to a texture
         app.setFrameBuffer('world', true);
         program.earth.use();

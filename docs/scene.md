@@ -19,6 +19,16 @@ default shaders take a look at the [Shaders](shaders.html) class. The [O3D](o3d.
 objects with a default scene.
 
 
+Scene Static Properties
+------------------------
+
+ * PICKING\_RES - Used to set the default resolution for the texture / image used for color picking. Default value is `4`. For best picking precision use `1`.
+
+### Syntax:
+
+    PhiloGL.Scene.PICKING\_RES = 1;
+
+
 Scene Method: constructor {#Scene:constructor}
 ------------------------------------------------
 
