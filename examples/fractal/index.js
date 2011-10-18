@@ -1,0 +1,164 @@
+PhiloGL.unpack();
+
+function BrowserSize() {
+  return {
+    width: window.innerWidth || document.body.clientWidth,
+    height: window.innerHeight || document.body.clientHeight
+  };
+}
+
+var browserSize;
+var halted = false;
+var it = 1;
+var frames = 0;
+var time;
+var mouseX = 0.5;
+var mouseY = 0.5;
+var animation;
+var timer;
+var sizeX = 512;
+var sizeY = 512;
+var viewX = 512;
+var viewY = 512;
+var c;
+
+function setMaximalSize() {
+  browserSize = new BrowserSize();
+  c.width = viewX = browserSize.width;
+  c.height = viewY = browserSize.height;
+}
+
+function load() {
+  if (!PhiloGL.hasWebGL()) {
+    alert("Your browser does not support WebGL");
+    return;
+  }
+
+  c = document.getElementById('c');
+  sizeX = 2048;
+  sizeY = 2048;
+
+  setMaximalSize();
+
+  PhiloGL('c', {
+    program: [{
+      id: 'advance',
+      from: 'ids',
+      vs: 'shader-vs',
+      fs: 'shader-fs-advance'
+    }, {
+      id: 'composite',
+      from: 'ids',
+      vs: 'shader-vs',
+      fs: 'shader-fs-composite'
+    }],
+    events: {
+      centerOrigin: false,
+      onMouseMove: function(e) {
+        mouseX = e.x / viewX;
+        mouseY = 1 - e.y / viewY;
+      }
+    },
+    onError: function() {
+      alert('There was an error, sorry :S');
+    },
+    onLoad: function(app) {
+      //Set framebuffers
+      var fboOpt = {
+        width: sizeX,
+        height: sizeY,
+        bindToTexture: {
+          parameters: [{
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'LINEAR'
+          }, {
+            name: 'TEXTURE_MIN_FILTER',
+            value: 'LINEAR',
+            generateMipmap: false
+          }]
+        },
+        bindToRenderBuffer: true
+      };
+
+      app.setFrameBuffer('main', fboOpt)
+         .setFrameBuffer('main2', fboOpt);
+		
+      timer = setInterval(fr, 500);
+      time = Date.now();
+      animation = "animate";
+      anim();
+      
+      function draw() {
+        // advance
+        if (it > 0) {
+          Media.Image.postProcess({
+            width: sizeX,
+            height: sizeY,
+            fromTexture: 'main-texture',
+            toFrameBuffer: 'main2',
+            program: 'advance',
+            uniforms: getUniforms()
+          }).postProcess({
+            width: viewX,
+            height: viewY,
+            fromTexture: 'main2-texture',
+            toFrameBuffer: 'main',
+            toScreen: true,
+            program: 'composite',
+            uniforms: getUniforms()
+          });
+        } else {
+          Media.Image.postProcess({
+            width: sizeX,
+            height: sizeY,
+            fromTexture: 'main2-texture',
+            toFrameBuffer: 'main',
+            program: 'advance',
+            uniforms: getUniforms()
+          }).postProcess({
+            width: viewX,
+            height: viewY,
+            fromTexture: 'main-texture',
+             toFrameBuffer: 'main2',
+            toScreen: true,
+            program: 'composite',
+            uniforms: getUniforms()
+          });
+        }
+        it = -it;
+        frames++;
+      }
+      
+      function getUniforms() {
+        return {
+          'time': time,
+          'mouse': [mouseX, mouseY]
+        };
+      }
+
+      function anim() {
+        if (!halted) {
+          draw();
+        }
+        switch (animation) {
+        case "animate":
+          setTimeout(function() { Fx.requestAnimationFrame(anim); }, 1);
+          break;
+        case "reset":
+          load();
+          break;
+        }
+      }
+      
+      function fr() {
+        var ti = Date.now();
+        var fps = Math.round(1000 * frames / (ti - time));
+        document.getElementById("fps").innerHTML = fps;
+        frames = 0;
+        time = ti;
+      }
+    }
+  });
+}
+
+

@@ -281,6 +281,9 @@
         pixelStore: [{
           name: gl.UNPACK_FLIP_Y_WEBGL,
           value: true
+        }, {
+          name: gl.UNPACK_ALIGNMENT,
+          value: 1
         }],
         parameters: [{
           name: gl.TEXTURE_MAG_FILTER,

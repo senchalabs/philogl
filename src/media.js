@@ -63,7 +63,9 @@
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
         app.setFrameBuffer(framebuffer, false);
-      } else if (screen) {
+      } 
+      
+      if (screen) {
         program.use();
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

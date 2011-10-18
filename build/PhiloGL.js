@@ -562,6 +562,9 @@ $.splat = (function() {
         pixelStore: [{
           name: gl.UNPACK_FLIP_Y_WEBGL,
           value: true
+        }, {
+          name: gl.UNPACK_ALIGNMENT,
+          value: 1
         }],
         parameters: [{
           name: gl.TEXTURE_MAG_FILTER,
@@ -4930,7 +4933,9 @@ $.splat = (function() {
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
         app.setFrameBuffer(framebuffer, false);
-      } else if (screen) {
+      } 
+      
+      if (screen) {
         program.use();
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
