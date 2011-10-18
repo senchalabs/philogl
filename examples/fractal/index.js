@@ -24,8 +24,8 @@ var c;
 
 function setMaximalSize() {
   browserSize = new BrowserSize();
-  c.width = viewX = browserSize.width;
-  c.height = viewY = browserSize.height;
+  c.width = viewX = 512;//browserSize.width;
+  c.height = viewY = 512;//browserSize.height;
 }
 
 function load() {
@@ -35,8 +35,8 @@ function load() {
   }
 
   c = document.getElementById('c');
-  sizeX = 2048;
-  sizeY = 2048;
+  // sizeX = 2048;
+  // sizeY = 2048;
 
   setMaximalSize();
 
