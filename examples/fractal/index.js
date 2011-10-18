@@ -10,7 +10,6 @@ function BrowserSize() {
 var browserSize;
 var halted = false;
 var it = 1;
-var frames = 0;
 var time;
 var mouseX = 0.5;
 var mouseY = 0.5;
@@ -24,8 +23,8 @@ var c;
 
 function setMaximalSize() {
   browserSize = new BrowserSize();
-  c.width = viewX = 512;//browserSize.width;
-  c.height = viewY = 512;//browserSize.height;
+  c.width = viewX = browserSize.width;
+  c.height = viewY = browserSize.height;
 }
 
 function load() {
@@ -35,8 +34,8 @@ function load() {
   }
 
   c = document.getElementById('c');
-  // sizeX = 2048;
-  // sizeY = 2048;
+  sizeX = 2048;
+  sizeY = 2048;
 
   setMaximalSize();
 
@@ -57,6 +56,9 @@ function load() {
       onMouseMove: function(e) {
         mouseX = e.x / viewX;
         mouseY = 1 - e.y / viewY;
+      },
+      onClick: function(e) {
+        halted = !halted;
       }
     },
     onError: function() {
@@ -77,7 +79,7 @@ function load() {
             generateMipmap: false
           }]
         },
-        bindToRenderBuffer: true
+        bindToRenderBuffer: false
       };
 
       app.setFrameBuffer('main', fboOpt)
@@ -102,7 +104,6 @@ function load() {
             width: viewX,
             height: viewY,
             fromTexture: 'main2-texture',
-            toFrameBuffer: 'main',
             toScreen: true,
             program: 'composite',
             uniforms: getUniforms()
@@ -119,14 +120,12 @@ function load() {
             width: viewX,
             height: viewY,
             fromTexture: 'main-texture',
-             toFrameBuffer: 'main2',
             toScreen: true,
             program: 'composite',
             uniforms: getUniforms()
           });
         }
         it = -it;
-        frames++;
       }
       
       function getUniforms() {
@@ -152,9 +151,6 @@ function load() {
       
       function fr() {
         var ti = Date.now();
-        var fps = Math.round(1000 * frames / (ti - time));
-        document.getElementById("fps").innerHTML = fps;
-        frames = 0;
         time = ti;
       }
     }

@@ -4895,7 +4895,7 @@ $.splat = (function() {
           width = opt.width || app.canvas.width,
           height = opt.height || app.canvas.height;
 
-      camera.aspect = height / width;
+      camera.aspect = Math.max(height / width, width / height);
       camera.update();
 
       scene.program = program;

@@ -13,6 +13,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
+    background: black;
   }
 
   a {
@@ -95,18 +96,16 @@
   }
 </script>
 
-<script type="text/javascript" src="index.js"></script>
+<script src="index.js"></script>
+
 </head>
-<body onload="load()" onresize="setMaximalSize()" onclick="halted=!halted;">
+<body onload="load()" onresize="setMaximalSize()">
 	<canvas id="c" width="100%" height="100%"></canvas>
 	<div id="overlay">
-		<b>Progressive Julia Fractal/Attractor</b>
+		<b>Progressive Julia Fractal/Attractor - Original work by <a href="http://twitter.com/Flexi23/">Felix Woitzel</a></b>
 		<p />
-		Fps: <span id="fps"></span><br /> Press F11 for fullscreen
+		<span id="fps"></span><br />
 		<p />
-		See the description in the less intense <a href="progressive-fractal.html">Lite version.</a>
-		<p />
-		recommended browser: <br> <a href="www.google.de/chrome" target="new">Google Chrome</a>
 	</div>
 </body>
 </html>
