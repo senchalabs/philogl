@@ -408,6 +408,8 @@
       
       //If there was another program then set to reuse that program.
       if (program) program.use();
+      //restore the viewport size to original size
+      gl.viewport(0, 0, app.canvas.width, app.canvas.height);
 
       //store model hash and pixel array
       this.o3dHash = o3dHash;
