@@ -4,6 +4,8 @@ div.section {
   border-bottom: 1px solid #ccc;
   margin: 15px;
   text-indent: 10px;
+  clear: both;
+  padding-top: 20px;
 }
 
 ul {
@@ -12,8 +14,19 @@ ul {
   padding:0;
 }
 
+
+ul li img {
+  width: 270px;
+  margin: 10px 5px;
+  -webkit-box-shadow: #000 0 0 5px;
+  -o-box-shadow: #000 0 0 5px;
+  -ms-box-shadow: #000 0 0 5px;
+  -moz-box-shadow: #000 0 0 5px;
+  box-shadow: #000 0 0 5px;
+}
+
 ul li {
-  width: 150px;
+  width: 280px;
   font-size: 0.8em;
   display: block;
   margin: 3px;
@@ -22,14 +35,13 @@ ul li {
   float: left;
 }
 
-ul li img {
+#lessons+ul li {
+  width: 150px;
+}
+
+#lessons+ul li img {
   width: 100px;
   margin: 10px 25px;
-  -webkit-box-shadow: #000 0 0 5px;
-  -o-box-shadow: #000 0 0 5px;
-  -ms-box-shadow: #000 0 0 5px;
-  -moz-box-shadow: #000 0 0 5px;
-  box-shadow: #000 0 0 5px;
 }
 
 div.lesson-title {

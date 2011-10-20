@@ -101,7 +101,7 @@ this.PhiloGL = null;
             onSuccess: function(p, popt) {
               programs[popt.id || (programLength - count)] = p;
               count--;
-              if (count == 0 && !error) {
+              if (count === 0 && !error) {
                 loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
                   opt.onLoad(app);
                 });
@@ -109,17 +109,21 @@ this.PhiloGL = null;
             },
             onError: function(p) {
               count--;
-              opt.onError(opt.id);
+              opt.onError(p);
               error = true;
             }
           };
         })();
     
     optProgram.forEach(function(optProgram, i) {
-      var pfrom = optProgram.from;
+      var pfrom = optProgram.from, program;
       for (var p in popt) {
         if (pfrom == p) {
-          program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          try {
+            program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
+          } catch(e) {
+            programCallback.onError(e);
+          }
           break;
         }
       }
@@ -181,13 +185,14 @@ this.PhiloGL = null;
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(branch) {
   branch = branch || globalContext;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
+  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 
+   'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
 };
 
 //Version
-PhiloGL.version = '1.4.0';
+PhiloGL.version = '1.4.1';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -562,6 +567,9 @@ $.splat = (function() {
         pixelStore: [{
           name: gl.UNPACK_FLIP_Y_WEBGL,
           value: true
+        }, {
+          name: gl.UNPACK_ALIGNMENT,
+          value: 1
         }],
         parameters: [{
           name: gl.TEXTURE_MAG_FILTER,
@@ -2463,7 +2471,7 @@ $.splat = (function() {
   };
 
   //Create a program from vs and fs sources
-  Program.fromShaderSources = function(opt) {
+  Program.fromShaderSources = function() {
     var opt = getOptions.apply({}, arguments),
         vs = opt.vs,
         fs = opt.fs;
@@ -2504,7 +2512,12 @@ $.splat = (function() {
         opt.onError(arg);
       },
       onComplete: function(ans) {
-        opt.onSuccess(Program.fromShaderSources(ans[0], ans[1]), opt);
+        try {
+          var p = Program.fromShaderSources(ans[0], ans[1]);
+          opt.onSuccess(p, opt);
+        } catch(e) {
+          opt.onError(e, opt);
+        }
       }
     }).send();  
   };
@@ -4562,6 +4575,8 @@ $.splat = (function() {
       
       //If there was another program then set to reuse that program.
       if (program) program.use();
+      //restore the viewport size to original size
+      gl.viewport(0, 0, app.canvas.width, app.canvas.height);
 
       //store model hash and pixel array
       this.o3dHash = o3dHash;
@@ -4892,7 +4907,7 @@ $.splat = (function() {
           width = opt.width || app.canvas.width,
           height = opt.height || app.canvas.height;
 
-      camera.aspect = height / width;
+      camera.aspect = Math.max(height / width, width / height);
       camera.update();
 
       scene.program = program;
@@ -4930,7 +4945,9 @@ $.splat = (function() {
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
         app.setFrameBuffer(framebuffer, false);
-      } else if (screen) {
+      } 
+      
+      if (screen) {
         program.use();
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
