@@ -8,6 +8,7 @@ examples/brain export-ignore
 examples/metaballs export-ignore
 examples/quaternion export-ignore
 examples/histogram export-ignore
+examples/hoc export-ignore
 examples/worldFlights export-ignore
 examples/mapProjections export-ignore
 examples/temperatureAnomalies export-ignore
