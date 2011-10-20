@@ -35,7 +35,7 @@
       "}",
       
       /* handle fog */
-      "if (hasFog) {",
+      "if (hasFog && colorUfm.r != 1.0) {",
         "float depth = gl_FragCoord.z / gl_FragCoord.w;",
         "float fogFactor = smoothstep(fogNear, fogFar, depth);",
         "gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);",
@@ -85,8 +85,8 @@
   }
 
   window.init = function() {
-    var stats = new xStats();
-    document.body.appendChild(stats.element);
+    // var stats = new xStats();
+    // document.body.appendChild(stats.element);
 
     //Create App
     PhiloGL('surface-explorer-canvas', {
@@ -127,6 +127,8 @@
       },
       events: {
         picking: true,
+        // lazyPicking: true,
+        // centerOrigin: false,
         onMouseEnter: function(e, model) {
           model.uniforms.colorUfm = [1, 1, 1, 1];
         },
