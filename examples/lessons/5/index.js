@@ -136,19 +136,21 @@ function webGLStart() {
         view.mulMat42(camera.view, cube.matrix);
         //set attributes, indices and textures
         program.setBuffer('aVertexPosition')
-              .setBuffer('aTextureCoord')
-              .setBuffer('indices')
-              .setTexture('nehe.gif');
+               .setBuffer('aTextureCoord')
+               .setBuffer('indices')
+               .setTexture('nehe.gif');
         //set uniforms
         program.setUniform('uMVMatrix', view)
-              .setUniform('uPMatrix', camera.projection)
-              .setUniform('uSampler', 0);
+               .setUniform('uPMatrix', camera.projection)
+               .setUniform('uSampler', 0);
         //draw triangles
         gl.drawElements(gl.TRIANGLES, cube.indices.length, gl.UNSIGNED_SHORT, 0);
+        //request new frame
+        PhiloGL.Fx.requestAnimationFrame(drawScene);
       }
-
-      setInterval(drawScene, 1000 / 60);
-
+      
+      drawScene();
+    
     }
    
   });

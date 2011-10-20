@@ -60,7 +60,7 @@ function webGLStart() {
           program = app.program,
           scene = app.scene,
           canvas = app.canvas,
-          camera = app.camera;
+          camera = app.camera,
           //get light config from forms
           lighting = $id('lighting'),
           ambient = {
@@ -87,7 +87,7 @@ function webGLStart() {
       //Add object to the scene
       scene.add(moon);
       //Animate
-      setInterval(draw, 1000/60);
+      draw();
 
       //Draw the scene
       function draw() {
@@ -114,6 +114,8 @@ function webGLStart() {
         };
         //render moon
         scene.render();
+        //request new frame
+        PhiloGL.Fx.requestAnimationFrame(draw);
       }
     }
   });

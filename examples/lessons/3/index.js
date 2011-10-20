@@ -78,6 +78,7 @@ function webGLStart() {
       function tick() {
         drawScene();
         animate();
+        PhiloGL.Fx.requestAnimationFrame(tick);
       }
 
       function drawScene() {
@@ -96,7 +97,7 @@ function webGLStart() {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       
-      setInterval(tick, 1000/24);
+      tick();
     }
   });
   

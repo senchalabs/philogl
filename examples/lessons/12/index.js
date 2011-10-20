@@ -92,7 +92,7 @@ function webGLStart() {
       //Add objects to the scene
       scene.add(moon, box);
       //Animate
-      setInterval(draw, 1000/60);
+      draw();
 
       //Draw the scene
       function draw() {
@@ -136,6 +136,9 @@ function webGLStart() {
         
         //render objects 
         scene.render();
+
+        //request frame
+        PhiloGL.Fx.requestAnimationFrame(draw);
       }
     }
   });

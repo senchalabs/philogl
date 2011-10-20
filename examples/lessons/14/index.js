@@ -83,8 +83,9 @@ function webGLStart() {
         gl.viewport(0, 0, +canvas.width, +canvas.height);
         //Add objects to the scene
         scene.add(teapot);
+        
         //Animate
-        setInterval(draw, 1000/60);
+        draw();
 
         //Draw the scene
         function draw() {
@@ -136,6 +137,9 @@ function webGLStart() {
           
           //render objects
           scene.render();
+
+          //request new frame
+          PhiloGL.Fx.requestAnimationFrame(draw);
         }
       }
     });

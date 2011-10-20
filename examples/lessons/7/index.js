@@ -206,6 +206,7 @@ function webGLStart() {
       function tick() {
         drawScene();
         animate();
+        PhiloGL.Fx.requestAnimationFrame(tick);
       }
 
       function drawScene() {
@@ -235,7 +236,7 @@ function webGLStart() {
         //Render all elements in the Scene
         scene.render();
       }  
-      setInterval(tick, 1000/60);
+      tick();
     }
   });
 }

@@ -36,7 +36,6 @@ function webGLStart() {
       
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       camera.view.id();
-      console.log('view', camera.view, camera.view.toFloat32Array());
       //Draw Triangle
       camera.view.$translate(-1.5, 0, -7);
       program.setUniform('uMVMatrix', camera.view);

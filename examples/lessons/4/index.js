@@ -146,6 +146,7 @@ function webGLStart() {
       function tick() {
         drawScene();
         animate();
+        PhiloGL.Fx.requestAnimationFrame(tick);
       }
 
       function drawScene() {
@@ -169,7 +170,7 @@ function webGLStart() {
         gl.drawElements(gl.TRIANGLES, cube.indices.length, gl.UNSIGNED_SHORT, 0);
       }
       
-      setInterval(tick, 1000/60);
+      tick();
     } 
   });
   

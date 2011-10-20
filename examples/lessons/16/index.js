@@ -247,10 +247,11 @@ function webGLStart() {
         function draw() {
           drawInnerScene();
           drawOuterScene();
+          PhiloGL.Fx.requestAnimationFrame(draw);
         }
         
         //Animate
-        setInterval(draw, 1000/60);
+        draw();
       }
     });
   }

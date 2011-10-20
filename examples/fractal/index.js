@@ -1,12 +1,5 @@
 PhiloGL.unpack();
 
-function BrowserSize() {
-  return {
-    width: window.innerWidth || document.body.clientWidth,
-    height: window.innerHeight || document.body.clientHeight
-  };
-}
-
 var browserSize;
 var halted = false;
 var it = 1;
@@ -17,27 +10,15 @@ var animation;
 var timer;
 var sizeX = 512;
 var sizeY = 512;
-var viewX = 512;
-var viewY = 512;
+var viewX = 900;
+var viewY = 550;
 var c;
-
-function setMaximalSize() {
-  browserSize = new BrowserSize();
-  c.width = viewX = browserSize.width;
-  c.height = viewY = browserSize.height;
-}
 
 function load() {
   if (!PhiloGL.hasWebGL()) {
     alert("Your browser does not support WebGL");
     return;
   }
-
-  c = document.getElementById('c');
-  sizeX = 2048;
-  sizeY = 2048;
-
-  setMaximalSize();
 
   PhiloGL('c', {
     program: [{

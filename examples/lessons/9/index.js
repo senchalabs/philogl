@@ -168,11 +168,12 @@ function webGLStart() {
         scene.add(new Star(i / numStars * 5.0, i / numStars));
       }
 
-      setInterval(tick, 1000/60);
+      tick();
 
       function tick() {
         drawScene();
         animate();
+        PhiloGL.Fx.requestAnimationFrame(tick);
       }
 
       function animate() {

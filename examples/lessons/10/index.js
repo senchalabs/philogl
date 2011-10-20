@@ -113,6 +113,7 @@ function webGLStart() {
         function tick() {
           drawScene();
           animate();
+          Fx.requestAnimationFrame(tick);
         }
         
         var lastTime = 0;
@@ -147,8 +148,9 @@ function webGLStart() {
           //Render all elements in the Scene
           scene.render();
         }
-
-        setInterval(tick, 1000 / 60);
+        
+        tick();
+      
       }
     });
   }
