@@ -254,7 +254,7 @@
   };
 
   //Create a program from vs and fs sources
-  Program.fromShaderSources = function(opt) {
+  Program.fromShaderSources = function() {
     var opt = getOptions.apply({}, arguments),
         vs = opt.vs,
         fs = opt.fs;
@@ -295,7 +295,12 @@
         opt.onError(arg);
       },
       onComplete: function(ans) {
-        opt.onSuccess(Program.fromShaderSources(ans[0], ans[1]), opt);
+        try {
+          var p = Program.fromShaderSources(ans[0], ans[1]);
+          opt.onSuccess(p, opt);
+        } catch(e) {
+          opt.onError(e, opt);
+        }
       }
     }).send();  
   };

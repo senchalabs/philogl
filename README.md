@@ -1,7 +1,7 @@
 PhiloGL: A JavaScript WebGL Framework
 =====================================
 
-Author: Nicolas Garcia Belmonte. More information in the [home page of the project](http://senchalabs.github.com/philogl/)!
+Author: [Nicolas Garcia Belmonte](http://philogb.github.com/). More information in the [home page of the project](http://senchalabs.github.com/philogl/)!
 
       Copyright (c) 2011 Sencha Labs (http://senchalabs.org/).
 
