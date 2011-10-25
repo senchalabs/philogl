@@ -11,6 +11,12 @@ input, select {
   max-width: 80px;
 }
 
+form {
+  text-align: left;
+  padding: 5px 0;
+  text-indent: 20px;
+}
+
 #fxy {
   width: 550px;
   max-width: 550px;

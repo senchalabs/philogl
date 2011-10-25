@@ -15,6 +15,8 @@ function load() {
     return;
   }
 
+  var range = $('range');
+
   $('fullscreen').addEventListener('click', function(e) {
     var width = window.innerWidth,
         height = window.innerHeight,
@@ -35,6 +37,8 @@ function load() {
     astyle.position = 'absolute';
     astyle.top = astyle.left = '0px';
     astyle.color = '#fff';
+    astyle.display = 'block';
+    astyle.backgroundColor = 'black';
     anchor.innerHTML = 'Click here to leave fullscreen';
     anchor.href = '#';
     document.body.appendChild(anchor);
@@ -65,15 +69,16 @@ function load() {
 
       function draw() {
         t = ((Date.now() - time) / 600) % (Math.PI * 2);
-
         // advance
         Media.Image.postProcess({
           width: viewX,
           height: viewY,
           toScreen: true,
+          aspectRatio: 1,
           program: 'quasip',
           uniforms: {
-            t: t
+            t: t,
+            ratio: +range.value
           }
         });
 
