@@ -4900,7 +4900,7 @@ $.splat = (function() {
     }), scene = new PhiloGL.Scene({}, camera);
     
     return function(opt) {
-      var program = app.program[opt.program],
+      var program = app.program.$$family ? app.program : app.program[opt.program],
           textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
           framebuffer = opt.toFrameBuffer,
           screen = !!opt.toScreen,
