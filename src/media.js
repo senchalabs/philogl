@@ -25,7 +25,7 @@
           width = opt.width || app.canvas.width,
           height = opt.height || app.canvas.height;
 
-      camera.aspect = Math.max(height / width, width / height);
+      camera.aspect = opt.aspectRatio ? opt.aspectRatio : Math.max(height / width, width / height);
       camera.update();
 
       scene.program = program;
