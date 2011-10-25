@@ -45,7 +45,7 @@
     float c;
     float ans;
 
-    vec2 defpixel = pixel * 200.;
+    vec2 defpixel = (pixel - vec2( 0.5 ) ) * 170.;
 
     for (float v = 0.; v < PI; v += step) {
       s = sin( v );
