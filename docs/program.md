@@ -31,7 +31,7 @@ project organized.
 
 ### Syntax:
 
-	var program = PhiloGL.Program.fromShaderURIs(options);
+	PhiloGL.Program.fromShaderURIs(options);
 
 ### Arguments:
 
@@ -45,7 +45,7 @@ project organized.
 * noCache - (*boolean*, optional) If true, files will be reloaded and not taken
   from the cache. Useful on development phase. Default's `false`.
 * onSuccess - (*function*) A callback function executed when the program was successfully created. The 
-first formal parameter of the function is the `Program` instance.
+first argument of the function is the `Program` instance.
 * onError - (*function*) A callback function executed when there's an error while fetching/compiling the shaders.
 
 ### Examples:
@@ -76,7 +76,7 @@ In `shaders/vertex.glsl`
 JavaScript code:
 
 {% highlight js %}
-var program = PhiloGL.Program.fromShaderURIs({
+PhiloGL.Program.fromShaderURIs({
   path: 'shaders/',
   vs: 'vertex.glsl',
   fs: 'fragment.glsl',
