@@ -111,7 +111,7 @@
 
 <h3 id='syntax'>Syntax:</h3>
 
-<pre><code>var program = PhiloGL.Program.fromShaderURIs(options);</code></pre>
+<pre><code>PhiloGL.Program.fromShaderURIs(options);</code></pre>
 
 <h3 id='arguments'>Arguments:</h3>
 
@@ -130,7 +130,7 @@
 
 <li>noCache - (<em>boolean</em>, optional) If true, files will be reloaded and not taken from the cache. Useful on development phase. Default&#8217;s <code>false</code>.</li>
 
-<li>onSuccess - (<em>function</em>) A callback function executed when the program was successfully created. The first formal parameter of the function is the <code>Program</code> instance.</li>
+<li>onSuccess - (<em>function</em>) A callback function executed when the program was successfully created. The first argument of the function is the <code>Program</code> instance.</li>
 
 <li>onError - (<em>function</em>) A callback function executed when there&#8217;s an error while fetching/compiling the shaders.</li>
 </ul>
@@ -161,7 +161,7 @@ void main(void) {
 }</code></pre>
 
 <p>JavaScript code:</p>
-<div class='highlight'><pre><code class='js'><span class='kd'>var</span> <span class='nx'>program</span> <span class='o'>=</span> <span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Program</span><span class='p'>.</span><span class='nx'>fromShaderURIs</span><span class='p'>({</span>
+<div class='highlight'><pre><code class='js'><span class='nx'>PhiloGL</span><span class='p'>.</span><span class='nx'>Program</span><span class='p'>.</span><span class='nx'>fromShaderURIs</span><span class='p'>({</span>
   <span class='nx'>path</span><span class='o'>:</span> <span class='s1'>&#39;shaders/&#39;</span><span class='p'>,</span>
   <span class='nx'>vs</span><span class='o'>:</span> <span class='s1'>&#39;vertex.glsl&#39;</span><span class='p'>,</span>
   <span class='nx'>fs</span><span class='o'>:</span> <span class='s1'>&#39;fragment.glsl&#39;</span><span class='p'>,</span>
