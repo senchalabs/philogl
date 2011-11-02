@@ -50,7 +50,7 @@ The main constructor function for the Model class. Use this to create a new Mode
 * vertices - (*array*, optional) An array of floats that describe the vertices of the model.
 * normals - (*array*, optional) An array of floats that describe the normals of the model.
 * textures - (*array*, optional) An array of strings of texture ids.
-* texCoords - (*mixed*, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and 
+* texCoords - (*mixed*, optional) Can be an array of floats indicating the texture coordinates for the texture to be used or an object that has texture ids as keys and an array of floats as values.
 * colors - (*array*, optional) An array of colors in RGBA. If just one color is specified that color will be used for all faces.
 * indices - (*array*, optional) An array of numbers describing the vertex indices for each face.
 * attributes - (*object*, optional) An object with buffer/attribute names and buffer/attribute descriptors to be set before rendering the model. If you want to know more 
