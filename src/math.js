@@ -392,11 +392,13 @@
     $mulVec3: function(dest, vec) {
       var vx = vec[0],
           vy = vec[1],
-          vz = vec[2];
+          vz = vec[2],
+          d = 1 / (dest[3] * vx + dest[7] * vy + dest[11] * vz + dest[15]);
 
-      vec[0] = dest[0] * vx + dest[4] * vy + dest[8 ] * vz + dest[12];
-      vec[1] = dest[1] * vx + dest[5] * vy + dest[9 ] * vz + dest[13];
-      vec[2] = dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14];
+      vec[0] = (dest[0] * vx + dest[4] * vy + dest[8 ] * vz + dest[12]) * d;
+      vec[1] = (dest[1] * vx + dest[5] * vy + dest[9 ] * vz + dest[13]) * d;
+      vec[2] = (dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14]) * d;
+
       return vec;
     },
 
