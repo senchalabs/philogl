@@ -4445,12 +4445,11 @@ $.splat = (function() {
     setupPicking: function() {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
-          pickingRes = Scene.PICKING_RES,
           floor = Math.floor;
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: floor(app.canvas.width / pickingRes),
-        height: floor(app.canvas.height / pickingRes),
+        width: 5,
+        height: 1,
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
@@ -4475,27 +4474,26 @@ $.splat = (function() {
         this.setupPicking();
       }
 
-      //if lazy picking and we have a previous
-      //image capture, then use lazy pick
-      if (lazy && this.capture) {
-        return this.lazyPick(x, y);
-      }
-
-      //normal picking
       var o3dHash = {},
           o3dList = [],
           program = app.usedProgram,
           pickingProgram = this.pickingProgram,
-          pickingRes = Scene.PICKING_RES,
           camera = this.camera,
+          oldtarget = camera.target,
+          oldaspect = camera.aspect,
           config = this.config,
           memoLightEnable = config.lights.enable,
           memoFog = config.effects.fog,
           width = gl.canvas.width,
           height = gl.canvas.height,
           floor = Math.floor,
+          pickingRes = Scene.PICKING_RES,
           resWidth = floor(width / pickingRes),
           resHeight = floor(height / pickingRes),
+          ndcx = x * 2 / width - 1,
+          ndcy = 1 - y * 2 / height,
+          origin = this.unproject([ndcx, ndcy, -1.0], camera),
+          target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, 
@@ -4542,15 +4540,9 @@ $.splat = (function() {
         }
       });
      
-      if (lazy) {
-        //grab the color of the pointed pixel in the texture
-        capture = new Uint8Array(4 * resWidth * resHeight);
-        gl.readPixels(0, 0, resWidth, resHeight, gl.RGBA, gl.UNSIGNED_BYTE, capture);
-        pindex = floor((x + (height - y) * resWidth) / pickingRes) * 4;
-        pixel = [capture[pindex], capture[pindex + 1], capture[pindex + 2], capture[pindex + 3]];
-      } else {
-        gl.readPixels(floor(x / pickingRes), floor((height - y) / pickingRes), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
-      } 
+      // the target point is in the center of the screen,
+      // so it should be the center point.
+      gl.readPixels(2, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
 
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
@@ -4575,11 +4567,15 @@ $.splat = (function() {
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
       
-      //If there was another program then set to reuse that program.
+      //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
-      gl.viewport(0, 0, app.canvas.width, app.canvas.height);
-
+      gl.viewport(0, 0, width, height);
+      //restore camera properties
+      camera.target = oldtarget;
+      camera.aspect = oldaspect;
+      camera.update();
+      
       //store model hash and pixel array
       this.o3dHash = o3dHash;
       this.o3dList = o3dList;
@@ -4589,41 +4585,11 @@ $.splat = (function() {
       return elem && elem.pickable && elem;
     },
 
-    lazyPick: function(x, y) {
-      var canvas = app.canvas,
-          width = canvas.width,
-          height = canvas.height,
-          pickingRes = Scene.PICKING_RES,
-          floor = Math.floor,
-          resWidth = width / pickingRes >> 0,
-          resHeight = height / pickingRes >> 0,
-          index = floor((x + (height - y) * resWidth) / pickingRes) * 4,
-          capture = this.capture,
-          pixel = [capture[index], capture[index + 1], capture[index + 2], capture[index + 3]],
-          stringColor = [pixel[0], pixel[1], pixel[2]].join(),
-          o3dHash = this.o3dHash,
-          o3dList = this.o3dList,
-          elem = o3dHash[stringColor],
-          pick;
-
-      if (!elem) {
-        for (var i = 0, l = o3dList.length; i < l; i++) {
-          elem = o3dList[i];
-          pick = elem.pick(pixel);
-          if (pick !== false) {
-            elem.$pickingIndex = pick;
-          } else {
-            elem = false;
-          }
-        }
-      }
-
-      return elem && elem.pickable && elem;
+    unproject: function(pt, camera) {
+      return camera.view.invert().mulMat4(camera.projection.invert()).mulVec3(pt);
     },
 
-    resetPicking: function() {
-      this.capture = false;
-    }
+    resetPicking: $.empty
   };
   
   Scene.MAX_TEXTURES = 10;
