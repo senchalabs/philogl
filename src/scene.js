@@ -323,13 +323,14 @@
           resHeight = 1,
           ndcx = x * 2 / width - 1,
           ndcy = 1 - y * 2 / height,
-          origin = this.unproject([ndcx, ndcy, -1.0], camera),
           target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, 
           backgroundColor, capture, pindex;
 
+      this.camera.target = target;
+      this.camera.update ();
       //setup the scene for picking
       config.lights.enable = false;
       config.effects.fog = false;
