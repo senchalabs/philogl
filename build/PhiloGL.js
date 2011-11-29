@@ -2900,7 +2900,7 @@ $.splat = (function() {
       pi = Math.PI,
       max = Math.max,
       slice = Array.prototype.slice;
-  
+
   function normalizeColors(arr, len) {
     if (arr && arr.length < len) {
       var a0 = arr[0],
@@ -2910,7 +2910,7 @@ $.splat = (function() {
           ans = [a0, a1, a2, a3],
           times = len / arr.length,
           index;
-      
+
       while (--times) {
         index = times * 4;
         ans[index    ] = a0;
@@ -2924,7 +2924,7 @@ $.splat = (function() {
       return arr;
     }
   }
-  
+
   //Model repository
   var O3D = {
       //map attribute names to property names
@@ -2957,7 +2957,7 @@ $.splat = (function() {
     if (opt.pickingColors) {
       this.pickingColors = opt.pickingColors;
     }
-    
+
     if (opt.texCoords) {
       this.texCoords = opt.texCoords;
     }
@@ -2992,12 +2992,12 @@ $.splat = (function() {
     if (opt.computeNormals) {
       this.computeNormals();
     }
-  
+
   };
 
   //Buffer setter mixin
   var Setters = {
-    
+
     setUniforms: function(program) {
       program.setUniforms(this.uniforms);
     },
@@ -3016,7 +3016,7 @@ $.splat = (function() {
         }
       }
     },
-    
+
     setVertices: function(program) {
       if (!this.$vertices) return;
 
@@ -3089,7 +3089,7 @@ $.splat = (function() {
     },
 
     setTexCoords: function(program) {
-      if (!this.$texCoords) return; 
+      if (!this.$texCoords) return;
 
       var id = this.id,
           i, txs, l, tex;
@@ -3161,7 +3161,7 @@ $.splat = (function() {
 
     unsetState: function(program) {
       var attributes = program.attributes;
-      
+
       //unbind the array and element buffers
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -3169,10 +3169,10 @@ $.splat = (function() {
       for (var name in attributes) {
         gl.disableVertexAttribArray(attributes[name]);
       }
-      
+
     }
  };
-  
+
   //ensure known attributes use typed arrays
   O3D.Model.prototype = Object.create(null, {
     vertices: {
@@ -3181,7 +3181,7 @@ $.splat = (function() {
             delete this.$vertices;
             delete this.$verticesLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$vertices = val;
@@ -3198,14 +3198,14 @@ $.splat = (function() {
         return this.$vertices;
       }
     },
-    
+
     normals: {
       set: function(val) {
         if (!val) {
             delete this.$normals;
             delete this.$normalsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$normals = val;
@@ -3222,14 +3222,14 @@ $.splat = (function() {
         return this.$normals;
       }
     },
-    
+
     colors: {
       set: function(val) {
         if (!val) {
             delete this.$colors;
             delete this.$colorsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$colors = val;
@@ -3249,14 +3249,14 @@ $.splat = (function() {
         return this.$colors;
       }
     },
-    
+
     pickingColors: {
       set: function(val) {
         if (!val) {
             delete this.$pickingColors;
             delete this.$pickingColorsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$pickingColors = val;
@@ -3276,14 +3276,14 @@ $.splat = (function() {
         return this.$pickingColors;
       }
     },
-    
+
     texCoords: {
       set: function(val) {
         if (!val) {
             delete this.$texCoords;
             delete this.$texCoordsLength;
             return;
-        } 
+        }
         if ($.type(val) == 'object') {
           var ans = {};
           for (var prop in val) {
@@ -3316,7 +3316,7 @@ $.splat = (function() {
             delete this.$indices;
             delete this.$indicesLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$indices = val;
@@ -3333,7 +3333,7 @@ $.splat = (function() {
         return this.$indices;
       }
     }
-    
+
   });
 
   $.extend(O3D.Model.prototype, {
@@ -3359,15 +3359,15 @@ $.splat = (function() {
       faces.forEach(function(face) {
         var centroid = [0, 0, 0],
             acum = 0;
-        
+
         face.forEach(function(idx) {
           var vertex = vertices[idx];
-          
+
           centroid[0] += vertex[0];
           centroid[1] += vertex[1];
           centroid[2] += vertex[2];
           acum++;
-        
+
         });
 
         centroid[0] /= acum;
@@ -3375,7 +3375,7 @@ $.splat = (function() {
         centroid[2] /= acum;
 
         centroids.push(centroid);
-      
+
       });
 
       this.centroids = centroids;
@@ -3402,20 +3402,20 @@ $.splat = (function() {
             };
 
         Vec3.$cross(dir2, dir1);
-        
+
         if (Vec3.norm(dir2) > 1e-6) {
           Vec3.unit(dir2);
         }
-        
+
         normals.push([dir2.x, dir2.y, dir2.z]);
-      
+
       });
 
       this.normals = normals;
     }
 
   });
-  
+
   //Apply our Setters mixin
   $.extend(O3D.Model.prototype, Setters);
 
@@ -3525,7 +3525,7 @@ $.splat = (function() {
         -1.0,  0.0,  0.0,
         -1.0,  0.0,  0.0
       ],
-      
+
       indices: [0, 1, 2, 0, 2, 3,
                 4, 5, 6, 4, 6, 7,
                 8, 9, 10, 8, 10, 11,
@@ -3537,10 +3537,10 @@ $.splat = (function() {
   };
 
   O3D.Cube.prototype = Object.create(O3D.Model.prototype);
-  
-  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
+
+  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/,
   //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
-  O3D.Sphere = function(opt) { 
+  O3D.Sphere = function(opt) {
       var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
            radius = opt.radius || 1,
@@ -3599,11 +3599,11 @@ $.splat = (function() {
       for (x = 0; x < nlat; x++) {
         for (y = 0; y < nlong; y++) {
           var index = (x * nlong + y) * 6;
-          
+
           indices[index + 0] = y * numVertsAround + x;
           indices[index + 1] = y * numVertsAround + x + 1;
           indices[index + 2] = (y + 1) * numVertsAround + x;
-          
+
           indices[index + 3] = (y + 1) * numVertsAround + x;
           indices[index + 4] = y * numVertsAround + x + 1;
           indices[index + 5] = (y + 1) * numVertsAround + x + 1;
@@ -3630,7 +3630,7 @@ $.splat = (function() {
         atan2 = Math.atan2,
         pi = Math.PI,
         pi2 = pi * 2;
-    
+
     //Add a callback for when a vertex is created
     opt.onAddVertex = opt.onAddVertex || $.empty;
 
@@ -3653,7 +3653,7 @@ $.splat = (function() {
                   -t / len,  0, -1 / len,
                   -t / len,  0,  1 / len);
 
-    
+
       indices.push(0, 11, 5,
                  0, 5, 1,
                  0, 1, 7,
@@ -3680,7 +3680,7 @@ $.splat = (function() {
 
     var getMiddlePoint = (function() {
       var pointMemo = {};
-      
+
       return function(i1, i2) {
         i1 *= 3;
         i2 *= 3;
@@ -3779,13 +3779,13 @@ $.splat = (function() {
       normals[in1    ] = normals[in2    ] = normals[in3    ] = normal.x;
       normals[in1 + 1] = normals[in2 + 1] = normals[in3 + 1] = normal.y;
       normals[in1 + 2] = normals[in2 + 2] = normals[in3 + 2] = normal.z;
-      
+
       texCoords[iu1    ] = u1;
       texCoords[iu1 + 1] = v1;
-      
+
       texCoords[iu2    ] = u2;
       texCoords[iu2 + 1] = v2;
-      
+
       texCoords[iu3    ] = u3;
       texCoords[iu3 + 1] = v3;
     }
@@ -3799,7 +3799,7 @@ $.splat = (function() {
   };
 
   O3D.IcoSphere.prototype = Object.create(O3D.Model.prototype);
-  
+
   O3D.TruncatedCone = function(config) {
     var bottomRadius = config.bottomRadius || 0,
         topRadius = config.topRadius || 0,
@@ -3831,7 +3831,7 @@ $.splat = (function() {
       var v = i / nvertical,
           y = height * v,
           ringRadius;
-      
+
       if (i < 0) {
         y = 0;
         v = 1;
@@ -3852,11 +3852,11 @@ $.splat = (function() {
       for (var j = 0; j < vertsAroundEdge; j++) {
         var sin = msin(j * mpi * 2 / nradial);
         var cos = mcos(j * mpi * 2 / nradial);
-        
+
         vertices[i3 + 0] = sin * ringRadius;
         vertices[i3 + 1] = y;
         vertices[i3 + 2] = cos * ringRadius;
-        
+
         normals[i3 + 0] = (i < 0 || i > nvertical) ? 0 : (sin * cosSlant);
         normals[i3 + 1] = (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant);
         normals[i3 + 2] = (i < 0 || i > nvertical) ? 0 : (cos * cosSlant);
@@ -3872,7 +3872,7 @@ $.splat = (function() {
     for (i = 0; i < nvertical + extra; i++) {
       for (j = 0; j < nradial; j++) {
         var index = (i * nradial + j) * 6;
-        
+
         indices[index + 0] = vertsAroundEdge * (i + 0) + 0 + j;
         indices[index + 1] = vertsAroundEdge * (i + 0) + 1 + j;
         indices[index + 2] = vertsAroundEdge * (i + 1) + 1 + j;
@@ -3889,9 +3889,9 @@ $.splat = (function() {
       indices: indices
     }, config || {}));
   };
-  
+
   O3D.TruncatedCone.prototype = Object.create(O3D.Model.prototype);
-  
+
   O3D.Cone = function(config) {
     config.topRadius = 0;
     config.topCap = !!config.cap;
@@ -3909,7 +3909,7 @@ $.splat = (function() {
   };
 
   O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
-  
+
 
   O3D.Plane = function(config) {
     var type = config.type,
@@ -3918,7 +3918,7 @@ $.splat = (function() {
         c2len = config[coords[1] + 'len'], //height
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
-        offset = config.offset
+        offset = config.offset,
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
@@ -3929,11 +3929,11 @@ $.splat = (function() {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
             v = z / subdivisions2;
-        
+
         texCoords[i2 + 0] = u;
         texCoords[i2 + 1] = v;
         i2 += 2;
-        
+
         switch (type) {
           case 'x,y':
             positions[i3 + 0] = c1len * u - c1len * 0.5;
