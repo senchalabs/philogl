@@ -1,14 +1,15 @@
 PhiloGL.unpack();
 
 function init() {
-  var imageUrls = ['worldflights2', 'metaballs', 'histogram', 'fractal', 'explorer', 'tanomalies', 'quaternion'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
+  var imageUrls = ['worldflights2', 'metaballs', 'histogram', 'fractal', 'explorer', 'tanomalies', 'quaternion', 'mercator'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
       descriptions = ['World Airline Routes',
                       'Reflective Metaballs', 
                       'Real-time 3D Color Histogram Analysis',
                       'Animating Fractals',
                       '3D Surface Explorer',
                       'World Temperature Anomalies from 1880 to 2010',
-                      'Quaternion Fractal Raymarching'];
+                      'Quaternion Fractal Raymarching',
+                      'GPU based spherical projection mapping'];
 
   var images = new IO.Images({
     src: imageUrls,
