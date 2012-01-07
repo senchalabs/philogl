@@ -1,6 +1,7 @@
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  /* font-family: 'Crimson Text', Verdana;*/
+  font-family: Verdana;
   margin: 0;
   padding: 0;
 }
