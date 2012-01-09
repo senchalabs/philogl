@@ -52,12 +52,16 @@ void main(void) {
 
   } else if (group == GROUP_PM) {
     
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    
-    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-      yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+
     } else {
-      yt = 1.0 - mod(yt, PATTERN_DIM) / PATTERN_DIM;
+      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
     }
 
   } else if (group == GROUP_PG) {

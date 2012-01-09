@@ -3,7 +3,7 @@ PhiloGL.unpack();
 var $ = function(d) { return document.getElementById(d); };
 
 var groups = ['p1', 'p2', 'pm', 'pg' /*other groups here*/],
-    currentGroup = groups[1],
+    currentGroup = groups[2],
     currentGroupIndex = groups.indexOf(currentGroup),
     offset = 20,
     width = 128,
@@ -105,6 +105,14 @@ function makeClipping(ctx) {
 
     case 'pm':
     case 'pg':
+      ctx.beginPath();
+      ctx.moveTo(0, offset);
+      ctx.lineTo(width, offset);
+      ctx.lineTo(width, height - offset);
+      ctx.lineTo(0, height - offset);
+      ctx.lineTo(0, offset);
+      ctx.clip();
+      break;
   }
 }
 
