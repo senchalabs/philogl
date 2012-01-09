@@ -35,17 +35,18 @@ void main(void) {
   } else if (group == GROUP_P2) {
     
     float widthDim = PATTERN_DIM - offset;
+    float oyt = yt;
     if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
       yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
       float from  = offset / PATTERN_DIM * yt;
       float to = 1. - offset * (1. - yt) / PATTERN_DIM;
-      xt = mod(xt - offset * yt, widthDim) / widthDim * (to - from) + from;
+      xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
 
     } else {
       yt = 1. - mod(yt, PATTERN_DIM) / PATTERN_DIM;
-      float from  = offset / PATTERN_DIM * yt;
-      float to = 1. - offset * (1. - yt) / PATTERN_DIM;
-      xt = (1. - mod(xt - offset * yt, widthDim) / widthDim) * (to - from) + from;
+      float from  = 1. - offset / PATTERN_DIM * (1. - yt);
+      float to = offset * yt / PATTERN_DIM;
+      xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
 
     }
 

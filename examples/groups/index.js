@@ -3,7 +3,7 @@ PhiloGL.unpack();
 var $ = function(d) { return document.getElementById(d); };
 
 var groups = ['p1', 'p2', 'pm', 'pg' /*other groups here*/],
-    currentGroup = groups[0],
+    currentGroup = groups[1],
     currentGroupIndex = groups.indexOf(currentGroup),
     offset = 20,
     width = 128,
