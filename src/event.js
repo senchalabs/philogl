@@ -156,6 +156,7 @@
           evt.wheel = event.getWheel(ge);
           break;
         case 'keydown':
+        case 'keyup':
           $.extend(evt, event.getKey(ge));
           break;
         case 'mouseup':

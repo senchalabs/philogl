@@ -2,8 +2,8 @@ PhiloGL.unpack();
 
 var $ = function(d) { return document.getElementById(d); };
 
-var groups = ['p1', 'p2', 'pm', 'pg' /*other groups here*/],
-    currentGroup = groups[3],
+var groups = ['p1', 'p2', 'pm', 'pg', 'cm' /*other groups here*/],
+    currentGroup = groups[4],
     currentGroupIndex = groups.indexOf(currentGroup),
     offset = 20,
     width = 128,
@@ -25,7 +25,7 @@ function load() {
       noCache: true
     }],
     onError: function(e) {
-      console.log(e);
+      console.log(e, e.message);
     },
     onLoad: function(app) {
       var glCanvas = app.canvas,
@@ -34,7 +34,6 @@ function load() {
 
       makeClipping(ctx);
       renderToCanvas(ctx);
-      makePattern(ctx);
 
       draw();
 
@@ -113,16 +112,15 @@ function makeClipping(ctx) {
       ctx.lineTo(0, offset);
       ctx.clip();
       break;
-  }
-}
 
-function makePattern(ctx) {
-  switch (currentGroup) {
-    case 'p1':
-
-    case 'p2':
-    case 'pm':
-    case 'pg':
+    case 'cm':
+      ctx.beginPath();
+      ctx.moveTo(0, offset);
+      ctx.lineTo(width / 2, height - offset);
+      ctx.lineTo(width, offset);
+      ctx.lineTo(0, offset);
+      ctx.clip();
+      break;
   }
 }
 

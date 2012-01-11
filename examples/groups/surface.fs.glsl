@@ -2,6 +2,9 @@
 precision highp float;
 #endif
 
+#define PI 3.141592654
+#define PI2 (3.141592654 * 2.)
+
 #define PATTERN_DIM 128.0
 
 #define GROUP_P1 0
@@ -79,6 +82,37 @@ void main(void) {
     
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
 
+  } else if (group == GROUP_CM) {
+    
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, heightDim) / heightDim;
+    
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      float xfrom = (1. - ytmod) / 2.;
+      float xto = ytmod / 2. + .5;
+      
+      if (xtmod > xfrom && xtmod < xto) {
+        xt = xtmod;
+        yt = ytmod * (to - from) + from;
+      } else {
+        xt = xtmod - .5;
+        yt = 1. - (ytmod * (to - from) + from);
+      }
+    } else {
+      float xfrom = ytmod / 2.;
+      float xto = (1. - ytmod) * .5 + .5;
+      
+      if (xtmod > xfrom && xtmod < xto) {
+        xt = xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      } else {
+        xt = xtmod - .5;
+        yt = 1. - ((1. - ytmod) * (to - from) + from);
+      }
+    }
   } else {
     
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
