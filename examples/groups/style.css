@@ -4,13 +4,40 @@ html, body {
   margin: 0;
   padding: 0;
   background: #111;
-  font-size: 1.1em;
+  font-size: 1.0em;
 }
 
 input, select {
-  font-size: 15px;
   font-family: 'Crimson Text', Verdana;
   max-width: 80px;
+}
+
+section#controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 200px;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+section#controls canvas {
+  /* background: white;*/
+  box-shadow:inset 0 0 5px #222;
+  margin: auto;
+}
+
+section#controls > .options-body,
+section#controls > header {
+  text-align: left;
+}
+
+section#controls > .options-body.pattern {
+  text-align: center;
+}
+
+section#controls > .options-body {
+  font-size: 0.9em;
 }
 
 #container {
@@ -46,6 +73,7 @@ body.no-webgl div.fallback {
   width: 100%;
   text-align: center;
   color: white;
+  font-size: 1.1em;
 }
 
 h1 {
@@ -62,7 +90,7 @@ canvas#surface {
 canvas {
 }
 
-.footer {
+footer {
   color: white;
   position: absolute;
   bottom: 10px;

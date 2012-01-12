@@ -1,30 +1,82 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PhiloGL - Quaternion Julia Set</title>
+    <title>PhiloGL - Wallpaper Groups</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
     <script type="text/javascript" src="../../build/PhiloGL.js"></script>
+    <script type="text/javascript" src="lib.js"></script>
+    <script type="text/javascript" src="controls.js"></script>
     <script type="text/javascript" src="index.js"></script>
   </head>
   <body onload="load();">
-    <div id="container">
+    <section id="container">
       
-      <div id="title">
+      <header id="title">
         <h1>Wallpaper Groups</h1>
-      </div>
+      </header>
       
       <canvas id="surface"></canvas>
-      <canvas id="canvas" width="128" height="128" style="box-shadow:inset 0 0 5px #222"></canvas>
+
+      <section id="controls">
+        <header>Pattern</header>
+        <div class='options-body pattern'>
+          <canvas id="canvas" width="128" height="128"></canvas>
+        </div>
+
+        <header>Groups</header>
+        <div class='options-body groups'>
+          <label for='current-group'>Current group: </label> 
+          <select id='current-group'>
+            <option>p1 (o)</option>
+            <option>p2 (2222)</option>
+            <option>pm (**)</option>
+            <option>pg (xx)</option>
+            <option>cm (*x)</option>
+            <option>pmm (*2222)</option>
+            <option>pmg (22*)</option>
+            <option>pgg (22x)</option>
+            <option>cmm (2*22)</option>
+            <option>p4 (442)</option>
+            <option>p4m (*442)</option>
+            <option>p4g (4*2)</option>
+            <option>p3 (333)</option>
+            <option>p3m1 (*333)</option>
+            <option>p31m (3*3)</option>
+            <option>p6 (632)</option>
+            <option>p6m (*632)</option>
+          </select>
+        </div>
+
+        <header>Other</header>
+        <div class='options-body other'>
+          <label for='offset'>Offset: </label> 
+          <input type='range' id='offset' min='0' max='40' value='20'
+          step='0.2'> <br>
+          
+          <label for='scale'>Scale: </label> 
+          <input type='range' id='scale' min='0.5' max='10' value='1'
+          step='0.2'> <br>
+
+          <label for='rotate'>Rotate: </label> 
+          <input type='range' id='rotate' min='0' max='180' value='0'
+          step='1'> <br>
+          
+          <label for='aura'>Aura: </label> 
+          <input type='range' id='aura' min='0' max='1' value='0.1'
+          step='0.1'> <br>
+        </div>
+
+      </section>
 
       
-      <div class="footer">
+      <footer>
         Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>
-      </div>
+      </footer>
 
-    </div>
+    </section>
     
-    <div id="fallback" class="fallback"></div>
+    <section id="fallback" class="fallback"></section>
 
   <script>
     if (!PhiloGL.hasWebGL()) {

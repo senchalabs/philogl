@@ -1,13 +1,16 @@
 PhiloGL.unpack();
 
-var $ = function(d) { return document.getElementById(d); };
-
 var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg' /*other groups here*/],
-    currentGroup = groups[7],
-    currentGroupIndex = groups.indexOf(currentGroup),
-    offset = 20,
     width = 128,
     height = 128;
+
+var options = {
+  currentGroupIndex: 0,
+  scale: 1,
+  rotate: 0,
+  radialFactor: 0.1,
+  offset: 20
+};
 
 function load() {
 
@@ -15,6 +18,8 @@ function load() {
     alert("Your browser does not support WebGL");
     return;
   }
+
+  initControls(options);
 
   PhiloGL('surface', {
     program: [{
@@ -28,16 +33,19 @@ function load() {
       console.log(e, e.message);
     },
     onLoad: function(app) {
-      var glCanvas = app.canvas,
+      var gl = app.gl,
+          glCanvas = app.canvas,
           drawCanvas = $('canvas'),
           ctx = drawCanvas.getContext('2d');
-
-      makeClipping(ctx);
-      renderToCanvas(ctx);
 
       draw();
 
       function draw() {
+        ctx.save();
+        makeClipping(ctx, drawCanvas);
+        renderToCanvas(ctx, drawCanvas);
+        ctx.restore();
+        
         glCanvas.width = window.innerWidth;
         glCanvas.height = window.innerHeight;
 
@@ -47,7 +55,7 @@ function load() {
           }
         });
   
-          // advance
+        // advance
         Media.Image.postProcess({
           width: glCanvas.width,
           height: glCanvas.height,
@@ -56,16 +64,20 @@ function load() {
           program: 'surface',
           fromTexture: 'pattern',
           uniforms: {
-            group: currentGroupIndex,
-            offset: offset,
-            rotation: 0,
-            scaling: [2, 2],
+            group: options.currentGroupIndex,
+            offset: options.offset,
+            rotation: options.rotate,
+            scaling: [options.scale, options.scale],
             resolution: [glCanvas.width, glCanvas.height],
-            radialFactor: 0.1
+            radialFactor: options.radialFactor
           }
         });
 
         Fx.requestAnimationFrame(draw);
+        
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        // app.setTexture('pattern', false);
       }
     }
   });
@@ -93,17 +105,18 @@ function renderToCanvas(ctx) {
   }
 }
 
-function makeClipping(ctx) {
+function makeClipping(ctx, canvas) {
+  canvas.width = canvas.width;
 
-  switch (currentGroup) {
+  switch (groups[options.currentGroupIndex]) {
     case 'p1':
     case 'p2':
       ctx.beginPath();
-      ctx.moveTo(offset, 0);
+      ctx.moveTo(options.offset, 0);
       ctx.lineTo(width, 0);
-      ctx.lineTo(width - offset, height);
+      ctx.lineTo(width - options.offset, height);
       ctx.lineTo(0, height);
-      ctx.lineTo(offset, 0);
+      ctx.lineTo(options.offset, 0);
       ctx.clip();
       break;
 
@@ -112,21 +125,21 @@ function makeClipping(ctx) {
     case 'pmm':
     case 'pmg':
       ctx.beginPath();
-      ctx.moveTo(0, offset);
-      ctx.lineTo(width, offset);
-      ctx.lineTo(width, height - offset);
-      ctx.lineTo(0, height - offset);
-      ctx.lineTo(0, offset);
+      ctx.moveTo(0, options.offset);
+      ctx.lineTo(width, options.offset);
+      ctx.lineTo(width, height - options.offset);
+      ctx.lineTo(0, height - options.offset);
+      ctx.lineTo(0, options.offset);
       ctx.clip();
       break;
 
     case 'cm':
     case 'pgg':
       ctx.beginPath();
-      ctx.moveTo(0, offset);
-      ctx.lineTo(width / 2, height - offset);
-      ctx.lineTo(width, offset);
-      ctx.lineTo(0, offset);
+      ctx.moveTo(0, options.offset);
+      ctx.lineTo(width / 2, height - options.offset);
+      ctx.lineTo(width, options.offset);
+      ctx.lineTo(0, options.offset);
       ctx.clip();
       break;
   }
