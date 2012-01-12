@@ -38,6 +38,9 @@ function load() {
       draw();
 
       function draw() {
+        glCanvas.width = window.innerWidth;
+        glCanvas.height = window.innerHeight;
+
         app.setTexture('pattern', {
           data: {
             value: drawCanvas
@@ -56,7 +59,9 @@ function load() {
             group: currentGroupIndex,
             offset: offset,
             rotation: 0,
-            scaling: [1, 1]
+            scaling: [2, 2],
+            resolution: [glCanvas.width, glCanvas.height],
+            radialFactor: 0.1
           }
         });
 

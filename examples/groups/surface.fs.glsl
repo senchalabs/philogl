@@ -20,6 +20,8 @@ uniform int group;
 uniform float offset;
 uniform float rotation;
 uniform vec2 scaling;
+uniform vec2 resolution;
+uniform float radialFactor;
 
 uniform sampler2D sampler1;
 
@@ -194,5 +196,12 @@ void main(void) {
   
   vec4 color = texture2D(sampler1, vec2(xt, yt));
 
-  gl_FragColor = color;
+  //add a radial blend
+  vec4 colorFrom = color;
+  vec4 colorTo = color * radialFactor;
+  vec2 uv = gl_FragCoord.xy / resolution.xy;
+  float ratio = resolution.y / resolution.x;
+  vec2 center = vec2(.5, .5);
+
+  gl_FragColor = colorFrom + (colorTo - colorFrom) * distance(uv, center) / distance(vec2(1., 1.), center);
 }
