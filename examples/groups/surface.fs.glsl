@@ -12,6 +12,9 @@ precision highp float;
 #define GROUP_PM 2
 #define GROUP_PG 3
 #define GROUP_CM 4
+#define GROUP_PMM 5
+#define GROUP_PMG 6
+#define GROUP_PGG 7
 
 uniform int group;
 uniform float offset;
@@ -113,6 +116,75 @@ void main(void) {
         yt = 1. - ((1. - ytmod) * (to - from) + from);
       }
     }
+  } else if (group == GROUP_PMM) {
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    } else {
+      xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    }
+    
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+    } else {
+      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+    }
+  } else if (group == GROUP_PMG) {
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      if (mod(yt / heightDim, 2.0) < 1.0) {
+        xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+        yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+      } else {
+        xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+        yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+      }
+    } else {
+      if (mod(yt / heightDim, 2.0) < 1.0) {
+        xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+        yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+      } else {
+        xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+        yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+      }
+    }
+  } else if (group == GROUP_PGG) {
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, heightDim) / heightDim;
+    
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      float xfrom = (1. - ytmod) / 2.;
+      float xto = ytmod / 2. + .5;
+      
+      if (xtmod > xfrom && xtmod < xto) {
+        xt = xtmod;
+        yt = ytmod * (to - from) + from;
+      } else {
+        xt = xtmod - .5;
+        yt = 1. - (ytmod * (to - from) + from);
+      }
+    } else {
+      float xfrom = ytmod / 2.;
+      float xto = (1. - ytmod) * .5 + .5;
+      
+      if (xtmod > xfrom && xtmod < xto) {
+        xt =  1. - xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      } else {
+        xt = (1. - xtmod) - .5;
+        yt = ytmod * (to - from) + from;
+      }
+    }
+    
   } else {
     
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
