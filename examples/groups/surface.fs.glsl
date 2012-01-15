@@ -15,6 +15,9 @@ precision highp float;
 #define GROUP_PMM 5
 #define GROUP_PMG 6
 #define GROUP_PGG 7
+#define GROUP_CMM 8
+#define GROUP_P4 9
+#define GROUP_P4M 10
 
 uniform int group;
 uniform float offset;
@@ -187,6 +190,160 @@ void main(void) {
       }
     }
     
+  } else if (group == GROUP_CMM) {
+    float heightDim = PATTERN_DIM - 2. * offset;
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, heightDim) / heightDim;
+
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      if (mod(yt / heightDim, 2.0) < 1.0) {
+        if (ytmod > 1. - xtmod) {
+          xt = xtmod;
+          yt = ytmod * (to - from) + from;
+        } else {
+          xt = 1. - xtmod;
+          yt = (1. - ytmod) * (to - from) + from;
+        }
+      } else {
+        if (ytmod < xtmod) {
+          xt = xtmod;
+          yt = (1. - ytmod) * (to - from) + from;
+        } else {
+          xt = 1. - xtmod;
+          yt = ytmod * (to - from) + from;
+        }
+      }
+    } else {
+      if (mod(yt / heightDim, 2.0) < 1.0) {
+        if (ytmod > xtmod) {
+          xt = 1. - xtmod;
+          yt = ytmod * (to - from) + from;
+        } else {
+          xt = xtmod;
+          yt = (1. - ytmod) * (to - from) + from;
+        }
+      } else {
+        if (ytmod < 1. - xtmod) {
+          xt = 1. - xtmod;
+          yt = (1. - ytmod) * (to - from) + from;
+        } else {
+          xt = xtmod;
+          yt = ytmod * (to - from) + from;
+        }
+      }
+    }
+    
+  } else if (group == GROUP_P4) {
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+    
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        xt = xtmod;
+        yt = ytmod;
+      } else {
+        xt = 1. - ytmod;
+        yt = xtmod;
+      }
+    } else {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        xt = ytmod;
+        yt = 1. - xtmod;
+      } else {
+        xt = 1. - xtmod;
+        yt = 1. - ytmod;
+      }
+    }
+  } else if (group == GROUP_P4M) {
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        if (xtmod > ytmod) {
+          xt = xtmod;
+          yt = ytmod;
+        } else {
+          xt = ytmod;
+          yt = xtmod;
+        }
+      } else {
+        if (ytmod < 1. - xtmod) {
+          xt = 1. - ytmod;
+          yt = xtmod;
+        } else {
+          xt = xtmod;
+          yt = 1. - ytmod;
+        }
+      }
+    } else {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        if (ytmod < 1. - xtmod) {
+          xt = 1. - xtmod;
+          yt = ytmod;
+        } else {
+          xt = ytmod;
+          yt = 1. - xtmod;
+        }
+      } else {
+        if (xtmod > ytmod) {
+          xt = 1. - ytmod;
+          yt = 1. - xtmod;
+        } else {
+          xt = 1. - xtmod;
+          yt = 1. - ytmod;
+        }
+      }
+    }
+    
+  } else if (groups == GROUP_P4G) {
+    float from = offset / PATTERN_DIM;
+    float to = 1. - offset / PATTERN_DIM;
+    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        if (ytmod > 1. - xmod) {
+          xt = xtmod;
+          yt = ytmod;
+        } else {
+          xt = ytmod;
+          yt = xtmod;
+        }
+      } else {
+        if (xtmod < ytmod) {
+          xt = 1. - ytmod;
+          yt = xtmod;
+        } else {
+          xt = xtmod;
+          yt = 1. - ytmod;
+        }
+      }
+    } else {
+      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+        if (xtmod < ytmod) {
+          xt = 1. - xtmod;
+          yt = ytmod;
+        } else {
+          xt = ytmod;
+          yt = 1. - xtmod;
+        }
+      } else {
+        if (ytmod < 1. - xtmod) {
+          xt = 1. - ytmod;
+          yt = 1. - xtmod;
+        } else {
+          xt = 1. - xtmod;
+          yt = 1. - ytmod;
+        }
+      }
+    }
+
   } else {
     
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;

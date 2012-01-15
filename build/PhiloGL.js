@@ -642,8 +642,12 @@ $.splat = (function() {
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
+      
       //set default options so we don't have to next time.
-      delete opt.data;
+      if (hasValue) {
+        opt.data.value = false;
+      }
+
       this.textureMemo[name] = opt;
       
       return this;
@@ -1993,6 +1997,7 @@ $.splat = (function() {
           evt.wheel = event.getWheel(ge);
           break;
         case 'keydown':
+        case 'keyup':
           $.extend(evt, event.getKey(ge));
           break;
         case 'mouseup':

@@ -356,8 +356,12 @@
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
+      
       //set default options so we don't have to next time.
-      delete opt.data;
+      if (hasValue) {
+        opt.data.value = false;
+      }
+
       this.textureMemo[name] = opt;
       
       return this;

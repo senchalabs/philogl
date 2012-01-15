@@ -1,6 +1,6 @@
 PhiloGL.unpack();
 
-var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg' /*other groups here*/],
+var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g' /*other groups here*/],
     width = 128,
     height = 128;
 
@@ -29,6 +29,18 @@ function load() {
       fs: 'surface.fs.glsl',
       noCache: true
     }],
+    events: {
+      onMouseWheel: function(e) {
+        e.stop();
+        options.scale += e.wheel / (10 * (window.opera ? 50 : 1));
+        if (options.scale < 0.5) {
+          options.scale = 0.5;
+        }
+        if (options.scale > 10) {
+          options.scale = 10;
+        }
+      }
+    },
     onError: function(e) {
       console.log(e, e.message);
     },
@@ -142,6 +154,41 @@ function makeClipping(ctx, canvas) {
       ctx.lineTo(0, options.offset);
       ctx.clip();
       break;
+
+    case 'cmm':
+      ctx.beginPath();
+      ctx.moveTo(0, options.offset);
+      ctx.lineTo(width, options.offset);
+      ctx.lineTo(width, height - options.offset);
+      ctx.lineTo(0, options.offset);
+      ctx.clip();
+      break;
+
+    //square based.
+    case 'p4':
+      break;
+
+    //square based.
+    case 'p4m':
+      ctx.beginPath();
+      ctx.moveTo(width, 0);
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
+      ctx.lineTo(width, 0);
+      ctx.clip();
+      break;
+    
+    //square based.
+    case 'p4g':
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(width, 0);
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, 0);
+      ctx.clip();
+      break;
+      
+      
   }
 }
 
