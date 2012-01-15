@@ -33,8 +33,8 @@ function load() {
       onMouseWheel: function(e) {
         e.stop();
         options.scale += e.wheel / (10 * (window.opera ? 50 : 1));
-        if (options.scale < 0.5) {
-          options.scale = 0.5;
+        if (options.scale < 1) {
+          options.scale = 1;
         }
         if (options.scale > 10) {
           options.scale = 10;

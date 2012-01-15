@@ -30,6 +30,18 @@ section#controls canvas {
 section#controls > .options-body,
 section#controls > header {
   text-align: left;
+  padding: 3px;
+}
+
+section#controls > header {
+  background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(204,204,204) 98%);
+  background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(204,204,204) 98%);
+  background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(204,204,204) 98%);
+  background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(204,204,204) 98%);
+  background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(204,204,204) 98%);
+  margin: 0 0 7px 0;
+  text-indent: 2px;
+  border-top: 1px solid #bbb;
 }
 
 section#controls > .options-body.pattern {

@@ -18,6 +18,7 @@ precision highp float;
 #define GROUP_CMM 8
 #define GROUP_P4 9
 #define GROUP_P4M 10
+#define GROUP_P4G 11
 
 uniform int group;
 uniform float offset;
@@ -300,7 +301,7 @@ void main(void) {
       }
     }
     
-  } else if (groups == GROUP_P4G) {
+  } else if (group == GROUP_P4G) {
     float from = offset / PATTERN_DIM;
     float to = 1. - offset / PATTERN_DIM;
     float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
@@ -308,35 +309,35 @@ void main(void) {
 
     if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
       if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (ytmod > 1. - xmod) {
+        if (ytmod > 1. - xtmod) {
           xt = xtmod;
           yt = ytmod;
         } else {
-          xt = ytmod;
-          yt = xtmod;
+          xt = 1. - ytmod;
+          yt = 1. - xtmod;
         }
       } else {
-        if (xtmod < ytmod) {
+        if (xtmod > ytmod) {
           xt = 1. - ytmod;
           yt = xtmod;
         } else {
-          xt = xtmod;
-          yt = 1. - ytmod;
+          xt = 1. - xtmod;
+          yt = ytmod;
         }
       }
     } else {
       if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (xtmod < ytmod) {
-          xt = 1. - xtmod;
-          yt = ytmod;
+        if (xtmod > ytmod) {
+          xt = xtmod;
+          yt = 1. - ytmod;
         } else {
           xt = ytmod;
           yt = 1. - xtmod;
         }
       } else {
-        if (ytmod < 1. - xtmod) {
-          xt = 1. - ytmod;
-          yt = 1. - xtmod;
+        if (ytmod > 1. - xtmod) {
+          xt = ytmod;
+          yt = xtmod;
         } else {
           xt = 1. - xtmod;
           yt = 1. - ytmod;

@@ -19,12 +19,12 @@
       <canvas id="surface"></canvas>
 
       <section id="controls">
-        <header>Pattern</header>
+        <header>&raquo; Pattern</header>
         <div class='options-body pattern'>
           <canvas id="canvas" width="128" height="128"></canvas>
         </div>
 
-        <header>Groups</header>
+        <header>&raquo; Groups</header>
         <div class='options-body groups'>
           <label for='current-group'>Current group: </label> 
           <select id='current-group'>
@@ -46,16 +46,19 @@
             <option>p6 (632)</option>
             <option>p6m (*632)</option>
           </select>
+
+          <div class='group-description'>
+          </div>
         </div>
 
-        <header>Other</header>
+        <header>&raquo; Other</header>
         <div class='options-body other'>
           <label for='offset'>Offset: </label> 
           <input type='range' id='offset' min='0' max='40' value='20'
           step='0.2'> <br>
           
           <label for='scale'>Scale: </label> 
-          <input type='range' id='scale' min='0.5' max='10' value='1'
+          <input type='range' id='scale' min='1' max='10' value='1'
           step='0.2'> <br>
 
           <label for='rotate'>Rotate: </label> 
