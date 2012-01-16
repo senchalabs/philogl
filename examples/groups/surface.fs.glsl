@@ -19,6 +19,7 @@ precision highp float;
 #define GROUP_P4 9
 #define GROUP_P4M 10
 #define GROUP_P4G 11
+#define GROUP_P3 12
 
 uniform int group;
 uniform float offset;
@@ -345,6 +346,60 @@ void main(void) {
       }
     }
 
+  } else if (group == GROUP_P3) {
+    float cosFactor = cos(PI / 6.);
+    float sinFactor = sin(PI / 6.);
+    float tanFactor = tan(PI / 6.);
+    
+    float cos2Factor = cos(PI / 3.);
+    float sin2Factor = sin(PI / 3.);
+    float tan2Factor = tan(PI / 3.);
+    
+    float cos3Factor = cos(2. * PI / 3.);
+    float sin3Factor = sin(2. * PI / 3.);
+    float tan3Factor = tan(2. * PI / 3.);
+    
+    float cos4Factor = cos(4. * PI / 3.);
+    float sin4Factor = sin(4. * PI / 3.);
+    
+    float widthDim = PATTERN_DIM * cosFactor * 2. / 3.;
+    float offsetDim = (1. - cosFactor * 2. / 3.) / 2.;
+    float from = offsetDim;
+    float to = 1. - offsetDim;
+    float xtmod = mod(xt, widthDim) / widthDim;
+    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+    float offsetWidth = mod(xt / widthDim, 3.0);
+
+    if (/*offsetWidth < 1.*/ true) {
+      /* if (ytmod < tanFactor * xtmod * widthDim / PATTERN_DIM) {*/
+      if( true) {
+        xt =  cos3Factor * (xtmod + offsetDim) * (to - from) + from - sin3Factor * (ytmod + 1. / 3.);
+        yt =  sin3Factor * (xtmod + offsetDim) * (to - from) + from + cos3Factor * (ytmod + 1. / 3.) - 1. / 3.;
+      } else if (ytmod < tan2Factor * xtmod * widthDim / PATTERN_DIM) {
+        /* xt =  cos4Factor * xtmod * (to - from) + from - sin4Factor * (ytmod + 1. / 3.);*/
+        /* yt =  sin4Factor * xtmod * (to - from) + from + cos4Factor * (ytmod + 1. / 3.);*/
+      }
+    } else if (offsetWidth < 2.) {
+      if (ytmod < (-tanFactor * xtmod) * widthDim / PATTERN_DIM + .3333333) {
+        /* xt =  cos4Factor * (xtmod + offsetDim) * (to - from) + from - sin4Factor * (ytmod - 1. / 3.);*/
+        /* yt =  sin4Factor * (xtmod + offsetDim) * (to - from) + from + cos4Factor * (ytmod - 1. / 3.) + 1. / 3.;*/
+      } else if (xtmod < -sinFactor * ytmod + 1.) {
+        /* xt = xtmod * (to - from) + from;*/
+        /* yt = ytmod;*/
+      } else {
+        /* xt = xtmod *  cos2Factor * (to - from) + from;*/
+        /* yt = ytmod * -sin2Factor;*/
+      }
+    } else {
+      if (xt < sin2Factor * yt && xt > sinFactor * yt + .6666666) {
+        /* xt = xtmod * cos2Factor * (to - from) + from;*/
+        /* yt = ytmod * sin2Factor;*/
+      } else if (true) {
+
+      }
+    }
+    
   } else {
     
     xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;

@@ -1,14 +1,17 @@
 PhiloGL.unpack();
 
-var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g' /*other groups here*/],
+var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g', 'p3' /*other groups here*/],
     width = 128,
-    height = 128;
+    height = 128,
+    cos = Math.cos,
+    sin = Math.sin,
+    PI = Math.PI;
 
 var options = {
-  currentGroupIndex: 0,
+  currentGroupIndex: 12,
   scale: 1,
   rotate: 0,
-  radialFactor: 0.1,
+  radialFactor: 1,
   offset: 20
 };
 
@@ -117,6 +120,10 @@ function renderToCanvas(ctx) {
   }
 }
 
+// function renderToCanvas(ctx) {
+//   ctx.fillRect(0, 0, width, height);
+// }
+
 function makeClipping(ctx, canvas) {
   canvas.width = canvas.width;
 
@@ -188,7 +195,21 @@ function makeClipping(ctx, canvas) {
       ctx.clip();
       break;
       
-      
+    //equilateral triangle based.
+    case 'p3':
+      var h = height * 2 / 3,
+          w = cos(PI / 6) * h,
+          offsetWidth = width - w;
+
+      ctx.beginPath();
+      ctx.moveTo(offsetWidth / 2, 0);
+      ctx.lineTo(offsetWidth / 2, h);
+      ctx.lineTo(offsetWidth / 2 + w , h + sin(PI / 6) * h );
+      ctx.lineTo(offsetWidth / 2 + w, height / 3 );
+      ctx.lineTo(offsetWidth / 2, 0);
+      ctx.clip();
+      break;
+
   }
 }
 
