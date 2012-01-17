@@ -8,11 +8,12 @@ var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p
     PI = Math.PI;
 
 var options = {
-  currentGroupIndex: 12,
+  currentGroupIndex: 0,
   scale: 1,
   rotate: 0,
-  radialFactor: 1,
-  offset: 20
+  radialFactor: 0.1,
+  offset: 20,
+  hyperbole: 0
 };
 
 function load() {
@@ -25,6 +26,9 @@ function load() {
   initControls(options);
 
   PhiloGL('surface', {
+    context: {
+      antialias: true
+    },
     program: [{
       id: 'surface',
       from: 'uris',
@@ -52,7 +56,11 @@ function load() {
           glCanvas = app.canvas,
           drawCanvas = $('canvas'),
           ctx = drawCanvas.getContext('2d');
-
+      
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+      gl.enable(gl.BLEND);
+      gl.disable(gl.DEPTH_TEST);
+      
       draw();
 
       function draw() {
@@ -84,7 +92,8 @@ function load() {
             rotation: options.rotate,
             scaling: [options.scale, options.scale],
             resolution: [glCanvas.width, glCanvas.height],
-            radialFactor: options.radialFactor
+            radialFactor: options.radialFactor,
+            hyperbolic: options.hyperbole
           }
         });
 

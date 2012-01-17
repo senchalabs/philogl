@@ -3,7 +3,8 @@ function initControls(options) {
       scale = $('scale'),
       rotate = $('rotate'),
       aura = $('aura'),
-      offset = $('offset');
+      offset = $('offset'),
+      hyperbole = $('hyperbole');
 
   currentGroup.addEventListener('change', function() {
     options.currentGroupIndex = this.selectedIndex;
@@ -24,5 +25,9 @@ function initControls(options) {
   
   offset.addEventListener('change', function() {
     options.offset = +this.value;
+  }, false);
+  
+  hyperbole.addEventListener('change', function() {
+    options.hyperbole = +this.value;
   }, false);
 }

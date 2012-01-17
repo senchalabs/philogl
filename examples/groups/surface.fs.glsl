@@ -21,20 +21,44 @@ precision highp float;
 #define GROUP_P4G 11
 #define GROUP_P3 12
 
+#define EPSILON 0.000001
+
 uniform int group;
 uniform float offset;
 uniform float rotation;
 uniform vec2 scaling;
 uniform vec2 resolution;
 uniform float radialFactor;
+uniform float hyperbolic;
 
 uniform sampler2D sampler1;
 
 void main(void) {
   vec2 pos = gl_FragCoord.xy;
+  float xt, yt;
 
-  float xt =  pos.x * cos(rotation) * scaling.x + pos.y * sin(rotation) * scaling.y;
-  float yt = -pos.x * sin(rotation) * scaling.x + pos.y * cos(rotation) * scaling.y;
+  xt =  pos.x * cos(rotation) * scaling.x + pos.y * sin(rotation) * scaling.y;
+  yt = -pos.x * sin(rotation) * scaling.x + pos.y * cos(rotation) * scaling.y;
+
+  xt -= resolution.x / 2.;
+  yt -= resolution.y / 2.;
+
+  if (hyperbolic > 0.0) {
+    float minDim = min(resolution.x, resolution.y) / (2. * hyperbolic);
+    xt /= minDim;
+    yt /= minDim;
+    vec2 v = vec2(xt, yt);
+    float vlen = length(v);
+    
+    if (vlen < 1.0 - EPSILON && vlen > EPSILON) {
+      float len = sqrt ( xt * xt + yt * yt );
+      xt = xt / (1. - len) * minDim;
+      yt = yt / (1. - len) * minDim;
+    } else {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+      return;
+    }
+  }
 
   if (group == GROUP_P1) {
     
