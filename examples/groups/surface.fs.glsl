@@ -51,9 +51,14 @@ void main(void) {
     float vlen = length(v);
     
     if (vlen < 1.0 - EPSILON && vlen > EPSILON) {
+      //map on sphere
+      /* float len = -sqrt ( 1. - (xt * xt + yt * yt) );*/
+      /* xt = xt / (1. - len) * minDim;*/
+      /* yt = yt / (1. - len) * minDim;*/
+      
       float len = sqrt ( xt * xt + yt * yt );
       xt = xt / (1. - len) * minDim;
-      yt = yt / (1. - len) * minDim;
+      yt = yt / (1. - len) * minDim;    
     } else {
       gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
       return;
