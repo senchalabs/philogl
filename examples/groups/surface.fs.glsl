@@ -20,6 +20,7 @@ precision highp float;
 #define GROUP_P4M 10
 #define GROUP_P4G 11
 #define GROUP_P3 12
+#define GROUP_P3M1 13
 
 #define EPSILON 0.000001
 
@@ -33,6 +34,461 @@ uniform float hyperbolic;
 
 uniform sampler2D sampler1;
 
+//Groups
+vec2 p1(float xt, float yt) {
+  float oyt = yt;
+  yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+  float widthDim = PATTERN_DIM - offset;
+  float from  = offset / PATTERN_DIM * yt;
+  float to = 1. - offset * (1. - yt) / PATTERN_DIM;
+  xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
+  return vec2(xt, yt);
+}
+
+vec2 p2(float xt, float yt) {
+  float widthDim = PATTERN_DIM - offset;
+  float oyt = yt;
+  if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+    yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+    float from  = offset / PATTERN_DIM * yt;
+    float to = 1. - offset * (1. - yt) / PATTERN_DIM;
+    xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
+  } else {
+    yt = 1. - mod(yt, PATTERN_DIM) / PATTERN_DIM;
+    float from  = 1. - offset / PATTERN_DIM * (1. - yt);
+    float to = offset * yt / PATTERN_DIM;
+    xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
+  }
+  return vec2(xt, yt);
+}
+
+vec2 pm(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(yt / heightDim, 2.0) < 1.0) {
+    yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+
+  } else {
+    yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+  }
+  return vec2(xt, yt);
+}
+
+vec2 pg(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+
+  } else {
+    yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+  }
+
+  xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  return vec2(xt, yt);
+}
+
+vec2 cm(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, heightDim) / heightDim;
+
+  if (mod(yt / heightDim, 2.0) < 1.0) {
+    float xfrom = (1. - ytmod) / 2.;
+    float xto = ytmod / 2. + .5;
+
+    if (xtmod > xfrom && xtmod < xto) {
+      xt = xtmod;
+      yt = ytmod * (to - from) + from;
+    } else {
+      xt = xtmod - .5;
+      yt = 1. - (ytmod * (to - from) + from);
+    }
+  } else {
+    float xfrom = ytmod / 2.;
+    float xto = (1. - ytmod) * .5 + .5;
+
+    if (xtmod > xfrom && xtmod < xto) {
+      xt = xtmod;
+      yt = (1. - ytmod) * (to - from) + from;
+    } else {
+      xt = xtmod - .5;
+      yt = 1. - ((1. - ytmod) * (to - from) + from);
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 pmm(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  } else {
+    xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  }
+
+  if (mod(yt / heightDim, 2.0) < 1.0) {
+    yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+  } else {
+    yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+  }
+  return vec2(xt, yt);
+}
+
+vec2 pmg(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+    } else {
+      xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+    }
+  } else {
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
+    } else {
+      xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
+      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 pgg(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, heightDim) / heightDim;
+  
+  if (mod(yt / heightDim, 2.0) < 1.0) {
+    float xfrom = (1. - ytmod) / 2.;
+    float xto = ytmod / 2. + .5;
+    
+    if (xtmod > xfrom && xtmod < xto) {
+      xt = xtmod;
+      yt = ytmod * (to - from) + from;
+    } else {
+      xt = xtmod - .5;
+      yt = 1. - (ytmod * (to - from) + from);
+    }
+  } else {
+    float xfrom = ytmod / 2.;
+    float xto = (1. - ytmod) * .5 + .5;
+    
+    if (xtmod > xfrom && xtmod < xto) {
+      xt =  1. - xtmod;
+      yt = (1. - ytmod) * (to - from) + from;
+    } else {
+      xt = (1. - xtmod) - .5;
+      yt = ytmod * (to - from) + from;
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 cmm(float xt, float yt) {
+  float heightDim = PATTERN_DIM - 2. * offset;
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, heightDim) / heightDim;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      if (ytmod > 1. - xtmod) {
+        xt = xtmod;
+        yt = ytmod * (to - from) + from;
+      } else {
+        xt = 1. - xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      }
+    } else {
+      if (ytmod < xtmod) {
+        xt = xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      } else {
+        xt = 1. - xtmod;
+        yt = ytmod * (to - from) + from;
+      }
+    }
+  } else {
+    if (mod(yt / heightDim, 2.0) < 1.0) {
+      if (ytmod > xtmod) {
+        xt = 1. - xtmod;
+        yt = ytmod * (to - from) + from;
+      } else {
+        xt = xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      }
+    } else {
+      if (ytmod < 1. - xtmod) {
+        xt = 1. - xtmod;
+        yt = (1. - ytmod) * (to - from) + from;
+      } else {
+        xt = xtmod;
+        yt = ytmod * (to - from) + from;
+      }
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 p4(float xt, float yt) {
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      xt = xtmod;
+      yt = ytmod;
+    } else {
+      xt = 1. - ytmod;
+      yt = xtmod;
+    }
+  } else {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      xt = ytmod;
+      yt = 1. - xtmod;
+    } else {
+      xt = 1. - xtmod;
+      yt = 1. - ytmod;
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 p4m(float xt, float yt) {
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      if (xtmod > ytmod) {
+        xt = xtmod;
+        yt = ytmod;
+      } else {
+        xt = ytmod;
+        yt = xtmod;
+      }
+    } else {
+      if (ytmod < 1. - xtmod) {
+        xt = 1. - ytmod;
+        yt = xtmod;
+      } else {
+        xt = xtmod;
+        yt = 1. - ytmod;
+      }
+    }
+  } else {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      if (ytmod < 1. - xtmod) {
+        xt = 1. - xtmod;
+        yt = ytmod;
+      } else {
+        xt = ytmod;
+        yt = 1. - xtmod;
+      }
+    } else {
+      if (xtmod > ytmod) {
+        xt = 1. - ytmod;
+        yt = 1. - xtmod;
+      } else {
+        xt = 1. - xtmod;
+        yt = 1. - ytmod;
+      }
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 p4g(float xt, float yt) {
+  float from = offset / PATTERN_DIM;
+  float to = 1. - offset / PATTERN_DIM;
+  float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      if (ytmod > 1. - xtmod) {
+        xt = xtmod;
+        yt = ytmod;
+      } else {
+        xt = 1. - ytmod;
+        yt = 1. - xtmod;
+      }
+    } else {
+      if (xtmod > ytmod) {
+        xt = 1. - ytmod;
+        yt = xtmod;
+      } else {
+        xt = 1. - xtmod;
+        yt = ytmod;
+      }
+    }
+  } else {
+    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
+      if (xtmod > ytmod) {
+        xt = xtmod;
+        yt = 1. - ytmod;
+      } else {
+        xt = ytmod;
+        yt = 1. - xtmod;
+      }
+    } else {
+      if (ytmod > 1. - xtmod) {
+        xt = ytmod;
+        yt = xtmod;
+      } else {
+        xt = 1. - xtmod;
+        yt = 1. - ytmod;
+      }
+    }
+  }
+  return vec2(xt, yt);
+}
+
+vec2 p3(float xt, float yt) {
+  const float w = 1.154700538379251529; // sqrt(4/3)
+  const float w_2 = 0.5773502691896257; // sqrt(1/3)
+  const float l = 0.3333333333;
+  const float offsetX = 0.21132486540518711774542560; // (1 - sqrt(1/3))/2;
+
+  float xtmod = mod(xt, w * PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(floor(yt / PATTERN_DIM), 2.0) < l) {
+    xtmod = mod(xtmod + w_2, w);
+  }
+
+  if (xtmod > w_2) {
+    if (ytmod > l && ytmod < l + l ||
+      ytmod < l && ytmod > (w - xtmod) * w_2 ||
+      ytmod > l + l && ytmod < 1.0 - (xtmod - w_2) * w_2
+      ) {
+      return vec2(xtmod - w_2 + offsetX, ytmod);
+    }
+  } else {
+    if (ytmod > l && ytmod < l + l ||
+        ytmod < l && ytmod > xtmod * w_2 ||
+        ytmod > l + l && ytmod < 1.0 - (w_2 - xtmod) * w_2
+        ) {
+        return vec2(- xtmod * 0.5 + ytmod / w + offsetX, 1.0 - ytmod * 0.5 - xtmod / w);
+      }
+  }
+
+  if (ytmod > l) {
+    ytmod -= 1.0;
+    xtmod = mod(xtmod + w_2, w);
+  }
+
+  return vec2(offsetX + (w - xtmod) * 0.5 - ytmod / w, 1.0 - (w - xtmod) / w - ytmod * 0.5);
+}
+
+vec2 p3m1(float xt, float yt) {
+  const float h = 0.5773502691896257; // sqrt(1/3)
+  const float c30 = 0.866025403784438; // sqrt(3)/2
+  const float h2 = 1.154700538379251529; // sqrt(4/3)
+  const float h6 = h * 6.0; // 6 * sqrt(1/3)
+  const mat3 rot = mat3(
+    -0.5, +c30, +c30,
+    -c30, -0.5, 0.5,
+    0.0, 0.0, 1.0
+  );
+  float xs = xt / PATTERN_DIM;
+  float xi = floor(xs);
+  float xmod = mod(xs - xi, 2.0);
+  if (xmod > 1.0) {
+    xmod = 2.0 - xmod;
+  }
+  float ys = yt / h2 / PATTERN_DIM;
+  float yi = floor(ys);
+  float ymod = mod(ys - yi, 3.0);
+  yi = mod(yi, 3.0);
+
+  vec3 res = vec3(xmod, ymod, 1.0);
+  if (yi > 0.5) {
+    res = rot * res;
+  }
+  if (yi > 1.5) {
+    res = rot * res;
+  }
+  return res.xy;
+}
+
+
+//Sampling
+float cubic(float x) {
+  x = abs(x);
+  const float a = -0.5;
+  if (x <= 1.0) {
+    return ((a + 2.0) * x - (a + 3.0)) * x * x + 1.0;
+  } else if (x < 2.0) {
+    return a * (((x - 5.0) * x + 8.0) * x - 4.0);
+  } else {
+    return 0.0;
+  }
+}
+
+vec4 sampDirNearest(float x, float y) {
+  return texture2D(sampler1, vec2(floor(mod(x, PATTERN_DIM)) / PATTERN_DIM, 
+                                  floor(mod(y, PATTERN_DIM)) / PATTERN_DIM));
+}
+
+vec4 sampNearest(float x, float y) {
+  x *= PATTERN_DIM;
+  y *= PATTERN_DIM;
+  return sampDirNearest(x, y);
+}
+
+vec4 sampLinear(float x, float y) {
+  x *= PATTERN_DIM;
+  y *= PATTERN_DIM;
+  float fx = x - floor(x);
+  float fy = y - floor(y);
+  return mix(
+    mix(sampDirNearest(x, y), sampDirNearest(x + 1.0, y), fx),
+    mix(sampDirNearest(x, y + 1.0), sampDirNearest(x + 1.0, y + 1.0), fx),
+    fy);
+}
+
+vec4 mix4(vec4 c1, vec4 c2, vec4 c3, vec4 c4, float fr) {
+  return ((((-c1+c2-c3+c4)*fr+(2.0*c1-2.0*c2+c3-c4))*fr)+(-c1+c3))*fr+c2;
+}
+
+vec4 sampCubic(float x, float y) {
+  x *= PATTERN_DIM;
+  y *= PATTERN_DIM;
+  float fx = x - floor(x);
+  float fy = y - floor(y);
+  return mix4(
+    mix4(sampDirNearest(x-1.0,y-1.0), sampDirNearest(x,y-1.0), sampDirNearest(x+1.0,y-1.0), sampDirNearest(x+2.0,y-1.0),fx),
+    mix4(sampDirNearest(x-1.0,y),     sampDirNearest(x,y),     sampDirNearest(x+1.0,y),     sampDirNearest(x+2.0,y),    fx),
+    mix4(sampDirNearest(x-1.0,y+1.0), sampDirNearest(x,y+1.0), sampDirNearest(x+1.0,y+1.0), sampDirNearest(x+2.0,y+1.0),fx),
+    mix4(sampDirNearest(x-1.0,y+2.0), sampDirNearest(x,y+2.0), sampDirNearest(x+1.0,y+2.0), sampDirNearest(x+2.0,y+2.0),fx),
+    fy
+  );
+}
+
+//Main
 void main(void) {
   vec2 pos = gl_FragCoord.xy;
   float xt, yt;
@@ -51,14 +507,9 @@ void main(void) {
     float vlen = length(v);
     
     if (vlen < 1.0 - EPSILON && vlen > EPSILON) {
-      //map on sphere
-      /* float len = -sqrt ( 1. - (xt * xt + yt * yt) );*/
-      /* xt = xt / (1. - len) * minDim;*/
-      /* yt = yt / (1. - len) * minDim;*/
-      
       float len = sqrt ( xt * xt + yt * yt );
       xt = xt / (1. - len) * minDim;
-      yt = yt / (1. - len) * minDim;    
+      yt = yt / (1. - len) * minDim;
     } else {
       gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
       return;
@@ -66,378 +517,39 @@ void main(void) {
   }
 
   if (group == GROUP_P1) {
-    
-    float oyt = yt;
-    yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-    float widthDim = PATTERN_DIM - offset;
-    float from  = offset / PATTERN_DIM * yt;
-    float to = 1. - offset * (1. - yt) / PATTERN_DIM;
-    xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
-
+    pos = p1(xt, yt);
   } else if (group == GROUP_P2) {
-    
-    float widthDim = PATTERN_DIM - offset;
-    float oyt = yt;
-    if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-      yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-      float from  = offset / PATTERN_DIM * yt;
-      float to = 1. - offset * (1. - yt) / PATTERN_DIM;
-      xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
-
-    } else {
-      yt = 1. - mod(yt, PATTERN_DIM) / PATTERN_DIM;
-      float from  = 1. - offset / PATTERN_DIM * (1. - yt);
-      float to = offset * yt / PATTERN_DIM;
-      xt = mod(xt - offset * (oyt / PATTERN_DIM), widthDim) / widthDim * (to - from) + from;
-
-    }
-
+    pos = p2(xt, yt);
   } else if (group == GROUP_PM) {
-    
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-
-    if (mod(yt / heightDim, 2.0) < 1.0) {
-      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
-
-    } else {
-      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
-    }
-
+    pos = pm(xt, yt);
   } else if (group == GROUP_PG) {
-    
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
-
-    } else {
-      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
-    }
-    
-    xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-
+    pos = pg(xt, yt);
   } else if (group == GROUP_CM) {
-    
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, heightDim) / heightDim;
-    
-    if (mod(yt / heightDim, 2.0) < 1.0) {
-      float xfrom = (1. - ytmod) / 2.;
-      float xto = ytmod / 2. + .5;
-      
-      if (xtmod > xfrom && xtmod < xto) {
-        xt = xtmod;
-        yt = ytmod * (to - from) + from;
-      } else {
-        xt = xtmod - .5;
-        yt = 1. - (ytmod * (to - from) + from);
-      }
-    } else {
-      float xfrom = ytmod / 2.;
-      float xto = (1. - ytmod) * .5 + .5;
-      
-      if (xtmod > xfrom && xtmod < xto) {
-        xt = xtmod;
-        yt = (1. - ytmod) * (to - from) + from;
-      } else {
-        xt = xtmod - .5;
-        yt = 1. - ((1. - ytmod) * (to - from) + from);
-      }
-    }
+    pos = cm(xt, yt);  
   } else if (group == GROUP_PMM) {
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    } else {
-      xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    }
-    
-    if (mod(yt / heightDim, 2.0) < 1.0) {
-      yt = mod(yt, heightDim) / heightDim * (to - from) + from;
-    } else {
-      yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
-    }
+    pos = pmm(xt, yt);
   } else if (group == GROUP_PMG) {
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      if (mod(yt / heightDim, 2.0) < 1.0) {
-        xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-        yt = mod(yt, heightDim) / heightDim * (to - from) + from;
-      } else {
-        xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-        yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
-      }
-    } else {
-      if (mod(yt / heightDim, 2.0) < 1.0) {
-        xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
-        yt = (1. - mod(yt, heightDim) / heightDim) * (to - from) + from;
-      } else {
-        xt = 1. - mod(xt, PATTERN_DIM) / PATTERN_DIM;
-        yt = mod(yt, heightDim) / heightDim * (to - from) + from;
-      }
-    }
+    pos = pmg(xt, yt);
   } else if (group == GROUP_PGG) {
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, heightDim) / heightDim;
-    
-    if (mod(yt / heightDim, 2.0) < 1.0) {
-      float xfrom = (1. - ytmod) / 2.;
-      float xto = ytmod / 2. + .5;
-      
-      if (xtmod > xfrom && xtmod < xto) {
-        xt = xtmod;
-        yt = ytmod * (to - from) + from;
-      } else {
-        xt = xtmod - .5;
-        yt = 1. - (ytmod * (to - from) + from);
-      }
-    } else {
-      float xfrom = ytmod / 2.;
-      float xto = (1. - ytmod) * .5 + .5;
-      
-      if (xtmod > xfrom && xtmod < xto) {
-        xt =  1. - xtmod;
-        yt = (1. - ytmod) * (to - from) + from;
-      } else {
-        xt = (1. - xtmod) - .5;
-        yt = ytmod * (to - from) + from;
-      }
-    }
-    
+    pos = pgg(xt, yt);
   } else if (group == GROUP_CMM) {
-    float heightDim = PATTERN_DIM - 2. * offset;
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, heightDim) / heightDim;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      if (mod(yt / heightDim, 2.0) < 1.0) {
-        if (ytmod > 1. - xtmod) {
-          xt = xtmod;
-          yt = ytmod * (to - from) + from;
-        } else {
-          xt = 1. - xtmod;
-          yt = (1. - ytmod) * (to - from) + from;
-        }
-      } else {
-        if (ytmod < xtmod) {
-          xt = xtmod;
-          yt = (1. - ytmod) * (to - from) + from;
-        } else {
-          xt = 1. - xtmod;
-          yt = ytmod * (to - from) + from;
-        }
-      }
-    } else {
-      if (mod(yt / heightDim, 2.0) < 1.0) {
-        if (ytmod > xtmod) {
-          xt = 1. - xtmod;
-          yt = ytmod * (to - from) + from;
-        } else {
-          xt = xtmod;
-          yt = (1. - ytmod) * (to - from) + from;
-        }
-      } else {
-        if (ytmod < 1. - xtmod) {
-          xt = 1. - xtmod;
-          yt = (1. - ytmod) * (to - from) + from;
-        } else {
-          xt = xtmod;
-          yt = ytmod * (to - from) + from;
-        }
-      }
-    }
-    
+    pos = cmm(xt, yt);
   } else if (group == GROUP_P4) {
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-    
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        xt = xtmod;
-        yt = ytmod;
-      } else {
-        xt = 1. - ytmod;
-        yt = xtmod;
-      }
-    } else {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        xt = ytmod;
-        yt = 1. - xtmod;
-      } else {
-        xt = 1. - xtmod;
-        yt = 1. - ytmod;
-      }
-    }
+    pos = p4(xt, yt);
   } else if (group == GROUP_P4M) {
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (xtmod > ytmod) {
-          xt = xtmod;
-          yt = ytmod;
-        } else {
-          xt = ytmod;
-          yt = xtmod;
-        }
-      } else {
-        if (ytmod < 1. - xtmod) {
-          xt = 1. - ytmod;
-          yt = xtmod;
-        } else {
-          xt = xtmod;
-          yt = 1. - ytmod;
-        }
-      }
-    } else {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (ytmod < 1. - xtmod) {
-          xt = 1. - xtmod;
-          yt = ytmod;
-        } else {
-          xt = ytmod;
-          yt = 1. - xtmod;
-        }
-      } else {
-        if (xtmod > ytmod) {
-          xt = 1. - ytmod;
-          yt = 1. - xtmod;
-        } else {
-          xt = 1. - xtmod;
-          yt = 1. - ytmod;
-        }
-      }
-    }
-    
+    pos = p4m(xt, yt);
   } else if (group == GROUP_P4G) {
-    float from = offset / PATTERN_DIM;
-    float to = 1. - offset / PATTERN_DIM;
-    float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-
-    if (mod(xt / PATTERN_DIM, 2.0) < 1.0) {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (ytmod > 1. - xtmod) {
-          xt = xtmod;
-          yt = ytmod;
-        } else {
-          xt = 1. - ytmod;
-          yt = 1. - xtmod;
-        }
-      } else {
-        if (xtmod > ytmod) {
-          xt = 1. - ytmod;
-          yt = xtmod;
-        } else {
-          xt = 1. - xtmod;
-          yt = ytmod;
-        }
-      }
-    } else {
-      if (mod(yt / PATTERN_DIM, 2.0) < 1.0) {
-        if (xtmod > ytmod) {
-          xt = xtmod;
-          yt = 1. - ytmod;
-        } else {
-          xt = ytmod;
-          yt = 1. - xtmod;
-        }
-      } else {
-        if (ytmod > 1. - xtmod) {
-          xt = ytmod;
-          yt = xtmod;
-        } else {
-          xt = 1. - xtmod;
-          yt = 1. - ytmod;
-        }
-      }
-    }
-
+    pos = p4g(xt, yt);
   } else if (group == GROUP_P3) {
-    float cosFactor = cos(PI / 6.);
-    float sinFactor = sin(PI / 6.);
-    float tanFactor = tan(PI / 6.);
-    
-    float cos2Factor = cos(PI / 3.);
-    float sin2Factor = sin(PI / 3.);
-    float tan2Factor = tan(PI / 3.);
-    
-    float cos3Factor = cos(2. * PI / 3.);
-    float sin3Factor = sin(2. * PI / 3.);
-    float tan3Factor = tan(2. * PI / 3.);
-    
-    float cos4Factor = cos(4. * PI / 3.);
-    float sin4Factor = sin(4. * PI / 3.);
-    
-    float widthDim = PATTERN_DIM * cosFactor * 2. / 3.;
-    float offsetDim = (1. - cosFactor * 2. / 3.) / 2.;
-    float from = offsetDim;
-    float to = 1. - offsetDim;
-    float xtmod = mod(xt, widthDim) / widthDim;
-    float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-
-    float offsetWidth = mod(xt / widthDim, 3.0);
-
-    if (/*offsetWidth < 1.*/ true) {
-      /* if (ytmod < tanFactor * xtmod * widthDim / PATTERN_DIM) {*/
-      if( true) {
-        xt =  cos3Factor * (xtmod + offsetDim) * (to - from) + from - sin3Factor * (ytmod + 1. / 3.);
-        yt =  sin3Factor * (xtmod + offsetDim) * (to - from) + from + cos3Factor * (ytmod + 1. / 3.) - 1. / 3.;
-      } else if (ytmod < tan2Factor * xtmod * widthDim / PATTERN_DIM) {
-        /* xt =  cos4Factor * xtmod * (to - from) + from - sin4Factor * (ytmod + 1. / 3.);*/
-        /* yt =  sin4Factor * xtmod * (to - from) + from + cos4Factor * (ytmod + 1. / 3.);*/
-      }
-    } else if (offsetWidth < 2.) {
-      if (ytmod < (-tanFactor * xtmod) * widthDim / PATTERN_DIM + .3333333) {
-        /* xt =  cos4Factor * (xtmod + offsetDim) * (to - from) + from - sin4Factor * (ytmod - 1. / 3.);*/
-        /* yt =  sin4Factor * (xtmod + offsetDim) * (to - from) + from + cos4Factor * (ytmod - 1. / 3.) + 1. / 3.;*/
-      } else if (xtmod < -sinFactor * ytmod + 1.) {
-        /* xt = xtmod * (to - from) + from;*/
-        /* yt = ytmod;*/
-      } else {
-        /* xt = xtmod *  cos2Factor * (to - from) + from;*/
-        /* yt = ytmod * -sin2Factor;*/
-      }
-    } else {
-      if (xt < sin2Factor * yt && xt > sinFactor * yt + .6666666) {
-        /* xt = xtmod * cos2Factor * (to - from) + from;*/
-        /* yt = ytmod * sin2Factor;*/
-      } else if (true) {
-
-      }
-    }
-    
+    pos = p3(xt, yt);
+  } else if (group == GROUP_P3M1) {
+    pos = p3m1(xt, yt);
   } else {
-    
-    xt = mod(xt, PATTERN_DIM) / PATTERN_DIM;
-    yt = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-
+    pos = vec2( mod(xt, PATTERN_DIM) / PATTERN_DIM, 
+                mod(yt, PATTERN_DIM) / PATTERN_DIM );
   }
-  
-  vec4 color = texture2D(sampler1, vec2(xt, yt));
 
+  vec4 color = texture2D(sampler1, pos);
   //add a radial blend
   vec4 colorFrom = color;
   vec4 colorTo = color * radialFactor;

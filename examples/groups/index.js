@@ -1,6 +1,6 @@
 PhiloGL.unpack();
 
-var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g', 'p3' /*other groups here*/],
+var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g', 'p3', 'p3m1' /*other groups here*/],
     width = 128,
     height = 128,
     cos = Math.cos,
