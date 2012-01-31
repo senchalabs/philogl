@@ -4,11 +4,17 @@ function initControls(options) {
       rotate = $('rotate'),
       aura = $('aura'),
       offset = $('offset'),
-      hyperbole = $('hyperbole');
+      hyperbole = $('hyperbole'),
+      descriptions = $$('#group-descriptions > div'),
+      descriptionContainer = $1('.options-body.details');
 
   currentGroup.addEventListener('change', function() {
     options.currentGroupIndex = this.selectedIndex;
-    //TODO need to change the description content for the selected group.
+    var node = descriptionContainer.firstChild;
+    if (node) {
+      node.parentNode.removeChild(node);
+    }
+    descriptionContainer.appendChild(descriptions[this.selectedIndex].cloneNode(true));
   }, false);
 
   scale.addEventListener('change', function() {

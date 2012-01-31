@@ -12,6 +12,21 @@ input, select {
   max-width: 80px;
 }
 
+section#group-descriptions {
+  display: none;
+}
+
+.details img {
+  width: 200px;
+  margin: auto;
+}
+
+.details div {
+  text-align: justify;
+  padding: 5px;
+  font-weight: 0.9em;
+}
+
 section#controls {
   position: absolute;
   top: 0;

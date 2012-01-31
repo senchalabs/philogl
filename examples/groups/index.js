@@ -5,7 +5,8 @@ var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p
     height = 128,
     cos = Math.cos,
     sin = Math.sin,
-    PI = Math.PI;
+    PI = Math.PI,
+    descriptions;
 
 var options = {
   currentGroupIndex: 0,
