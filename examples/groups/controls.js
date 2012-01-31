@@ -10,11 +10,7 @@ function initControls(options) {
 
   currentGroup.addEventListener('change', function() {
     options.currentGroupIndex = this.selectedIndex;
-    var node = descriptionContainer.firstChild;
-    if (node) {
-      node.parentNode.removeChild(node);
-    }
-    descriptionContainer.appendChild(descriptions[this.selectedIndex].cloneNode(true));
+    setGroupDescription(this.selectedIndex);
   }, false);
 
   scale.addEventListener('change', function() {
@@ -36,4 +32,17 @@ function initControls(options) {
   hyperbole.addEventListener('change', function() {
     options.hyperbole = +this.value;
   }, false);
+
+  //set first group description
+  setGroupDescription(options.currentGroupIndex);
+  
+  function setGroupDescription(index) {
+    var node = descriptionContainer.firstChild;
+    if (node) {
+      node.parentNode.removeChild(node);
+    }
+    node = descriptions[index].cloneNode(true);
+    descriptionContainer.appendChild(node);
+  }
 }
+

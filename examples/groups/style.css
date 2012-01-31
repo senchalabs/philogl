@@ -1,6 +1,6 @@
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times;
   margin: 0;
   padding: 0;
   background: #111;
@@ -8,7 +8,7 @@ html, body {
 }
 
 input, select {
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times;
   max-width: 80px;
 }
 
@@ -17,12 +17,13 @@ section#group-descriptions {
 }
 
 .details img {
-  width: 200px;
   margin: auto;
+  display: block;
 }
 
 .details div {
   text-align: justify;
+  line-height: 1.2em;
   padding: 5px;
   font-weight: 0.9em;
 }
@@ -32,12 +33,11 @@ section#controls {
   top: 0;
   right: 0;
   height: 100%;
-  width: 200px;
+  width: 220px;
   background-color: rgba(255, 255, 255, 0.7);
 }
 
 section#controls canvas {
-  /* background: white;*/
   box-shadow:inset 0 0 5px #222;
   margin: auto;
 }
@@ -46,6 +46,10 @@ section#controls > .options-body,
 section#controls > header {
   text-align: left;
   padding: 3px;
+}
+
+section#controls > .options-body.other {
+  text-align: right;
 }
 
 section#controls > header {
