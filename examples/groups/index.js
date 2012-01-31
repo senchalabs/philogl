@@ -1,6 +1,6 @@
 PhiloGL.unpack();
 
-var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g', 'p3', 'p3m1' /*other groups here*/],
+var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p4m', 'p4g', 'p3', 'p3m1', 'p31m', 'p6', 'p6m'],
     width = 128,
     height = 128,
     cos = Math.cos,
@@ -27,9 +27,6 @@ function load() {
   initControls(options);
 
   PhiloGL('surface', {
-    context: {
-      antialias: true
-    },
     program: [{
       id: 'surface',
       from: 'uris',
@@ -209,17 +206,53 @@ function makeClipping(ctx, canvas) {
     case 'p3':
       var h = height * 2 / 3,
           w = cos(PI / 6) * h,
-          offsetWidth = width - w;
+          offsetWidth = width - w,
+          offsetWidthDiv2 = offsetWidth / 2;
 
       ctx.beginPath();
-      ctx.moveTo(offsetWidth / 2, 0);
-      ctx.lineTo(offsetWidth / 2, h);
-      ctx.lineTo(offsetWidth / 2 + w , h + sin(PI / 6) * h );
-      ctx.lineTo(offsetWidth / 2 + w, height / 3 );
-      ctx.lineTo(offsetWidth / 2, 0);
+      ctx.moveTo(offsetWidthDiv2, 0);
+      ctx.lineTo(offsetWidthDiv2, h);
+      ctx.lineTo(offsetWidthDiv2 + w, h + sin(PI / 6) * h );
+      ctx.lineTo(offsetWidthDiv2 + w, height / 3 );
+      ctx.lineTo(offsetWidthDiv2, 0);
       ctx.clip();
       break;
 
+    case 'p3m1':
+      var len = cos(PI / 6) * height,
+          offset = (width - len) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(offset, 0);
+      ctx.lineTo(offset, height);
+      ctx.lineTo(offset + len, height / 2);
+      ctx.lineTo(offset, 0);
+      ctx.clip();
+      break;
+
+    case 'p31m': case 'p6':
+      var h = (sin(PI / 3) * width) / 3,
+          offset = (height - h) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(0, offset + h);
+      ctx.lineTo(width, offset + h);
+      ctx.lineTo(width / 2, offset);
+      ctx.lineTo(0, offset + h);
+      ctx.clip();
+      break;
+    
+    case 'p6m':
+      var h = (sin(PI / 3) * width) / 3 * 2,
+          offset = (height - h) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(0, offset + h);
+      ctx.lineTo(width, offset + h);
+      ctx.lineTo(width, offset);
+      ctx.lineTo(0, offset + h);
+      ctx.clip();
+      break;
   }
 }
 

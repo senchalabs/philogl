@@ -21,6 +21,9 @@ precision highp float;
 #define GROUP_P4G 11
 #define GROUP_P3 12
 #define GROUP_P3M1 13
+#define GROUP_P31M 14
+#define GROUP_P6 15
+#define GROUP_P6M 16
 
 #define EPSILON 0.000001
 
@@ -434,6 +437,98 @@ vec2 p3m1(float xt, float yt) {
   return res.xy;
 }
 
+vec2 p31m(float xt, float yt) {
+  const float h = 0.5773502691896257; // sqrt(1/3)
+  const float c30 = 0.866025403784438; // sqrt(3)/2
+  const float h2 = 1.154700538379251529; // sqrt(4/3)
+  const float h6 = h * 6.0; // 6 * sqrt(1/3)
+  const mat3 rot = mat3(
+    -0.5, +c30, +c30,
+    -c30, -0.5, 0.5,
+    0.0, 0.0, 1.0
+  );
+  float xs = xt / PATTERN_DIM;
+  float xi = floor(xs);
+  float xmod = mod(xs - xi, 2.0);
+  if (xmod > 1.0) {
+    xmod = 2.0 - xmod;
+  }
+  float ys = yt / h2 / PATTERN_DIM;
+  float yi = floor(ys);
+  float ymod = mod(ys - yi, 3.0);
+  yi = mod(yi, 3.0);
+
+  vec3 res = vec3(xmod, ymod, 1.0);
+  if (yi > 0.5) {
+    res = rot * res;
+  }
+  if (yi > 1.5) {
+    res = rot * res;
+  }
+  return res.xy;
+}
+
+vec2 p6(float xt, float yt) {
+  const float h = 0.5773502691896257; // sqrt(1/3)
+  const float c30 = 0.866025403784438; // sqrt(3)/2
+  const float h2 = 1.154700538379251529; // sqrt(4/3)
+  const float h6 = h * 6.0; // 6 * sqrt(1/3)
+  const mat3 rot = mat3(
+    -0.5, +c30, +c30,
+    -c30, -0.5, 0.5,
+    0.0, 0.0, 1.0
+  );
+  float xs = xt / PATTERN_DIM;
+  float xi = floor(xs);
+  float xmod = mod(xs - xi, 2.0);
+  if (xmod > 1.0) {
+    xmod = 2.0 - xmod;
+  }
+  float ys = yt / h2 / PATTERN_DIM;
+  float yi = floor(ys);
+  float ymod = mod(ys - yi, 3.0);
+  yi = mod(yi, 3.0);
+
+  vec3 res = vec3(xmod, ymod, 1.0);
+  if (yi > 0.5) {
+    res = rot * res;
+  }
+  if (yi > 1.5) {
+    res = rot * res;
+  }
+  return res.xy;
+}
+
+vec2 p6m(float xt, float yt) {
+  const float h = 0.5773502691896257; // sqrt(1/3)
+  const float c30 = 0.866025403784438; // sqrt(3)/2
+  const float h2 = 1.154700538379251529; // sqrt(4/3)
+  const float h6 = h * 6.0; // 6 * sqrt(1/3)
+  const mat3 rot = mat3(
+    -0.5, +c30, +c30,
+    -c30, -0.5, 0.5,
+    0.0, 0.0, 1.0
+  );
+  float xs = xt / PATTERN_DIM;
+  float xi = floor(xs);
+  float xmod = mod(xs - xi, 2.0);
+  if (xmod > 1.0) {
+    xmod = 2.0 - xmod;
+  }
+  float ys = yt / h2 / PATTERN_DIM;
+  float yi = floor(ys);
+  float ymod = mod(ys - yi, 3.0);
+  yi = mod(yi, 3.0);
+
+  vec3 res = vec3(xmod, ymod, 1.0);
+  if (yi > 0.5) {
+    res = rot * res;
+  }
+  if (yi > 1.5) {
+    res = rot * res;
+  }
+  return res.xy;
+}
 
 //Sampling
 float cubic(float x) {
@@ -544,6 +639,10 @@ void main(void) {
     pos = p3(xt, yt);
   } else if (group == GROUP_P3M1) {
     pos = p3m1(xt, yt);
+  } else if (group == GROUP_P6) {
+    pos = p6(xt, yt);
+  } else if (group == GROUP_P6M) {
+    pos = p6m(xt, yt);
   } else {
     pos = vec2( mod(xt, PATTERN_DIM) / PATTERN_DIM, 
                 mod(yt, PATTERN_DIM) / PATTERN_DIM );
