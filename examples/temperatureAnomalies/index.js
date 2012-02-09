@@ -250,6 +250,35 @@ function init() {
         }
       },
       events: {
+        onTouchStart: function(e) {
+          if (e.event.preventDefault) e.event.preventDefault();
+          this.pos = {
+            x: e.x,
+            y: e.y
+          };
+          this.dragging = true;
+        },
+        onTouchCancel: function() {
+          this.dragging = false;
+        },
+        onTouchEnd: function() {
+          this.dragging = false;
+          theta = this.scene.models[0].rotation.y;
+        },
+        onTouchMove: function(e) {
+          if (e.event.preventDefault) e.event.preventDefault();
+          var z = this.camera.position.z,
+              sign = Math.abs(z) / z,
+              pos = this.pos;
+
+          this.scene.models.forEach(function(m) {
+            m.rotation.y += -(pos.x - e.x) / 100;
+            m.update();
+          });
+
+          pos.x = e.x;
+          pos.y = e.y;
+        },
         onDragStart: function(e) {
           this.pos = {
             x: e.x,

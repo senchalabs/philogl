@@ -407,34 +407,91 @@ vec2 p3(float xt, float yt) {
 }
 
 vec2 p3m1(float xt, float yt) {
-  const float h = 0.5773502691896257; // sqrt(1/3)
-  const float c30 = 0.866025403784438; // sqrt(3)/2
-  const float h2 = 1.154700538379251529; // sqrt(4/3)
-  const float h6 = h * 6.0; // 6 * sqrt(1/3)
-  const mat3 rot = mat3(
-    -0.5, +c30, +c30,
-    -c30, -0.5, 0.5,
-    0.0, 0.0, 1.0
-  );
-  float xs = xt / PATTERN_DIM;
-  float xi = floor(xs);
-  float xmod = mod(xs - xi, 2.0);
-  if (xmod > 1.0) {
-    xmod = 2.0 - xmod;
-  }
-  float ys = yt / h2 / PATTERN_DIM;
-  float yi = floor(ys);
-  float ymod = mod(ys - yi, 3.0);
-  yi = mod(yi, 3.0);
+  const float w = 1.154700538379251529; // sqrt(4/3)
+  const float w_2 = 0.5773502691896257; // sqrt(1/3)
+  const float l = 0.3333333333;
+  const float offsetX = 0.21132486540518711774542560; // (1 - sqrt(1/3))/2;
+  float offset = (1. - cos(PI / 6.)) / 2.;
+  float offset2 = 1.0 / w;
+  float xtmod = mod(xt, PATTERN_DIM * offset2) / PATTERN_DIM / offset2;
+  float ytmod = mod(yt, PATTERN_DIM * 2.0) / PATTERN_DIM;
 
-  vec3 res = vec3(xmod, ymod, 1.0);
-  if (yi > 0.5) {
-    res = rot * res;
+  /* mat2 rot60 = mat3 ( cos (PI / 3.), -sin (PI / 3.),*/
+  /*                     sin (PI / 3.),  cos (PI / 3.) );*/
+
+  /* mat2 rotm60 = mat3 ( cos (- PI / 3.), -sin (-PI / 3.),*/
+  /*                      sin (- PI / 3.),  cos (-PI / 3.) );*/
+
+  float from = offset;
+  float to = 1. - offset;
+  
+  float fromy = 0.;
+  float toy = 0.;
+
+  vec2 ans = vec2(xtmod, ytmod);
+  vec2 res = vec2(0., 0.);
+
+  if (mod(xt / (PATTERN_DIM * offset2), 2.0) < 1.0) {
+    fromy = .5 * xtmod;
+    toy = 1. - fromy;
+
+    if (ytmod > toy) {
+      
+
+    } else if (ytmod <= toy && ytmod >= fromy) {
+      ans.x = from + xtmod * (to - from);
+
+    } else {
+      /* ans = rot60 * ans;*/
+    }
+  } else {
+    fromy = .5 * (1. - xtmod);
+    toy = 1. - fromy;
+
+    if (ytmod > toy) {
+      
+
+    } else if (ytmod <= toy && ytmod >= fromy) {
+      ans.x = from + (1. - xtmod) * (to - from);
+
+    } else {
+
+    }
   }
-  if (yi > 1.5) {
-    res = rot * res;
+
+  return ans;
+
+  /*
+  float xtmod = mod(xt, w * PATTERN_DIM) / PATTERN_DIM;
+  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
+
+  if (mod(floor(yt / PATTERN_DIM), 2.0) < l) {
+    xtmod = mod(xtmod + w_2, w);
   }
-  return res.xy;
+
+  if (xtmod > w_2) {
+    if (ytmod > l && ytmod < l + l ||
+      ytmod < l && ytmod > (w - xtmod) * w_2 ||
+      ytmod > l + l && ytmod < 1.0 - (xtmod - w_2) * w_2
+      ) {
+      return vec2(xtmod - w_2 + offsetX, ytmod);
+    }
+  } else {
+    if (ytmod > l && ytmod < l + l ||
+        ytmod < l && ytmod > xtmod * w_2 ||
+        ytmod > l + l && ytmod < 1.0 - (w_2 - xtmod) * w_2
+        ) {
+        return vec2(- xtmod * 0.5 + ytmod / w + offsetX, 1.0 - ytmod * 0.5 - xtmod / w);
+      }
+  }
+
+  if (ytmod > l) {
+    ytmod -= 1.0;
+    xtmod = mod(xtmod + w_2, w);
+  }
+
+  return vec2(offsetX + (w - xtmod) * 0.5 - ytmod / w, 1.0 - (w - xtmod) / w - ytmod * 0.5);
+  */
 }
 
 vec2 p31m(float xt, float yt) {

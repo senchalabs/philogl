@@ -6,7 +6,11 @@ function initControls(options) {
       offset = $('offset'),
       hyperbole = $('hyperbole'),
       descriptions = $$('#group-descriptions > div'),
-      descriptionContainer = $1('.options-body.details');
+      descriptionContainer = $1('.options-body.details'),
+      buttonChange = $1('button.pattern-change'),
+      buttonSave = $1('button.pattern-save');
+
+  initCodeEditor(buttonChange, buttonSave);
 
   currentGroup.addEventListener('change', function() {
     options.currentGroupIndex = this.selectedIndex;
@@ -46,3 +50,28 @@ function initControls(options) {
   }
 }
 
+function initCodeEditor(buttonChange) {
+  var editor = CodeMirror(document.body, {
+    mode: 'javascript',
+    value: 'function canvasRender(some, arguments) { \nreturn something; \n}',
+    lineNumbers: true,
+    matchBrackets: true,
+    indentWithTabs: true,
+    tabSize: 4,
+    indentUnit: 4,
+    onChange: function () {
+      console.log('change!', arguments);
+    }
+  }),
+  wrapper = editor.getWrapperElement(),
+  style = wrapper.style;
+
+  style.visibility = 'visible';
+  style.width = '500px';
+  style.height = '300px';
+  // style.display = 'none';
+
+  buttonChange.addEventListener('click', function() {
+    
+  }, false);
+}

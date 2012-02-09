@@ -9,7 +9,7 @@ var groups = ['p1', 'p2', 'pm', 'pg', 'cm', 'pmm', 'pmg', 'pgg', 'cmm', 'p4', 'p
     descriptions;
 
 var options = {
-  currentGroupIndex: 0,
+  currentGroupIndex: 13,
   scale: 1,
   rotate: 0,
   radialFactor: 0.1,

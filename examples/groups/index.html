@@ -3,12 +3,17 @@
   <head>
     <title>PhiloGL - Wallpaper Groups</title>
     <meta charset='utf-8'>
-    <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
+    <!-- link href='http://fonts.googleapis.com/css?family=Crimson+Text'
+    rel='stylesheet' type='text/css' -->
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <script type="text/javascript" src="../../build/PhiloGL.js"></script>
-    <script type="text/javascript" src="lib.js"></script>
-    <script type="text/javascript" src="controls.js"></script>
-    <script type="text/javascript" src="index.js"></script>
+    <!--link rel="stylesheet" media="all" type="text/css" href="codemirror/lib/codemirror.css" / -->
+    <script src="codemirror/lib/codemirror.js"></script>
+    <script src="codemirror/mode/javascript/javascript.js"></script>
+    
+    <script src="../../build/PhiloGL.js"></script>
+    <script src="lib.js"></script>
+    <script src="controls.js"></script>
+    <script src="index.js"></script>
   </head>
   <body onload="load();">
     <section id="container">
@@ -23,6 +28,7 @@
         <header>&raquo; Pattern</header>
         <div class='options-body pattern'>
           <canvas id="canvas" width="128" height="128"></canvas>
+          <button class='pattern-change' type='button'>Change Pattern...</button>
         </div>
 
         <header>&raquo; Groups</header>
