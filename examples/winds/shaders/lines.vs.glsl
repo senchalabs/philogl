@@ -1,11 +1,13 @@
+#define PI2 1.5707963267949
+
 attribute vec3 position;
 attribute vec2 texCoord1;
+attribute vec3 data;
 
 uniform mat4 worldMatrix;
 uniform mat4 projectionMatrix;
 uniform sampler2D sampler1;
-
-attribute vec3 center;
+uniform float delta;
 
 float getHue(vec4 sampling) {
   float r = sampling.r;
@@ -31,8 +33,10 @@ float getHue(vec4 sampling) {
 }
 
 void main(void) {
-  vec4 pos = vec4(center, 1.0);
-  vec4 actualPos = vec4(position, 1.0);
+  float first = position.z;
+  float angle = data.x * PI2;
+  float windSpeed = data.y * delta / 5.;
+  float temp = data.z;
 
   const float offset = (4096. - 3764.) / 2. * (1. / 4096.);
   const float fromy = 25.;
@@ -44,12 +48,20 @@ void main(void) {
   const float toyt = 0.25;
   const float fromxt = 0.5 - offset;
   const float toxt = -0.5 + offset;
-
-  pos.x = (pos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
-  pos.y = (pos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
   
-  actualPos.x = (actualPos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
-  actualPos.y = (actualPos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
+  vec4 pos  = vec4(position, 1.0);
+  vec4 pos2 = vec4(position, 1.0);
+
+  if (first > 0.) {
+    pos2.x += cos (angle) * windSpeed;
+    pos2.y += sin (angle) * windSpeed;
+  }
+
+  pos.x  = (pos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
+  pos.y  = (pos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
+  
+  pos2.x = (pos2.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
+  pos2.y = (pos2.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
   
   vec4 sampling = texture2D(sampler1, vec2(pos.x + 0.5, pos.y + 0.25 * 2.));
   float hue = getHue(sampling);
@@ -71,8 +83,7 @@ void main(void) {
   
   pos.z += .01;
 
-  vec4 endPos = vec4(actualPos.x, actualPos.y, pos.z, 1.0);
-  gl_Position = projectionMatrix * worldMatrix * endPos;
+  gl_Position = projectionMatrix * worldMatrix * vec4(pos2.x, pos2.y, pos.z, 1.0);
   gl_PointSize = 3.;
 }
 

@@ -138,7 +138,7 @@ function init() {
             ny: 50,
             offset: 0,
             textures: ['img/elevation_3764_2048_post.jpg', 
-                       'img/elevation_3764_2048_gs.jpg'],
+                       'img/elevation_3764_2048_post.jpg'],
             program: 'elevation'
           });
 
@@ -154,10 +154,11 @@ function init() {
       //Add object to the scene
       scene.add(surface);
 
-      getStations(function(stations, wind) {
-        scene.add(stations, wind);
-        getWeatherData(function(hourlyData) {
-          hourData = hourlyData;
+      //get data and create models.
+      getWeatherData(function(hourlyData) {
+        hourData = hourlyData;
+        getStations(function(stations, wind) {
+          scene.add(stations, wind);
           draw();
         });
       });
@@ -196,38 +197,37 @@ function init() {
               vertices[i3 + 1] = lat;
               vertices[i3 + 2] = 0;
               
-              center[i6    ] = long;
-              center[i6 + 1] = lat;
-              center[i6 + 2] = 0;
-              
-              center[i6 + 3] = long;
-              center[i6 + 4] = lat;
-              center[i6 + 5] = 0;
-              
-              lines[i6    ] = long - delta;
-              lines[i6 + 1] = lat - delta;
+              lines[i6    ] = long;
+              lines[i6 + 1] = lat;
               lines[i6 + 2] = 0;
               
-              lines[i6 + 3] = long + delta;
-              lines[i6 + 4] = lat + delta;
-              lines[i6 + 5] = 0;
+              lines[i6 + 3] = long;
+              lines[i6 + 4] = lat;
+              lines[i6 + 5] = 1;
             }
 
             var stations = new O3D.Model({
               vertices: vertices,
               program: 'stations',
-              drawType: 'POINTS'
+              drawType: 'POINTS',
+              data: {
+                value: hourData[0].single,
+                size: 3
+              }
             });
 
             app.gl.lineWidth(2);
-            
+
             var wind = new O3D.Model({
               vertices: lines,
               program: 'lines',
               drawType: 'LINES',
+              uniforms: {
+                delta: 0.2
+              },
               attributes: {
-                center: {
-                  value: center,
+                data: {
+                  value: hourData[0].repeat,
                   size: 3
                 }
               }
@@ -266,16 +266,27 @@ function init() {
 
         function createHourlyData(data, i, l, hours, components) {
           var len = data.length,
-              ans = new Float32Array(l * components);
+              single = new Float32Array(l * components),
+              repeat = new Float32Array(l * components * 2);
           
-          for (var j = i, count = 0; j < len; j += (hours * components)) {
+          for (var j = i, singleCount = 0, repeatCount = 0; j < len; j += (hours * components)) {
             //three components
-            ans[count++] = data[j    ];
-            ans[count++] = data[j + 1];
-            ans[count++] = data[j + 2];
+            single[singleCount++] = data[j    ];
+            single[singleCount++] = data[j + 1];
+            single[singleCount++] = data[j + 2];
+            //repeat array for lines
+            repeat[repeatCount++] = data[j    ];
+            repeat[repeatCount++] = data[j + 1];
+            repeat[repeatCount++] = data[j + 2];
+            repeat[repeatCount++] = data[j    ];
+            repeat[repeatCount++] = data[j + 1];
+            repeat[repeatCount++] = data[j + 2];
           }
 
-          return ans;
+          return {
+            single: single,
+            repeat: repeat
+          };
         }
       }
 
