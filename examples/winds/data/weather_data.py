@@ -64,8 +64,6 @@ def parsefiles():
     with open('weather.bin', 'w') as fout:
         for entry in entries:
             code = entry['icao']
-
-            print code
             
             #read html file for station
             with open(code + '.html', 'r') as fentry:
@@ -74,16 +72,21 @@ def parsefiles():
             trs = soup.findAll('tr', align='center', valign='top')
             ln = len(trs)
             counter = 0
+            count = 0
             
             if ln == 0:
                 step = 1
                 ln = samples
                 empty = True
             else:
-                step = samples / float(ln)
+                step = ln / float(samples)
                 empty = False
 
-            while counter < ln:
+            print code, counter, ln, step
+
+            while count < samples:
+                count += 1
+
                 if empty:
                     dat = struct.pack('HHH', 0, 0, 0)
                     fout.write(dat)

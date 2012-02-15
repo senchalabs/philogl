@@ -11,6 +11,9 @@ uniform float lat;
 uniform float lon;
 uniform vec3 data;
 
+varying vec2 vTexCoord;
+varying vec3 vColor;
+
 float getHue(vec4 sampling) {
   float r = sampling.r;
   float g = sampling.g;
@@ -34,10 +37,36 @@ float getHue(vec4 sampling) {
   return hue;
 }
 
-void main(void) {
-  vec3 pos = vec3(lat, lon, 0);
+vec3 getRGB(float h, float s, float v) {
+  float c = v * s;
+  float hp = h / 60.;
+  float x = c * (1. - abs( mod(hp, 2.) - 1. ));
+  vec3 rgbp;
 
-  const float scale = 0.02;
+  if (h < 1.) {
+    rgbp = vec3(c, x, 0);
+  } else if (h < 2.) {
+    rgbp = vec3(x, c, 0);
+  } else if (h < 3.) {
+    rgbp = vec3(0, c, x);
+  } else if (h < 4.) {
+    rgbp = vec3(0, x, c);
+  } else if (h < 5.) {
+    rgbp = vec3(x, 0, c);
+  } else {
+    rgbp = vec3(c, 0, x);
+  }
+
+  float m = v - c;
+
+  return rgbp + vec3(m);
+}
+
+void main(void) {
+  vec3 pos = vec3(lon, lat, 0);
+
+  float scale = data.y / 300.;
+  float h = data.z / 250.;
 
   const float offset = (4096. - 3764.) / 2. * (1. / 4096.);
   const float fromy = 25.;
@@ -75,6 +104,8 @@ void main(void) {
 
   pos = vec3(position.xy * scale, 0) + pos;
 
+  vTexCoord = texCoord1;
+  vColor = getRGB((1. - h) * 360., .8, .8);
   gl_Position = projectionMatrix * worldMatrix * vec4(pos, 1);
 }
 

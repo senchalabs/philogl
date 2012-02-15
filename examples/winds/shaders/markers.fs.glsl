@@ -2,13 +2,21 @@
 precision highp float;
 #endif
 
-uniform vec3 data;
+#define PI 3.1415926535
+
+varying vec2 vTexCoord;
+varying vec3 vColor;
 
 void main(void) {
-  /* float angle = data.x * PI2;*/
-  /* float windSpeed = data.y * delta / 5.;*/
+  /* float angle = data.x * PI / 2.;*/
+  /* float windSpeed = data.y * .2 / 5.;*/
   /* float temp = data.z;*/
-  
-  gl_FragColor = vec4(.2, 1, .2, 1);
+
+  float dist = distance(vTexCoord, vec2(.5, .5));
+  if (dist <= .5) {
+    gl_FragColor = vec4(vColor, dist * dist + .2);
+  } else {
+    gl_FragColor = vec4(0, 0, 0, 0);
+  }
 }
 

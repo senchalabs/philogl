@@ -196,16 +196,20 @@ function init() {
             weather = data.hour[hour],
             l = stations.length;
             
-
         O3D.Plane.call(this, {
           type: 'x,y',
           xlen: 1,
           ylen: 1,
           offset: 0,
-          program: 'marker',
+          program: 'markers',
           textures: ['img/elevation_3764_2048_post.jpg'],
 
           render: function(gl, program, camera) {
+            //enable blend
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            gl.enable(gl.BLEND);
+            gl.disable(gl.DEPTH_TEST);
+            
             for (var i = 0, 
                      TRIANGLES = gl.TRIANGLES, 
                      indicesLength = this.$indicesLength, 
@@ -221,6 +225,10 @@ function init() {
 
               gl.drawElements(TRIANGLES, indicesLength, UNSIGNED_SHORT, 0);
             }
+
+            //disable blend
+            gl.disable(gl.BLEND);
+            gl.enable(gl.DEPTH_TEST);
           }
         });
       }
@@ -254,14 +262,14 @@ function init() {
           }
         }).send();
 
-        function createHourlyData(data, i, l, hours, components) {
-          var len = data.length,
+        function createHourlyData(bufferData, i, l, hours, components) {
+          var len = bufferData.length,
               array = Array(l);
-          
-          for (var j = i, singleCount = 0; j < len; j += (hours * components)) {
-            array[count] = new Float32Array([data[j    ], 
-                                             data[j + 1],
-                                             data[j + 2]]);
+ 
+          for (var j = i, count = 0; j < len; j += (hours * components)) {
+            array[count++] = new Float32Array([bufferData[j    ], 
+                                               bufferData[j + 1],
+                                               bufferData[j + 2]]);
           }
 
           return array;
