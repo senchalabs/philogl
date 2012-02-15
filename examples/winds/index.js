@@ -16,6 +16,13 @@ function init() {
       fs: 'elevation.fs.glsl',
       noCache: true
     }, {
+      id: 'markers',
+      from: 'uris',
+      path: './shaders/',
+      vs: 'markers.vs.glsl',
+      fs: 'markers.fs.glsl',
+      noCache: true
+    }/*, {
       id: 'stations',
       from: 'uris',
       path: './shaders/',
@@ -43,7 +50,7 @@ function init() {
       vs: 'lines.vs.glsl',
       fs: 'lines.fs.glsl',
       noCache: true
-    }],
+    }*/],
     // scene: {
     //   lights: {
     //     enable: true,
@@ -114,7 +121,7 @@ function init() {
       onMouseWheel: function(e) {
         e.stop();
         var camera = this.camera;
-        camera.position.z -= e.wheel;
+        camera.position.z -= e.wheel / 2;
         camera.update();
       }
     },
@@ -124,7 +131,7 @@ function init() {
     onLoad: function(app) {
       //Unpack app properties
       var hour = 0,
-          hourData = null,
+          data = { hour: null, stations: null },
           gl = app.gl,
           program = app.program,
           scene = app.scene,
@@ -158,7 +165,7 @@ function init() {
       getWeatherData(function(hourlyData) {
         hourData = hourlyData;
         getStations(function(stations, wind) {
-          scene.add(stations, wind);
+          scene.add(new MapMarkers());
           draw();
         });
       });
@@ -178,66 +185,48 @@ function init() {
             console.log('there was an error while making the XHR request');
           },
           onSuccess: function(text) {
-            var array = JSON.parse(text),
-                l = array.length,
-                vertices = new Float32Array(l * 3),
-                lines    = new Float32Array(l * 6),
-                center   = new Float32Array(l * 6),
-                delta = 0.2;
-
-            for (var i = 0; i < l; ++i) {
-              var i3 = i * 3,
-                  i4 = i * 4,
-                  i6 = i * 6,
-                  elem = array[i],
-                  lat = elem.lat,
-                  long = elem.long;
-              
-              vertices[i3    ] = long;
-              vertices[i3 + 1] = lat;
-              vertices[i3 + 2] = 0;
-              
-              lines[i6    ] = long;
-              lines[i6 + 1] = lat;
-              lines[i6 + 2] = 0;
-              
-              lines[i6 + 3] = long;
-              lines[i6 + 4] = lat;
-              lines[i6 + 5] = 1;
-            }
-
-            var stations = new O3D.Model({
-              vertices: vertices,
-              program: 'stations',
-              drawType: 'POINTS',
-              data: {
-                value: hourData[0].single,
-                size: 3
-              }
-            });
-
-            app.gl.lineWidth(2);
-
-            var wind = new O3D.Model({
-              vertices: lines,
-              program: 'lines',
-              drawType: 'LINES',
-              uniforms: {
-                delta: 0.2
-              },
-              attributes: {
-                data: {
-                  value: hourData[0].repeat,
-                  size: 3
-                }
-              }
-            });
-
-            callback(stations, wind);
-
+            data.stations = JSON.parse(text);
+            callback();
           }
         }).send();
       }
+
+      function MapMarkers() {
+        var stations = data.stations,
+            weather = data.hour[hour],
+            l = stations.length;
+            
+
+        O3D.Plane.call(this, {
+          type: 'x,y',
+          xlen: 1,
+          ylen: 1,
+          offset: 0,
+          program: 'marker',
+          textures: ['img/elevation_3764_2048_post.jpg'],
+
+          render: function(gl, program, camera) {
+            for (var i = 0, 
+                     TRIANGLES = gl.TRIANGLES, 
+                     indicesLength = this.$indicesLength, 
+                     UNSIGNED_SHORT = gl.UNSIGNED_SHORT; i < l; i++) {
+
+              var station = stations[i];
+              
+              program.setUniforms({
+                lat: station.lat,
+                lon: station.long,
+                data: weather[i]
+              });
+
+              gl.drawElements(TRIANGLES, indicesLength, UNSIGNED_SHORT, 0);
+            }
+          }
+        });
+      }
+
+      MapMarkers.prototype = Object.create(O3D.Plane.prototype);
+
 
       function getWeatherData(callback) {
         new IO.XHR({
@@ -250,175 +239,34 @@ function init() {
             console.log('progress', arguments);
           },
           onSuccess: function(buffer) {
-            var data = new Uint16Array(buffer),
+            var bufferData = new Uint16Array(buffer),
                 hours = 72,
                 components = 3,
-                l = data.length / (hours * components),
+                l = bufferData.length / (hours * components),
                 hourlyData = Array(hours);
 
             for (var i = 0; i < hours; ++i) {
-              hourlyData[i] = createHourlyData(data, i, l, hours, components);
+              hourlyData[i] = createHourlyData(bufferData, i, l, hours, components);
             }
 
-            callback(hourlyData);
+            data.hour = hourlyData;
+            callback();
           }
         }).send();
 
         function createHourlyData(data, i, l, hours, components) {
           var len = data.length,
-              single = new Float32Array(l * components),
-              repeat = new Float32Array(l * components * 2);
+              array = Array(l);
           
-          for (var j = i, singleCount = 0, repeatCount = 0; j < len; j += (hours * components)) {
-            //three components
-            single[singleCount++] = data[j    ];
-            single[singleCount++] = data[j + 1];
-            single[singleCount++] = data[j + 2];
-            //repeat array for lines
-            repeat[repeatCount++] = data[j    ];
-            repeat[repeatCount++] = data[j + 1];
-            repeat[repeatCount++] = data[j + 2];
-            repeat[repeatCount++] = data[j    ];
-            repeat[repeatCount++] = data[j + 1];
-            repeat[repeatCount++] = data[j + 2];
+          for (var j = i, singleCount = 0; j < len; j += (hours * components)) {
+            array[count] = new Float32Array([data[j    ], 
+                                             data[j + 1],
+                                             data[j + 2]]);
           }
 
-          return {
-            single: single,
-            repeat: repeat
-          };
+          return array;
         }
       }
-
-
-      // var generateShadowTexture = (function() {
-      //   var backCamera = new Camera(45, 1, 0.1, 500),
-      //       backScene = new Scene(app.program.points, camera);
-      //   //create glow and image framebuffer
-      //   app.setFrameBuffer('points', {
-      //     width: 1024,
-      //     height: 512,
-      //     bindToTexture: {
-      //       parameters: [{
-      //         name: 'TEXTURE_MAG_FILTER',
-      //         value: 'LINEAR'
-      //       }, {
-      //         name: 'TEXTURE_MIN_FILTER',
-      //         value: 'LINEAR_MIPMAP_NEAREST',
-      //         generateMipmap: false
-      //       }]
-      //     },
-      //     bindToRenderBuffer: true
-      //   });
-
-      //   return function(model) {
-      //     //add point mesh
-      //     backScene.add(model);
-
-      //     //render points to texture
-      //     app.setFrameBuffer('points', true);
-      //     gl.viewport(0, 0, 1024, 512);
-      //     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      //     // backScene.render();
-      //     backScene.renderToTexture('points');
-      //     app.setFrameBuffer('points', false);
-
-      //     //add bloom effect
-      //     Media.Image.postProcess({
-      //       fromTexture: ['points-texture'],
-      //       toScreen: true,
-      //       aspectRatio: 1,
-      //       // toFrameBuffer: ['points-glow'],
-      //       program: 'glow',
-      //       width: 1024,
-      //       height: 512
-      //     });
-      //   };
-      // })();
     }
   });
-
-
-
-
-
-
-
-      /*Used to generate a shadow map.
-      getStations(function(model) {
-        generateShadowMap(model);
-      });
-
-      function getStations(callback) {
-        new IO.XHR({
-          url: 'data/stations.json',
-          onError: function() {
-            console.log('there was an error while making the XHR request');
-          },
-          onSuccess: function(text) {
-            var array = JSON.parse(text),
-                l = array.length,
-                vertices = new Float32Array(l * 3);
-
-            for (var i = 0; i < l; ++i) {
-              var i3 = i * 3,
-                  elem = array[i];
-              
-              vertices[i3    ] = elem.long;
-              vertices[i3 + 1] = elem.lat;
-              vertices[i3 + 2] = elem.elv;
-            }
-
-            callback(new O3D.Model({
-              vertices: vertices,
-              program: 'points',
-              drawType: 'POINTS'
-            }));
-
-          }
-        }).send();
-      }
-
-
-      function generateShadowMap(model) {
-        var map = document.getElementById('map'),
-            ctx = map.getContext('2d'),
-            width = map.width,
-            height = map.height;
-
-        var vertices = model.vertices,
-            len = vertices.length,
-            offset = (4096 - 3764) / 2 * (1024 / 4096),
-            fromy = 25,
-            toy = 50,
-            fromx = 65,
-            tox = 125,
-            fromyt = 0,
-            toyt = 512,
-            fromxt = 0 + offset,
-            toxt = 1024 - offset;
-        
-
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, width, height);
-
-        for (var i = 0; i < len; i+=3) {
-          var x = vertices[i    ],
-              y = vertices[i + 1];
-          
-          x = width - ((x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt);
-          y = height - ((y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt);
-
-          ctx.save();
-          var rg = ctx.createRadialGradient(x, y, 0, x, y, 30);
-          rg.addColorStop(0, 'rgba(255, 255, 255, 1)');
-          rg.addColorStop(0.2, 'rgba(255, 255, 255, .05)');
-          rg.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          ctx.fillStyle = rg;
-          ctx.arc(x, y, 30, 0, Math.PI * 2, true);
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-      */
 }

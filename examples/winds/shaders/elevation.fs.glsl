@@ -11,6 +11,10 @@ void main(void) {
   /* float shadow = clamp(x, 0.6, 1.);*/
   /* vec3 shadow_vec = vec3 (shadow, shadow, clamp(1.3 * shadow, 0.0, 1.));*/
   /* gl_FragColor = vec4(texture2D(sampler2, vTexCoord).xyz * shadow_vec, 1);*/
-  gl_FragColor = texture2D(sampler2, vTexCoord);
+  vec4 color = texture2D(sampler2, vTexCoord);
+  float avg = (color.r + color.g + color.b) / 3.;
+  gl_FragColor = vec4(clamp((color.r + avg) / 2., 0., 1.), 
+                      clamp((color.g + avg) / 2., 0., 1.), 
+                      clamp((color.b + avg) / 2., 0., 1.), 1.0) * 0.5;
 }
 
