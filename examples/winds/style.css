@@ -5,31 +5,44 @@ html, body {
   padding: 0;
 }
 
-input, select {
-  font-size: 15px;
-  font-family: 'Crimson Text', Verdana;
-  max-width: 80px;
-}
-
-form {
-  text-align: left;
-  padding: 5px 0;
-  text-indent: 20px;
-}
-
-#fxy {
-  width: 550px;
-  max-width: 550px;
-}
-
-input.error {
-  background: #ffdddd;
-}
-
 #container {
-  width: 600px;
+  width: 1100px;
   margin: auto;
 }
+
+#slider {
+  width: 100px;
+  /* appearance: none !important;*/
+  /* -webkit-appearance: none !important;*/
+  /* -o-appearance: none !important;*/
+  /* -moz-appearance: none !important;*/
+}
+
+sub {
+  position: relative;
+}
+
+sub#from {
+  left: 7px;
+}
+
+sub#to {
+  left: -10px;
+}
+
+label {
+  padding: 0 0 5px 0;
+}
+
+/* #hours::before {*/
+/*   content: '';*/
+/*   background: red;*/
+/* }*/
+
+/* #hours::after {*/
+/*   content: '';*/
+/*   background: red;*/
+/* }*/
 
 body.no-webgl #container {
   display: none;
@@ -44,19 +57,18 @@ body.no-webgl div.fallback {
 }
 
 .description {
-  width: 200px;
-  font-size: 13px;
-  position: absolute;
-  padding: 5px;
-  text-align: left;
-  right: 8px;
-  top: 8px;
-  border: 1px solid #ccc;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px auto;
+  padding: 3px;
   background-color: rgb(255, 241, 168);
+  border: 1px solid #ccc;
 }
 
-#title {
-
+img.legend {
+  margin: 9px auto;
+  width: 190px;
+  background: #444;
 }
 
 h1 {
@@ -64,19 +76,83 @@ h1 {
   margin: 5px;
 }
 
-.controls {
+#map-container {
+  -webkit-box-shadow: #333 0 0 10px;
+  -o-box-shadow: #333 0 0 10px;
+  -moz-box-shadow: #333 0 0 10px;
+  box-shadow: #333 0 0 10px;
   position: relative;
-  background: #E0ECFF;
-  padding: 7px;
-  border: 1px solid #ccc;
-  margin: 7px 0;
-/*  text-align: left;*/
+  height: 450px;
 }
 
-.controls table tr td {
-  text-align: left;
-  margin: auto;
-  font-size: 15px;
+.first-col {
+  float: left;
+  margin: 0;
+}
+
+#controls {
+  float: left;
+  margin: 0;
+  width: 200px;
+  top:0;
+  right:0;
+  overflow: hidden;
+}
+
+#controls .title {
+  color: #ccc;
+  -webkit-box-shadow: #333 0 0 5px;
+  -o-box-shadow: #333 0 0 5px;
+  -moz-box-shadow: #333 0 0 5px;
+  box-shadow: #333 0 0 5px;
+  background-color: #000;
+}
+
+#controls ul {
+  margin:0;
+  padding:0;
+}
+
+#controls ul li {
+  position: relative;
+  display: block;
+  list-style-type: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+#controls ul li:hover {
+  background-color:  #E0ECFF;
+}
+
+#controls ul li.selected {
+  background-color: rgb(255, 241, 168);
+}
+
+#controls ul li.selected:hover {
+ background-color: rgb(255, 241, 168);
+}
+
+#controls ul li .square {
+  width: 15px;
+  height: 15px;
+  margin: 4px;
+  position: absolute;
+  top:0;
+  left:6px;
+  border: 1px solid #555;
+}
+
+#controls img {
+  -webkit-box-shadow: #333 0 0 3px;
+  -o-box-shadow: #333 0 0 3px;
+  -moz-box-shadow: #333 0 0 3px;
+  box-shadow: #333 0 0 3px;  
+}
+
+#controls .title {
+  font-size: 16px;
+  margin: 5px 0;
 }
 
 #canvas-container {
@@ -84,13 +160,54 @@ h1 {
 }
 
 canvas {
-  -webkit-box-shadow: #333 0 0 10px;
-  -o-box-shadow: #333 0 0 10px;
-  -moz-box-shadow: #333 0 0 10px;
-  box-shadow: #333 0 0 10px;
+  top: 0;
+  left: 0;
+  background: black;
 }
 
 .footer {
-  margin: 4px;
+  margin: 114px;
   font-size: 13px;
 }
+
+#log-panel {
+  font-family: Arial;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  color: white;
+  background-color: red;
+  font-weight: bold;
+  font-size: 1em;
+  z-index: 4000;
+}
+
+div.tooltip {
+  position: absolute;
+  color: black;
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid #555;
+  /*
+  border-radius: 0.5em;
+  border: 1px solid #ccc;
+  background-color: -webkit-linear-gradient(#111, #666, #666);
+  background-color: -moz-linear-gradient(top, #111, #666, #666);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -o-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  */
+  font-size: 0.8em;
+}
+
+div.tooltip.show {
+  display: block;
+}
+
+div.tooltip.hide {
+  display: none;
+}
+

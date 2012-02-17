@@ -1,4 +1,4 @@
-#define PI2 1.5707963267949
+#define PI4 0.78539816339745
 
 attribute vec3 position;
 attribute vec2 texCoord1;
@@ -13,6 +13,9 @@ uniform vec3 data;
 
 varying vec2 vTexCoord;
 varying vec3 vColor;
+varying float vAngle;
+varying float vRadius;
+
 
 float getHue(vec4 sampling) {
   float r = sampling.r;
@@ -39,8 +42,8 @@ float getHue(vec4 sampling) {
 
 vec3 getRGB(float h, float s, float v) {
   float c = v * s;
-  float hp = h / 60.;
-  float x = c * (1. - abs( mod(hp, 2.) - 1. ));
+  h /= 60.;
+  float x = c * (1. - abs( mod(h, 2.) - 1. ));
   vec3 rgbp;
 
   if (h < 1.) {
@@ -65,8 +68,13 @@ vec3 getRGB(float h, float s, float v) {
 void main(void) {
   vec3 pos = vec3(lon, lat, 0);
 
-  float scale = data.y / 300.;
-  float h = data.z / 250.;
+  float scale = data.y / 350.;
+  float h;
+  if (data.z == 0.) {
+    h = 150.;
+  } else {
+    h = clamp((data.z - 77.) / 204., 0., 1.) - .3;
+  }
 
   const float offset = (4096. - 3764.) / 2. * (1. / 4096.);
   const float fromy = 25.;
@@ -102,10 +110,21 @@ void main(void) {
   
   pos.z += .01;
 
+  pos.z = .01;
+
   pos = vec3(position.xy * scale, 0) + pos;
 
   vTexCoord = texCoord1;
-  vColor = getRGB((1. - h) * 360., .8, .8);
+  vColor = getRGB(clamp(.5 - h, 0., 1.) * 360., 1., 1.);
+  /* vColor = vec3(.5, .5, .5 - h * 5.0);*/
+  vRadius = scale;
+
+  if (data.x == 8.) {
+    vAngle = -1.;
+  } else {
+    vAngle = data.x * PI4;
+  }
+
   gl_Position = projectionMatrix * worldMatrix * vec4(pos, 1);
 }
 

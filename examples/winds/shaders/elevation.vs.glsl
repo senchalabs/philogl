@@ -50,6 +50,8 @@ void main(void) {
     pos.z = exp(z / 3600.) -1.01;
   }
 
+  pos.z = 0.;
+
   gl_Position = projectionMatrix * worldMatrix * pos;
   vTexCoord = texCoord1;
 }

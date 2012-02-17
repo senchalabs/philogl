@@ -283,7 +283,7 @@
         height: 1,
         bindToTexture: {
           parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
+            name: 'TEXTURE_ MAG_FILTER',
             value: 'LINEAR'
           }, {
             name: 'TEXTURE_MIN_FILTER',
@@ -348,28 +348,12 @@
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       backgroundColor = pixel[0] + pixel[1] * 256 + pixel[2] * 256 * 256;
 
-      //render to texture
-      this.renderToTexture('$picking', {
-        renderProgram: pickingProgram,
-        onBeforeRender: function(elem, i) {
-          if (i == backgroundColor) {
-            index = 1;
-          }
-          var suc = i + index,
-              hasPickingColors = !!elem.pickingColors;
-
-          pickingProgram.setUniform('hasPickingColors', hasPickingColors);
-
-          if (!hasPickingColors) {
-            hash[0] = suc % 256;
-            hash[1] = ((suc / 256) >> 0) % 256;
-            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
-            pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
-            o3dHash[hash.join()] = elem;
-          } else {
-            o3dList.push(elem);
-          }
-        }
+      //render picking scene
+      this.renderPickingScene({
+        background: backgroundColor,
+        o3dHash: o3dHash,
+        o3dList: o3dList,
+        hash: hash
       });
      
       // the target point is in the center of the screen,
@@ -421,6 +405,45 @@
       return camera.view.invert().mulMat4(camera.projection.invert()).mulVec3(pt);
     },
 
+    renderPickingScene: function(opt) {
+      //if set through the config, render a custom scene.
+      if (this.config.renderPickingScene) {
+        this.config.renderPickingScene.call(this, opt);
+        return;
+      }
+
+      var pickingProgram = this.pickingProgram,
+          o3dHash = opt.o3dHash,
+          o3dList = opt.o3dList,
+          background = opt.background,
+          hash = opt.hash,
+          index = 0;
+
+      //render to texture
+      this.renderToTexture('$picking', {
+        renderProgram: pickingProgram,
+        onBeforeRender: function(elem, i) {
+          if (i == background) {
+            index = 1;
+          }
+          var suc = i + index,
+              hasPickingColors = !!elem.pickingColors;
+
+          pickingProgram.setUniform('hasPickingColors', hasPickingColors);
+
+          if (!hasPickingColors) {
+            hash[0] = suc % 256;
+            hash[1] = ((suc / 256) >> 0) % 256;
+            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+            pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+            o3dHash[hash.join()] = elem;
+          } else {
+            o3dList.push(elem);
+          }
+        }
+      });
+    },
+    
     resetPicking: $.empty
   };
   

@@ -131,6 +131,8 @@ def parsefiles():
                     else:
                         speed = 0
 
+                    print temp, (int(temp) + 100)
+
                     temp = int(temp) + 100
                     if temp < 0:
                         temp = 0

@@ -1,12 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<title>Winds</title>
-<link href="style.css" type="text/css" rel="stylesheet" media="screen" />
-<script type="text/javascript" src="../../build/PhiloGL.js"></script>
-<script type="text/javascript" src="index.js"></script>
-</head>
-<body>
-  <canvas id="map" width="1024" height="512" style="background:black"></canvas>
+  <head>
+    <title>PhiloGL - World temperature changes from 1880 to 2011</title>
+    <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" media="all" type="text/css" href="style.css" />
+    <script src="../../build/PhiloGL.js"></script>
+    <script src="models.js"></script>
+    <script src="controls.js"></script>
+    <script src="index.js"></script>
+  </head>
+  <body onload="init();">
+    <div id="log-panel" style="display:none;">
+      <span id="log-message"></span>
+    </div>
+  
+    <div id="fallback" class="fallback"></div>
+
+    <div id="container">
+      
+      <div id="title">
+        <h1>Wind Patterns</h1>
+        
+        <div class="description">Wind Patterns.</div>
+      </div>
+
+      <div id="map-container">
+        <div class='first-col'>
+          <canvas id="map" width="900" height="450"></canvas>
+          <div id='bottom-controls'>
+                     </div>
+        </div>
+        
+        <div id="controls">
+          <div class="title">Controls</div>
+
+          <label for='slider'>Hour: </label>
+          <sub id='from'>1</sub>
+            <input id='slider' type='range' value='0' min='0' max='71'>
+          <sub id='to'>72</sub>
+
+        </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a> - Imagery by <a href="http://svs.gsfc.nasa.gov/vis/a000000/a003800/a003817/">NASA</a>.
+  </div>
+  
+  <div class="tooltip hide" id="tooltip" style="width:auto;"></div>
+  
+  <script>
+    if (!PhiloGL.hasWebGL()) {
+      document.body.className = 'no-webgl';
+      document.getElementById('fallback').innerHTML = ''
+        +  '<div style="margin:10px;">'
+        +   'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        +  '</div>'
+        +   '<iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/NzDA2Rj3_uE" frameborder="0" allowfullscreen></iframe>';
+    }
+  </script>
 </body>
 </html>
+
