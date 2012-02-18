@@ -9,8 +9,7 @@ function getModels(callback) {
     nx: 100,
     ny: 50,
     offset: 0,
-    textures: ['img/elevation_3764_2048_post.jpg', 
-               'img/elevation_3764_2048_post.jpg'],
+    textures: ['img/elevation_3764_2048_post.jpg'],
     program: 'elevation'
   });
   
@@ -48,14 +47,19 @@ function getModels(callback) {
           gl.enable(gl.BLEND);
           gl.disable(gl.DEPTH_TEST);
         }
+        
+        var TRIANGLES = gl.TRIANGLES, 
+            indicesLength = this.$indicesLength, 
+            UNSIGNED_SHORT = gl.UNSIGNED_SHORT,
+            selected = this.selected,
+            weather = data.weather,
+            index = this.index || 0,
+            delta = this.delta || 0,
+            weatherFrom = weather[index],
+            weatherTo = weather[index + 1],
+            markerType = this.markerType;
 
-        for (var i = 0, 
-             TRIANGLES = gl.TRIANGLES, 
-             indicesLength = this.$indicesLength, 
-             UNSIGNED_SHORT = gl.UNSIGNED_SHORT,
-             selected = this.selected,
-             weather = data.weather[data.currentHour || 0]; i < l; i++) {
-
+        for (var i = 0; i < l; i++) {
              var station = stations[i],
                  suc = i + 1,
                  r = suc % 255,
@@ -65,9 +69,12 @@ function getModels(callback) {
              program.setUniforms({
                lat: station.lat,
                lon: station.long,
-               data: weather[i],
+               dataFrom: weatherFrom[i],
+               dataTo: weatherTo ? weatherTo[i] : weatherFrom[i],
+               delta: delta,
                pickColor: [r / 255, g / 255, b / 255],
-               selected: selected === suc
+               selected: selected === suc,
+               markerType: markerType
              });
 
              gl.drawElements(TRIANGLES, indicesLength, UNSIGNED_SHORT, 0);

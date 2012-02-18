@@ -2,25 +2,22 @@
 precision highp float;
 #endif
 
-uniform sampler2D sampler2;
-uniform sampler2D sampler3;
+uniform sampler2D sampler1;
+uniform bool picking;
+uniform float level;
+
 varying vec2 vTexCoord;
 
-uniform bool picking;
 
 void main(void) {
-  /* float x = texture2D(sampler3, vTexCoord).x;*/
-  /* float shadow = clamp(x, 0.6, 1.);*/
-  /* vec3 shadow_vec = vec3 (shadow, shadow, clamp(1.3 * shadow, 0.0, 1.));*/
-  /* gl_FragColor = vec4(texture2D(sampler2, vTexCoord).xyz * shadow_vec, 1);*/
   if (picking) {
     gl_FragColor = vec4(0, 0, 0, 0);
     return;
   }
-  vec4 color = texture2D(sampler2, vTexCoord);
+  vec4 color = texture2D(sampler1, vTexCoord);
   float avg = (color.r + color.g + color.b) / 3.;
-  gl_FragColor = vec4(clamp((color.r + avg) / 2., 0., 1.), 
-                      clamp((color.g + avg) / 2., 0., 1.), 
-                      clamp((color.b + avg) / 2., 0., 1.), 1.0) * 0.5;
+  gl_FragColor = vec4(clamp((color.r + avg * level) / (level + 1.), 0., 1.), 
+                      clamp((color.g + avg * level) / (level + 1.), 0., 1.), 
+                      clamp((color.b + avg * level) / (level + 1.), 0., 1.), 1.0) * 0.5;
 }
 

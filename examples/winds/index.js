@@ -49,8 +49,7 @@ function init() {
       }
     },
     textures: {
-      src: ['img/elevation_3764_2048_post.jpg',
-            'img/elevation_3764_2048_gs.jpg'],
+      src: ['img/elevation_3764_2048_post.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -82,7 +81,7 @@ function init() {
           style.left = (e.x + 5 + bbox.left) + 'px';
           this.tooltip.className = 'tooltip show';
           this.tooltip.innerHTML = textName;
-          
+
           this.timer = setTimeout(function(me) {
             me.tooltip.className = 'tooltip hide';
           }, 1500, this);
@@ -105,7 +104,8 @@ function init() {
             pos = this.pos;
 
         this.scene.models.forEach(function(m) {
-          m.rotation.x += (pos.y - e.y) / 100;
+          m.position.y += (pos.y - e.y) / 1000;
+          m.position.x += (e.x - pos.x) / 1000;
           m.update();
         });
 
@@ -114,8 +114,16 @@ function init() {
       },
       onMouseWheel: function(e) {
         e.stop();
-        var camera = this.camera;
-        camera.position.z -= e.wheel / 2;
+        var camera = this.camera,
+            position = camera.position;
+
+        position.z -= e.wheel / 2;
+        if (position.z > 1.36) {
+          position.z = 1.36;
+        }
+        if (position.z < 0.175) {
+          position.z = 0.175;
+        }
         camera.update();
       }
     },
@@ -130,6 +138,7 @@ function init() {
           scene = app.scene,
           canvas = app.canvas,
           camera = app.camera;
+
       app.tooltip = $('tooltip');
 
       //gather data and create O3D models
@@ -139,8 +148,38 @@ function init() {
 
         //add listeners and behavior to controls.
         setupControls({
-          onSliderChange: function(value) {
-            data.currentHour = value || 0;
+          onTimeChange: function(value) {
+            var markers = models.markers;
+            markers.index = value || 0;
+            markers.delta = 0;
+          },
+          onColorChange: function(value) {
+            models.map.uniforms.level = +value;
+          },
+          onMarkerChange: function(value) {
+            models.markers.markerType = value;
+          },
+          onPlay: function(button) {
+            var me = this;
+            me.time.disabled = true;
+            new Fx({
+              duration: 20000,
+              transition: Fx.Transition.linear,
+              onCompute: function(delta) {
+                var hour = delta * 71,
+                    index = hour >> 0,
+                    epsi = hour - index,
+                    markers = models.markers;
+
+                me.time.value = index;
+                markers.delta = epsi;
+                markers.index = index;
+              },
+              onComplete: function() {
+                me.time.value = 0;
+                me.time.disabled = false;
+              }
+            }).start();
           }
         });
 

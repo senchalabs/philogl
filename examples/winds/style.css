@@ -5,44 +5,25 @@ html, body {
   padding: 0;
 }
 
+input, select {
+  font-size: 15px;
+  font-family: 'Crimson Text', Verdana;
+  max-width: 80px;
+}
+
+#fxy {
+  width: 550px;
+  max-width: 550px;
+}
+
+input.error {
+  background: #ffdddd;
+}
+
 #container {
-  width: 1100px;
+  width: 900px;
   margin: auto;
 }
-
-#slider {
-  width: 100px;
-  /* appearance: none !important;*/
-  /* -webkit-appearance: none !important;*/
-  /* -o-appearance: none !important;*/
-  /* -moz-appearance: none !important;*/
-}
-
-sub {
-  position: relative;
-}
-
-sub#from {
-  left: 7px;
-}
-
-sub#to {
-  left: -10px;
-}
-
-label {
-  padding: 0 0 5px 0;
-}
-
-/* #hours::before {*/
-/*   content: '';*/
-/*   background: red;*/
-/* }*/
-
-/* #hours::after {*/
-/*   content: '';*/
-/*   background: red;*/
-/* }*/
 
 body.no-webgl #container {
   display: none;
@@ -57,131 +38,40 @@ body.no-webgl div.fallback {
 }
 
 .description {
-  font-size: 14px;
-  text-align: center;
-  margin: 10px auto;
-  padding: 3px;
-  background-color: rgb(255, 241, 168);
-  border: 1px solid #ccc;
-}
-
-img.legend {
-  margin: 9px auto;
-  width: 190px;
-  background: #444;
-}
-
-h1 {
-  text-shadow: rgba(0, 0, 0, 0.2) 0 0 3px;
-  margin: 5px;
-}
-
-#map-container {
-  -webkit-box-shadow: #333 0 0 10px;
-  -o-box-shadow: #333 0 0 10px;
-  -moz-box-shadow: #333 0 0 10px;
-  box-shadow: #333 0 0 10px;
-  position: relative;
-  height: 450px;
-}
-
-.first-col {
-  float: left;
-  margin: 0;
-}
-
-#controls {
-  float: left;
-  margin: 0;
   width: 200px;
-  top:0;
-  right:0;
-  overflow: hidden;
-}
-
-#controls .title {
-  color: #ccc;
-  -webkit-box-shadow: #333 0 0 5px;
-  -o-box-shadow: #333 0 0 5px;
-  -moz-box-shadow: #333 0 0 5px;
-  box-shadow: #333 0 0 5px;
-  background-color: #000;
-}
-
-#controls ul {
-  margin:0;
-  padding:0;
-}
-
-#controls ul li {
-  position: relative;
-  display: block;
-  list-style-type: none;
-  background-color: white;
-  cursor: pointer;
-}
-
-#controls ul li:hover {
-  background-color:  #E0ECFF;
-}
-
-#controls ul li.selected {
+  font-size: 13px;
+  position: absolute;
+  padding: 5px;
+  text-align: left;
+  right: 8px;
+  top: 8px;
+  border: 1px solid #ccc;
   background-color: rgb(255, 241, 168);
 }
 
-#controls ul li.selected:hover {
- background-color: rgb(255, 241, 168);
+input[type=range] {
+  width: 300px;
+  max-width: 300px;
+  /* appearance: none !important;*/
+  /* -webkit-appearance: none !important;*/
+  /* -o-appearance: none !important;*/
+  /* -moz-appearance: none !important;*/
 }
 
-#controls ul li .square {
-  width: 15px;
-  height: 15px;
-  margin: 4px;
-  position: absolute;
-  top:0;
-  left:6px;
-  border: 1px solid #555;
+sub {
+  position: relative;
 }
 
-#controls img {
-  -webkit-box-shadow: #333 0 0 3px;
-  -o-box-shadow: #333 0 0 3px;
-  -moz-box-shadow: #333 0 0 3px;
-  box-shadow: #333 0 0 3px;  
+sub#from {
+  left: 2px;
 }
 
-#controls .title {
-  font-size: 16px;
-  margin: 5px 0;
+sub#to {
+  left: -10px;
 }
 
-#canvas-container {
-  margin: auto;
-}
-
-canvas {
-  top: 0;
-  left: 0;
-  background: black;
-}
-
-.footer {
-  margin: 114px;
-  font-size: 13px;
-}
-
-#log-panel {
-  font-family: Arial;
-  margin: 0;
-  position: fixed;
-  top: 0;
-  right: 0;
-  padding: 5px;
-  color: white;
-  background-color: red;
-  font-weight: bold;
-  font-size: 1em;
-  z-index: 4000;
+label {
+  padding: 0 0 5px 0;
 }
 
 div.tooltip {
@@ -209,5 +99,47 @@ div.tooltip.show {
 
 div.tooltip.hide {
   display: none;
+}
+
+#title {
+
+}
+
+h1 {
+  text-shadow: rgba(0, 0, 0, 0.2) 0 0 3px;
+  margin: 5px;
+}
+
+.controls {
+  position: relative;
+  background: #E0ECFF;
+  padding: 7px;
+  border: 1px solid #ccc;
+  margin: 7px 0;
+/*  text-align: left;*/
+}
+
+.controls table tr td {
+  text-align: left;
+  margin: auto;
+  font-size: 15px;
+}
+
+#canvas-container {
+  margin: auto;
+}
+
+canvas {
+  -webkit-box-shadow: #333 0 0 10px;
+  -o-box-shadow: #333 0 0 10px;
+  -moz-box-shadow: #333 0 0 10px;
+  box-shadow: #333 0 0 10px;
+  cursor: move;
+  background: black;
+}
+
+.footer {
+  margin: 4px;
+  font-size: 13px;
 }
 
