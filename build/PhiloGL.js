@@ -484,7 +484,7 @@ $.splat = (function() {
             }, $.type(bindToTexture) == 'object'? bindToTexture : {}),
             texName = name + '-texture',
             texOpt = opt.textureOptions;
-            
+
         this.setTexture(texName, texBindOpt);
         
         gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
@@ -644,9 +644,13 @@ $.splat = (function() {
       opt.isCube = isCube;
       
       //set default options so we don't have to next time.
+<<<<<<< HEAD
       if (hasValue) {
         opt.data.value = false;
       }
+=======
+      opt.data.value = false;
+>>>>>>> stuff
 
       this.textureMemo[name] = opt;
       

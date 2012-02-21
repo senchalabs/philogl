@@ -198,7 +198,7 @@
             }, $.type(bindToTexture) == 'object'? bindToTexture : {}),
             texName = name + '-texture',
             texOpt = opt.textureOptions;
-            
+
         this.setTexture(texName, texBindOpt);
         
         gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
