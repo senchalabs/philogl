@@ -23,7 +23,6 @@ function webGLStart() {
   resize();
 
   function calcXYZ(e) {
-    console.log(e.x, e.y);
     var x = e.x / R,
         y = e.y / R,
         z = 1.0 - x * x - y * y;
@@ -53,6 +52,7 @@ function webGLStart() {
       alert(e);
     },
     events:{
+      cachePosition: false,
       onDragStart:function (e) {
         matStart = mat.clone();
         dragStart = [e.x, e.y];
