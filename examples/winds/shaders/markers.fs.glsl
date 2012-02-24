@@ -88,7 +88,7 @@ void main(void) {
         cos(vAngle - atan(coord.y, coord.x)) > 0. && 
         distanceToLine(bound, coord) < EPSILON / vRadius) {
 
-        gl_FragColor = vec4(vColor, .5);
+        gl_FragColor = vec4(1. - dist, 0, dist, 1);
       } else {
         gl_FragColor = vec4(0);
       }

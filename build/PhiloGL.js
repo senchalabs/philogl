@@ -2088,10 +2088,12 @@ $.splat = (function() {
       }
       if(this.hovered) {
         var target = toO3D(e.getTarget());
-        if(!target || target.id != this.hovered.id) {
+        if(!target || target.hash != this.hash) {
           this.callbacks.onMouseLeave(e, this.hovered);
           this.hovered = target;
+          this.hash = target;
           if(target) {
+            this.hash = target.hash;
             this.callbacks.onMouseEnter(e, this.hovered);
           }
         } else {
@@ -2099,7 +2101,9 @@ $.splat = (function() {
         }
       } else {
         this.hovered = toO3D(e.getTarget());
+        this.hash = this.hovered;
         if(this.hovered) {
+          this.hash = this.hovered.hash;
           this.callbacks.onMouseEnter(e, this.hovered);
         }
       }
@@ -3184,6 +3188,11 @@ $.splat = (function() {
 
   //ensure known attributes use typed arrays
   O3D.Model.prototype = Object.create(null, {
+    hash: {
+      get: function() {
+        return this.id + ' ' + this.$pickingIndex;
+      }
+    },
     vertices: {
       set: function(val) {
         if (!val) {

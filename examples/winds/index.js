@@ -140,9 +140,7 @@ function init() {
         }
       },
       onMouseLeave: function(e, model) {
-        this.timer = setTimeout(function(me) {
-          me.tooltip.className = 'tooltip hide';
-        }, 100, this);
+        this.tooltip.className = 'tooltip hide';
       },
       onDragStart: function(e) {
         this.pos = {
@@ -194,7 +192,7 @@ function init() {
       app.tooltip = $('tooltip');
 
       Log.write('Fetching data...');
-      
+
       //gather data and create O3D models
       getModels({
         onProgress: function(perc) {
@@ -222,7 +220,7 @@ function init() {
               var me = this;
               me.time.disabled = true;
               new Fx({
-                duration: 20000,
+                duration: 30000,
                 transition: Fx.Transition.linear,
                 onCompute: function(delta) {
                   var hour = delta * 71,
@@ -235,6 +233,7 @@ function init() {
                   markers.index = index;
                 },
                 onComplete: function() {
+                  var markers = models.markers;
                   me.time.value = 0;
                   me.time.disabled = false;
                   markers.index = 0;

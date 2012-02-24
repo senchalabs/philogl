@@ -8,8 +8,36 @@ html, body {
 input, select {
   font-size: 15px;
   font-family: 'Crimson Text', Verdana;
-  max-width: 80px;
 }
+
+input[type=range] {
+  width: 760px;
+  cursor: pointer;
+  /* appearance: none !important;*/
+  /* -webkit-appearance: none !important;*/
+  /* -o-appearance: none !important;*/
+  /* -moz-appearance: none !important;*/
+}
+
+input[type=range][disabled] {
+  cursor: default;
+}
+
+button {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+fieldset {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-align: left;
+  margin: 5px 0;
+}
+
+
 
 #log-panel {
   font-family: Arial;
@@ -58,14 +86,6 @@ body.no-webgl div.fallback {
   background-color: rgb(255, 241, 168);
 }
 
-input[type=range] {
-  width: 300px;
-  max-width: 300px;
-  /* appearance: none !important;*/
-  /* -webkit-appearance: none !important;*/
-  /* -o-appearance: none !important;*/
-  /* -moz-appearance: none !important;*/
-}
 
 sub {
   position: relative;
@@ -81,9 +101,11 @@ sub#to {
 
 label {
   padding: 0 0 5px 0;
+  cursor: pointer;
 }
 
 div.tooltip {
+  opacity: 0.9;
   position: absolute;
   color: black;
   padding: 5px;

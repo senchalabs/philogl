@@ -22,44 +22,37 @@
         <h1>US Wind Patterns</h1>
       </div>
 
-      <div class="controls">
+      <div class='controls'>
         Visualize the last 72 hour wind motion in the US.
-        <table>
-          <tr>
-            <td><label for='slider'>Time (hs): </label></td>
-            <td> 
-              1
-              <input id='time' type='range' value='0' min='0' max='71'>
-              72 
-              <button id='play'>Play!</button> 
-            </td>
-          </tr>
-          <tr>
-            <td><label for='slider'>Elevation (intensity): </label></td>
-            <td>
-              0
-              <input id='elevation' type='range' value='3' min='0' max='5' step='0.2'>
-              1000
-            </td>
-          </tr>
-          <tr>
-            <td>Markers: </td>
-            <td>
-              <input type='radio' name='group1' id='r1' checked> <label
-                for='r1'>disk </label>
-              <input type='radio' name='group1' id='r2'> <label
-                for='r2'>circle </label>
-              <input type='radio' name='group1' id='r3'> <label
-                for='r3'>line </label>
-            </td>
-          </tr>
-        </table>
       </div>
 
+      <fieldset>
+        Markers: 
+          <input type='radio' name='group1' id='r1' checked> <label
+            for='r1'>disk </label>
+          <input type='radio' name='group1' id='r2'> <label
+            for='r2'>circle </label>
+          <input type='radio' name='group1' id='r3'> <label
+            for='r3'>line </label>
+      </fieldset>
 
       <div id="canvas-container">
         <canvas id="map" width="900" height="450"></canvas>
       </div>
+      
+      <fieldset>
+        <button id='play'>Play!</button> 
+        1h
+        <input id='time' type='range' value='0' min='0' max='71'>
+        72hs
+
+        <div style='display: none'>
+          <label for='slider'>Elevation (intensity): </label>
+          0
+          <input id='elevation' type='range' value='3' min='0' max='5' step='0.2'>
+          1000
+        </div>
+      </fieldset>
   </div>
   
   <div class="footer">

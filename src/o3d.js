@@ -285,6 +285,11 @@
 
   //ensure known attributes use typed arrays
   O3D.Model.prototype = Object.create(null, {
+    hash: {
+      get: function() {
+        return this.id + ' ' + this.$pickingIndex;
+      }
+    },
     vertices: {
       set: function(val) {
         if (!val) {
