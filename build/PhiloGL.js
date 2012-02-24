@@ -644,13 +644,9 @@ $.splat = (function() {
       opt.isCube = isCube;
       
       //set default options so we don't have to next time.
-<<<<<<< HEAD
       if (hasValue) {
         opt.data.value = false;
       }
-=======
-      opt.data.value = false;
->>>>>>> stuff
 
       this.textureMemo[name] = opt;
       
