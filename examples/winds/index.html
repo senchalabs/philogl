@@ -17,13 +17,21 @@
     <div id="fallback" class="fallback"></div>
 
     <div id="container">
-      
       <div id="title">
         <h1>US Wind Patterns</h1>
       </div>
 
       <div class='controls'>
         Visualize the last 72 hour wind motion in the US.
+      </div>
+
+      <div class='description'>
+        This map tracks wind direction (lines), speed (radius) and
+        temperature (hue) measurements from 1200 weather stations across the country. 
+        You can play an animation of the wind movements and hover the weather stations 
+        in the map to get more 
+        information. Use the slider at the bottom to focus on a
+        particular hour.
       </div>
 
       <fieldset>
@@ -33,7 +41,9 @@
           <input type='radio' name='group1' id='r2'> <label
             for='r2'>circle </label>
           <input type='radio' name='group1' id='r3'> <label
-            for='r3'>line </label>
+            for='r3'>line </label> <br>
+          
+          <button id='play' class='blue'>Play 72 hour wind motion</button> 
       </fieldset>
 
       <div id="canvas-container">
@@ -41,7 +51,6 @@
       </div>
       
       <fieldset>
-        <button id='play'>Play!</button> 
         1h
         <input id='time' type='range' value='0' min='0' max='71'>
         72hs
@@ -56,7 +65,12 @@
   </div>
   
   <div class="footer">
-    Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a> - Imagery by <a href="http://svs.gsfc.nasa.gov/vis/a000000/a003800/a003817/">NASA</a>.
+    Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia
+      Belmonte</a> - Elevation map by <a
+      href="http://weather.unisys.com/usgs/index.php">UNISYS</a> -
+    Weather data by the <a
+      href='http://www.nws.noaa.gov/climate/'>National Weather
+      Service</a>.
   </div>
   
   <div class="tooltip hide" id="tooltip" style="width:auto;"></div>
