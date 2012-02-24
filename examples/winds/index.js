@@ -1,11 +1,43 @@
 PhiloGL.unpack();
 
 var $ = function(d) { return document.getElementById(d); };
-    
+
+//Log singleton
+var Log = {
+  elem: null,
+  timer: null,
+
+  getElem: function() {
+    if (!this.elem) {
+      return (this.elem = $('log-message'));
+    }
+    return this.elem;
+  },
+
+  write: function(text, hide) {
+    if (this.timer) {
+      this.timer = clearTimeout(this.timer);
+    }
+
+    var elem = this.getElem(),
+    style = elem.parentNode.style;
+
+    elem.innerHTML = text;
+    style.display = '';
+
+    if (hide) {
+      this.timer = setTimeout(function() {
+        style.display = 'none';
+      }, 2000);
+    }
+  }
+};
 
 window.addEventListener('DOMContentLoaded', init, false);
 
 function init() {
+  Log.write('Loading...');
+
   var models = {},
       data   = {},
       tooltip = $('tooltip');
@@ -62,6 +94,7 @@ function init() {
     events: {
       picking: true,
       centerOrigin: false,
+      cachePosition: false,
       onClick: function(e, model) {
         if (!model) {
           models.markers.selected = -1;
@@ -71,26 +104,45 @@ function init() {
       },
       onMouseEnter: function(e, model) {
         if (model) {
+          //now that we have the current position cache it
+          this.events.cachePosition = true;
           clearTimeout(this.timer);
           var style = tooltip.style,
               record = data.stations[model.$pickingIndex],
-              textName = record.name[0] + record.name.slice(1).toLowerCase() + ', ' + record.abbr,
               bbox = this.canvas.getBoundingClientRect();
 
-          style.top = (e.y + 10 + bbox.top) + 'px';
-          style.left = (e.x + 5 + bbox.left) + 'px';
+          style.top = (e.y + 20 + bbox.top) + 'px';
+          style.left = (e.x + 10 + bbox.left) + 'px';
           this.tooltip.className = 'tooltip show';
-          this.tooltip.innerHTML = textName;
+          this.tooltip.innerHTML = buildHTML(record, data.weather[models.markers.index || 0][model.$pickingIndex]);
+        }
 
-          this.timer = setTimeout(function(me) {
-            me.tooltip.className = 'tooltip hide';
-          }, 1500, this);
+        function buildHTML(rec, data) {
+          var title = rec.name[0] + rec.name.slice(1).toLowerCase() + ', ' + rec.abbr,
+              lat = rec.lat,
+              lon = rec.long,
+              elv = Math.round(rec.elv / 3.281),
+              tmp = Math.round((data[2] - 100) - 32 * 5 / 9),
+              dir = data[0] == 8 ? 'NA' : ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'][data[0]],
+              spd = data[1];
+
+          var html = '<h1>' + title + '</h1>' + 
+            '<ul>' + 
+            '<li><b>latitude</b>: ' + lat + '</li>' + 
+            '<li><b>longitude</b>: ' + lon + '</li>' + 
+            '<li><b>elevation</b>: ' + elv + 'm</li>' + 
+            '<li><b>temperature</b>: ' + tmp + 'C</li>' + 
+            '<li><b>wind direction</b>: ' + dir + '</li>' + 
+            '<li><b>wind speed</b>: ' + spd + ' knots</li>' + 
+            '</ul>';
+
+          return html;
         }
       },
       onMouseLeave: function(e, model) {
         this.timer = setTimeout(function(me) {
           me.tooltip.className = 'tooltip hide';
-        }, 500, this);
+        }, 100, this);
       },
       onDragStart: function(e) {
         this.pos = {
@@ -141,67 +193,78 @@ function init() {
 
       app.tooltip = $('tooltip');
 
+      Log.write('Fetching data...');
+      
       //gather data and create O3D models
-      getModels(function(dataAns, modelsAns) {
-        data = dataAns;
-        models = modelsAns;
+      getModels({
+        onProgress: function(perc) {
+          Log.write('Fetching data ' + perc + '%');
+        },
 
-        //add listeners and behavior to controls.
-        setupControls({
-          onTimeChange: function(value) {
-            var markers = models.markers;
-            markers.index = value || 0;
-            markers.delta = 0;
-          },
-          onColorChange: function(value) {
-            models.map.uniforms.level = +value;
-          },
-          onMarkerChange: function(value) {
-            models.markers.markerType = value;
-          },
-          onPlay: function(button) {
-            var me = this;
-            me.time.disabled = true;
-            new Fx({
-              duration: 20000,
-              transition: Fx.Transition.linear,
-              onCompute: function(delta) {
-                var hour = delta * 71,
-                    index = hour >> 0,
-                    epsi = hour - index,
-                    markers = models.markers;
+        onComplete: function(dataAns, modelsAns) {
+          data = dataAns;
+          models = modelsAns;
 
-                me.time.value = index;
-                markers.delta = epsi;
-                markers.index = index;
-              },
-              onComplete: function() {
-                me.time.value = 0;
-                me.time.disabled = false;
-              }
-            }).start();
+          //add listeners and behavior to controls.
+          setupControls({
+            onTimeChange: function(value) {
+              var markers = models.markers;
+              markers.index = value || 0;
+              markers.delta = 0;
+            },
+            onColorChange: function(value) {
+              models.map.uniforms.level = +value;
+            },
+            onMarkerChange: function(value) {
+              models.markers.markerType = value;
+            },
+            onPlay: function(button) {
+              var me = this;
+              me.time.disabled = true;
+              new Fx({
+                duration: 20000,
+                transition: Fx.Transition.linear,
+                onCompute: function(delta) {
+                  var hour = delta * 71,
+                  index = hour >> 0,
+                  epsi = hour - index,
+                  markers = models.markers;
+
+                  me.time.value = index;
+                  markers.delta = epsi;
+                  markers.index = index;
+                },
+                onComplete: function() {
+                  me.time.value = 0;
+                  me.time.disabled = false;
+                  markers.index = 0;
+                  markers.delta = 0;
+                }
+              }).start();
+            }
+          });
+
+          //Basic gl setup
+          gl.clearColor(0.0, 0.0, 0.0, 1.0);
+          gl.clearDepth(1.0);
+          gl.enable(gl.DEPTH_TEST);
+          gl.depthFunc(gl.LEQUAL);
+          gl.viewport(0, 0, +canvas.width, +canvas.height);
+
+          scene.add(models.map, models.markers);
+
+          draw();
+
+          Log.write('Done.', true);
+
+          //Draw the scene
+          function draw() {
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            //render model
+            scene.render();
+            Fx.requestAnimationFrame(draw);
           }
-        });
-
-        //Basic gl setup
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.clearDepth(1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-        gl.viewport(0, 0, +canvas.width, +canvas.height);
-
-        scene.add(models.map, models.markers);
-
-        draw();
-
-        //Draw the scene
-        function draw() {
-          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-          //render model
-          scene.render();
-          Fx.requestAnimationFrame(draw);
         }
-
       });
     }
   });

@@ -10,7 +10,10 @@ function getModels(callback) {
     ny: 50,
     offset: 0,
     textures: ['img/elevation_3764_2048_post.jpg'],
-    program: 'elevation'
+    program: 'elevation',
+    uniforms: {
+      level: 3
+    }
   });
   
   //markers in map
@@ -61,7 +64,7 @@ function getModels(callback) {
 
         for (var i = 0; i < l; i++) {
              var station = stations[i],
-                 suc = i + 1,
+                 suc = i,
                  r = suc % 255,
                  g = (suc / 255 >> 0) % 255,
                  b = (suc / 255 / 255 >> 0) % 255;
@@ -106,15 +109,15 @@ function getModels(callback) {
   }
 
   //get weather station data
-  function getWeatherData(callback) {
+  function getWeatherData(callbackProgress, callback) {
     new IO.XHR({
       url: 'data/weather.bin',
       responseType: 'arraybuffer',
       onError: function() {
         console.log('there was an error while making the XHR request');
       },
-      onProgress: function() {
-        console.log('progress', arguments);
+      onProgress: function(e, perc) {
+        callbackProgress(perc);
       },
       onSuccess: function(buffer) {
         var bufferData = new Uint16Array(buffer),
@@ -145,7 +148,7 @@ function getModels(callback) {
   }
 
   //get data and create models.
-  getWeatherData(function(weather) {
+  getWeatherData(callback.onProgress, function(weather) {
     getStations(function(stations) {
       var data = {
         stations: stations,
@@ -155,7 +158,7 @@ function getModels(callback) {
         map: surface,
         markers: new MapMarkers(data)
       };
-      callback(data, models);
+      callback.onComplete(data, models);
     });
   });
 }

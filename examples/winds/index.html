@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PhiloGL - World temperature changes from 1880 to 2011</title>
+    <title>PhiloGL - US Wind Patterns</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
     <script src="../../build/PhiloGL.js"></script>
@@ -19,15 +19,11 @@
     <div id="container">
       
       <div id="title">
-        <h1>Wind Patterns</h1>
+        <h1>US Wind Patterns</h1>
       </div>
 
       <div class="controls">
-        Visualize the last 72 hour wind motion.
-        
-        <div class="description">
-          Controls for stuff.
-        </div>
+        Visualize the last 72 hour wind motion in the US.
         <table>
           <tr>
             <td><label for='slider'>Time (hs): </label></td>
@@ -42,7 +38,7 @@
             <td><label for='slider'>Elevation (intensity): </label></td>
             <td>
               0
-              <input id='elevation' type='range' value='0' min='0' max='5' step='0.2'>
+              <input id='elevation' type='range' value='3' min='0' max='5' step='0.2'>
               1000
             </td>
           </tr>

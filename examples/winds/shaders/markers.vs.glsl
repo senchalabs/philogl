@@ -1,4 +1,6 @@
 #define PI4 0.78539816339745
+#define PI2 6.28318530717959
+#define DELTA 0.001
 
 attribute vec3 position;
 attribute vec2 texCoord1;
@@ -12,6 +14,8 @@ uniform float lon;
 uniform vec3 dataFrom;
 uniform vec3 dataTo;
 uniform float delta;
+
+uniform bool selected;
 
 varying vec2 vTexCoord;
 varying vec3 vColor;
@@ -47,6 +51,25 @@ void main(void) {
   vec3 pos = vec3(lon, lat, 0);
   vec3 data = dataFrom + (dataTo - dataFrom) * delta;
 
+  //check angle direction
+  float angleFrom = dataFrom.x * PI4;
+  float angleTo = dataTo.x * PI4;
+  float angle;
+
+  if (abs(data.x - 8.) < DELTA) {
+    vAngle = -1.;
+  } else {
+    if (angleFrom > angleTo 
+     && angleFrom - angleTo > PI2 + angleTo - angleFrom) {
+      angleTo += PI2;
+    } else if (angleTo > angleFrom 
+            && angleTo - angleFrom > PI2 + angleFrom - angleTo) {
+      angleFrom += PI2;
+    }
+    angle = angleFrom + delta * (angleTo - angleFrom);
+    vAngle = angle;
+  }
+
   float scale = data.y / 350.;
   float h;
   if (data.z == 0.) {
@@ -68,19 +91,13 @@ void main(void) {
 
   pos.x  = (pos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
   pos.y  = (pos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
-  pos.z = .01;
+  pos.z = .0001 / scale;
 
   pos = vec3(position.xy * scale, 0) + pos;
 
   vTexCoord = texCoord1;
   vColor = getRGB(clamp(.5 - h, 0., 1.) * 360., 1., 1.);
   vRadius = scale;
-
-  if (data.x == 8.) {
-    vAngle = -1.;
-  } else {
-    vAngle = data.x * PI4;
-  }
 
   gl_Position = projectionMatrix * worldMatrix * vec4(pos, 1);
 }

@@ -11,9 +11,18 @@ input, select {
   max-width: 80px;
 }
 
-#fxy {
-  width: 550px;
-  max-width: 550px;
+#log-panel {
+  font-family: Arial;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  color: white;
+  background-color: red;
+  font-weight: bold;
+  font-size: 0.9em;
+  z-index: 4000;
 }
 
 input.error {
@@ -101,6 +110,20 @@ div.tooltip.hide {
   display: none;
 }
 
+div.tooltip > h1 {
+  font-size: 1.1em;
+}
+
+div.tooltip > ul {
+  margin: 0;
+  padding: 5px;
+  text-align: left;
+}
+
+div.tooltip > ul > li {
+  list-style-type: none;
+}
+
 #title {
 
 }
@@ -134,7 +157,6 @@ canvas {
   -o-box-shadow: #333 0 0 10px;
   -moz-box-shadow: #333 0 0 10px;
   box-shadow: #333 0 0 10px;
-  cursor: move;
   background: black;
 }
 
