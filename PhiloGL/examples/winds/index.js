@@ -49,15 +49,13 @@ function init() {
       from: 'uris',
       path: './shaders/',
       vs: 'elevation.vs.glsl',
-      fs: 'elevation.fs.glsl',
-      noCache: true
+      fs: 'elevation.fs.glsl'
     }, {
       id: 'markers',
       from: 'uris',
       path: './shaders/',
       vs: 'markers.vs.glsl',
-      fs: 'markers.fs.glsl',
-      noCache: true
+      fs: 'markers.fs.glsl'
     }],
     camera: {
       position: {

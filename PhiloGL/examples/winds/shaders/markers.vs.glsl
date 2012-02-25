@@ -91,7 +91,7 @@ void main(void) {
 
   pos.x  = (pos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
   pos.y  = (pos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
-  pos.z = .0001 / scale;
+  pos.z = .0001 / (scale + .1);
 
   pos = vec3(position.xy * scale, 0) + pos;
 
