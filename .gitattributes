@@ -2,6 +2,7 @@
 .gitattributes export-ignore
 build/compiler.jar export-ignore
 build/build.py export-ignore
+build/build.js export-ignore
 build.sh export-ignore
 examples/blur export-ignore
 examples/brain export-ignore
