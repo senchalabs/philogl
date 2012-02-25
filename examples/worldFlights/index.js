@@ -419,15 +419,7 @@ function createApp() {
       }
     },
     textures: {
-      src: ['img/lala.jpg'],
-      parameters: [{
-        name: 'TEXTURE_MAG_FILTER',
-        value: 'LINEAR'
-      }, {
-        name: 'TEXTURE_MIN_FILTER',
-        value: 'LINEAR_MIPMAP_NEAREST',
-        generateMipmap: true
-      }]
+      src: ['img/lala.jpg']
     },
     onError: function() {
       Log.write("There was an error creating the app.", true);
@@ -460,28 +452,12 @@ function createApp() {
         width: 1024,
         height: 1024,
         bindToTexture: {
-          parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
-            value: 'LINEAR'
-          }, {
-            name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR_MIPMAP_NEAREST',
-            generateMipmap: false
-          }]
         },
         bindToRenderBuffer: true
       }).setFrameBuffer('world2', {
         width: 1024,
         height: 1024,
         bindToTexture: {
-          parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
-            value: 'LINEAR'
-          }, {
-            name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR_MIPMAP_NEAREST',
-            generateMipmap: false
-          }]
         },
         bindToRenderBuffer: true
       });

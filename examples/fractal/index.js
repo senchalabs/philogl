@@ -14,6 +14,8 @@ var viewX = 900;
 var viewY = 550;
 var c;
 
+window.addEventListener('DOMContentLoaded', load, false);
+
 function load() {
   if (!PhiloGL.hasWebGL()) {
     alert("Your browser does not support WebGL");
@@ -37,6 +39,21 @@ function load() {
       onMouseMove: function(e) {
         mouseX = e.x / viewX;
         mouseY = 1 - e.y / viewY;
+      },
+      onTouchStart: function(e) {
+        e.stop();
+      },
+      onTouchMove: function(e) {
+        var evt = e.event;
+        if (evt.preventDefault) evt.preventDefault();
+        if (evt.stopPropagation) evt.stopPropagation();
+
+        e.stop();
+        mouseX = e.x / viewX;
+        mouseY = 1 - e.y / viewY;
+      },
+      onTouchEnd: function(e) {
+        e.stop();
       },
       onClick: function(e) {
         halted = !halted;

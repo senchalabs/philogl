@@ -1,15 +1,31 @@
+window.addEventListener('DOMContentLoaded', webGLStart, false);
+
 function webGLStart() {
-  var numSites = 1, sites = [0, 0, 1], siteColors = [0.5, 0.5, 0.7],
-      width = 800, height = 600, R = 200, vs = [], weight = [1], fullscreen = false,
-      dragStart = [], matStart = null, mat = new PhiloGL.Mat4(), imat = mat.clone(), weighted = false;
+  var numSites = 1,
+      sites = [0, 0, 1],
+      siteColors = [0.5, 0.5, 0.7],
+      width = 800,
+      height = 600,
+      R = 200,
+      vs = [],
+      weight = [1],
+      fullscreen = false,
+      dragStart = [],
+      matStart = null,
+      mat = new PhiloGL.Mat4(),
+      imat = mat.clone(),
+      weighted = false;
+
   mat.id();
   imat.id();
+
   function toggleFullscreen() {
     document.body.classList.toggle('fullscreen');
     resize();
   }
 
   window.toggleFullscreen = toggleFullscreen;
+
   function resize() {
     var canvas = document.getElementById('voronoi'),
         style = window.getComputedStyle(canvas);
@@ -52,7 +68,7 @@ function webGLStart() {
       alert(e);
     },
     events:{
-      cachePosition: false,
+      cachePosition:false,
       onDragStart:function (e) {
         matStart = mat.clone();
         dragStart = [e.x, e.y];
@@ -61,7 +77,7 @@ function webGLStart() {
         var id = new PhiloGL.Mat4();
         id.id();
         id.$rotateAxis((e.event.wheelDeltaX) / 5 / R, [0, 1, 0])
-            .$rotateAxis((e.event.wheelDeltaY) / 5 / R, [1, 0, 0]);
+          .$rotateAxis((e.event.wheelDeltaY) / 5 / R, [1, 0, 0]);
         mat = id.mulMat4(mat);
         imat = mat.invert();
         var v3 = calcXYZ(e);
@@ -122,7 +138,7 @@ function webGLStart() {
       program.setBuffers({
         'square':{
           attribute:'aVertexPosition',
-          value:new Float32Array([1, 1, -1, 1, 1, -1, -1, -1]),
+          value: new Float32Array([1, 1, -1, 1, 1, -1, -1, -1]),
           size:2
         }
       });

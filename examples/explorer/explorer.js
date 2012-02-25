@@ -40,7 +40,7 @@
         i, j, p1, p2;
     
     for (i = 0; i < xp -2; i++) {
-      p1 = [i, i+1, i+1],
+      p1 = [i, i+1, i+1];
       p2 = [i+1, i, i];
       
       for (j = 0; j < yp -2; j++) {
@@ -64,16 +64,17 @@
       'colorUfm': [0.5, 0.3, 0.7, 1]
     }
   });
-  
-  window.init = function() {
+
+  window.addEventListener('DOMContentLoaded', init, false);
+
+  function init() {
     //Create App
     PhiloGL('surface-explorer-canvas', {
       program: {
         from: 'uris',
         path: './',
         vs: 'surface.vs.glsl',
-        fs: 'surface.fs.glsl',
-        noCache: true
+        fs: 'surface.fs.glsl'
       },
       camera: {
         position: {
@@ -115,6 +116,25 @@
           };
         },
         onDragMove: function(e) {
+          var z = this.camera.position.z,
+              sign = Math.abs(z) / z,
+              pos = this.pos;
+
+          surface.rotation.y += -(pos.x - e.x) / 100;
+          surface.rotation.x += sign * (pos.y - e.y) / 100;
+          surface.update();
+          pos.x = e.x;
+          pos.y = e.y;
+        },
+        onTouchStart: function(e) {
+          e.stop();
+          this.pos = {
+            x: e.x,
+            y: e.y
+          };
+        },
+        onTouchMove: function(e) {
+          e.stop();
           var z = this.camera.position.z,
               sign = Math.abs(z) / z,
               pos = this.pos;
