@@ -153,6 +153,31 @@
           }
         },
         events: {
+          onTouchStart: function(e) {
+            e.stop();
+            this.pos = {
+              x: e.x,
+              y: e.y
+            };
+            this.dragging = true;
+          },
+          onTouchEnd: function() {
+            e.stop();
+            this.dragging = false;
+            theta = histogramModel.rotation.y;
+          },
+          onTouchMove: function(e) {
+            e.stop();
+            var z = this.camera.position.z,
+                sign = Math.abs(z) / z,
+                pos = this.pos;
+
+            histogramModel.rotation.y += -(pos.x - e.x) / 100;
+            //histogramModel.rotation.x += sign * (pos.y - e.y) / 100;
+            histogramModel.update();
+            pos.x = e.x;
+            pos.y = e.y;
+          },
           onDragStart: function(e) {
             this.pos = {
               x: e.x,

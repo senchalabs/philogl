@@ -250,6 +250,35 @@ function init() {
         }
       },
       events: {
+        onTouchStart: function(e) {
+          e.stop();
+          this.pos = {
+            x: e.x,
+            y: e.y
+          };
+          this.dragging = true;
+        },
+        onTouchCancel: function() {
+          this.dragging = false;
+        },
+        onTouchEnd: function() {
+          this.dragging = false;
+          theta = this.scene.models[0].rotation.y;
+        },
+        onTouchMove: function(e) {
+          e.stop();
+          var z = this.camera.position.z,
+              sign = Math.abs(z) / z,
+              pos = this.pos;
+
+          this.scene.models.forEach(function(m) {
+            m.rotation.y += -(pos.x - e.x) / 100;
+            m.update();
+          });
+
+          pos.x = e.x;
+          pos.y = e.y;
+        },
         onDragStart: function(e) {
           this.pos = {
             x: e.x,
@@ -285,15 +314,7 @@ function init() {
         }
       },
       textures: {
-        src: ['img/earth.jpg'],
-        parameters: [{
-          name: 'TEXTURE_MAG_FILTER',
-          value: 'LINEAR'
-        }, {
-          name: 'TEXTURE_MIN_FILTER',
-          value: 'LINEAR_MIPMAP_NEAREST',
-          generateMipmap: true
-        }]
+        src: ['img/earth.jpg']
       },
       onError: function() {
         alert("There was an error creating the app.");
