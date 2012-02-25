@@ -192,7 +192,7 @@ PhiloGL.unpack = function(branch) {
 };
 
 //Version
-PhiloGL.version = '1.4.1';
+PhiloGL.version = '1.4.2';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -484,7 +484,7 @@ $.splat = (function() {
             }, $.type(bindToTexture) == 'object'? bindToTexture : {}),
             texName = name + '-texture',
             texOpt = opt.textureOptions;
-            
+
         this.setTexture(texName, texBindOpt);
         
         gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
@@ -642,8 +642,12 @@ $.splat = (function() {
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
+      
       //set default options so we don't have to next time.
-      delete opt.data;
+      if (hasValue) {
+        opt.data.value = false;
+      }
+
       this.textureMemo[name] = opt;
       
       return this;
@@ -1078,11 +1082,13 @@ $.splat = (function() {
     $mulVec3: function(dest, vec) {
       var vx = vec[0],
           vy = vec[1],
-          vz = vec[2];
+          vz = vec[2],
+          d = 1 / (dest[3] * vx + dest[7] * vy + dest[11] * vz + dest[15]);
 
-      vec[0] = dest[0] * vx + dest[4] * vy + dest[8 ] * vz + dest[12];
-      vec[1] = dest[1] * vx + dest[5] * vy + dest[9 ] * vz + dest[13];
-      vec[2] = dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14];
+      vec[0] = (dest[0] * vx + dest[4] * vy + dest[8 ] * vz + dest[12]) * d;
+      vec[1] = (dest[1] * vx + dest[5] * vy + dest[9 ] * vz + dest[13]) * d;
+      vec[2] = (dest[2] * vx + dest[6] * vy + dest[10] * vz + dest[14]) * d;
+
       return vec;
     },
 
@@ -1991,6 +1997,7 @@ $.splat = (function() {
           evt.wheel = event.getWheel(ge);
           break;
         case 'keydown':
+        case 'keyup':
           $.extend(evt, event.getKey(ge));
           break;
         case 'mouseup':
@@ -2077,10 +2084,12 @@ $.splat = (function() {
       }
       if(this.hovered) {
         var target = toO3D(e.getTarget());
-        if(!target || target.id != this.hovered.id) {
+        if(!target || target.hash != this.hash) {
           this.callbacks.onMouseLeave(e, this.hovered);
           this.hovered = target;
+          this.hash = target;
           if(target) {
+            this.hash = target.hash;
             this.callbacks.onMouseEnter(e, this.hovered);
           }
         } else {
@@ -2088,7 +2097,9 @@ $.splat = (function() {
         }
       } else {
         this.hovered = toO3D(e.getTarget());
+        this.hash = this.hovered;
         if(this.hovered) {
+          this.hash = this.hovered.hash;
           this.callbacks.onMouseEnter(e, this.hovered);
         }
       }
@@ -2898,7 +2909,7 @@ $.splat = (function() {
       pi = Math.PI,
       max = Math.max,
       slice = Array.prototype.slice;
-  
+
   function normalizeColors(arr, len) {
     if (arr && arr.length < len) {
       var a0 = arr[0],
@@ -2908,7 +2919,7 @@ $.splat = (function() {
           ans = [a0, a1, a2, a3],
           times = len / arr.length,
           index;
-      
+
       while (--times) {
         index = times * 4;
         ans[index    ] = a0;
@@ -2922,7 +2933,7 @@ $.splat = (function() {
       return arr;
     }
   }
-  
+
   //Model repository
   var O3D = {
       //map attribute names to property names
@@ -2955,7 +2966,7 @@ $.splat = (function() {
     if (opt.pickingColors) {
       this.pickingColors = opt.pickingColors;
     }
-    
+
     if (opt.texCoords) {
       this.texCoords = opt.texCoords;
     }
@@ -2990,12 +3001,12 @@ $.splat = (function() {
     if (opt.computeNormals) {
       this.computeNormals();
     }
-  
+
   };
 
   //Buffer setter mixin
   var Setters = {
-    
+
     setUniforms: function(program) {
       program.setUniforms(this.uniforms);
     },
@@ -3014,7 +3025,7 @@ $.splat = (function() {
         }
       }
     },
-    
+
     setVertices: function(program) {
       if (!this.$vertices) return;
 
@@ -3087,7 +3098,7 @@ $.splat = (function() {
     },
 
     setTexCoords: function(program) {
-      if (!this.$texCoords) return; 
+      if (!this.$texCoords) return;
 
       var id = this.id,
           i, txs, l, tex;
@@ -3159,7 +3170,7 @@ $.splat = (function() {
 
     unsetState: function(program) {
       var attributes = program.attributes;
-      
+
       //unbind the array and element buffers
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -3167,19 +3178,24 @@ $.splat = (function() {
       for (var name in attributes) {
         gl.disableVertexAttribArray(attributes[name]);
       }
-      
+
     }
  };
-  
+
   //ensure known attributes use typed arrays
   O3D.Model.prototype = Object.create(null, {
+    hash: {
+      get: function() {
+        return this.id + ' ' + this.$pickingIndex;
+      }
+    },
     vertices: {
       set: function(val) {
         if (!val) {
             delete this.$vertices;
             delete this.$verticesLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$vertices = val;
@@ -3196,14 +3212,14 @@ $.splat = (function() {
         return this.$vertices;
       }
     },
-    
+
     normals: {
       set: function(val) {
         if (!val) {
             delete this.$normals;
             delete this.$normalsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$normals = val;
@@ -3220,14 +3236,14 @@ $.splat = (function() {
         return this.$normals;
       }
     },
-    
+
     colors: {
       set: function(val) {
         if (!val) {
             delete this.$colors;
             delete this.$colorsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$colors = val;
@@ -3247,14 +3263,14 @@ $.splat = (function() {
         return this.$colors;
       }
     },
-    
+
     pickingColors: {
       set: function(val) {
         if (!val) {
             delete this.$pickingColors;
             delete this.$pickingColorsLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$pickingColors = val;
@@ -3274,14 +3290,14 @@ $.splat = (function() {
         return this.$pickingColors;
       }
     },
-    
+
     texCoords: {
       set: function(val) {
         if (!val) {
             delete this.$texCoords;
             delete this.$texCoordsLength;
             return;
-        } 
+        }
         if ($.type(val) == 'object') {
           var ans = {};
           for (var prop in val) {
@@ -3314,7 +3330,7 @@ $.splat = (function() {
             delete this.$indices;
             delete this.$indicesLength;
             return;
-        } 
+        }
         var vlen = val.length;
         if (val.BYTES_PER_ELEMENT) {
           this.$indices = val;
@@ -3331,7 +3347,7 @@ $.splat = (function() {
         return this.$indices;
       }
     }
-    
+
   });
 
   $.extend(O3D.Model.prototype, {
@@ -3357,15 +3373,15 @@ $.splat = (function() {
       faces.forEach(function(face) {
         var centroid = [0, 0, 0],
             acum = 0;
-        
+
         face.forEach(function(idx) {
           var vertex = vertices[idx];
-          
+
           centroid[0] += vertex[0];
           centroid[1] += vertex[1];
           centroid[2] += vertex[2];
           acum++;
-        
+
         });
 
         centroid[0] /= acum;
@@ -3373,7 +3389,7 @@ $.splat = (function() {
         centroid[2] /= acum;
 
         centroids.push(centroid);
-      
+
       });
 
       this.centroids = centroids;
@@ -3400,20 +3416,20 @@ $.splat = (function() {
             };
 
         Vec3.$cross(dir2, dir1);
-        
+
         if (Vec3.norm(dir2) > 1e-6) {
           Vec3.unit(dir2);
         }
-        
+
         normals.push([dir2.x, dir2.y, dir2.z]);
-      
+
       });
 
       this.normals = normals;
     }
 
   });
-  
+
   //Apply our Setters mixin
   $.extend(O3D.Model.prototype, Setters);
 
@@ -3523,7 +3539,7 @@ $.splat = (function() {
         -1.0,  0.0,  0.0,
         -1.0,  0.0,  0.0
       ],
-      
+
       indices: [0, 1, 2, 0, 2, 3,
                 4, 5, 6, 4, 6, 7,
                 8, 9, 10, 8, 10, 11,
@@ -3535,10 +3551,10 @@ $.splat = (function() {
   };
 
   O3D.Cube.prototype = Object.create(O3D.Model.prototype);
-  
-  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/, 
+
+  //Primitives constructors inspired by TDL http://code.google.com/p/webglsamples/,
   //copyright 2011 Google Inc. new BSD License (http://www.opensource.org/licenses/bsd-license.php).
-  O3D.Sphere = function(opt) { 
+  O3D.Sphere = function(opt) {
       var nlat = opt.nlat || 10,
            nlong = opt.nlong || 10,
            radius = opt.radius || 1,
@@ -3597,11 +3613,11 @@ $.splat = (function() {
       for (x = 0; x < nlat; x++) {
         for (y = 0; y < nlong; y++) {
           var index = (x * nlong + y) * 6;
-          
+
           indices[index + 0] = y * numVertsAround + x;
           indices[index + 1] = y * numVertsAround + x + 1;
           indices[index + 2] = (y + 1) * numVertsAround + x;
-          
+
           indices[index + 3] = (y + 1) * numVertsAround + x;
           indices[index + 4] = y * numVertsAround + x + 1;
           indices[index + 5] = (y + 1) * numVertsAround + x + 1;
@@ -3628,7 +3644,7 @@ $.splat = (function() {
         atan2 = Math.atan2,
         pi = Math.PI,
         pi2 = pi * 2;
-    
+
     //Add a callback for when a vertex is created
     opt.onAddVertex = opt.onAddVertex || $.empty;
 
@@ -3651,7 +3667,7 @@ $.splat = (function() {
                   -t / len,  0, -1 / len,
                   -t / len,  0,  1 / len);
 
-    
+
       indices.push(0, 11, 5,
                  0, 5, 1,
                  0, 1, 7,
@@ -3678,7 +3694,7 @@ $.splat = (function() {
 
     var getMiddlePoint = (function() {
       var pointMemo = {};
-      
+
       return function(i1, i2) {
         i1 *= 3;
         i2 *= 3;
@@ -3777,13 +3793,13 @@ $.splat = (function() {
       normals[in1    ] = normals[in2    ] = normals[in3    ] = normal.x;
       normals[in1 + 1] = normals[in2 + 1] = normals[in3 + 1] = normal.y;
       normals[in1 + 2] = normals[in2 + 2] = normals[in3 + 2] = normal.z;
-      
+
       texCoords[iu1    ] = u1;
       texCoords[iu1 + 1] = v1;
-      
+
       texCoords[iu2    ] = u2;
       texCoords[iu2 + 1] = v2;
-      
+
       texCoords[iu3    ] = u3;
       texCoords[iu3 + 1] = v3;
     }
@@ -3797,7 +3813,7 @@ $.splat = (function() {
   };
 
   O3D.IcoSphere.prototype = Object.create(O3D.Model.prototype);
-  
+
   O3D.TruncatedCone = function(config) {
     var bottomRadius = config.bottomRadius || 0,
         topRadius = config.topRadius || 0,
@@ -3829,7 +3845,7 @@ $.splat = (function() {
       var v = i / nvertical,
           y = height * v,
           ringRadius;
-      
+
       if (i < 0) {
         y = 0;
         v = 1;
@@ -3850,11 +3866,11 @@ $.splat = (function() {
       for (var j = 0; j < vertsAroundEdge; j++) {
         var sin = msin(j * mpi * 2 / nradial);
         var cos = mcos(j * mpi * 2 / nradial);
-        
+
         vertices[i3 + 0] = sin * ringRadius;
         vertices[i3 + 1] = y;
         vertices[i3 + 2] = cos * ringRadius;
-        
+
         normals[i3 + 0] = (i < 0 || i > nvertical) ? 0 : (sin * cosSlant);
         normals[i3 + 1] = (i < 0) ? -1 : (i > nvertical ? 1 : sinSlant);
         normals[i3 + 2] = (i < 0 || i > nvertical) ? 0 : (cos * cosSlant);
@@ -3870,7 +3886,7 @@ $.splat = (function() {
     for (i = 0; i < nvertical + extra; i++) {
       for (j = 0; j < nradial; j++) {
         var index = (i * nradial + j) * 6;
-        
+
         indices[index + 0] = vertsAroundEdge * (i + 0) + 0 + j;
         indices[index + 1] = vertsAroundEdge * (i + 0) + 1 + j;
         indices[index + 2] = vertsAroundEdge * (i + 1) + 1 + j;
@@ -3887,9 +3903,9 @@ $.splat = (function() {
       indices: indices
     }, config || {}));
   };
-  
+
   O3D.TruncatedCone.prototype = Object.create(O3D.Model.prototype);
-  
+
   O3D.Cone = function(config) {
     config.topRadius = 0;
     config.topCap = !!config.cap;
@@ -3907,7 +3923,7 @@ $.splat = (function() {
   };
 
   O3D.Cylinder.prototype = Object.create(O3D.TruncatedCone.prototype);
-  
+
 
   O3D.Plane = function(config) {
     var type = config.type,
@@ -3916,7 +3932,7 @@ $.splat = (function() {
         c2len = config[coords[1] + 'len'], //height
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
-        offset = config.offset
+        offset = config.offset,
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
@@ -3927,11 +3943,11 @@ $.splat = (function() {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
             v = z / subdivisions2;
-        
+
         texCoords[i2 + 0] = u;
         texCoords[i2 + 1] = v;
         i2 += 2;
-        
+
         switch (type) {
           case 'x,y':
             positions[i3 + 0] = c1len * u - c1len * 0.5;
@@ -4443,15 +4459,14 @@ $.splat = (function() {
     setupPicking: function() {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
-          pickingRes = Scene.PICKING_RES,
           floor = Math.floor;
       //create framebuffer
       app.setFrameBuffer('$picking', {
-        width: floor(app.canvas.width / pickingRes),
-        height: floor(app.canvas.height / pickingRes),
+        width: 5,
+        height: 1,
         bindToTexture: {
           parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
+            name: 'TEXTURE_ MAG_FILTER',
             value: 'LINEAR'
           }, {
             name: 'TEXTURE_MIN_FILTER',
@@ -4473,32 +4488,32 @@ $.splat = (function() {
         this.setupPicking();
       }
 
-      //if lazy picking and we have a previous
-      //image capture, then use lazy pick
-      if (lazy && this.capture) {
-        return this.lazyPick(x, y);
-      }
-
-      //normal picking
       var o3dHash = {},
           o3dList = [],
           program = app.usedProgram,
           pickingProgram = this.pickingProgram,
-          pickingRes = Scene.PICKING_RES,
           camera = this.camera,
+          oldtarget = camera.target,
+          oldaspect = camera.aspect,
           config = this.config,
           memoLightEnable = config.lights.enable,
           memoFog = config.effects.fog,
           width = gl.canvas.width,
           height = gl.canvas.height,
           floor = Math.floor,
-          resWidth = floor(width / pickingRes),
-          resHeight = floor(height / pickingRes),
+          pickingRes = Scene.PICKING_RES,
+          resWidth = 5,
+          resHeight = 1,
+          ndcx = x * 2 / width - 1,
+          ndcy = 1 - y * 2 / height,
+          target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
           index = 0, 
           backgroundColor, capture, pindex;
 
+      this.camera.target = target;
+      this.camera.update ();
       //setup the scene for picking
       config.lights.enable = false;
       config.effects.fog = false;
@@ -4516,39 +4531,17 @@ $.splat = (function() {
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
       backgroundColor = pixel[0] + pixel[1] * 256 + pixel[2] * 256 * 256;
 
-      //render to texture
-      this.renderToTexture('$picking', {
-        renderProgram: pickingProgram,
-        onBeforeRender: function(elem, i) {
-          if (i == backgroundColor) {
-            index = 1;
-          }
-          var suc = i + index,
-              hasPickingColors = !!elem.pickingColors;
-
-          pickingProgram.setUniform('hasPickingColors', hasPickingColors);
-
-          if (!hasPickingColors) {
-            hash[0] = suc % 256;
-            hash[1] = ((suc / 256) >> 0) % 256;
-            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
-            pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
-            o3dHash[hash.join()] = elem;
-          } else {
-            o3dList.push(elem);
-          }
-        }
+      //render picking scene
+      this.renderPickingScene({
+        background: backgroundColor,
+        o3dHash: o3dHash,
+        o3dList: o3dList,
+        hash: hash
       });
      
-      if (lazy) {
-        //grab the color of the pointed pixel in the texture
-        capture = new Uint8Array(4 * resWidth * resHeight);
-        gl.readPixels(0, 0, resWidth, resHeight, gl.RGBA, gl.UNSIGNED_BYTE, capture);
-        pindex = floor((x + (height - y) * resWidth) / pickingRes) * 4;
-        pixel = [capture[pindex], capture[pindex + 1], capture[pindex + 2], capture[pindex + 3]];
-      } else {
-        gl.readPixels(floor(x / pickingRes), floor((height - y) / pickingRes), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
-      } 
+      // the target point is in the center of the screen,
+      // so it should be the center point.
+      gl.readPixels(2, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
 
       var stringColor = [pixel[0], pixel[1], pixel[2]].join(),
           elem = o3dHash[stringColor],
@@ -4573,11 +4566,15 @@ $.splat = (function() {
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
       
-      //If there was another program then set to reuse that program.
+      //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
-      gl.viewport(0, 0, app.canvas.width, app.canvas.height);
-
+      gl.viewport(0, 0, width, height);
+      //restore camera properties
+      camera.target = oldtarget;
+      camera.aspect = oldaspect;
+      camera.update();
+      
       //store model hash and pixel array
       this.o3dHash = o3dHash;
       this.o3dList = o3dList;
@@ -4587,41 +4584,50 @@ $.splat = (function() {
       return elem && elem.pickable && elem;
     },
 
-    lazyPick: function(x, y) {
-      var canvas = app.canvas,
-          width = canvas.width,
-          height = canvas.height,
-          pickingRes = Scene.PICKING_RES,
-          floor = Math.floor,
-          resWidth = width / pickingRes >> 0,
-          resHeight = height / pickingRes >> 0,
-          index = floor((x + (height - y) * resWidth) / pickingRes) * 4,
-          capture = this.capture,
-          pixel = [capture[index], capture[index + 1], capture[index + 2], capture[index + 3]],
-          stringColor = [pixel[0], pixel[1], pixel[2]].join(),
-          o3dHash = this.o3dHash,
-          o3dList = this.o3dList,
-          elem = o3dHash[stringColor],
-          pick;
-
-      if (!elem) {
-        for (var i = 0, l = o3dList.length; i < l; i++) {
-          elem = o3dList[i];
-          pick = elem.pick(pixel);
-          if (pick !== false) {
-            elem.$pickingIndex = pick;
-          } else {
-            elem = false;
-          }
-        }
-      }
-
-      return elem && elem.pickable && elem;
+    unproject: function(pt, camera) {
+      return camera.view.invert().mulMat4(camera.projection.invert()).mulVec3(pt);
     },
 
-    resetPicking: function() {
-      this.capture = false;
-    }
+    renderPickingScene: function(opt) {
+      //if set through the config, render a custom scene.
+      if (this.config.renderPickingScene) {
+        this.config.renderPickingScene.call(this, opt);
+        return;
+      }
+
+      var pickingProgram = this.pickingProgram,
+          o3dHash = opt.o3dHash,
+          o3dList = opt.o3dList,
+          background = opt.background,
+          hash = opt.hash,
+          index = 0;
+
+      //render to texture
+      this.renderToTexture('$picking', {
+        renderProgram: pickingProgram,
+        onBeforeRender: function(elem, i) {
+          if (i == background) {
+            index = 1;
+          }
+          var suc = i + index,
+              hasPickingColors = !!elem.pickingColors;
+
+          pickingProgram.setUniform('hasPickingColors', hasPickingColors);
+
+          if (!hasPickingColors) {
+            hash[0] = suc % 256;
+            hash[1] = ((suc / 256) >> 0) % 256;
+            hash[2] = ((suc / (256 * 256)) >> 0) % 256;
+            pickingProgram.setUniform('pickColor', [hash[0] / 255, hash[1] / 255, hash[2] / 255]);
+            o3dHash[hash.join()] = elem;
+          } else {
+            o3dList.push(elem);
+          }
+        }
+      });
+    },
+    
+    resetPicking: $.empty
   };
   
   Scene.MAX_TEXTURES = 10;
