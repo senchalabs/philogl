@@ -217,6 +217,15 @@ h1 {
 
 #canvas-container {
   margin: auto;
+  position: relative;
+}
+
+#front-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 910px;
+  height: 460px;
 }
 
 canvas {

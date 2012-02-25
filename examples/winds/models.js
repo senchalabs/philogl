@@ -9,7 +9,7 @@ function getModels(callback) {
     nx: 100,
     ny: 50,
     offset: 0,
-    textures: ['img/elevation_3764_2048_post.jpg'],
+    textures: ['img/elevation_3764_2048_post_small.jpg'],
     program: 'elevation',
     uniforms: {
       level: 3
@@ -28,7 +28,6 @@ function getModels(callback) {
       ylen: 1,
       offset: 0,
       program: 'markers',
-      textures: ['img/elevation_3764_2048_post.jpg'],
 
       pick: function(pixel) {
         //if the color is not the background color...

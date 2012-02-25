@@ -81,7 +81,7 @@ function init() {
       }
     },
     textures: {
-      src: ['img/elevation_3764_2048_post.jpg'],
+      src: ['img/elevation_3764_2048_post_small.jpg'],
       parameters: [{
         name: 'TEXTURE_MAG_FILTER',
         value: 'LINEAR'
@@ -104,8 +104,6 @@ function init() {
       },
       onMouseEnter: function(e, model) {
         if (model) {
-          //now that we have the current position cache it
-          this.events.cachePosition = true;
           clearTimeout(this.timer);
           var style = tooltip.style,
               record = data.stations[model.$pickingIndex],
@@ -200,6 +198,7 @@ function init() {
         },
 
         onComplete: function(dataAns, modelsAns) {
+          $('front-layer').style.display = 'none';
           data = dataAns;
           models = modelsAns;
 
