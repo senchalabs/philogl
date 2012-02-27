@@ -115,40 +115,6 @@
                 y: 3, 
                 z: 3 
               }
-            },
-            {
-              diffuse: { 
-                r: 0.7, 
-                g: 0.7, 
-                b: 0.7 
-              },
-              specular: { 
-                r: 0.8, 
-                g: 0.8, 
-                b: 0.8 
-              },
-              position: { 
-                x: 3, 
-                y: -3, 
-                z: -3 
-              }
-            },
-            {
-              diffuse: { 
-                r: 0.7, 
-                g: 0.7, 
-                b: 0.7 
-              },
-              specular: { 
-                r: 0.8, 
-                g: 0.8, 
-                b: 0.8 
-              },
-              position: { 
-                x: 3, 
-                y: 3, 
-                z: -3 
-              }
             }]
           }
         },
@@ -210,8 +176,8 @@
             camera.update();
           }
         },
-        onError: function() {
-          alert("There was an error while creating the WebGL application");
+        onError: function(m) {
+          alert("There was an error while creating the WebGL application" + String(m));
         },
         onLoad: function(app) {
           var gl = app.gl,

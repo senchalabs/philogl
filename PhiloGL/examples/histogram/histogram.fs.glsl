@@ -43,24 +43,18 @@ void main(void) {
     
     vec3 pointWeight = vec3(0.0, 0.0, 0.0);
  
-    for (int i = 0; i < LIGHT_MAX; i++) {
-      if (i < numberPoints) {
-        transformedPointLocation = (viewMatrix * vec4(pointLocation[i], 1.0)).xyz;
-        lightDirection = normalize(transformedPointLocation - vPosition.xyz);
-        
-        if (enableSpecular[i] > 0.0) {
-          reflectionDirection = reflect(-lightDirection, normal);
-          specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
-          specularLight += specularLightWeighting * pointSpecularColor[i];
-        }
+    transformedPointLocation = (viewMatrix * vec4(pointLocation[0], 1.0)).xyz;
+    lightDirection = normalize(transformedPointLocation - vPosition.xyz);
 
-        diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
-        diffuseLight += diffuseLightWeighting * pointColor[i];
-      } else {
-        break;
-      }
+    if (enableSpecular[0] > 0.0) {
+      reflectionDirection = reflect(-lightDirection, normal);
+      specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
+      specularLight += specularLightWeighting * pointSpecularColor[0];
     }
-    
+
+    diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
+    diffuseLight += diffuseLightWeighting * pointColor[0];
+
     lightWeighting = ambientColor + diffuseLight + specularLight;
   }
 
