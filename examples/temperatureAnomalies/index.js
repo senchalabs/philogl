@@ -316,8 +316,8 @@ function init() {
       textures: {
         src: ['img/earth.jpg']
       },
-      onError: function() {
-        alert("There was an error creating the app.");
+      onError: function(e) {
+        alert("There was an error creating the app. ");
       },
       onLoad: function(app) {
         //Unpack app properties

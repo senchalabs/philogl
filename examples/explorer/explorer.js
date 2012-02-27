@@ -74,7 +74,8 @@
         from: 'uris',
         path: './',
         vs: 'surface.vs.glsl',
-        fs: 'surface.fs.glsl'
+        fs: 'surface.fs.glsl',
+        noCache: true
       },
       camera: {
         position: {
@@ -152,8 +153,8 @@
           camera.update();
         }
       },
-      onError: function() {
-        alert("There was an error while creating the WebGL application");
+      onError: function(e) {
+        alert("There was an error while creating the WebGL application " + String(e));
       },
       onLoad: function(app) {
         var gl = app.gl,

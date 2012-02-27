@@ -129,7 +129,7 @@
     }
 
     //Set a uniform array
-    if (isArray) {
+    if (isArray && typedArray) {
       return function(val) {
         glFunction(loc, new typedArray(val));
       };
