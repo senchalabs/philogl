@@ -257,6 +257,7 @@ Default's `[{ name: gl.UNPACK_FLIP_Y_WEBGL, value: true }]`.
 Default's `[{ name: gl.TEXTURE_MAG_FILTER, value: gl.NEAREST }, { name: gl.TEXTURE_MIN_FILTER, value: gl.NEAREST }]`.
 * data - (*object*, optional) An object with properties described below:
   * format - (*enum*, optional) The format used for `gl.texImage2D` calls. Default's `gl.RGBA`.
+  * type - (*enum*, optional) The texture pixel component type used for `gl.texImage2D` calls. Default's `gl.UNSIGNED_BYTE`. Needs `'OES_texture_float'` extension to use `gl.FLOAT`. The extension will be enabled automatically.
   * value - (*object*, optional) If set to an `Image` object then this image will be used to fill the texture. Default's false. If no image is set then we might want to 
 set the width and height of the texture.
   * width - (*number*, optional) The width of the texture. Default's 0.
