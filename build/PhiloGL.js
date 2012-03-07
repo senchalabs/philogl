@@ -467,7 +467,7 @@ $.splat = (function() {
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
           hasBuffer = name in this.frameBuffers,
-          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer(gl.FRAMEBUFFER);
+          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer();
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
@@ -561,6 +561,12 @@ $.splat = (function() {
         gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
         return;
       }
+      
+      if (opt.data && opt.data.type === gl.FLOAT) {
+        // Enable floating-point texture.
+        gl.getExtension('OES_texture_float');
+      }
+      
       //get defaults
       opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
@@ -581,6 +587,7 @@ $.splat = (function() {
         data: {
           format: gl.RGBA,
           value: false,
+          type: gl.UNSIGNED_BYTE,
           
           width: 0,
           height: 0,
@@ -598,6 +605,7 @@ $.splat = (function() {
           parameters = opt.parameters,
           data = opt.data,
           value = data.value,
+          type = data.type,
           format = data.format,
           hasValue = !!data.value;
 
@@ -620,14 +628,14 @@ $.splat = (function() {
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
 //            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
-            gl.texImage2D(textureTarget[i], 0, format, format, gl.UNSIGNED_BYTE, value[i]);
+            gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
           }
         } else {
-          gl.texImage2D(textureTarget, 0, format, format, gl.UNSIGNED_BYTE, value);
+          gl.texImage2D(textureTarget, 0, format, format, type, value);
         }
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
-        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, gl.UNSIGNED_BYTE, null); 
+        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null); 
       }
       //set texture parameters
       if (!hasTexture) {

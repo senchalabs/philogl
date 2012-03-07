@@ -379,7 +379,7 @@ function createApp() {
             from = -5.125,
             to = -2.95,
             pos = camera.position,
-            pz = pos.z;
+            pz = pos.z,
             speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001;
 
         pos.z += e.wheel * speed;

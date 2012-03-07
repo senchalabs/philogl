@@ -2,7 +2,6 @@ PhiloGL.unpack();
 
 var browserSize;
 var halted = false;
-var it = 1;
 var time;
 var mouseX = 0.5;
 var mouseY = 0.5;
@@ -89,41 +88,43 @@ function load() {
       anim();
       
       function draw() {
-        // advance
-        if (it > 0) {
-          Media.Image.postProcess({
-            width: sizeX,
-            height: sizeY,
-            fromTexture: 'main-texture',
-            toFrameBuffer: 'main2',
-            program: 'advance',
-            uniforms: getUniforms()
-          }).postProcess({
-            width: viewX,
-            height: viewY,
-            fromTexture: 'main2-texture',
-            toScreen: true,
-            program: 'composite',
-            uniforms: getUniforms()
-          });
-        } else {
-          Media.Image.postProcess({
-            width: sizeX,
-            height: sizeY,
-            fromTexture: 'main2-texture',
-            toFrameBuffer: 'main',
-            program: 'advance',
-            uniforms: getUniforms()
-          }).postProcess({
-            width: viewX,
-            height: viewY,
-            fromTexture: 'main-texture',
-            toScreen: true,
-            program: 'composite',
-            uniforms: getUniforms()
-          });
-        }
-        it = -it;
+        var uniform = getUniforms();
+        Media.Image.postProcess({
+          width: sizeX,
+          height: sizeY,
+          fromTexture: 'main-texture',
+          toFrameBuffer: 'main2',
+          program: 'advance',
+          uniforms: uniform
+        }).postProcess({
+          width: sizeX,
+          height: sizeY,
+          fromTexture: 'main2-texture',
+          toFrameBuffer: 'main',
+          program: 'advance',
+          uniforms: uniform
+        }).postProcess({
+          width: sizeX,
+          height: sizeY,
+          fromTexture: 'main-texture',
+          toFrameBuffer: 'main2',
+          program: 'advance',
+          uniforms: uniform
+        }).postProcess({
+          width: sizeX,
+          height: sizeY,
+          fromTexture: 'main2-texture',
+          toFrameBuffer: 'main',
+          program: 'advance',
+          uniforms: uniform
+        }).postProcess({
+          width: viewX,
+          height: viewY,
+          fromTexture: 'main-texture',
+          toScreen: true,
+          program: 'composite',
+          uniforms: uniform
+        });
       }
       
       function getUniforms() {
@@ -139,7 +140,7 @@ function load() {
         }
         switch (animation) {
         case "animate":
-          setTimeout(function() { Fx.requestAnimationFrame(anim); }, 1);
+          setTimeout(function() { Fx.requestAnimationFrame(anim); }, 25);
           break;
         case "reset":
           load();
