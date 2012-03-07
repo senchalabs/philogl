@@ -117,7 +117,7 @@ function init() {
           var title = rec.name[0] + rec.name.slice(1).toLowerCase() + ', ' + rec.abbr,
               lat = rec.lat,
               lon = rec.long,
-              elv = Math.round(rec.elv / 3.281),
+              elv = rec.elv,
               tmp = Math.round((data[2] - 100) - 32 * 5 / 9),
               dir = data[0] == 8 ? 'NA' : ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'][data[0]],
               spd = data[1];
