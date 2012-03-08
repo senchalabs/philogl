@@ -107,6 +107,10 @@ citiesWorker.onmessage = function(e) {
   }
 };
 
+citiesWorker.onerror = function(e) {
+  Log.write(e);
+};
+
 function loadData() {
   Log.write('Loading data...');
   //Request cities data
@@ -475,19 +479,21 @@ function createApp() {
       //Draw to screen
       function draw() {
         // render to a texture
+        gl.viewport(0, 0, 1024, 1024);
+        
+        app.setFrameBuffer('world', {});
         app.setFrameBuffer('world', true);
         program.earth.use();
-        gl.clear(clearOpt);
-        gl.viewport(0, 0, 1024, 1024);
         program.earth.setUniform('renderType',  0);
+        gl.clear(clearOpt);
         scene.renderToTexture('world');
         app.setFrameBuffer('world', false);
 
+        app.setFrameBuffer('world2', {});
         app.setFrameBuffer('world2', true);
         program.earth.use();
-        gl.clear(clearOpt);
-        gl.viewport(0, 0, 1024, 1024);
         program.earth.setUniform('renderType',  -1);
+        gl.clear(clearOpt);
         scene.renderToTexture('world2');
         app.setFrameBuffer('world2', false);
         
