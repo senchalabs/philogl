@@ -1,6 +1,8 @@
-#define SITE_MAX 40
-attribute vec2 aVertexPosition;
+attribute vec3 position;
+attribute vec2 texCoord1;
+varying vec2 vTexCoord1;
 
 void main(void) {
-  gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+  vTexCoord1 = texCoord1;
+  gl_Position = vec4(position.x * 2., position.y * 2., 0, 1);
 }
