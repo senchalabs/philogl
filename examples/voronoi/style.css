@@ -104,7 +104,7 @@ canvas {
   margin: 4px;
 }
 
-.fullscreen .off {
+.fullscreen .toggle-button.off {
   position: absolute;
   color: white;
   bottom: 5px;
@@ -113,11 +113,11 @@ canvas {
   display: inline;
 }
 
-.fullscreen .on {
+.fullscreen .toggle-button.on {
   display: none;
 }
 
-.off {
+.toggle-button.off {
   display: none;
 }
 
