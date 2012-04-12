@@ -2,6 +2,7 @@
 precision highp float;
 #endif
 #define SITE_MAX 50
+varying vec2 vTexCoord1;
 uniform int numberSites;
 uniform float p;
 uniform float width;
@@ -49,6 +50,6 @@ vec4 sample(float x0, float y0) {
   return color;
 }
 void main(void) {
-  float x = gl_FragCoord.x, y = gl_FragCoord.y;
+  float x = vTexCoord1.x * width, y = vTexCoord1.y * height;
   gl_FragColor = sample(x, y);
 }

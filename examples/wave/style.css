@@ -1,0 +1,87 @@
+html, body {
+    text-align: center;
+    font-family: Verdana;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+}
+
+input.error {
+    background: #ffdddd;
+}
+
+#container {
+    width: 1024px;
+    margin: auto;
+}
+
+h1 {
+    margin: 5px;
+    color: #8fb7fa;
+}
+
+h2 {
+    margin: 10px;
+}
+
+td {
+    vertical-align: top;
+}
+
+.title {
+    text-align: center;
+}
+.controls {
+    position: relative;
+    background: #cae5f4;
+    padding: 7px;
+    border: 1px solid #333;
+    margin: 7px 0;
+    color: #000;
+    font-size: 13px;
+    /*  text-align: left;*/
+}
+
+.controls table tr td {
+    text-align: left;
+    margin: auto;
+}
+
+.description {
+    text-align: left;
+    width: 750px;
+    font-size: 13px;
+    margin: 7px auto;
+    padding: 7px 15px;
+    border: 1px #333 solid;
+    background: #cae5f4;
+    border-radius: 7px;
+    color: #111;
+}
+
+#canvas-container {
+    margin: auto;
+}
+
+canvas {
+    border: 1px solid #333;
+    margin-top: 5px;
+}
+
+a {
+    font-family: Helvetica;
+}
+
+.fullscreen canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    z-index: 10;
+}
+
+

@@ -3941,18 +3941,26 @@ $.splat = (function() {
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset,
+        flipCull = !!config.flipCull, 
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
         texCoords = new Float32Array(numVertices * 2),
         i2 = 0, i3 = 0;
 
+    if (flipCull) {
+      c1len = - c1len;
+    }
+    
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
             v = z / subdivisions2;
-
-        texCoords[i2 + 0] = u;
+        if (flipCull) {
+          texCoords[i2 + 0] = 1 - u;
+        } else {
+          texCoords[i2 + 0] = u;
+        }
         texCoords[i2 + 1] = v;
         i2 += 2;
 
@@ -3964,7 +3972,11 @@ $.splat = (function() {
 
             normals[i3 + 0] = 0;
             normals[i3 + 1] = 0;
-            normals[i3 + 2] = 1;
+            if (flipCull) {
+              normals[i3 + 2] = 1;
+            } else {
+              normals[i3 + 2] = -1;
+            }
           break;
 
           case 'x,z':
@@ -3973,7 +3985,11 @@ $.splat = (function() {
             positions[i3 + 2] = c2len * v - c2len * 0.5;
 
             normals[i3 + 0] = 0;
-            normals[i3 + 1] = 1;
+            if (flipCull) {
+              normals[i3 + 1] = 1;
+            } else {
+              normals[i3 + 1] = -1;
+            }
             normals[i3 + 2] = 0;
           break;
 
@@ -3982,7 +3998,11 @@ $.splat = (function() {
             positions[i3 + 1] = c1len * u - c1len * 0.5;
             positions[i3 + 2] = c2len * v - c2len * 0.5;
 
-            normals[i3 + 0] = 1;
+            if (flipCull) {
+              normals[i3 + 0] = 1;
+            } else {
+              normals[i3 + 0] = -1;
+            }
             normals[i3 + 1] = 0;
             normals[i3 + 2] = 0;
           break;
