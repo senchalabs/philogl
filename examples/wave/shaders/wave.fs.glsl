@@ -77,12 +77,12 @@ vec3 hitPlane(vec3 dir, vec3 center, vec3 r1, vec3 r2, vec3 rc) {
 
 vec4 sample(vec3 direction) {
   vec3 from = vPosition.xyz;
-  vec2 tex = vec2(atan(direction.y, direction.x) / 2. / PI  - 0.3, -atan(direction.z, length(direction.xy)) / 2. / PI * 1.2  + 0.5);
   vec3 hit = hitPlane(direction, from, plainU, plainV, plainC);
   if (abs(hit.x) <= 1.0 && abs(hit.y) <= 1.0 && hit.z >= 0.0) {
     vec2 samp = vec2((hit.x + 1.0) * 0.5, (hit.y + 1.0) * 0.5); 
     return texture2D(sampler6, vec2(samp.x, samp.y * 2.));
   }
+  vec2 tex = vec2(atan(direction.y, direction.x) / 2. / PI - 0.3, -atan(direction.z, length(direction.xy)) / 2. / PI  + 0.5);
   vec3 color0 = texture2D(sampler1, tex).xyz,
        color1 = texture2D(sampler2, tex).xyz,
        color2 = texture2D(sampler3, tex).xyz,

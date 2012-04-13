@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <canvas id="wave" width="1024" height="480"></canvas>
+  <canvas id="wave" width="1024" height="550"></canvas>
   <div class="controls">
     <table style="width: 100%">
       <tr>
@@ -58,21 +58,18 @@
       </tr>
     </table>
   </div>
-
-  
-  
-  <script>
-    if (!PhiloGL.hasWebGL()) {
-      document.body.className = 'no-webgl';
-      document.getElementById('fallback').innerHTML = ''
-          + '<div style="margin:10px;">'
-          + 'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
-          + '</div>'
-          + '<iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/NzDA2Rj3_uE" frameborder="0" allowfullscreen></iframe>';
-    }
-  </script>
-
 </div>
+
+<script>
+  if (!PhiloGL.hasWebGL()) {
+    document.body.className = 'no-webgl';
+    document.getElementById('fallback').innerHTML = ''
+        + '<div style="margin:10px;">'
+        + 'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        + '</div>'
+        + '<iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/NzDA2Rj3_uE" frameborder="0" allowfullscreen></iframe>';
+  }
+</script>
 </body>
 </html>
 
