@@ -288,7 +288,6 @@ function webGLStart() {
           }
         };
 
-
         app.setFrameBuffer(src, frameBuffer);
         app.setFrameBuffer(dst, frameBuffer);
 

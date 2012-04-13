@@ -143,7 +143,7 @@
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
-        typedArray.set(val);
+        typedArray.set(Array.prototype.slice.call(val));
         glFunction(loc, typedArray);
       };
     
