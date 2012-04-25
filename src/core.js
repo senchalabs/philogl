@@ -165,6 +165,8 @@ PhiloGL.unpack = function(branch) {
    'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
+  branch.gl = gl;
+  branch.Utils = $;
 };
 
 //Version

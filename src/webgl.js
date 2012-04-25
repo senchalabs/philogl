@@ -278,7 +278,9 @@
       
       if (opt.data && opt.data.type === gl.FLOAT) {
         // Enable floating-point texture.
-        gl.getExtension('OES_texture_float');
+        if (!gl.getExtension('OES_texture_float')) {
+          throw 'OES_texture_float is not supported';
+        }
       }
       
       //get defaults
@@ -310,8 +312,8 @@
 
       }, opt || {});
 
-      var textureType = ('textureType' in opt)? gl.get(opt.textureType) : gl.TEXTURE_2D,
-          textureTarget = ('textureTarget' in opt)? gl.get(opt.textureTarget) : textureType,
+      var textureType = ('textureType' in opt)? opt.textureType = gl.get(opt.textureType) : gl.TEXTURE_2D,
+          textureTarget = ('textureTarget' in opt)? opt.textureTarget = gl.get(opt.textureTarget) : textureType,
           isCube = textureType == gl.TEXTURE_CUBE_MAP,
           hasTexture = name in this.textures,
           texture = hasTexture? this.textures[name] : gl.createTexture(),
@@ -331,7 +333,7 @@
       if (!hasTexture) {
         //set texture properties
         pixelStore.forEach(function(opt) {
-          opt.name = typeof opt.name == 'string'? gl[opt.name] : opt.name;
+          opt.name = typeof opt.name == 'string'? gl.get(opt.name) : opt.name;
           gl.pixelStorei(opt.name, opt.value);
         });
       }
@@ -341,7 +343,6 @@
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
-//            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
             gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
           }
         } else {
@@ -353,14 +354,15 @@
       }
       //set texture parameters
       if (!hasTexture) {
-        parameters.forEach(function(opt) {
-          opt.name = gl.get(opt.name);
-          opt.value = gl.get(opt.value);
-          gl.texParameteri(textureType, opt.name, opt.value);
-          if (opt.generateMipmap) {
+        for (i = 0; i < parameters.length ;i++) {
+          var opti = parameters[i];
+          opti.name = gl.get(opti.name);
+          opti.value = gl.get(opti.value);
+          gl.texParameteri(textureType, opti.name, opti.value);
+          if (opti.generateMipmap) {
             gl.generateMipmap(textureType);
           }
-        });
+        }
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;

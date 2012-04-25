@@ -132,7 +132,7 @@
 
     var urls = $.splat(opt.urls),
         len = urls.length,
-        ans = Array(len),
+        ans = new Array(len),
         reqs = urls.map(function(url, i) {
             return new XHR({
               url: url,
@@ -278,7 +278,7 @@
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {
-          textures[opt.src[i]] = $.merge({
+          textures[opt.id[i] || opt.src[i]] = $.merge({
             data: {
               value: img
             }
