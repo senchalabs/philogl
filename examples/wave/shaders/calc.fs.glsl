@@ -7,25 +7,32 @@ precision highp float;
 #define PI_2 1.5707963267948966
 uniform float RESOLUTIONX;
 uniform float RESOLUTIONY;
+uniform bool isElevation;
+
 #define sq 0.36
 #define one_pixel_x (1. / RESOLUTIONX)
 #define one_pixel_y (1. / RESOLUTIONY)
-uniform sampler2D sampler1;
+uniform sampler2D sampler1, sampler2;
 uniform float elevation;
 uniform vec2 cursor;
 uniform float dt, time;
 varying vec2 vTexCoord;
 
-float height(vec2 pos, vec2 offset) {
-  pos += offset;
-  if (pos.x < 0. || pos.y < 0. || pos.x > 1. || pos.y > 1.) {
+#include "packing.glsl"
+
+float height(vec2 position, vec2 offset) {
+  position += offset;
+  if (position.x < 0. || position.y < 0. || position.x > 1. || position.y > 1.) {
     return 0.;
   }
-  return texture2D(sampler1, pos).x;
+  return decode(texture2D(sampler1, position));
 }
 
-float vol(vec2 pos) {
-  return texture2D(sampler1, pos).y;
+float vol(vec2 position) {
+  if (position.x < 0. || position.y < 0. || position.x > 1. || position.y > 1.) {
+    return 0.;
+  }
+  return decode(texture2D(sampler2, position));
 }
 
 void main(void) {
@@ -53,5 +60,9 @@ void main(void) {
   // f += h * .1;
   a = dh * k;
   h += (v0 + a * dt / (1. - sticky)) * dt;
-  gl_FragColor = vec4(h, v0 + a * dt, (hr - hl) * .5 * RESOLUTIONX, (ht - hb) * .5 * RESOLUTIONY);
+  if (isElevation) {
+    gl_FragColor = encode(h);
+  } else {
+    gl_FragColor = encode(v0 + a * dt);
+  }
 }

@@ -8,11 +8,17 @@ uniform float elevation;
 varying vec2 vTexCoord;
 uniform vec2 cursor;
 
+#include "packing.glsl"
 
 void main(void) {
   vec2 position = vTexCoord;
+  float x = floor(position.x * RESOLUTIONX);
+  float y = floor(position.y * RESOLUTIONY);
   float dist = distance(
     vec2(position.x * RESOLUTIONX, position.y * RESOLUTIONY), 
-    vec2((cursor.x + 0.5) * RESOLUTIONX, (cursor.y + 0.5) * RESOLUTIONY)) * 0.6;
-  gl_FragColor = texture2D(sampler1, position) + vec4(elevation * exp(- dist * dist) * 0.01, 0, 0, 0);
+    vec2((cursor.x + 0.5) * RESOLUTIONX, (cursor.y + 0.5) * RESOLUTIONY));
+    
+  float el = decode(texture2D(sampler1, position));
+  el += elevation * exp(- dist * dist) / 10.;
+  gl_FragColor = encode(el) ;
 }

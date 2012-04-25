@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 uniform sampler2D sampler1;
-uniform vec3 eye;
+uniform vec3 cameraPosition;
 varying vec4 vPosition;
 varying vec2 vTexCoord;
 void main(void) {
