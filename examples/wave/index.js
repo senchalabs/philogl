@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', webGLStart, false);
 var width, height;
 function resize() {
   var canvas = document.getElementById('wave'),
-    style = window.getComputedStyle(canvas);
+      style = window.getComputedStyle(canvas);
   height = parseFloat(style.getPropertyValue('height'));
   canvas.height = height;
   width = parseFloat(style.getPropertyValue('width'));
@@ -18,26 +18,26 @@ window.addEventListener('resize', resize);
 function webGLStart() {
   resize();
   var
-    cameraControl,
-    RESOLUTIONX = 256.,
-    RESOLUTIONY = 256.,
-    SIZEX = 1,
-    SIZEY = 1,
+      cameraControl,
+      RESOLUTIONX = 256.,
+      RESOLUTIONY = 256.,
+      SIZEX = 1,
+      SIZEY = 1,
 
   // Scene objects
-    shore,
-    backgroundSphere,
-    waterSurface,
+      shore,
+      backgroundSphere,
+      waterSurface,
 
   // Frame buffers,
-    surfaceBuffer,
+      surfaceBuffer,
 
-    matStart = new Mat4(),
-    lastDrop = 0,
-    dt = 1,
-    drops = 5,
-    IOR = 1.3330, // Water
-    N = 2;
+      matStart = new Mat4(),
+      lastDrop = 0,
+      dt = 1,
+      drops = 5,
+      IOR = 1.3330, // Water
+      N = 5;
 
   matStart.id();
 
@@ -129,7 +129,9 @@ function webGLStart() {
     events: {
       cachePosition: false,
       onClick: function(e) {
-        if (!this.calculatePosition) return;
+        if (!this.calculatePosition) {
+          return;
+        }
         var position = this.calculatePosition(e);
         if (Math.abs(position[0]) > 0.5 * SIZEX || Math.abs(position[1]) > 0.5 * SIZEY) {
           return;
@@ -141,7 +143,9 @@ function webGLStart() {
       },
 
       onMouseMove: function(e) {
-        if (!this.calculatePosition) return;
+        if (!this.calculatePosition) {
+          return;
+        }
         var position = this.calculatePosition(e);
         if (Math.abs(position[0]) > 0.5 * SIZEX || Math.abs(position[1]) > 0.5 * SIZEY) {
           return;
@@ -171,8 +175,8 @@ function webGLStart() {
 
     onLoad: function(app) {
       PhiloGL.unpack();
-      var start = +new Date();
       window.app = app;
+      var start = +new Date();
       // Install controls
       cameraControl = new CameraControl(app.camera);
 
@@ -212,9 +216,9 @@ function webGLStart() {
         shore.position.z = -0.1;
         shore.update();
         var
-          u = new Vec3(0.5, 0, 0),
-          v = new Vec3(0, 0.5, 0),
-          c = new Vec3(0, 0, 0);
+            u = new Vec3(0.5, 0, 0),
+            v = new Vec3(0, 0.5, 0),
+            c = new Vec3(0, 0, 0);
         u = shore.matrix.mulVec3(u);
         v = shore.matrix.mulVec3(v);
         c = shore.matrix.mulVec3(c);
@@ -249,10 +253,9 @@ function webGLStart() {
           textures: ['SKY0', 'SKY1', 'SKY2', 'SKY3']
         });
         var scene = this.scene,
-          camera = this.camera;
+            camera = this.camera;
         scene.add(backgroundSphere);
         scene.add(waterSurface);
-        scene.add(shore);
         camera.fov = 37.8; // 35mm
         camera.far = 1e40;
         camera.update();
@@ -290,7 +293,7 @@ function webGLStart() {
         gl.clearDepth(1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, width, height);
-        waterSurface.textures = [surfaceBuffer.from[0] + '-texture', 'SKY0', 'SKY1', 'SKY2', 'SKY3'];
+        waterSurface.textures = [surfaceBuffer.from[0] + '-texture', 'SKY0', 'SKY1', 'SKY2', 'SKY3', 'rocks'];
         this.scene.render();
         if (lastDrop < time - 300) {
           lastDrop = time - 300;
@@ -301,7 +304,7 @@ function webGLStart() {
             lastDrop += 1 / drops / dt;
           }
         }
-        setTimeout(function() {return app.animate.apply(app, arguments);}, 1);
+        setTimeout(function() {return app.animate.apply(app, arguments);}, 15);
       };
 
       app.drop = function(position, elevation) {
@@ -320,14 +323,14 @@ function webGLStart() {
 
       app.calculatePosition = function(e) {
         var camera = this.camera,
-          x = e.x / width,
-          y = e.y / height,
-          proj = camera.projection,
-          view = camera.view,
-          projView = proj.mulMat4(view),
-          invView = projView.invert(),
-          camPos = camera.position,
-          vec = invView.mulVec3(new Vec3(x * 2., y * 2., 100));
+            x = e.x / width,
+            y = e.y / height,
+            proj = camera.projection,
+            view = camera.view,
+            projView = proj.mulMat4(view),
+            invView = projView.invert(),
+            camPos = camera.position,
+            vec = invView.mulVec3(new Vec3(x * 2., y * 2., 100));
         var k = camPos.z / (camPos.z - vec.z);
         return [camPos.x + (vec.x - camPos.x) * k, camPos.y + (vec.y - camPos.y) * k];
       };

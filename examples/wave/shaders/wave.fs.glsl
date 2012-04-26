@@ -35,7 +35,7 @@ vec4 sample(vec3 direction) {
     vec2 samp = vec2((hit.x + 1.0) * 0.5, (hit.y + 1.0) * 0.5); 
     return texture2D(sampler6, vec2(samp.x, samp.y * 2.));
   }
-  return envSampling(direction, sampler2, sampler3, sampler4, sampler5);
+  return envSampling(direction, vPosition.xyz, sampler2, sampler3, sampler4, sampler5, sampler6);
 }
 
 float height(vec2 position) {
