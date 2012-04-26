@@ -51,7 +51,7 @@
   var preprocess = function(base, source, callback, callbackError, duplist) {
     duplist = duplist || {};
     var match;
-    if ((match = source.match(/^\s*#include "(.*?)"\s*$/))) {
+    if ((match = source.match(/#include "(.*?)"/))) {
       var xhr = PhiloGL.IO.XHR,
         url = getpath(base) + match[1];
 
@@ -69,7 +69,7 @@
           duplist[url] = true;
           return preprocess(url, response, function(replacement) {
             delete duplist[url];
-            source = source.replace(/^\s*#include ".*?"\s*$/, replacement);
+            source = source.replace(/#include ".*?"/, replacement);
             source = source.replace(/\sHAS_EXTENSION\s*\(\s*([A-Za-z_\-0-9]+)\s*\)/g, function (all, ext) {
               return gl.getExtension(ext) ? ' 1 ': ' 0 ';
             });
@@ -81,7 +81,7 @@
     } else {
       return callback(source);
     }
-  };
+  };  
 
   //Link a program.
   var linkProgram = function(gl, program) {
@@ -296,8 +296,8 @@
     var opt = getOptions(arguments),
       vs = $(opt.vs),
       fs = $(opt.fs);
-    preprocess(opt.path, vs.innerHTML, function(vectexShader) {
-      preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
+    return preprocess(opt.path, vs.innerHTML, function(vectexShader) {
+      return preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
         opt.onSuccess(new Program(vectexShader, fragmentShader), opt);
       });
     });
@@ -306,25 +306,35 @@
   //Create a program from vs and fs sources
   Program.fromShaderSources = function() {
     var opt = getOptions(arguments, {path: './'});
-    preprocess(opt.path, opt.vs, function(vectexShader) {
-      preprocess(opt.path, opt.fs, function(fragmentShader) {
+    return preprocess(opt.path, opt.vs, function(vectexShader) {
+      return preprocess(opt.path, opt.fs, function(fragmentShader) {
         try {
           var program = new Program(vectexShader, fragmentShader);
-          opt.onSuccess(program, opt);
+          if(opt.onSuccess) {
+            opt.onSuccess(program, opt); 
+          } else {
+            return program;
+          }
         } catch(e) {
-          opt.onError(e, opt); 
+          if (opt.onError) {
+            opt.onError(e, opt);
+          } else {
+            throw e;
+          }
         }
       });
     });
   };
 
   //Build program from default shaders (requires Shaders)
-  Program.fromDefaultShaders = function() {
-    var opt = getOptions(arguments, {path: './'}),
-      vs = opt.vs || 'Default',
+  Program.fromDefaultShaders = function(opt) {
+    opt = opt || {};
+    var vs = opt.vs || 'Default',
       fs = opt.fs || 'Default',
       sh = PhiloGL.Shaders;
-    return PhiloGL.Program.fromShaderSources(sh.Vertex[vs], sh.Fragment[fs]);
+    opt.vs = sh.Vertex[vs];
+    opt.fs = sh.Fragment[fs];
+    return PhiloGL.Program.fromShaderSources(opt);
   };
 
   //Implement Program.fromShaderURIs (requires IO)
@@ -350,11 +360,11 @@
       },
       onComplete: function(ans) {
         try {
-          preprocess(vertexShaderURI, ans[0], function(vectexShader) {
-            preprocess(fragmentShaderURI, ans[1], function(fragmentShader) {
+          return preprocess(vertexShaderURI, ans[0], function(vectexShader) {
+            return preprocess(fragmentShaderURI, ans[1], function(fragmentShader) {
               opt.vs = vectexShader;
               opt.fs = fragmentShader;
-              Program.fromShaderSources(opt);
+              return Program.fromShaderSources(opt);
             }, opt.onError);
           }, opt.onError);
         } catch (e) {

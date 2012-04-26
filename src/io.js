@@ -278,7 +278,7 @@
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {
-          textures[opt.id[i] || opt.src[i]] = $.merge({
+          textures[opt.id && opt.id[i] || opt.src && opt.src[i]] = $.merge({
             data: {
               value: img
             }
