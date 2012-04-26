@@ -106,11 +106,11 @@ function webGLStart() {
       parameters: [
         {
           name: 'TEXTURE_MAG_FILTER',
-          value: 'LINEAR_MIPMAP_LINEAR'
+          value: 'LINEAR'
         },
         {
           name: 'TEXTURE_MIN_FILTER',
-          value: 'LINEAR_MIPMAP_LINEAR',
+          value: 'LINEAR_MIPMAP_NEAREST',
           generateMipmap: true
         }
       ],
@@ -123,7 +123,8 @@ function webGLStart() {
       data: {
         width: 1024,
         height: 512
-      }
+      },
+      bindToRenderBuffer: true
     },
 
     events: {
@@ -163,7 +164,6 @@ function webGLStart() {
       onDragStart: function(e) {
         cameraControl.onDragStart(e);
       },
-
       onDragMove: function(e) {
         cameraControl.onDragMove(e);
       }

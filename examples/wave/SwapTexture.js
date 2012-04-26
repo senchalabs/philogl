@@ -3,6 +3,7 @@ function SwapTexture(config, count) {
   config = config || {};
   var me = this;
   gl.supports_OES_texture_float = !!gl.getExtension('OES_texture_float');
+  debugger;
   config = Utils.merge({
     width: 512,
     height: 512,
@@ -15,8 +16,8 @@ function SwapTexture(config, count) {
         },
         {
           name: gl.TEXTURE_MIN_FILTER,
-          value: gl.supports_OES_texture_float ? gl.LINEAR : gl.NEAREST,
-          generateMipmap: false
+          value: gl.supports_OES_texture_float ? gl.LINEAR_MIPMAP_NEAREST : gl.NEAREST,
+          generateMipmap: true
         },
         {
           name: gl.TEXTURE_WRAP_S,
@@ -30,7 +31,8 @@ function SwapTexture(config, count) {
       data: {
         type: gl.supports_OES_texture_float ? gl.FLOAT : gl.UNSIGNED_BYTE
       }
-    }
+    },
+    bindToRenderBuffer: true
   }, config);
   if (config.bindToTexture.data) {
     var data = config.bindToTexture.data;

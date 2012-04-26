@@ -62,6 +62,7 @@ function load() {
       alert('There was an error, sorry :S');
     },
     onLoad: function(app) {
+      window.app = app;
       //Set framebuffers
       var fboOpt = {
         width: sizeX,
@@ -72,7 +73,7 @@ function load() {
             value: 'LINEAR'
           }, {
             name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR',
+            value: 'LINEAR_MIPMAP_NEAREST',
             generateMipmap: false
           }]
         },
@@ -81,12 +82,12 @@ function load() {
 
       app.setFrameBuffer('main', fboOpt)
          .setFrameBuffer('main2', fboOpt);
-		
+
       timer = setInterval(fr, 500);
       time = Date.now();
       animation = "animate";
       anim();
-      
+
       function draw() {
         var uniform = getUniforms();
         Media.Image.postProcess({
@@ -126,7 +127,7 @@ function load() {
           uniforms: uniform
         });
       }
-      
+
       function getUniforms() {
         return {
           'time': time,
@@ -147,7 +148,7 @@ function load() {
           break;
         }
       }
-      
+
       function fr() {
         var ti = Date.now();
         time = ti;

@@ -107,7 +107,7 @@ function load() {
 							value : 'LINEAR'
 						}, {
 							name : 'TEXTURE_MIN_FILTER',
-							value : 'LINEAR',
+							value : 'LINEAR_MIPMAP_NEAREST',
 							generateMipmap : false
 						} ]
 					},
