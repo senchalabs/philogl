@@ -2288,10 +2288,10 @@ $.splat = (function() {
 
   // preprocess a source with `#include ""` support
   // `duplist` records all the pending replacements
-  var proprocess = function(base, source, callback, callbackError, duplist) {
+  var preprocess = function(base, source, callback, callbackError, duplist) {
     duplist = duplist || {};
     var match;
-    if ((match = source.match(/#include "(.*?)"/))) {
+    if ((match = source.match(/^\s*#include "(.*?)"\s*$/))) {
       var xhr = PhiloGL.IO.XHR,
         url = getpath(base) + match[1];
 
@@ -2307,13 +2307,13 @@ $.splat = (function() {
         },
         onSuccess: function(response) {
           duplist[url] = true;
-          return proprocess(url, response, function(replacement) {
+          return preprocess(url, response, function(replacement) {
             delete duplist[url];
-            source = source.replace(/#include ".*?"/, replacement);
-            source = source.replace(/HAS_EXTENSION\s*\(\s*([A-Za-z_]+)\s*\)/g, function (all, ext) {
+            source = source.replace(/^\s*#include ".*?"\s*$/, replacement);
+            source = source.replace(/\sHAS_EXTENSION\s*\(\s*([A-Za-z_\-0-9]+)\s*\)/g, function (all, ext) {
               return gl.getExtension(ext) ? ' 1 ': ' 0 ';
             });
-            return proprocess(url, source, callback, callbackError, duplist);
+            return preprocess(url, source, callback, callbackError, duplist);
           }, callbackError, duplist);
         }
       }).send();
@@ -2536,8 +2536,8 @@ $.splat = (function() {
     var opt = getOptions(arguments),
       vs = $(opt.vs),
       fs = $(opt.fs);
-    proprocess(opt.path, vs.innerHTML, function(vectexShader) {
-      proprocess(opt.path, fs.innerHTML, function(fragmentShader) {
+    preprocess(opt.path, vs.innerHTML, function(vectexShader) {
+      preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
         opt.onSuccess(new Program(vectexShader, fragmentShader), opt);
       });
     });
@@ -2546,8 +2546,8 @@ $.splat = (function() {
   //Create a program from vs and fs sources
   Program.fromShaderSources = function() {
     var opt = getOptions(arguments, {path: './'});
-    proprocess(opt.path, opt.vs, function(vectexShader) {
-      proprocess(opt.path, opt.fs, function(fragmentShader) {
+    preprocess(opt.path, opt.vs, function(vectexShader) {
+      preprocess(opt.path, opt.fs, function(fragmentShader) {
         try {
           var program = new Program(vectexShader, fragmentShader);
           opt.onSuccess(program, opt);
@@ -2590,8 +2590,8 @@ $.splat = (function() {
       },
       onComplete: function(ans) {
         try {
-          proprocess(vertexShaderURI, ans[0], function(vectexShader) {
-            proprocess(fragmentShaderURI, ans[1], function(fragmentShader) {
+          preprocess(vertexShaderURI, ans[0], function(vectexShader) {
+            preprocess(fragmentShaderURI, ans[1], function(fragmentShader) {
               opt.vs = vectexShader;
               opt.fs = fragmentShader;
               Program.fromShaderSources(opt);
