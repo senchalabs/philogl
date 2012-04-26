@@ -62,7 +62,6 @@ function load() {
       alert('There was an error, sorry :S');
     },
     onLoad: function(app) {
-      window.app = app;
       //Set framebuffers
       var fboOpt = {
         width: sizeX,

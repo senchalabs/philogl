@@ -3,7 +3,6 @@ function SwapTexture(config, count) {
   config = config || {};
   var me = this;
   gl.supports_OES_texture_float = !!gl.getExtension('OES_texture_float');
-  debugger;
   config = Utils.merge({
     width: 512,
     height: 512,
