@@ -15,7 +15,7 @@ function SwapTexture(config, count) {
         },
         {
           name: gl.TEXTURE_MIN_FILTER,
-          value: gl.supports_OES_texture_float ? gl.LINEAR_MIPMAP_NEAREST : gl.NEAREST,
+          value: gl.supports_OES_texture_float ? gl.LINEAR : gl.NEAREST,
           generateMipmap: true
         },
         {
@@ -31,7 +31,7 @@ function SwapTexture(config, count) {
         type: gl.supports_OES_texture_float ? gl.FLOAT : gl.UNSIGNED_BYTE
       }
     },
-    bindToRenderBuffer: true
+    bindToRenderBuffer: false
   }, config);
   if (config.bindToTexture.data) {
     var data = config.bindToTexture.data;
