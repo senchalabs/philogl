@@ -34,8 +34,8 @@ this.PhiloGL = null;
   PhiloGL = function(canvasId, opt) {
     opt = $.merge({
       context: {
-        /* 
-         debug: true 
+        /*
+         debug: true
         */
       },
       camera: {
@@ -68,14 +68,14 @@ this.PhiloGL = null;
       onError: $.empty
 
     }, opt || {});
-    
+
     var optContext = opt.context,
         optCamera = opt.camera,
         optEvents = opt.events,
         optTextures = opt.textures,
         optProgram = $.splat(opt.program),
         optScene = opt.scene;
-    
+
     //get Context global to all framework
     gl = PhiloGL.WebGL.getContext(canvasId, optContext);
 
@@ -114,7 +114,7 @@ this.PhiloGL = null;
             }
           };
         })();
-    
+
     optProgram.forEach(function(optProgram, i) {
       var pfrom = optProgram.from, program;
       for (var p in popt) {
@@ -136,15 +136,15 @@ this.PhiloGL = null;
     function loadProgramDeps(gl, program, callback) {
       //get Camera
       var canvas = gl.canvas,
-          camera = new PhiloGL.Camera(optCamera.fov, 
-                                      canvas.width / canvas.height, 
-                                      optCamera.near, 
+          camera = new PhiloGL.Camera(optCamera.fov,
+                                      canvas.width / canvas.height,
+                                      optCamera.near,
                                       optCamera.far, optCamera);
       camera.update();
-      
+
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
-      
+
       //make app instance global to all framework
       app = new PhiloGL.WebGL.Application({
         gl: gl,
@@ -158,7 +158,7 @@ this.PhiloGL = null;
       if (program.$$family == 'program') {
         program.use();
       }
-      
+
       //get Events
       if (optEvents) {
         PhiloGL.Events.create(app, $.extend(optEvents, {
@@ -185,14 +185,16 @@ this.PhiloGL = null;
 //Unpacks the submodules to the global space.
 PhiloGL.unpack = function(branch) {
   branch = branch || globalContext;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D', 
+  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D',
    'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
       branch[module] = PhiloGL[module];
   });
+  branch.gl = gl;
+  branch.Utils = $;
 };
 
 //Version
-PhiloGL.version = '1.4.3';
+PhiloGL.version = '1.5.0';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -208,7 +210,7 @@ $.time = Date.now;
 
 $.uid = (function() {
   var t = $.time();
-  
+
   return function() {
     return t++;
   };
@@ -467,7 +469,7 @@ $.splat = (function() {
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
           hasBuffer = name in this.frameBuffers,
-          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer(gl.FRAMEBUFFER);
+          frameBuffer = hasBuffer? this.frameBuffers[name] : gl.createFramebuffer();
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
@@ -561,6 +563,14 @@ $.splat = (function() {
         gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
         return;
       }
+      
+      if (opt.data && opt.data.type === gl.FLOAT) {
+        // Enable floating-point texture.
+        if (!gl.getExtension('OES_texture_float')) {
+          throw 'OES_texture_float is not supported';
+        }
+      }
+      
       //get defaults
       opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
@@ -581,6 +591,7 @@ $.splat = (function() {
         data: {
           format: gl.RGBA,
           value: false,
+          type: gl.UNSIGNED_BYTE,
           
           width: 0,
           height: 0,
@@ -589,8 +600,8 @@ $.splat = (function() {
 
       }, opt || {});
 
-      var textureType = ('textureType' in opt)? gl.get(opt.textureType) : gl.TEXTURE_2D,
-          textureTarget = ('textureTarget' in opt)? gl.get(opt.textureTarget) : textureType,
+      var textureType = ('textureType' in opt)? opt.textureType = gl.get(opt.textureType) : gl.TEXTURE_2D,
+          textureTarget = ('textureTarget' in opt)? opt.textureTarget = gl.get(opt.textureTarget) : textureType,
           isCube = textureType == gl.TEXTURE_CUBE_MAP,
           hasTexture = name in this.textures,
           texture = hasTexture? this.textures[name] : gl.createTexture(),
@@ -598,6 +609,7 @@ $.splat = (function() {
           parameters = opt.parameters,
           data = opt.data,
           value = data.value,
+          type = data.type,
           format = data.format,
           hasValue = !!data.value;
 
@@ -609,7 +621,7 @@ $.splat = (function() {
       if (!hasTexture) {
         //set texture properties
         pixelStore.forEach(function(opt) {
-          opt.name = typeof opt.name == 'string'? gl[opt.name] : opt.name;
+          opt.name = typeof opt.name == 'string'? gl.get(opt.name) : opt.name;
           gl.pixelStorei(opt.name, opt.value);
         });
       }
@@ -619,26 +631,26 @@ $.splat = (function() {
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
-//            gl.texSubImage2D(textureTarget + i, 0, 0, 0, format, gl.UNSIGNED_BYTE, value[i]);
-            gl.texImage2D(textureTarget[i], 0, format, format, gl.UNSIGNED_BYTE, value[i]);
+            gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
           }
         } else {
-          gl.texImage2D(textureTarget, 0, format, format, gl.UNSIGNED_BYTE, value);
+          gl.texImage2D(textureTarget, 0, format, format, type, value);
         }
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
-        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, gl.UNSIGNED_BYTE, null); 
+        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null); 
       }
       //set texture parameters
       if (!hasTexture) {
-        parameters.forEach(function(opt) {
-          opt.name = gl.get(opt.name);
-          opt.value = gl.get(opt.value);
-          gl.texParameteri(textureType, opt.name, opt.value);
-          if (opt.generateMipmap) {
+        for (i = 0; i < parameters.length ;i++) {
+          var opti = parameters[i];
+          opti.name = gl.get(opti.name);
+          opti.value = gl.get(opti.value);
+          gl.texParameteri(textureType, opti.name, opti.value);
+          if (opti.generateMipmap) {
             gl.generateMipmap(textureType);
           }
-        });
+        }
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
@@ -2265,6 +2277,52 @@ $.splat = (function() {
     return program;
   };
   
+  var getpath = function(path) {
+    var last = path.lastIndexOf('/');
+    if (last == '/') {
+      return './';
+    } else {
+      return path.substr(0, last + 1);
+    }
+  };
+
+  // preprocess a source with `#include ""` support
+  // `duplist` records all the pending replacements
+  var preprocess = function(base, source, callback, callbackError, duplist) {
+    duplist = duplist || {};
+    var match;
+    if ((match = source.match(/#include "(.*?)"/))) {
+      var xhr = PhiloGL.IO.XHR,
+        url = getpath(base) + match[1];
+
+      if (duplist[url]) {
+        callbackError('Recursive include');
+      }
+
+      new xhr({
+        url: url,
+        noCache: true,
+        onError: function(code) {
+          callbackError('Load included file `' + url + '` failed: Code ' + code);
+        },
+        onSuccess: function(response) {
+          duplist[url] = true;
+          return preprocess(url, response, function(replacement) {
+            delete duplist[url];
+            source = source.replace(/#include ".*?"/, replacement);
+            source = source.replace(/\sHAS_EXTENSION\s*\(\s*([A-Za-z_\-0-9]+)\s*\)/g, function (all, ext) {
+              return gl.getExtension(ext) ? ' 1 ': ' 0 ';
+            });
+            return preprocess(url, source, callback, callbackError, duplist);
+          }, callbackError, duplist);
+        }
+      }).send();
+      return null;
+    } else {
+      return callback(source);
+    }
+  };  
+
   //Link a program.
   var linkProgram = function(gl, program) {
     gl.linkProgram(program);
@@ -2371,7 +2429,7 @@ $.splat = (function() {
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
-        typedArray.set(val);
+        typedArray.set(val.toFloat32Array ? val.toFloat32Array() : val);
         glFunction(loc, typedArray);
       };
     
@@ -2382,6 +2440,7 @@ $.splat = (function() {
       };
     }
 
+    // FIXME: Unreachable code
     throw "Unknown type: " + type;
 
   };
@@ -2459,48 +2518,65 @@ $.splat = (function() {
   });
 
   //Get options in object or arguments
-  function getOptions() {
+  function getOptions(args, base) {
     var opt;
-    if (arguments.length == 2) {
+    if (args.length == 2) {
       opt = {
-        vs: arguments[0],
-        fs: arguments[1]
+        vs: args[0],
+        fs: args[1]
       };
     } else {
-      opt = arguments[0] || {};
+      opt = args[0] || {};
     }
-    return opt;
+    return $.merge(base || {}, opt);
   }
-  
+
   //Create a program from vertex and fragment shader node ids
   Program.fromShaderIds = function() {
-    var opt = getOptions.apply({}, arguments),
-        vs = $(opt.vs),
-        fs = $(opt.fs);
-
-    return new Program(vs.innerHTML, fs.innerHTML);
+    var opt = getOptions(arguments),
+      vs = $(opt.vs),
+      fs = $(opt.fs);
+    return preprocess(opt.path, vs.innerHTML, function(vectexShader) {
+      return preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
+        opt.onSuccess(new Program(vectexShader, fragmentShader), opt);
+      });
+    });
   };
 
   //Create a program from vs and fs sources
   Program.fromShaderSources = function() {
-    var opt = getOptions.apply({}, arguments),
-        vs = opt.vs,
-        fs = opt.fs;
-
-    return new Program(opt.vs, opt.fs);
+    var opt = getOptions(arguments, {path: './'});
+    return preprocess(opt.path, opt.vs, function(vectexShader) {
+      return preprocess(opt.path, opt.fs, function(fragmentShader) {
+        try {
+          var program = new Program(vectexShader, fragmentShader);
+          if(opt.onSuccess) {
+            opt.onSuccess(program, opt); 
+          } else {
+            return program;
+          }
+        } catch(e) {
+          if (opt.onError) {
+            opt.onError(e, opt);
+          } else {
+            throw e;
+          }
+        }
+      });
+    });
   };
 
   //Build program from default shaders (requires Shaders)
-  Program.fromDefaultShaders = function() {
-    var opt = getOptions.apply({}, arguments),
-        vs = opt.vs || 'Default',
-        fs = opt.fs || 'Default',
-        sh = PhiloGL.Shaders;
-
-    return PhiloGL.Program.fromShaderSources(sh.Vertex[vs], 
-                                              sh.Fragment[fs]);
+  Program.fromDefaultShaders = function(opt) {
+    opt = opt || {};
+    var vs = opt.vs || 'Default',
+      fs = opt.fs || 'Default',
+      sh = PhiloGL.Shaders;
+    opt.vs = sh.Vertex[vs];
+    opt.fs = sh.Fragment[fs];
+    return PhiloGL.Program.fromShaderSources(opt);
   };
-  
+
   //Implement Program.fromShaderURIs (requires IO)
   Program.fromShaderURIs = function(opt) {
     opt = $.merge({
@@ -2524,13 +2600,18 @@ $.splat = (function() {
       },
       onComplete: function(ans) {
         try {
-          var p = Program.fromShaderSources(ans[0], ans[1]);
-          opt.onSuccess(p, opt);
-        } catch(e) {
+          return preprocess(vertexShaderURI, ans[0], function(vectexShader) {
+            return preprocess(fragmentShaderURI, ans[1], function(fragmentShader) {
+              opt.vs = vectexShader;
+              opt.fs = fragmentShader;
+              return Program.fromShaderSources(opt);
+            }, opt.onError);
+          }, opt.onError);
+        } catch (e) {
           opt.onError(e, opt);
         }
       }
-    }).send();  
+    }).send();
   };
 
   PhiloGL.Program = Program;
@@ -2671,7 +2752,7 @@ $.splat = (function() {
 
     var urls = $.splat(opt.urls),
         len = urls.length,
-        ans = Array(len),
+        ans = new Array(len),
         reqs = urls.map(function(url, i) {
             return new XHR({
               url: url,
@@ -2817,7 +2898,7 @@ $.splat = (function() {
       onComplete: function(images) {
         var textures = {};
         images.forEach(function(img, i) {
-          textures[opt.src[i]] = $.merge({
+          textures[opt.id && opt.id[i] || opt.src && opt.src[i]] = $.merge({
             data: {
               value: img
             }
@@ -3933,18 +4014,26 @@ $.splat = (function() {
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset,
+        flipCull = !!config.flipCull, 
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
         texCoords = new Float32Array(numVertices * 2),
         i2 = 0, i3 = 0;
 
+    if (flipCull) {
+      c1len = - c1len;
+    }
+    
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
             v = z / subdivisions2;
-
-        texCoords[i2 + 0] = u;
+        if (flipCull) {
+          texCoords[i2 + 0] = 1 - u;
+        } else {
+          texCoords[i2 + 0] = u;
+        }
         texCoords[i2 + 1] = v;
         i2 += 2;
 
@@ -3956,7 +4045,11 @@ $.splat = (function() {
 
             normals[i3 + 0] = 0;
             normals[i3 + 1] = 0;
-            normals[i3 + 2] = 1;
+            if (flipCull) {
+              normals[i3 + 2] = 1;
+            } else {
+              normals[i3 + 2] = -1;
+            }
           break;
 
           case 'x,z':
@@ -3965,7 +4058,11 @@ $.splat = (function() {
             positions[i3 + 2] = c2len * v - c2len * 0.5;
 
             normals[i3 + 0] = 0;
-            normals[i3 + 1] = 1;
+            if (flipCull) {
+              normals[i3 + 1] = 1;
+            } else {
+              normals[i3 + 1] = -1;
+            }
             normals[i3 + 2] = 0;
           break;
 
@@ -3974,7 +4071,11 @@ $.splat = (function() {
             positions[i3 + 1] = c1len * u - c1len * 0.5;
             positions[i3 + 2] = c2len * v - c2len * 0.5;
 
-            normals[i3 + 0] = 1;
+            if (flipCull) {
+              normals[i3 + 0] = 1;
+            } else {
+              normals[i3 + 0] = -1;
+            }
             normals[i3 + 1] = 0;
             normals[i3 + 2] = 0;
           break;
