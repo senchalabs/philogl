@@ -124,7 +124,7 @@ function webGLStart() {
         width: 1024,
         height: 512
       },
-      bindToRenderBuffer: true
+      bindToRenderBuffer: false
     },
 
     events: {
