@@ -1,16 +1,16 @@
-<!DOCTYPE html> 
- <html lang="en"> 
-<head> 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
-    <meta name="author" content="Nicolas Garcia Belmonte" /> 
-    <meta name="copyright" content="copyright 2011, Sencha Inc." /> 
-    <meta name="description" content="PhiloGL: A WebGL Framework for Data Visualization, Creative Coding and Game Development" /> 
-    <meta name="keywords" content="WebGL, JavaScript, Sencha, PhiloGL, Data Visualization, Creative Coding, Experimentation, Prototyping, Game Development" /> 
-    <meta name="robots" content="all" /> 
+<!DOCTYPE html>
+ <html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="Nicolas Garcia Belmonte" />
+    <meta name="copyright" content="copyright 2011, Sencha Inc." />
+    <meta name="description" content="PhiloGL: A WebGL Framework for Data Visualization, Creative Coding and Game Development" />
+    <meta name="keywords" content="WebGL, JavaScript, Sencha, PhiloGL, Data Visualization, Creative Coding, Experimentation, Prototyping, Game Development" />
+    <meta name="robots" content="all" />
     <link rel="shortcut icon" type="image/ico" href="img/favicon.ico" />
-    <title>PhiloGL: A WebGL Framework for Data Visualization, Creative Coding and Game Development</title> 
+    <title>PhiloGL: A WebGL Framework for Data Visualization, Creative Coding and Game Development</title>
 
-    <link href="css/base.css" rel="stylesheet" type="text/css" media="screen" /> 
+    <link href="css/base.css" rel="stylesheet" type="text/css" media="screen" />
 
     <script src="PhiloGL/build/PhiloGL.js"></script>
     <script src="js/home.js"></script>
@@ -27,87 +27,87 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script> 
-</head> 
-<body onload="init();"> 
-<div id="main-container"> 
+</script>
+</head>
+<body onload="init();">
+<div id="main-container">
 
-    
-    <div id="top-header"></div>   
-        
-        <div id="logo"> 
+
+    <div id="top-header"></div>
+
+        <div id="logo">
         <a href="/philogl/">
           <img src="img/philo_logo.png" />
         </a>
         </div>
 
-        <div id="header"> 
-        <div class="container"> 
-            <div id="navigation"> 
-                <a href="/philogl/" class="first">Home</a> 
-                <a href="demos.html">Demos</a> 
-                <a href="docs.html">API Docs</a> 
-                <a href="http://groups.google.com/group/philogl">Discuss</a> 
-                <a href="http://blog.thejit.org">Blog</a> 
-                <a href="http://philogb.github.com/">About</a> 
-            </div> 
-        </div> 
+        <div id="header">
+        <div class="container">
+            <div id="navigation">
+                <a href="/philogl/" class="first">Home</a>
+                <a href="demos.html">Demos</a>
+                <a href="docs.html">API Docs</a>
+                <a href="http://groups.google.com/group/philogl">Discuss</a>
+                <a href="http://blog.thejit.org">Blog</a>
+                <a href="http://philogb.github.com/">About</a>
+            </div>
+        </div>
     </div>
 
-    <div id="wrapper"> 
-        <div id="container" class="container"> 
-            <div id="image-switcher"> 
-                <div style="position:relative;"> 
-                    <img src="img/marquee/worldflights2.png" id="first-image" alt="image" /> 
-                    <div class="tag"> 
+    <div id="wrapper">
+        <div id="container" class="container">
+            <div id="image-switcher">
+                <div style="position:relative;">
+                    <img src="img/marquee/worldflights2.png" id="first-image" alt="image" />
+                    <div class="tag">
                         World Airline Routes
                     </div>
-                </div> 
-            </div> 
-            <div id="main-text-container"> 
+                </div>
+            </div>
+            <div id="main-text-container">
               PhiloGL is a WebGL Framework for Data Visualization, Creative Coding and Game Development.
-            </div> 
-          <div id="download"> 
-              <a title="Source and Compressed Files" class="button blue" href="downloads/PhiloGL-1.4.3.zip">Download</a> 
-              <div class="description"> 
+            </div>
+          <div id="download">
+              <a title="Source and Compressed Files" class="button blue" href="downloads/PhiloGL-1.4.3.zip">Download</a>
+              <div class="description">
                   Current Release: <b>1.4.3</b>
-              </div> 
-          </div> 
-        </div> 
-    </div> 
-    
-    <div id="more"> 
-    <div id="col1" class="col"> 
-        <div class="title">Features</div> 
-        <ul> 
-          <li><b>Idiomatic JavaScript</b><br />PhiloGL is built on JavaScript good practices and idioms, providing an expressive and powerful API</li> 
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <div id="more">
+    <div id="col1" class="col">
+        <div class="title">Features</div>
+        <ul>
+          <li><b>Idiomatic JavaScript</b><br />PhiloGL is built on JavaScript good practices and idioms, providing an expressive and powerful API</li>
           <li><b>Focused on Performance</b><br />PhiloGL tries to be as close to the gl calls as possible, providing a clear yet tight abstraction to WebGL</li>
           <li><b>All the Modules you need</b><br />PhiloGL modules cover from Program and Shader management to XHR, JSONP, Effects, Web Workers and much more.</li>
-          <li><b>Library Agnostic</b><br /> All modules lie under the unique global PhiloGL</li> 
-          <li><b>Open Source</b><br /> Licensed under the MIT License</li> 
+          <li><b>Library Agnostic</b><br /> All modules lie under the unique global PhiloGL</li>
+          <li><b>Open Source</b><br /> Licensed under the MIT License</li>
         </ul>
-    </div>  
- 
-    <div id="col2" class="col"> 
-        <div class="title">Learn by Example</div> 
+    </div>
+
+    <div id="col2" class="col">
+        <div class="title">Learn by Example</div>
         <div class="description">
-          All lessons from <a href="http://learningwebgl.com/">Learning WebGL</a> have been ported into the PhiloGL Framework. 
+          All lessons from <a href="http://learningwebgl.com/">Learning WebGL</a> have been ported into the PhiloGL Framework.
           This is a great starting point for people wanting to learn PhiloGL and/or WebGL as well.
         </div>
         <div class="description">
           <a href="demos.html#lessons">Go to the lessons page</a>
         </div>
-        
-        <div class="title other">Other Examples</div> 
-        <ul> 
+
+        <div class="title other">Other Examples</div>
+        <ul>
           <li>
            <div class="featured-title">
-             <a href="PhiloGL/examples/metaballs/">Reflective Metaballs</a>
+             <a href="PhiloGL/examples/wave/">Wave Simlulation</a>
            </div>
-           <a href="PhiloGL/examples/metaballs/">
-              <img src="img/marquee/metaballs.png" />
+           <a href="PhiloGL/examples/wave/">
+              <img src="img/marquee/wave.png" />
             </a>
-          </li> 
+          </li>
           <li>
            <div class="featured-title">
              <a href="PhiloGL/examples/quaternion/">Fractal Quaternion Raymarching</a>
@@ -115,18 +115,18 @@
            <a href="PhiloGL/examples/quaternion/">
               <img src="img/marquee/quaternion.png" />
             </a>
-          </li> 
+          </li>
         </ul>
-        
+
         <div class="description">
           <a href="demos.html">Explore more examples!</a>
         </div>
-      
-    </div> 
-    
-    <div id="col3" class="col"> 
-        <div class="title">Featured Demos and Projects</div> 
-        <ul> 
+
+    </div>
+
+    <div id="col3" class="col">
+        <div class="title">Featured Demos and Projects</div>
+        <ul>
           <li>
            <div class="featured-title">
              <a href="PhiloGL/examples/winds/">Explore Wind Patterns</a>
@@ -134,7 +134,7 @@
            <a href="PhiloGL/examples/winds/">
               <img src="img/marquee/winds.png" />
             </a>
-          </li> 
+          </li>
           <li>
            <div class="featured-title">
              <a href="PhiloGL/examples/worldFlights/">World Airline Routes</a>
@@ -144,7 +144,7 @@
               <img src="img/marquee/worldflights2.png" />
             </a>
 
-          </li> 
+          </li>
           <li>
            <div class="featured-title">
              <a href="PhiloGL/examples/temperatureAnomalies/">Temperature Anomalies from 1880 to 2010</a>
@@ -152,7 +152,7 @@
            <a href="PhiloGL/examples/temperatureAnomalies/">
               <img src="img/marquee/tanomalies.png" />
             </a>
-          </li> 
+          </li>
           <li>
            <div class="featured-title">
              <a href="PhiloGL/examples/histogram/">Real-Time 3D color Histogram Analysis</a>
@@ -161,27 +161,27 @@
               <img src="img/marquee/histogram.png" />
             </a>
            </li>
-        </ul> 
+        </ul>
         <div class="description">
           <a href="demos.html">Explore more projects!</a>
         </div>
-    </div> 
-    </div> 
- 
-    <div id="footer"> 
+    </div>
+    </div>
+
+    <div id="footer">
         <a class="senchalabs" href="http://sencha.com/">
           <img src="img/labs.gif" alt="part of senchalabs image" />
         </a>
-        <div class="container"> 
-          <p>copyright &copy; 2011 <a href="http://sencha.com/">Sencha Inc.</a>. Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.</p> 
-        </div> 
-    </div> 
- 
-  </div> 
+        <div class="container">
+          <p>copyright &copy; 2011 <a href="http://sencha.com/">Sencha Inc.</a>. Author: <a href="http://philogb.github.com/">Nicolas Garcia Belmonte</a>.</p>
+        </div>
+    </div>
 
-  <a href="http://github.com/senchalabs/philogl"><img style="position: absolute; top: 0; left: 0; border: 0;" src="img/fork-me.png" alt="Fork me on GitHub"></a>  
+  </div>
+
+  <a href="http://github.com/senchalabs/philogl"><img style="position: absolute; top: 0; left: 0; border: 0;" src="img/fork-me.png" alt="Fork me on GitHub"></a>
 
 
-</body> 
-</html> 
+</body>
+</html>
 

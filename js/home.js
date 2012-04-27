@@ -1,8 +1,9 @@
 PhiloGL.unpack();
 
 function init() {
-  var imageUrls = ['worldflights2', 'winds', 'metaballs', 'histogram', 'fractal', 'explorer', 'tanomalies', 'quaternion', 'mercator'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
+  var imageUrls = ['worldflights2', 'wave', 'winds', 'metaballs', 'histogram', 'fractal', 'explorer', 'tanomalies', 'quaternion', 'mercator'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
       descriptions = ['World Airline Routes',
+                      'Wave Simulation',
                       'Explore Wind Patterns',
                       'Reflective Metaballs',
                       'Real-time 3D Color Histogram Analysis',
