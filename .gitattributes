@@ -17,6 +17,7 @@ examples/quasicrystal export-ignore
 examples/quaternion export-ignore
 examples/temperatureAnomalies export-ignore
 examples/voronoi export-ignore
+examples/wave export-ignore
 examples/winds export-ignore
 examples/worldFlights export-ignore
 TODO export-ignore
