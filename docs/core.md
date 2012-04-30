@@ -123,7 +123,7 @@ the WebGL application.
   * centerOrigin - (*boolean*, optional) Whether to set the center (0, 0) coordinate to the center of the canvas or to the top-left corner. Default's `true`.
   * disableContextMenu - (*boolean*, optional) Disable the context menu (generally shown when the canvas is right clicked). Default's `true`.
   * bind - (*mixed*, optional) bind the *thisArg* in the callbacks to the specified object.
-  * pick - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
+  * picking - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
   * onClick - (*function*, optional) Handles the onClick event.
   * onRightClick - (*function*, optional) Handles the onRightClick event.
   * onDragStart - (*function*, optional) Handles the onDragStart event.
