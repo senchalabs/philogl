@@ -1,6 +1,6 @@
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times;
   margin: 0;
   padding: 0;
 }
@@ -107,7 +107,7 @@ h1 {
   -webkit-box-shadow: #333 0 0 3px;
   -o-box-shadow: #333 0 0 3px;
   -moz-box-shadow: #333 0 0 3px;
-  box-shadow: #333 0 0 3px;  
+  box-shadow: #333 0 0 3px;
 }
 
 #controls .title {

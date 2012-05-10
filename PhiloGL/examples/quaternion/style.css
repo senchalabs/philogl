@@ -1,13 +1,13 @@
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times;
   margin: 0;
   padding: 0;
 }
 
 input, select {
   font-size: 15px;
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times;
   max-width: 80px;
 }
 
