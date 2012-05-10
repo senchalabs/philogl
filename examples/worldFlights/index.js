@@ -273,14 +273,6 @@ function createApp() {
   //Create application
   PhiloGL('map-canvas', {
     program: [{
-      //to render the globe
-      id: 'earth',
-      from: 'uris',
-      path: 'shaders/',
-      vs: 'earth.vs.glsl',
-      fs: 'earth.fs.glsl',
-      noCache: true
-    }, {
       //to render cities and routes
       id: 'airline_layer',
       from: 'uris',
@@ -297,6 +289,14 @@ function createApp() {
       fs: 'layer.fs.glsl',
       noCache: true
     },{
+      //to render the globe
+      id: 'earth',
+      from: 'uris',
+      path: 'shaders/',
+      vs: 'earth.vs.glsl',
+      fs: 'earth.fs.glsl',
+      noCache: true
+    }, {
       //for glow post-processing
       id: 'glow',
       from: 'uris',
@@ -456,30 +456,14 @@ function createApp() {
         width: 1024,
         height: 1024,
         bindToTexture: {
-          parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
-            value: 'NEAREST'
-          }, {
-            name: 'TEXTURE_MIN_FILTER',
-            value: 'NEAREST',
-            generateMipmap: false
-          }]
         },
-        bindToRenderBuffer: false
+        bindToRenderBuffer: true
       }).setFrameBuffer('world2', {
         width: 1024,
         height: 1024,
         bindToTexture: {
-          parameters: [{
-            name: 'TEXTURE_MAG_FILTER',
-            value: 'NEAREST'
-          }, {
-            name: 'TEXTURE_MIN_FILTER',
-            value: 'NEAREST',
-            generateMipmap: false
-          }]
         },
-        bindToRenderBuffer: false
+        bindToRenderBuffer: true
       });
 
       //picking scene
@@ -497,26 +481,24 @@ function createApp() {
         // render to a texture
         gl.viewport(0, 0, 1024, 1024);
 
-//        app.setFrameBuffer('world', {});
-//        app.setFrameBuffer('world', true);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, app.frameBuffers.world);
+        app.setFrameBuffer('world', {});
+        app.setFrameBuffer('world', true);
         program.earth.use();
         program.earth.setUniform('renderType',  0);
         gl.clear(clearOpt);
         scene.renderToTexture('world');
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        //app.setFrameBuffer('world', false);
+        app.setFrameBuffer('world', false);
 
-        //app.setFrameBuffer('world2', {});
-        //app.setFrameBuffer('world2', true);
-        //program.earth.use();
-        //program.earth.setUniform('renderType',  -1);
-        //gl.clear(clearOpt);
-        //scene.renderToTexture('world2');
-        //app.setFrameBuffer('world2', false);
+        app.setFrameBuffer('world2', {});
+        app.setFrameBuffer('world2', true);
+        program.earth.use();
+        program.earth.setUniform('renderType',  -1);
+        gl.clear(clearOpt);
+        scene.renderToTexture('world2');
+        app.setFrameBuffer('world2', false);
 
         Media.Image.postProcess({
-          fromTexture: ['world-texture', 'world-texture'],
+          fromTexture: ['world-texture', 'world2-texture'],
           toScreen: true,
           program: 'glow',
           width: 1024,
