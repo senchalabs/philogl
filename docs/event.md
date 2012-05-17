@@ -39,7 +39,7 @@ Creates a set of events for the given domElement that can be handled through a c
 
 ### Options:
 
-* pick - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
+* picking - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
 * lazyPicking - (*boolean*, optional) When using lazy picking the framebuffer only stores a new image used for color picking when `scene.resetPicking();` is called. This is useful for when images of large resolution are being used and the scene is static most of the time (i.e. pickable objects don't change their shape/position too often). **Currently this only works for Chrome, Opera, Safari**. Default's false.
 * cachePosition - (*boolean*, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default's `true`.
 * cacheSize - (*boolean*, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default's `true`.
@@ -52,7 +52,7 @@ Creates a set of events for the given domElement that can be handled through a c
 
 You can also provide callback functions for the events you need to
 handle. The first parameter of the callback is the event object
-described [here](event.html#Event). If `pick` is set to `true` in the
+described [here](event.html#Event). If `picking` is set to `true` in the
 options, then the second parameter of the callback may be an
 [O3D](o3d.html) that is the target of the mouse event. If no target
 exists for the mouse event then a falsy value will be provided. The
