@@ -13,7 +13,6 @@ var $ = function(id) { return document.getElementById(id); },
       duration: 1000,
       transition: Fx.Transition.Expo.easeInOut
     }),
-    isFirefox = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
     airlineList, pos, tooltip;
 
 //Get handles when document is ready
@@ -339,7 +338,6 @@ function createApp() {
     },
     events: {
       picking: true,
-      lazyPicking: !isFirefox,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
@@ -456,12 +454,28 @@ function createApp() {
         width: 1024,
         height: 1024,
         bindToTexture: {
+          parameters : [ {
+            name : 'TEXTURE_MAG_FILTER',
+            value : 'LINEAR'
+          }, {
+            name : 'TEXTURE_MIN_FILTER',
+            value : 'LINEAR',
+            generateMipmap : false
+          } ]
         },
         bindToRenderBuffer: true
       }).setFrameBuffer('world2', {
         width: 1024,
         height: 1024,
         bindToTexture: {
+          parameters : [ {
+            name : 'TEXTURE_MAG_FILTER',
+            value : 'LINEAR'
+          }, {
+            name : 'TEXTURE_MIN_FILTER',
+            value : 'LINEAR',
+            generateMipmap : false
+          } ]
         },
         bindToRenderBuffer: true
       });
@@ -481,18 +495,16 @@ function createApp() {
         // render to a texture
         gl.viewport(0, 0, 1024, 1024);
 
-        app.setFrameBuffer('world', {});
-        app.setFrameBuffer('world', true);
         program.earth.use();
         program.earth.setUniform('renderType',  0);
+        app.setFrameBuffer('world', true);
         gl.clear(clearOpt);
         scene.renderToTexture('world');
         app.setFrameBuffer('world', false);
 
-        app.setFrameBuffer('world2', {});
-        app.setFrameBuffer('world2', true);
         program.earth.use();
         program.earth.setUniform('renderType',  -1);
+        app.setFrameBuffer('world2', true);
         gl.clear(clearOpt);
         scene.renderToTexture('world2');
         app.setFrameBuffer('world2', false);

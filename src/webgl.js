@@ -4,7 +4,7 @@
 (function () {
 
   var WebGL = {
-    
+
     getContext: function(canvas, opt) {
       var canvas = typeof canvas == 'string'? $(canvas) : canvas, ctx;
       ctx = canvas.getContext('experimental-webgl', opt);
@@ -51,10 +51,10 @@
       }
 
       return gl;
-    } 
+    }
 
   };
-   
+
   function Application(options) {
     //copy program, scene, camera, etc.
     for (var prop in options) {
@@ -78,7 +78,7 @@
     $$family: 'application',
 
     setBuffer: function(program, name, opt) {
-      //unbind buffer 
+      //unbind buffer
       if (opt === false || opt === null) {
         opt = this.bufferMemo[name];
         //reset buffer
@@ -94,7 +94,7 @@
         }
         return;
       }
-      
+
       //set defaults
       opt = $.extend(this.bufferMemo[name] || {
         bufferType: gl.ARRAY_BUFFER,
@@ -122,21 +122,21 @@
       if (!hasBuffer) {
         this.buffers[name] = buffer;
       }
-      
+
       if (isAttribute) {
         gl.enableVertexAttribArray(loc);
       }
 
       gl.bindBuffer(bufferType, buffer);
-      
+
       if (hasValue) {
         gl.bufferData(bufferType, value, drawType);
       }
-      
+
       if (isAttribute) {
         gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       }
-      
+
       //set default options so we don't have to next time.
       //set them under the buffer name and attribute name (if an
       //attribute is defined)
@@ -177,7 +177,7 @@
           attachment: gl.DEPTH_ATTACHMENT
         }
       }, opt || {});
-      
+
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
           hasBuffer = name in this.frameBuffers,
@@ -188,7 +188,7 @@
       if (!hasBuffer) {
         this.frameBuffers[name] = frameBuffer;
       }
-      
+
       if (bindToTexture) {
         var texBindOpt = $.merge({
               data: {
@@ -200,7 +200,7 @@
             texOpt = opt.textureOptions;
 
         this.setTexture(texName, texBindOpt);
-        
+
         gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
       }
 
@@ -211,7 +211,7 @@
             }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
             rbName = name + '-renderbuffer',
             rbOpt = opt.renderBufferOptions;
-        
+
         this.setRenderBuffer(rbName, rbBindOpt);
 
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, rbOpt.attachment, gl.RENDERBUFFER, this.renderBuffers[rbName]);
@@ -251,7 +251,7 @@
       if (!hasBuffer) {
         this.renderBuffers[name] = renderBuffer;
       }
-      
+
       gl.bindRenderbuffer(gl.RENDERBUFFER, renderBuffer);
 
       gl.renderbufferStorage(gl.RENDERBUFFER, opt.storageType, opt.width, opt.height);
@@ -275,14 +275,14 @@
         gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
         return;
       }
-      
+
       if (opt.data && opt.data.type === gl.FLOAT) {
         // Enable floating-point texture.
         if (!gl.getExtension('OES_texture_float')) {
           throw 'OES_texture_float is not supported';
         }
       }
-      
+
       //get defaults
       opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
@@ -304,7 +304,7 @@
           format: gl.RGBA,
           value: false,
           type: gl.UNSIGNED_BYTE,
-          
+
           width: 0,
           height: 0,
           border: 0
@@ -337,7 +337,7 @@
           gl.pixelStorei(opt.name, opt.value);
         });
       }
-      
+
       //load texture
       if (hasValue) {
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
@@ -350,7 +350,7 @@
         }
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
-        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null); 
+        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null);
       }
       //set texture parameters
       if (!hasTexture) {
@@ -366,14 +366,14 @@
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
-      
+
       //set default options so we don't have to next time.
       if (hasValue) {
         opt.data.value = false;
       }
 
       this.textureMemo[name] = opt;
-      
+
       return this;
     },
 
@@ -393,7 +393,7 @@
   };
 
   WebGL.Application = Application;
- 
+
   //Feature test WebGL
   (function() {
     try {
@@ -409,5 +409,5 @@
   })();
 
   PhiloGL.WebGL = WebGL;
-  
+
 })();

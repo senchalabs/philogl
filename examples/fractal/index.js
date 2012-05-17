@@ -58,8 +58,8 @@ function load() {
         halted = !halted;
       }
     },
-    onError: function() {
-      alert('There was an error, sorry :S');
+    onError: function(e) {
+      alert('There was an error: ' + e);
     },
     onLoad: function(app) {
       //Set framebuffers
@@ -72,7 +72,7 @@ function load() {
             value: 'LINEAR'
           }, {
             name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR_MIPMAP_NEAREST',
+            value: 'LINEAR',
             generateMipmap: false
           }]
         },

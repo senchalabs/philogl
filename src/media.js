@@ -16,7 +16,7 @@
     }), camera = new PhiloGL.Camera(45, 1, 0.1, 500, {
       position: { x: 0, y: 0, z: 1.205 }
     }), scene = new PhiloGL.Scene({}, camera);
-    
+
     return function(opt) {
       var program = app.program.$$family ? app.program : app.program[opt.program],
           textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
@@ -49,11 +49,11 @@
                 value: 'LINEAR'
               }, {
                 name: 'TEXTURE_MIN_FILTER',
-                value: 'LINEAR_MIPMAP_NEAREST',
+                value: 'LINEAR',
                 generateMipmap: false
               }]
             },
-            bindToRenderBuffer: true
+            bindToRenderBuffer: false
           });
         }
         program.use();
@@ -63,8 +63,8 @@
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
         app.setFrameBuffer(framebuffer, false);
-      } 
-      
+      }
+
       if (screen) {
         program.use();
         gl.viewport(0, 0, width, height);

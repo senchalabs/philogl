@@ -4,9 +4,7 @@
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4,
-      //don't ask why, it just works
-      generateMipmap = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/));
+      Mat4 = PhiloGL.Mat4;
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -25,7 +23,7 @@
             x: 1,
             y: 1,
             z: 1
-          },  
+          },
           color: {
             r: 0,
             g: 0,
@@ -40,7 +38,7 @@
         // { near, far, color }
       }
     }, opt || {});
-    
+
     this.program = opt.program ? program[opt.program] : program;
     this.camera = camera;
     this.models = [];
@@ -48,7 +46,7 @@
   };
 
   Scene.prototype = {
-    
+
     add: function() {
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
@@ -129,10 +127,10 @@
           pointColors = [],
           enableSpecular = [],
           pointSpecularColors = [];
-      
+
       //Normalize lighting direction vector
       dir = new Vec3(dir.x, dir.y, dir.z).$unit().$scale(-1);
-      
+
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
 
@@ -141,7 +139,7 @@
       program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
       program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
       program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
-      
+
       //Set point lights
       program.setUniform('numberPoints', numberPoints);
       for (var i = 0, l = numberPoints; i < l; i++) {
@@ -149,10 +147,10 @@
             position = point.position,
             color = point.color || point.diffuse,
             spec = point.specular;
-        
+
         pointLocations.push(position.x, position.y, position.z);
         pointColors.push(color.r, color.g, color.b);
-        
+
         //Add specular color
         enableSpecular.push(+!!spec);
         if (spec) {
@@ -161,12 +159,12 @@
           pointSpecularColors.push(0, 0, 0);
         }
       }
-      
+
       program.setUniforms({
         'pointLocation': pointLocations,
         'pointColor': pointColors
       });
-      
+
       program.setUniforms({
         'enableSpecular': enableSpecular,
         'pointSpecularColor': pointSpecularColors
@@ -207,7 +205,7 @@
       //If we're just using one program then
       //execute the beforeRender method once.
       !multiplePrograms && this.beforeRender(renderProgram || program);
-      
+
       //Go through each model and render it.
       for (var i = 0, models = this.models, l = models.length; i < l; ++i) {
         var elem = models[i];
@@ -229,12 +227,12 @@
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
           texMemo = app.textureMemo[name + '-texture'];
-      
+
       this.render(opt);
 
       gl.bindTexture(texMemo.textureType, texture);
-      gl.generateMipmap(texMemo.textureType);
-      gl.bindTexture(texMemo.textureType, null);
+      //gl.generateMipmap(texMemo.textureType);
+      //gl.bindTexture(texMemo.textureType, null);
     },
 
     renderObject: function(obj, program) {
@@ -256,7 +254,7 @@
         worldInverseTransposeMatrix: worldInverseTranspose
 //        worldViewProjection:  view.mulMat4(object).$mulMat4(view.mulMat4(projection))
       });
-      
+
       //Draw
       //TODO(nico): move this into O3D, but, somehow, abstract the gl.draw* methods inside that object.
       if (obj.render) {
@@ -268,10 +266,10 @@
           gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.$verticesLength / 3);
         }
       }
-      
+
       obj.unsetState(program);
     },
-    
+
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
@@ -288,7 +286,7 @@
           }, {
             name: 'TEXTURE_MIN_FILTER',
             value: 'LINEAR',
-            generateMipmap: generateMipmap
+            generateMipmap: false
           }]
         },
         bindToRenderBuffer: true
@@ -296,7 +294,7 @@
       app.setFrameBuffer('$picking', false);
       this.pickingProgram = program;
     },
-    
+
     //returns an element at the given position
     pick: function(x, y, lazy) {
       //setup the picking program if this is
@@ -326,7 +324,7 @@
           target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
-          index = 0, 
+          index = 0,
           backgroundColor, capture, pindex;
 
       this.camera.target = target;
@@ -334,12 +332,12 @@
       //setup the scene for picking
       config.lights.enable = false;
       config.effects.fog = false;
-      
+
       //enable picking and render to texture
       app.setFrameBuffer('$picking', true);
       pickingProgram.use();
       pickingProgram.setUniform('enablePicking', true);
-      
+
       //render the scene to a texture
       gl.disable(gl.BLEND);
       gl.viewport(0, 0, resWidth, resHeight);
@@ -355,7 +353,7 @@
         o3dList: o3dList,
         hash: hash
       });
-     
+
       // the target point is in the center of the screen,
       // so it should be the center point.
       gl.readPixels(2, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -382,7 +380,7 @@
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
-      
+
       //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
@@ -391,7 +389,7 @@
       camera.target = oldtarget;
       camera.aspect = oldaspect;
       camera.update();
-      
+
       //store model hash and pixel array
       this.o3dHash = o3dHash;
       this.o3dList = o3dList;
@@ -443,10 +441,10 @@
         }
       });
     },
-    
+
     resetPicking: $.empty
   };
-  
+
   Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
   Scene.PICKING_RES = 4;

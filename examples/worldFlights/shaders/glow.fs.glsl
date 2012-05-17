@@ -2,9 +2,6 @@
 precision highp float;
 #endif
 
-#define BLUR_LIMIT 4 
-#define BLUR_LIMIT_SQ 64.0
-
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
 varying vec2 vTexCoord3;
@@ -19,21 +16,21 @@ uniform sampler2D sampler2;
 
 void main(void) {
   vec4 fragmentColor = vec4(0.0, 0.0, 0.0, 0.0);
+  vec2 blurSize = vec2(0.002, 0.002);
   float dx;
   float dy;
 
-  if (hasTexture1 && hasTexture2) {
-    //Add glow
-    for (int i = - BLUR_LIMIT; i < BLUR_LIMIT; i++) {
-      dx = float(i) / 512.0;
-      for (int j = - BLUR_LIMIT; j < BLUR_LIMIT; j++) {
-        dy = float(j) / 512.0;
-        fragmentColor += texture2D(sampler1, vec2(vTexCoord1.s + dx, vTexCoord1.t + dy)) / BLUR_LIMIT_SQ;
-      }
-    }
-    //Add real image
-    fragmentColor += texture2D(sampler2, vec2(vTexCoord1.s, vTexCoord1.t));
-  }
+  fragmentColor += texture2D(sampler1, vTexCoord1 - 4.0 * blurSize) * 0.05;
+  fragmentColor += texture2D(sampler1, vTexCoord1 - 3.0 * blurSize) * 0.09;
+  fragmentColor += texture2D(sampler1, vTexCoord1 - 2.0 * blurSize) * 0.12;
+  fragmentColor += texture2D(sampler1, vTexCoord1 - 1.0 * blurSize) * 0.15;
+  fragmentColor += texture2D(sampler1, vTexCoord1                 ) * 0.16;
+  fragmentColor += texture2D(sampler1, vTexCoord1 + 1.0 * blurSize) * 0.15;
+  fragmentColor += texture2D(sampler1, vTexCoord1 + 2.0 * blurSize) * 0.12;
+  fragmentColor += texture2D(sampler1, vTexCoord1 + 3.0 * blurSize) * 0.09;
+  fragmentColor += texture2D(sampler1, vTexCoord1 + 4.0 * blurSize) * 0.05;
+
+  fragmentColor += texture2D(sampler2, vec2(vTexCoord1.s, vTexCoord1.t));
   gl_FragColor = vec4(fragmentColor.rgb, 1.0);
 }
 
