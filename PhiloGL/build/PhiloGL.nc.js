@@ -194,7 +194,7 @@ PhiloGL.unpack = function(branch) {
 };
 
 //Version
-PhiloGL.version = '1.5.0';
+PhiloGL.version = '1.5.1';
 
 //Holds the 3D context, holds the application
 var gl, app, globalContext = this;
@@ -292,7 +292,7 @@ $.splat = (function() {
 (function () {
 
   var WebGL = {
-    
+
     getContext: function(canvas, opt) {
       var canvas = typeof canvas == 'string'? $(canvas) : canvas, ctx;
       ctx = canvas.getContext('experimental-webgl', opt);
@@ -339,10 +339,10 @@ $.splat = (function() {
       }
 
       return gl;
-    } 
+    }
 
   };
-   
+
   function Application(options) {
     //copy program, scene, camera, etc.
     for (var prop in options) {
@@ -366,7 +366,7 @@ $.splat = (function() {
     $$family: 'application',
 
     setBuffer: function(program, name, opt) {
-      //unbind buffer 
+      //unbind buffer
       if (opt === false || opt === null) {
         opt = this.bufferMemo[name];
         //reset buffer
@@ -382,7 +382,7 @@ $.splat = (function() {
         }
         return;
       }
-      
+
       //set defaults
       opt = $.extend(this.bufferMemo[name] || {
         bufferType: gl.ARRAY_BUFFER,
@@ -410,21 +410,21 @@ $.splat = (function() {
       if (!hasBuffer) {
         this.buffers[name] = buffer;
       }
-      
+
       if (isAttribute) {
         gl.enableVertexAttribArray(loc);
       }
 
       gl.bindBuffer(bufferType, buffer);
-      
+
       if (hasValue) {
         gl.bufferData(bufferType, value, drawType);
       }
-      
+
       if (isAttribute) {
         gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
       }
-      
+
       //set default options so we don't have to next time.
       //set them under the buffer name and attribute name (if an
       //attribute is defined)
@@ -465,7 +465,7 @@ $.splat = (function() {
           attachment: gl.DEPTH_ATTACHMENT
         }
       }, opt || {});
-      
+
       var bindToTexture = opt.bindToTexture,
           bindToRenderBuffer = opt.bindToRenderBuffer,
           hasBuffer = name in this.frameBuffers,
@@ -476,7 +476,7 @@ $.splat = (function() {
       if (!hasBuffer) {
         this.frameBuffers[name] = frameBuffer;
       }
-      
+
       if (bindToTexture) {
         var texBindOpt = $.merge({
               data: {
@@ -488,7 +488,7 @@ $.splat = (function() {
             texOpt = opt.textureOptions;
 
         this.setTexture(texName, texBindOpt);
-        
+
         gl.framebufferTexture2D(gl.FRAMEBUFFER, texOpt.attachment, this.textureMemo[texName].textureType, this.textures[texName], 0);
       }
 
@@ -499,7 +499,7 @@ $.splat = (function() {
             }, $.type(bindToRenderBuffer) == 'object'? bindToRenderBuffer : {}),
             rbName = name + '-renderbuffer',
             rbOpt = opt.renderBufferOptions;
-        
+
         this.setRenderBuffer(rbName, rbBindOpt);
 
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, rbOpt.attachment, gl.RENDERBUFFER, this.renderBuffers[rbName]);
@@ -539,7 +539,7 @@ $.splat = (function() {
       if (!hasBuffer) {
         this.renderBuffers[name] = renderBuffer;
       }
-      
+
       gl.bindRenderbuffer(gl.RENDERBUFFER, renderBuffer);
 
       gl.renderbufferStorage(gl.RENDERBUFFER, opt.storageType, opt.width, opt.height);
@@ -563,14 +563,14 @@ $.splat = (function() {
         gl.bindTexture(this.textureMemo[name].textureType || gl.TEXTURE_2D, this.textures[name]);
         return;
       }
-      
+
       if (opt.data && opt.data.type === gl.FLOAT) {
         // Enable floating-point texture.
         if (!gl.getExtension('OES_texture_float')) {
           throw 'OES_texture_float is not supported';
         }
       }
-      
+
       //get defaults
       opt = $.merge(this.textureMemo[name] || {
         textureType: gl.TEXTURE_2D,
@@ -592,7 +592,7 @@ $.splat = (function() {
           format: gl.RGBA,
           value: false,
           type: gl.UNSIGNED_BYTE,
-          
+
           width: 0,
           height: 0,
           border: 0
@@ -625,7 +625,7 @@ $.splat = (function() {
           gl.pixelStorei(opt.name, opt.value);
         });
       }
-      
+
       //load texture
       if (hasValue) {
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
@@ -638,7 +638,7 @@ $.splat = (function() {
         }
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
-        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null); 
+        gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null);
       }
       //set texture parameters
       if (!hasTexture) {
@@ -654,14 +654,14 @@ $.splat = (function() {
       }
       //remember whether the texture is a cubemap or not
       opt.isCube = isCube;
-      
+
       //set default options so we don't have to next time.
       if (hasValue) {
         opt.data.value = false;
       }
 
       this.textureMemo[name] = opt;
-      
+
       return this;
     },
 
@@ -681,7 +681,7 @@ $.splat = (function() {
   };
 
   WebGL.Application = Application;
- 
+
   //Feature test WebGL
   (function() {
     try {
@@ -697,7 +697,7 @@ $.splat = (function() {
   })();
 
   PhiloGL.WebGL = WebGL;
-  
+
 })();
 
 //math.js
@@ -4288,9 +4288,7 @@ $.splat = (function() {
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4,
-      //don't ask why, it just works
-      generateMipmap = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/));
+      Mat4 = PhiloGL.Mat4;
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -4309,7 +4307,7 @@ $.splat = (function() {
             x: 1,
             y: 1,
             z: 1
-          },  
+          },
           color: {
             r: 0,
             g: 0,
@@ -4324,7 +4322,7 @@ $.splat = (function() {
         // { near, far, color }
       }
     }, opt || {});
-    
+
     this.program = opt.program ? program[opt.program] : program;
     this.camera = camera;
     this.models = [];
@@ -4332,7 +4330,7 @@ $.splat = (function() {
   };
 
   Scene.prototype = {
-    
+
     add: function() {
       for (var i = 0, models = this.models, l = arguments.length; i < l; i++) {
         var model = arguments[i];
@@ -4413,10 +4411,10 @@ $.splat = (function() {
           pointColors = [],
           enableSpecular = [],
           pointSpecularColors = [];
-      
+
       //Normalize lighting direction vector
       dir = new Vec3(dir.x, dir.y, dir.z).$unit().$scale(-1);
-      
+
       //Set light uniforms. Ambient and directional lights.
       program.setUniform('enableLights', enable);
 
@@ -4425,7 +4423,7 @@ $.splat = (function() {
       program.setUniform('ambientColor', [ambient.r, ambient.g, ambient.b]);
       program.setUniform('directionalColor', [dcolor.r, dcolor.g, dcolor.b]);
       program.setUniform('lightingDirection', [dir.x, dir.y, dir.z]);
-      
+
       //Set point lights
       program.setUniform('numberPoints', numberPoints);
       for (var i = 0, l = numberPoints; i < l; i++) {
@@ -4433,10 +4431,10 @@ $.splat = (function() {
             position = point.position,
             color = point.color || point.diffuse,
             spec = point.specular;
-        
+
         pointLocations.push(position.x, position.y, position.z);
         pointColors.push(color.r, color.g, color.b);
-        
+
         //Add specular color
         enableSpecular.push(+!!spec);
         if (spec) {
@@ -4445,12 +4443,12 @@ $.splat = (function() {
           pointSpecularColors.push(0, 0, 0);
         }
       }
-      
+
       program.setUniforms({
         'pointLocation': pointLocations,
         'pointColor': pointColors
       });
-      
+
       program.setUniforms({
         'enableSpecular': enableSpecular,
         'pointSpecularColor': pointSpecularColors
@@ -4491,7 +4489,7 @@ $.splat = (function() {
       //If we're just using one program then
       //execute the beforeRender method once.
       !multiplePrograms && this.beforeRender(renderProgram || program);
-      
+
       //Go through each model and render it.
       for (var i = 0, models = this.models, l = models.length; i < l; ++i) {
         var elem = models[i];
@@ -4513,12 +4511,12 @@ $.splat = (function() {
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
           texMemo = app.textureMemo[name + '-texture'];
-      
+
       this.render(opt);
 
       gl.bindTexture(texMemo.textureType, texture);
-      gl.generateMipmap(texMemo.textureType);
-      gl.bindTexture(texMemo.textureType, null);
+      //gl.generateMipmap(texMemo.textureType);
+      //gl.bindTexture(texMemo.textureType, null);
     },
 
     renderObject: function(obj, program) {
@@ -4540,7 +4538,7 @@ $.splat = (function() {
         worldInverseTransposeMatrix: worldInverseTranspose
 //        worldViewProjection:  view.mulMat4(object).$mulMat4(view.mulMat4(projection))
       });
-      
+
       //Draw
       //TODO(nico): move this into O3D, but, somehow, abstract the gl.draw* methods inside that object.
       if (obj.render) {
@@ -4552,10 +4550,10 @@ $.splat = (function() {
           gl.drawArrays((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, 0, obj.$verticesLength / 3);
         }
       }
-      
+
       obj.unsetState(program);
     },
-    
+
     //setup picking framebuffer
     setupPicking: function() {
       //create picking program
@@ -4572,7 +4570,7 @@ $.splat = (function() {
           }, {
             name: 'TEXTURE_MIN_FILTER',
             value: 'LINEAR',
-            generateMipmap: generateMipmap
+            generateMipmap: false
           }]
         },
         bindToRenderBuffer: true
@@ -4580,7 +4578,7 @@ $.splat = (function() {
       app.setFrameBuffer('$picking', false);
       this.pickingProgram = program;
     },
-    
+
     //returns an element at the given position
     pick: function(x, y, lazy) {
       //setup the picking program if this is
@@ -4610,7 +4608,7 @@ $.splat = (function() {
           target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
-          index = 0, 
+          index = 0,
           backgroundColor, capture, pindex;
 
       this.camera.target = target;
@@ -4618,12 +4616,12 @@ $.splat = (function() {
       //setup the scene for picking
       config.lights.enable = false;
       config.effects.fog = false;
-      
+
       //enable picking and render to texture
       app.setFrameBuffer('$picking', true);
       pickingProgram.use();
       pickingProgram.setUniform('enablePicking', true);
-      
+
       //render the scene to a texture
       gl.disable(gl.BLEND);
       gl.viewport(0, 0, resWidth, resHeight);
@@ -4639,7 +4637,7 @@ $.splat = (function() {
         o3dList: o3dList,
         hash: hash
       });
-     
+
       // the target point is in the center of the screen,
       // so it should be the center point.
       gl.readPixels(2, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
@@ -4666,7 +4664,7 @@ $.splat = (function() {
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
-      
+
       //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
@@ -4675,7 +4673,7 @@ $.splat = (function() {
       camera.target = oldtarget;
       camera.aspect = oldaspect;
       camera.update();
-      
+
       //store model hash and pixel array
       this.o3dHash = o3dHash;
       this.o3dList = o3dList;
@@ -4727,10 +4725,10 @@ $.splat = (function() {
         }
       });
     },
-    
+
     resetPicking: $.empty
   };
-  
+
   Scene.MAX_TEXTURES = 10;
   Scene.MAX_POINT_LIGHTS = 50;
   Scene.PICKING_RES = 4;
@@ -5005,7 +5003,7 @@ $.splat = (function() {
     }), camera = new PhiloGL.Camera(45, 1, 0.1, 500, {
       position: { x: 0, y: 0, z: 1.205 }
     }), scene = new PhiloGL.Scene({}, camera);
-    
+
     return function(opt) {
       var program = app.program.$$family ? app.program : app.program[opt.program],
           textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
@@ -5038,11 +5036,11 @@ $.splat = (function() {
                 value: 'LINEAR'
               }, {
                 name: 'TEXTURE_MIN_FILTER',
-                value: 'LINEAR_MIPMAP_NEAREST',
+                value: 'LINEAR',
                 generateMipmap: false
               }]
             },
-            bindToRenderBuffer: true
+            bindToRenderBuffer: false
           });
         }
         program.use();
@@ -5052,8 +5050,8 @@ $.splat = (function() {
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
         app.setFrameBuffer(framebuffer, false);
-      } 
-      
+      }
+
       if (screen) {
         program.use();
         gl.viewport(0, 0, width, height);

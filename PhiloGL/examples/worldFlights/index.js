@@ -13,13 +13,12 @@ var $ = function(id) { return document.getElementById(id); },
       duration: 1000,
       transition: Fx.Transition.Expo.easeInOut
     }),
-    isFirefox = !!(navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox/)),
     airlineList, pos, tooltip;
 
 //Get handles when document is ready
 document.onreadystatechange = function() {
   if (document.readyState == 'complete' && PhiloGL.hasWebGL()) {
-    
+
     airlineList = $('airline-list');
     tooltip = $('tooltip');
 
@@ -44,15 +43,15 @@ document.onreadystatechange = function() {
         timer = clearTimeout(timer);
         var trimmed = this.value.trim();
         if (trimmed != previousText) {
-          timer = setTimeout(function() { 
-            search(trimmed.toLowerCase()); 
+          timer = setTimeout(function() {
+            search(trimmed.toLowerCase());
             previousText = trimmed;
           }, 100);
         }
       };
 
     })(), true);
-    
+
     //load dataset
     loadData();
   }
@@ -81,7 +80,7 @@ citiesWorker.onmessage = function(e) {
   } else {
     data.citiesIndex = modelInfo.citiesIndex;
     models.cities = new O3D.Model(Object.create(modelInfo, {
-      pickable: { 
+      pickable: {
         value: true
       },
       //Add a custom picking method
@@ -122,7 +121,7 @@ function loadData() {
       Log.write('Building models...');
     },
     onProgress: function(e) {
-      Log.write('Loading airports data, please wait...' + 
+      Log.write('Loading airports data, please wait...' +
                 (e.total ? Math.round(e.loaded / e.total * 1000) / 10 : ''));
     },
     onError: function() {
@@ -154,11 +153,11 @@ function loadData() {
         cosTheta = cos(theta);
         sinPhi = sin(phi);
         cosPhi = cos(phi);
-        
+
         airlinePos[airlineId] = [ cosTheta * sinPhi, cosPhi, sinTheta * sinPhi, phi, theta ];
 
-        html.push('<label for=\'checkbox-' + 
-                  airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' + 
+        html.push('<label for=\'checkbox-' +
+                  airlineId + '\'><input type=\'checkbox\' id=\'checkbox-' +
                       airlineId + '\' /> ' + airlineName + '</label>');
       }
 
@@ -166,7 +165,7 @@ function loadData() {
       airlineList.addEventListener('change', function(e) {
         var target = e.target,
             airlineId = target.id.split('-')[1];
-        
+
         function callback() {
           if (target.checked) {
             airlineMgr.add(airlineId);
@@ -193,11 +192,11 @@ function loadData() {
           }).send();
         }
       }, false);
-      
+
       //create right menu
       var rightMenu = new RightMenu(airlineList, airlineMgr);
       rightMenu.load('<li>' + html.join('</li><li>') + '</li>');
-    
+
     },
     onError: function() {
       Log.write('There was an error while fetching airlines data.', true);
@@ -216,7 +215,7 @@ function centerAirline(airlineId) {
       thetaPrev = geom.theta || (3 * Math.PI / 2),
       phiDiff = phi - phiPrev,
       thetaDiff = theta - thetaPrev;
-    
+
   geom.matEarth = earth.matrix.clone();
   geom.matCities = cities.matrix.clone();
 
@@ -240,13 +239,13 @@ function rotateXY(phi, theta) {
       xVec = [1, 0, 0],
       yVec = [0, 1, 0],
       yVec2 =[0, -1, 0];
-  
+
   earth.matrix = geom.matEarth.clone();
   cities.matrix = geom.matCities.clone();
-      
+
   var m1 = new Mat4(),
       m2 = new Mat4();
-  
+
   m1.$rotateAxis(phi, xVec);
   m2.$rotateAxis(phi, xVec);
 
@@ -255,7 +254,7 @@ function rotateXY(phi, theta) {
 
   var m3 = new Mat4(),
       m4 = new Mat4();
-  
+
   m3.$rotateAxis(theta, yVec2);
   m4.$rotateAxis(theta, yVec);
 
@@ -319,34 +318,33 @@ function createApp() {
           b: 0.4
         },
         points: {
-          diffuse: { 
-            r: 0.8, 
-            g: 0.8, 
-            b: 0.8 
+          diffuse: {
+            r: 0.8,
+            g: 0.8,
+            b: 0.8
           },
-          specular: { 
-            r: 0.9, 
-            g: 0.9, 
-            b: 0.9 
+          specular: {
+            r: 0.9,
+            g: 0.9,
+            b: 0.9
           },
-          position: { 
-            x: 2, 
-            y: 2, 
-            z: -4 
+          position: {
+            x: 2,
+            y: 2,
+            z: -4
           }
         }
       }
     },
     events: {
       picking: true,
-      lazyPicking: !isFirefox,
       centerOrigin: false,
       onDragStart: function(e) {
         pos = pos || {};
         pos.x = e.x;
         pos.y = e.y;
         pos.started = true;
-        
+
         geom.matEarth = models.earth.matrix.clone();
         geom.matCities = models.cities.matrix.clone();
       },
@@ -360,7 +358,7 @@ function createApp() {
             x = (e.x - pos.x) / 100;
 
         rotateXY(y, x);
-        
+
       },
       onDragEnd: function(e) {
         var y = -(e.y - pos.y) / 100,
@@ -370,12 +368,12 @@ function createApp() {
 
         newPhi = newPhi < 0 ? (Math.PI + newPhi) : newPhi;
         newTheta = newTheta < 0 ? (Math.PI * 2 + newTheta) : newTheta;
-        
+
         geom.phi = newPhi;
         geom.theta = newTheta;
-        
+
         pos.started = false;
-        
+
         this.scene.resetPicking();
       },
       onMouseWheel: function(e) {
@@ -387,13 +385,13 @@ function createApp() {
             speed = (1 - Math.abs((pz - from) / (to - from) * 2 - 1)) / 6 + 0.001;
 
         pos.z += e.wheel * speed;
-        
+
         if (pos.z > to) {
             pos.z = to;
         } else if (pos.z < from) {
             pos.z = from;
         }
-        
+
         clearTimeout(this.resetTimer);
         this.resetTimer = setTimeout(function(me) {
           me.scene.resetPicking();
@@ -450,18 +448,34 @@ function createApp() {
       gl.clearDepth(1);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
-      
+
       //create shadow, glow and image framebuffers
       app.setFrameBuffer('world', {
         width: 1024,
         height: 1024,
         bindToTexture: {
+          parameters : [ {
+            name : 'TEXTURE_MAG_FILTER',
+            value : 'LINEAR'
+          }, {
+            name : 'TEXTURE_MIN_FILTER',
+            value : 'LINEAR',
+            generateMipmap : false
+          } ]
         },
         bindToRenderBuffer: true
       }).setFrameBuffer('world2', {
         width: 1024,
         height: 1024,
         bindToTexture: {
+          parameters : [ {
+            name : 'TEXTURE_MAG_FILTER',
+            value : 'LINEAR'
+          }, {
+            name : 'TEXTURE_MIN_FILTER',
+            value : 'LINEAR',
+            generateMipmap : false
+          } ]
         },
         bindToRenderBuffer: true
       });
@@ -471,7 +485,7 @@ function createApp() {
                 models.cities);
 
       draw();
-      
+
       //Select first airline
       $$('#airline-list li input')[0].click();
       $('list-wrapper').style.display = '';
@@ -480,23 +494,21 @@ function createApp() {
       function draw() {
         // render to a texture
         gl.viewport(0, 0, 1024, 1024);
-        
-        app.setFrameBuffer('world', {});
-        app.setFrameBuffer('world', true);
+
         program.earth.use();
         program.earth.setUniform('renderType',  0);
+        app.setFrameBuffer('world', true);
         gl.clear(clearOpt);
         scene.renderToTexture('world');
         app.setFrameBuffer('world', false);
 
-        app.setFrameBuffer('world2', {});
-        app.setFrameBuffer('world2', true);
         program.earth.use();
         program.earth.setUniform('renderType',  -1);
+        app.setFrameBuffer('world2', true);
         gl.clear(clearOpt);
         scene.renderToTexture('world2');
         app.setFrameBuffer('world2', false);
-        
+
         Media.Image.postProcess({
           fromTexture: ['world-texture', 'world2-texture'],
           toScreen: true,
