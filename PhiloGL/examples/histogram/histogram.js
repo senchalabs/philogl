@@ -251,7 +251,7 @@
               key = getUserMediaKey[i];
               if (key in navigator) {
                 if (i > 0) {
-                  navigator[key]('video', videoHandler, errorHandler);
+                  navigator[key]({ video: true}, videoHandler, errorHandler);
                 } else {
                   navigator[key]({ video: true }, videoHandler2, errorHandler);
                 }
