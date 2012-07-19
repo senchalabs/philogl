@@ -6,7 +6,6 @@ precision highp float;
 
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
-varying vec2 vTexCoord3;
 varying vec4 vColor;
 varying vec4 vTransformedNormal;
 varying vec4 vPosition;
