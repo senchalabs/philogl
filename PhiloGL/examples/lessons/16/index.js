@@ -3,7 +3,7 @@ function webGLStart() {
 
   //unpack modules
   PhiloGL.unpack();
-  
+
   //create all models
   var models = {};
   //Create moon
@@ -34,7 +34,7 @@ function webGLStart() {
     }
   });
   models.box.scale.set(2, 2, 2);
-  
+
   //Load macbook
   models.macbookscreen = new O3D.Model({
     normals: [
@@ -132,7 +132,7 @@ function webGLStart() {
         alert("There was an error creating the app.");
       },
       onLoad: function(app) {
-        var screenWidth = 512, 
+        var screenWidth = 512,
             screenHeight = 512,
             screenRatio = 1.66,
             gl = app.gl,
@@ -174,19 +174,19 @@ function webGLStart() {
         program.setFrameBuffer('monitor', {
           width: screenWidth,
           height: screenHeight,
-          bindToTexture: {      
+          bindToTexture: {
             parameters: [{
               name: 'TEXTURE_MAG_FILTER',
               value: 'LINEAR'
             }, {
               name: 'TEXTURE_MIN_FILTER',
-              value: 'LINEAR_MIPMAP_NEAREST',
+              value: 'LINEAR',
               generateMipmap: false
             }]
           },
           bindToRenderBuffer: true
         });
-        
+
         //Basic gl setup
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
@@ -196,45 +196,45 @@ function webGLStart() {
         //Add objects to different scenes
         outerScene.add(macbook, macbookscreen);
         innerScene.add(moon, box);
-        
+
         outerCamera.update();
         innerCamera.update();
-      
+
         outerCamera.view.$translate(0, -0.5, 0);
-        
+
         function drawInnerScene() {
           program.setFrameBuffer('monitor', true);
-          
+
           gl.viewport(0, 0, screenWidth, screenHeight);
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-          
+
           theta += 0.01;
-          
+
           moon.position = {
             x: rho * Math.cos(theta),
             y: 0,
             z: rho * Math.sin(theta)
           };
           moon.update();
-          
+
           box.position = {
             x: rho * Math.cos(Math.PI + theta),
             y: 0,
             z: rho * Math.sin(Math.PI + theta)
           };
           box.update();
-          
+
           innerScene.renderToTexture('monitor');
-          
+
           program.setFrameBuffer('monitor', false);
         }
-              
+
         function drawOuterScene() {
           gl.viewport(0, 0, screenWidth, screenHeight);
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-          
+
           laptopTheta += 0.005;
-          
+
           macbook.rotation.set(-Math.PI /2, laptopTheta, 0);
           macbook.update();
 
@@ -249,7 +249,7 @@ function webGLStart() {
           drawOuterScene();
           PhiloGL.Fx.requestAnimationFrame(draw);
         }
-        
+
         //Animate
         draw();
       }
