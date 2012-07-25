@@ -1,13 +1,13 @@
 function webGLStart() {
   var $id = function(d) { return document.getElementById(d); };
-  
+
   //Get Model
   new PhiloGL.IO.XHR({
     url: 'Teapot.json',
     onSuccess: function(text) {
       var json = JSON.parse(text);
       json.colors = [1, 1, 1, 1];
-      json.textures = 'arroway.de_metal+structure+06_d100_flat.jpg';
+      json.textures = 'metal.jpg';
       var teapot = new PhiloGL.O3D.Model(json);
       animateObject(teapot);
     }
@@ -29,7 +29,7 @@ function webGLStart() {
         }
       },
       textures: {
-        src: ['arroway.de_metal+structure+06_d100_flat.jpg', 'earth.jpg'],
+        src: ['metal.jpg', 'earth.jpg'],
         parameters: [{
           name: 'TEXTURE_MAG_FILTER',
           value: 'LINEAR'
@@ -40,6 +40,7 @@ function webGLStart() {
         }]
       },
       onError: function() {
+        console.log(arguments);
         alert("There was an error creating the app.");
       },
       onLoad: function(app) {
@@ -62,11 +63,11 @@ function webGLStart() {
               x: $id('lightPositionX'),
               y: $id('lightPositionY'),
               z: $id('lightPositionZ'),
-            
+
               sr: $id('specularR'),
               sg: $id('specularG'),
               sb: $id('specularB'),
-              
+
               dr: $id('diffuseR'),
               dg: $id('diffuseG'),
               db: $id('diffuseB')
@@ -83,7 +84,7 @@ function webGLStart() {
         gl.viewport(0, 0, +canvas.width, +canvas.height);
         //Add objects to the scene
         scene.add(teapot);
-        
+
         //Animate
         draw();
 
@@ -125,16 +126,16 @@ function webGLStart() {
           if (texture.value == 'none') {
             delete teapot.textures;
           } else if (texture.value == 'galvanized') {
-            teapot.textures = ['arroway.de_metal+structure+06_d100_flat.jpg'];
+            teapot.textures = ['metal.jpg'];
           } else {
             teapot.textures = ['earth.jpg'];
           }
-         
+
           //Update position
           theta += 0.01;
           teapot.rotation.set(theta / 100, theta, 0);
           teapot.update();
-          
+
           //render objects
           scene.render();
 
@@ -143,7 +144,7 @@ function webGLStart() {
         }
       }
     });
-    
+
   }
 }
 
