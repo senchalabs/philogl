@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smoke</title>
+  <!--<link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>-->
+  <link rel="stylesheet" media="all" type="text/css" href="style.css"/>
+  <style type="text/css">
+    canvas {
+      background: black;
+    }
+  </style>
+
+  <script src="../../build/PhiloGL.js"></script>
+  <script src="CameraControl.js"></script>
+  <script src="SwapTexture.js"></script>
+  <script src="index.js"></script>
+
+</head>
+<body>
+<div id="container">
+  <div id="title">
+    <h1>Smoke Demo</h1>
+    <div class="description">
+      This example demonstrates the ability to calculate an simple physical model using GPU. As well as several
+      very common rendering features such as Fresnel reflection/refraction, geometric ray tracing and HDRI.
+    </div>
+  </div>
+
+  <canvas id="smoke" style="width:1024px;height:550px"></canvas>
+</div>
+
+<script>
+  if (!PhiloGL.hasWebGL()) {
+    document.body.className = 'no-webgl';
+    document.getElementById('fallback').innerHTML = ''
+        + '<div style="margin:10px;">'
+        + 'Your browser does not support WebGL. Try downloading <a href="http://google.com/chrome/">Google Chrome</a> to see the example.'
+        + '</div>'
+        + '<iframe title="YouTube video player" width="640" height="510" src="http://www.youtube.com/embed/NzDA2Rj3_uE" frameborder="0" allowfullscreen></iframe>';
+  }
+</script>
+</body>
+</html>
+
+
