@@ -2,18 +2,16 @@
 precision highp float;
 #endif
 
-uniform float RESOLUTIONX;
-uniform float RESOLUTIONY;
-uniform float RESOLUTIONZ;
-uniform sampler2D sampler1;
-uniform float seed;
-uniform float time;
+uniform float FIELD_RESO;
+uniform float seed, time;
 varying vec2 vTexCoord;
 #define PI 3.14159265359
 
-#include "3d.glsl"
 #include "rng.glsl"
 void main() {
-//  gl_FragColor = vec4(noise(vec3(x-0.5,y-0.5,z-0.5)) - 0.5, 1) ;
-  gl_FragColor = vec4 (0,0,0.5,0); //vec4(0,0,(dot(vec2(x,y),vec2(0.5)) - 0.2) * 100000.0,1);
+  float x = vTexCoord.x;
+  float y = floor(vTexCoord.y * FIELD_RESO) / FIELD_RESO;
+  float z = mod(vTexCoord.y * FIELD_RESO * FIELD_RESO, FIELD_RESO) / FIELD_RESO;
+  vec3 v = noise(vec3(x-0.5,y-0.5,z-0.5 + time)) - 0.5;
+  gl_FragColor = vec4(v,0);
 }

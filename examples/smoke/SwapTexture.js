@@ -59,12 +59,12 @@ SwapTexture.prototype = {
       textures.push(this.from[i] + '-texture');
     }
     PhiloGL.Media.Image.postProcess(
-      Utils.merge({
-        width: me.width,
-        height: me.height,
-        fromTexture: textures,
-        toFrameBuffer: this.to[idx || 0]
-      }, config)
+        Utils.merge({
+          width: me.width,
+          height: me.height,
+          fromTexture: textures,
+          toFrameBuffer: this.to[idx || 0]
+        }, config)
     );
     if (!noSwap) {
       me.swap();
@@ -72,8 +72,11 @@ SwapTexture.prototype = {
   },
   swap: function() {
     var me = this,
-      temp = me.from;
+        temp = me.from;
     me.from = me.to;
     me.to = temp;
+  },
+  getResult: function(i) {
+    return this.from[i || 0] + '-texture';
   }
 };

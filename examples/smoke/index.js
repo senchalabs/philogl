@@ -1,6 +1,6 @@
 PhiloGL.unpack();
 window.addEventListener('DOMContentLoaded', webGLStart, false);
-
+window.devicePixelRatio = 1;
 function webGLStart() {
   var width = 1024 * window.devicePixelRatio,
       height = 550 * window.devicePixelRatio,
@@ -19,7 +19,7 @@ function webGLStart() {
 
   window.addEventListener('resize', resize);
   resize();
-  
+
   PhiloGL('smoke', {
     events: {
 
@@ -97,13 +97,13 @@ function webGLStart() {
     camera: {
       position: {
         x: 1,
-        y: 4,
-        z: 1.5
+        y: 2,
+        z: 1.3
       },
       target: {
         x: 0,
         y: 0,
-        z: 0.5
+        z: 1
       },
       up: {
         x: 0,
@@ -129,7 +129,7 @@ function webGLStart() {
 
     onLoad: function(app) {
 
-      var RESOLUTION = 32, mult = 1; // times 64K particles
+      var RESOLUTION = 32, mult = 5, N = 5; // times 64K particles
       PhiloGL.unpack();
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
       var particleBuffers = [];
@@ -140,75 +140,67 @@ function webGLStart() {
       var camera = app.camera;
       cameraControl = new CameraControl(app.camera);
 
-      
+
+      // This initializes a non-compressible field
+
       velocityField.process({
         program: 'rand_source',
         uniforms: {
-          'RESOLUTIONX': RESOLUTION,
-          'RESOLUTIONY': RESOLUTION,
-          'RESOLUTIONZ': RESOLUTION
+          FIELD_RESO: RESOLUTION,
+          time: +new Date() % 3600000 / 1000,
+          mult: 1
         }
       });
 
       velocityField.process({
         program: 'curl',
         uniforms: {
-          'RESOLUTIONX': RESOLUTION,
-          'RESOLUTIONY': RESOLUTION,
-          'RESOLUTIONZ': RESOLUTION
+          FIELD_RESO: RESOLUTION
         }
       });
-      
+
       for (i = 0; i < mult; i++) {
         particleBuffers[i].process({
           program: 'init',
           uniforms: {
-            'RESOLUTIONX': RESOLUTION,
-            'RESOLUTIONY': RESOLUTION,
-            'RESOLUTIONZ': RESOLUTION,
+            FIELD_RESO: RESOLUTION,
+            multiple: mult,
+            curr: i,
             time: +new Date() % 1000 / 1000 + i / 10
           }
         });
       }
       var number = 256 * 256,
           idx = new Float32Array(number);
-      for (i = 0; i < number; i++)idx[i] = i;
+      for (i = 0; i < number; i++) {
+        idx[i] = i;
+      }
 
-      var plane = new O3D.Plane({
-        type: 'x,y',
-        xlen: 2,
-        ylen: 2,
-        nx: 2,
-        ny: 2,
-        offset: 0,
-        program: 'plain'
-      });
-      app.scene.add(plane);
-
-      var particleModels = [];
+      var particleModels = [], k = 0;
       for (i = 0; i < mult; i++) {
-        particleModels.push(new O3D.Model({
-          program: 'particles',
-          textures: [velocityField.from[0] + '-texture', particleBuffers[i].from[0] + '-texture', 'smoke'],
-          uniforms: {
-            'RESOLUTIONX': RESOLUTION,
-            'RESOLUTIONY': RESOLUTION,
-            'RESOLUTIONZ': RESOLUTION,
-            devicePixelRatio: window.devicePixelRatio
-          },
-          onBeforeRender: function(program, camera) {
-            program.setBuffer('indices', {
-              value: idx
-            });
-          },
+        (function(i) {
+          particleModels.push(new O3D.Model({
+            program: 'particles',
+            textures: [velocityField.getResult(), particleBuffers[i].getResult(), 'smoke'],
+            uniforms: {
+              FIELD_RESO: RESOLUTION,
+              devicePixelRatio: window.devicePixelRatio
+            },
+            onBeforeRender: function(program, camera) {
+              this.textures = [velocityField.getResult(), particleBuffers[i].getResult(), 'smoke'];
+              program.setBuffer('indices', {
+                value: idx
+              });
+            },
 
-          render: function() {
-            gl.depthMask(0);
-            gl.drawArrays(gl.POINTS, 0, number);
-            gl.depthMask(1);
-          }
-        }));
-        app.scene.add(particleModels[i]);
+            render: function() {
+              gl.depthMask(0);
+              gl.drawArrays(gl.POINTS, 0, number);
+              gl.depthMask(1);
+            }
+          }));
+          app.scene.add(particleModels[i]);
+        })(i);
       }
 
       var lastDate = +new Date();
@@ -217,19 +209,20 @@ function webGLStart() {
         var now = +new Date(),
             dt = now - lastDate;
         lastDate = now;
-        
-        for (i = 0; i < mult; i++)
-          particleBuffers[i].process({
-            program: 'move',
-            textures: [velocityField.from[0] + '-texture'],
-            uniforms: {
-              'RESOLUTIONX': RESOLUTION,
-              'RESOLUTIONY': RESOLUTION,
-              'RESOLUTIONZ': RESOLUTION,
-              time: +new Date() % 1000 / 1000,
-              dt: dt / 1000
-            }
-          });
+
+        for (i = 0; i < mult; i++) {
+          for (var j = 0; j < N; j++) {
+            particleBuffers[i].process({
+              program: 'move',
+              textures: [velocityField.getResult()],
+              uniforms: {
+                FIELD_RESO: RESOLUTION,
+                time: now % 1000 / 1000,
+                dt: dt / 1000 / N / (k + 100) * 100
+              }
+            });
+          }
+        }
 
       }
 
@@ -241,7 +234,7 @@ function webGLStart() {
         gl.clearDepth(2);
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        
+
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LESS);
         gl.enable(gl.BLEND);
@@ -250,9 +243,9 @@ function webGLStart() {
         gl.depthMask(1);
         setTimeout(function() {
           draw();
-        }, 15);
+        }, 1);
       }
-      
+
       draw();
     }
   });

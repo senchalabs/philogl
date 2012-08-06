@@ -1,49 +1,49 @@
-vec4 get(float x, float y, float z) {
-  if (x < 0. || x >= RESOLUTIONX || y < 0. || y >= RESOLUTIONY || z < 0. || z >= RESOLUTIONZ) {
-    return vec4(0);
+uniform float FIELD_RESO;
+float pixel = 1./ FIELD_RESO;
+
+vec3 get(sampler2D field, float x, float y, float z) {
+  if (x < 0. || x >= 1. || y < 0. || y >= 1. || z < 0. || z >= 1.) {
+    return vec3(0);
   }
-  return texture2D(sampler1, vec2(floor(x) / RESOLUTIONX, (floor(y) / RESOLUTIONZ + floor(z)) / RESOLUTIONY));
+  return texture2D(sampler1, vec2(floor(x * FIELD_RESO) / FIELD_RESO, (floor(y * FIELD_RESO) + floor(z * FIELD_RESO) / FIELD_RESO) / FIELD_RESO)).xyz;
 }
 
-vec4 getAA(float x, float y, float z) {
-  x -= 0.5;
-  y -= 0.5;
-  z -= 0.5;
+float interp(float x) {
+  return ((6. * x - 15.) * x + 10.) * x * x * x;
+}
+
+vec3 getAA(sampler2D field, float x, float y, float z) {
   return 
-  mix(mix(
-    mix(get(x,y,z), get(x + 1.,y,z), fract(x)),
-    mix(get(x,y+1.,z), get(x + 1.,y+1.,z), fract(x)),
-    fract(y)
-  ),
   mix(
-      mix(get(x,y,z+1.), get(x + 1.,y,z+1.), fract(x)),
-      mix(get(x,y+1.,z+1.), get(x + 1.,y+1.,z+1.), fract(x)),
-      fract(y)
-    ),
-  fract(z));
+    mix(
+      mix(get(field, x, y, z), get(field, x + pixel, y, z), interp(fract(x * FIELD_RESO))), 
+      mix(get(field, x, y + pixel, z), get(field, x + pixel, y + pixel, z), interp(fract(x * FIELD_RESO))), 
+      interp(fract(y * FIELD_RESO))
+    ), 
+    mix(
+      mix(get(field, x, y, z + pixel), get(field, x + pixel, y, z + pixel), interp(fract(x * FIELD_RESO))), 
+      mix(get(field, x, y + pixel, z + pixel), get(field, x + pixel, y + pixel, z + pixel), interp(fract(x * FIELD_RESO))), 
+      interp(fract(y * FIELD_RESO))
+    ), 
+    interp(fract(z * FIELD_RESO))
+  );
 }
 
-vec4 dx(float x, float y, float z) {
-  x *= RESOLUTIONX;
-  y *= RESOLUTIONY;
-  z *= RESOLUTIONZ;
-  return (getAA(x + 1., y, z) - getAA(x, y, z)) * RESOLUTIONX;
+vec3 getAA(sampler2D field, vec3 position){
+  float x = position.x - 0.5 / FIELD_RESO;
+  float y = position.y - 0.5 / FIELD_RESO;
+  float z = position.z - 0.5 / FIELD_RESO;
+  return getAA(field, x, y, z);
 }
 
-vec4 dy(float x, float y, float z) {
-  x *= RESOLUTIONX;
-  y *= RESOLUTIONY;
-  z *= RESOLUTIONZ;
-  return (getAA(x, y + 1., z) - getAA(x, y, z)) * RESOLUTIONY;
+vec3 dx(sampler2D field, float x, float y, float z) {
+  return (get(field,x + pixel, y, z) - get(field, x, y, z));
 }
 
-vec4 dz(float x, float y, float z) {
-  x *= RESOLUTIONX;
-  y *= RESOLUTIONY;
-  z *= RESOLUTIONZ;
-  return (getAA(x, y, z + 1.) - getAA(x, y, z)) * RESOLUTIONZ;
+vec3 dy(sampler2D field, float x, float y, float z) {
+  return (get(field,x, y + pixel, z) - get(field, x, y, z));
 }
 
-float x = vTexCoord.x;
-float y = fract(vTexCoord.y * RESOLUTIONY);
-float z = floor(vTexCoord.y * RESOLUTIONZ) / RESOLUTIONZ;
+vec3 dz(sampler2D field, float x, float y, float z) {
+  return (get(field,x, y, z + pixel) - get(field, x, y, z));
+}

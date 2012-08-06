@@ -10,8 +10,8 @@ varying vec2 vTexCoord;
 #include "rng.glsl"
 
 void main() {
-  gl_FragColor = vec4(1,1,1,0.02);
   gl_FragColor = texture2D(sampler3, gl_PointCoord);
   gl_FragColor.xyz = color;
-  gl_FragColor.a *= 0.1;
+  gl_FragColor.a *= 0.1 * max(0., 0.5 - length(gl_PointCoord - 0.5));
+  gl_FragColor.a *= 1./(0.5 + distance(position, vec3(0,0,1)));
 }

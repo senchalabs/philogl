@@ -2,18 +2,18 @@
 precision highp float;
 #endif
 
-
-uniform float RESOLUTIONX;
-uniform float RESOLUTIONY;
-uniform float RESOLUTIONZ;
 uniform sampler2D sampler1;
 varying vec2 vTexCoord;
 
 #include "3d.glsl"
   
 void main() {
-  vec4 Dx = dx(x,y,z);
-  vec4 Dy = dy(x,y,z);
-  vec4 Dz = dz(x,y,z);
-  gl_FragColor = vec4(Dy.z-Dz.y,Dz.x-Dx.z,Dx.y-Dy.x,1.);
+  float x = vTexCoord.x;
+  float y = floor(vTexCoord.y * FIELD_RESO) / FIELD_RESO;
+  float z = mod(vTexCoord.y * FIELD_RESO * FIELD_RESO, FIELD_RESO) / FIELD_RESO;
+
+  vec3 Dx = dx(sampler1,x,y,z);
+  vec3 Dy = dy(sampler1,x,y,z);
+  vec3 Dz = dz(sampler1,x,y,z);
+  gl_FragColor = vec4(Dy.z - Dz.y, Dz.x - Dx.z, Dx.y - Dy.x, 1.);
 }

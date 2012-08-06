@@ -2,9 +2,6 @@
 precision highp float;
 #endif
 
-uniform float RESOLUTIONX;
-uniform float RESOLUTIONY;
-uniform float RESOLUTIONZ;
 uniform sampler2D sampler1, sampler2;
 uniform float time, dt;
 varying vec2 vTexCoord;
@@ -13,12 +10,18 @@ varying vec2 vTexCoord;
 #include "rng.glsl"
 
 void main() {
-  vec3 pos = texture2D(sampler2, vTexCoord).xyz;
-  vec3 v = normalize(getAA(pos.x * RESOLUTIONX, pos.y * RESOLUTIONY, pos.z * RESOLUTIONZ).xyz);
-  v += (noise(pos + time + 3.)-0.5) * 0.05;
-  pos += v * dt * 0.5;
-  pos.x = clamp(pos.x, 0., 1.);
-  pos.y = clamp(pos.y, 0., 1.);
-  pos.z = clamp(pos.z, 0., 1.);
-  gl_FragColor = vec4(pos, 1);
+  vec3 position = texture2D(sampler2, vTexCoord).xyz;
+  vec3 v = getAA(sampler1, position);
+  v += (noise(position + time + 3.) - 0.5) * 0.005;
+  position += v * dt * 1.;
+  if (distance(position, vec3(0.5)) > 0.5) {
+    position = (position - 0.5)/ distance(position, vec3(0.5)) /10. + 0.5;
+  }
+//  position.x = mod(position.x, 1.);
+//  position.y = mod(position.y, 1.);
+//  position.z = mod(position.z, 1.);
+//  position.x = clamp(position.x, 0., 1.);
+//  position.y = clamp(position.y, 0., 1.);
+//  position.z = clamp(position.z, 0., 1.);
+  gl_FragColor = vec4(position, 1);
 }
