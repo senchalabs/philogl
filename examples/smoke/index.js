@@ -129,7 +129,7 @@ function webGLStart() {
 
     onLoad: function(app) {
 
-      var RESOLUTION = 32, mult = 5, N = 5; // times 64K particles
+      var RESOLUTION = 32, mult = 1, N = 5; // times 64K particles
       PhiloGL.unpack();
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
       var particleBuffers = [];
@@ -218,7 +218,7 @@ function webGLStart() {
               uniforms: {
                 FIELD_RESO: RESOLUTION,
                 time: now % 1000 / 1000,
-                dt: dt / 1000 / N / (k + 100) * 100
+                dt: dt / 1000 / N / (k * k + 100) * 100
               }
             });
           }
