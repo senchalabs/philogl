@@ -11,7 +11,6 @@ input.error {
 }
 
 #container {
-    width: 1024px;
     position: relative;
     margin: auto;
 }
@@ -58,9 +57,8 @@ td {
 
 .description {
     text-align: left;
-    width: 750px;
     font-size: 13px;
-    margin: 7px auto;
+    margin: 7px;
     padding: 7px 15px;
     border: 1px #333 solid;
     background: #cae5f4;
@@ -69,7 +67,6 @@ td {
 }
 
 canvas {
-    border: 1px solid #333;
     margin-top: 5px;
 }
 

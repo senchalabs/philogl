@@ -8,7 +8,7 @@ varying vec4 vNormal;
 
 uniform mat4 objectMatrix, viewMatrix, worldMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 viewProjectionMatrix;
+uniform mat4 viewProjectionMatrix, worldInverseTransposeMatrix;
 
 void main(void) {
   vTexCoord = texCoord1;
