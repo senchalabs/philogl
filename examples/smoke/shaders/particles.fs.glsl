@@ -12,7 +12,5 @@ varying vec2 vTexCoord;
 
 void main() {
   gl_FragColor = color;
-//  gl_FragColor.a = sqrt(sqrt(gl_FragColor.a));
-  gl_FragColor.a *= 0.1 * max(0., 0.5 - length(gl_PointCoord - 0.5));
-  gl_FragColor.a *= 4. / (0.5 + distance(position, vec3(0,0,1)));
+  gl_FragColor.a *= 1. * max(0., 0.5 - length(gl_PointCoord - 0.5));
 }

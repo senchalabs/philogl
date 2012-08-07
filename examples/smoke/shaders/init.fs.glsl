@@ -16,5 +16,5 @@ void main() {
   vec3 position = vec3(mod(idx / f / f, f) / f, mod(idx / f, f) / f, mod(idx, f) / f);
   gl_FragColor = vec4(
     normalize(position - 0.5) * 0.01 + 0.5, 
-  1. * noise(position).x);
+  cross(noise(position), position).x);
 }

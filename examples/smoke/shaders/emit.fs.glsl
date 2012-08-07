@@ -3,7 +3,7 @@ precision highp float;
 #endif
 
 uniform sampler2D sampler1, sampler2;
-uniform float time, dt;
+uniform float time, dt, curr;
 uniform vec3 center;
 varying vec2 vTexCoord;
 
@@ -15,10 +15,10 @@ void main() {
   vec3 position = samp.xyz;
   float life = samp.a;
   if (life < 0.) {
-    life = noise(position).x ;
-    position = center + normalize(noise(position)- 0.5) * 0.05;
+    life = noise(position + curr * 100.).x * 0.5 + .6;
+    position = center + normalize(noise(position+vec3(vTexCoord, 342. + curr)) - 0.5) * 0.04;
   } else {
-    life -= dt * 0.5;
+    life -= dt * 0.7;
   }
   gl_FragColor = vec4(position.xyz, life);
 }

@@ -8,5 +8,5 @@ varying vec2 vTexCoord;
 varying vec4 vNormal;
 
 void main(void) {
-  gl_FragColor = vec4(0.2 + 0.5 * vec3(dot(normalize(cameraPosition - vPosition.xyz),normalize(vNormal.xyz))),1);
+  gl_FragColor = vec4(0.8 + 0.3 * vec3(dot(normalize(cameraPosition - vPosition.xyz),normalize(vNormal.xyz))),1);
 }

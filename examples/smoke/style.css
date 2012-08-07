@@ -12,7 +12,8 @@ input.error {
 
 #container {
     position: relative;
-    margin: auto;
+    margin: 0 auto;
+    display: inline-block;
 }
 
 h1 {
@@ -30,6 +31,7 @@ td {
 
 .title {
     text-align: center;
+    display: inline-block;
 }
 
 .controls {
@@ -56,7 +58,7 @@ td {
 }
 
 .description {
-    text-align: left;
+    text-align: center;
     font-size: 13px;
     margin: 7px;
     padding: 7px 15px;
