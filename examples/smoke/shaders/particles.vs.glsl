@@ -5,9 +5,9 @@ varying float depth;
 varying vec3 position;
 varying float idx;
 
-uniform sampler2D sampler1, sampler2, sampler3;
+uniform sampler2D sampler1, sampler2, sampler3, sampler4;
 
-uniform float multiple, near, far;
+uniform float multiple, near, far, platform;
 uniform vec3 cameraPosition;
 uniform mat4 objectMatrix, viewMatrix, worldMatrix;
 uniform mat4 projectionMatrix;

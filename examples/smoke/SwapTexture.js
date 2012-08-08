@@ -3,8 +3,8 @@ function SwapTexture(app, config, count) {
   config = config || {};
   var me = this;
   config = Utils.merge({
-    width: 512,
-    height: 512,
+    width: config.width,
+    height: config.height,
     bindToTexture: {
       pixelStore: [],
       parameters: [

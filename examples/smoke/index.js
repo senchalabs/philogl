@@ -74,6 +74,13 @@ function webGLStart() {
         noCache: true
       },
       {
+        id: 'copy',
+        from: 'uris',
+        vs: 'shaders/plain.vs.glsl',
+        fs: 'shaders/copy.fs.glsl',
+        noCache: true
+      },
+      {
         id: 'emit',
         from: 'uris',
         vs: 'shaders/plain.vs.glsl',
@@ -145,7 +152,8 @@ function webGLStart() {
 
     onLoad: function(app) {
 
-      var RESOLUTION = 32, SHADOW_RESO = 64, mult = 2, N = 1;
+      var RESOLUTION = 32, SHADOW_RESO = 128, mult = 2, N = 1;
+      var light = new PhiloGL.Vec3(.5, .75, 1.5);
       PhiloGL.unpack();
       gl = app.gl;
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
@@ -201,12 +209,12 @@ function webGLStart() {
           parameters: [
             {
               name: gl.TEXTURE_MAG_FILTER,
-              value: gl.NEAREST
+              value: gl.NEAREST_MIPMAP_NEAREST
             },
             {
               name: gl.TEXTURE_MIN_FILTER,
-              value: gl.NEAREST,
-              generateMipmap: false
+              value: gl.NEAREST_MIPMAP_NEAREST,
+              generateMipmap: true
             },
             {
               name: gl.TEXTURE_WRAP_S,
@@ -217,13 +225,16 @@ function webGLStart() {
               value: gl.CLAMP_TO_EDGE
             }
           ],
+          attachment: gl.COLOR_ATTACHMENT0,
           data: {
             type: gl.FLOAT,
             width: SHADOW_RESO,
             height: SHADOW_RESO
           }
         },
-        bindToRenderBuffer: false
+        bindToRenderBuffer: {
+          attachment: gl.DEPTH_ATTACHMENT
+        }
       });
 
       var plane = new PhiloGL.O3D.Plane({
@@ -232,14 +243,28 @@ function webGLStart() {
         ylen: 3,
         nx: 2,
         ny: 2,
-        offset: -1.3,
+        offset: -1,
         program: 'plane',
         textures: ['shadow-on-plane-texture'],
+        uniforms: {
+          lightPosition: light
+        },
         flipCull: true
       });
       app.scene.add(plane);
 
-      
+      var sphere = new PhiloGL.O3D.Sphere({
+        nlat: 30,
+        nlong: 30,
+        radius: 0.02,
+        program: 'sphere'
+      });
+      app.scene.add(sphere);
+      sphere.position.x = light.x;
+      sphere.position.y = light.y;
+      sphere.position.z = light.z;
+      sphere.update();
+
       var particleModel = new PhiloGL.O3D.Model({
         program: 'particles',
         textures: [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke'],
@@ -310,45 +335,38 @@ function webGLStart() {
 
       }
 
-      var shadowCamera = new PhiloGL.Camera(45, 1, 0.5, 4, {
-        position: {
-          x: 0.5, y: 0.5, z: 4
-        },
-        target: {
-          x: 0, y: 0, z: -1.3
-        },
-        up: {
-          x: 0, y: 0, z: 1
-        }});
-
-      shadowCamera.update();
-
-
       function updateShadow() {
         var program = app.program.shadow,
             framebuffer = 'shadow-on-plane';
 
-        app.setFrameBuffer(framebuffer, true);
         program.use();
+        app.setFrameBuffer(framebuffer, true);
         program.setBuffer('indices', { value: idx });
-        gl.viewport(0, 0, width, height);
+        program.setUniform('platform', -1);
+        program.setUniform('lightPosition', [light.x, light.y, light.z]);
+        gl.viewport(0, 0, SHADOW_RESO, SHADOW_RESO);
         gl.clearColor(1, 1, 1, 0);
         gl.clearDepth(1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        shadowCamera.setStatus(program);
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.depthMask(0);
         for (var j = 0; j < mult; j++) {
           program.setTexture(particleBuffers[j].getResult(), gl.TEXTURE0);
           gl.drawArrays(gl.POINTS, 0, number);
         }
-
+        gl.depthMask(1);
+        program.setBuffer('indices', false);
         app.setFrameBuffer(framebuffer, false);
       }
 
       function draw() {
         updateParticles();
         updateShadow();
-        gl.clearColor(.2, .2, .2, 0);
-        gl.clearDepth(1);
+
+        gl.clearColor(.2, .2, .24, 0);
+        gl.clearDepth(2);
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -358,7 +376,6 @@ function webGLStart() {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         gl.depthMask(1);
-
         app.scene.render();
         setTimeout(function() {
           draw();
