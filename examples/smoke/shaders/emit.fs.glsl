@@ -16,7 +16,7 @@ void main() {
   float life = samp.a;
   if (life < 0.) {
     life = noise(position + curr * 100.).x * 0.5 + .6;
-    position = center + normalize(noise(position+vec3(vTexCoord, 342. + curr)) - 0.5) * 0.04;
+    position = center + normalize(noise(position+vec3(vTexCoord, 342. + curr)) - 0.5) * 0.05;
   } else {
     life -= dt * 0.7;
   }

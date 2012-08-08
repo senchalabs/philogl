@@ -2,7 +2,6 @@ function SwapTexture(app, config, count) {
   count = count || 1;
   config = config || {};
   var me = this;
-  gl.supports_OES_texture_float = !!gl.getExtension('OES_texture_float');
   config = Utils.merge({
     width: 512,
     height: 512,
@@ -16,7 +15,7 @@ function SwapTexture(app, config, count) {
         {
           name: gl.TEXTURE_MIN_FILTER,
           value: gl.NEAREST,
-          generateMipmap: true
+          generateMipmap: false
         },
         {
           name: gl.TEXTURE_WRAP_S,
@@ -28,7 +27,7 @@ function SwapTexture(app, config, count) {
         }
       ],
       data: {
-        type: gl.supports_OES_texture_float ? gl.FLOAT : gl.UNSIGNED_BYTE
+        type: gl.FLOAT
       }
     },
     bindToRenderBuffer: false

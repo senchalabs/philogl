@@ -145,7 +145,7 @@ function webGLStart() {
 
     onLoad: function(app) {
 
-      var RESOLUTION = 64, mult = 3, N = 2;
+      var RESOLUTION = 32, mult = 1, N = 2;
       PhiloGL.unpack();
       gl = app.gl;
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
@@ -169,6 +169,7 @@ function webGLStart() {
             }
           });
 
+      
       // This initializes a incompressible field
       velocityField.process({
         program: 'rand_source',
@@ -236,7 +237,7 @@ function webGLStart() {
 
             render: function(gl, program, camera) {
               gl.depthMask(0);
-              var K = 10;
+              var K = 128;
               for (var i = K - 1; i >= 0; i--) {
                 program.setUniforms({near: i / K, far: (i + 1) / K});
                 gl.drawArrays(gl.POINTS, 0, number);
@@ -247,7 +248,6 @@ function webGLStart() {
           app.scene.add(particleModels[i]);
         })(i);
       }
-
 
       var lastDate = +new Date(),
           startTime = lastDate;
@@ -288,10 +288,14 @@ function webGLStart() {
         }
 
       }
+      
+      function updateShadow () {
+        
+      }
 
       function draw() {
         updateParticles();
-
+        updateShadow();
         gl.clearColor(.2, .2, .2, 0);
         gl.clearDepth(1);
         gl.viewport(0, 0, width, height);

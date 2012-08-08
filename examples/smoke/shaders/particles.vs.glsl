@@ -22,7 +22,7 @@ void main(void) {
   vec4 samp = texture2D(sampler2, vec2(mod(indices, 256.0) / 256.0, floor(indices / 256.0) /256.0));
   position = samp.xyz;
   float life = samp.w;
-  color = vec4(3.2, 1.1, 0.9, 1);// mix(vec3(0,0,.01),vec3(3,3,1.8), smoothstep(0.1, 0.2, life));
+  color = vec4(1,1,1.1,1);
   color.xyz *= smoothstep(0., 0.9, life);
   position.x = position.x * 2. - 1.;
   position.y = position.y * 2. - 1.;
@@ -30,12 +30,12 @@ void main(void) {
   vPosition = vec4(position, 1);
   gl_Position = projectionMatrix * worldMatrix * vPosition;
   float alpha = 1. - pow((1. - life), .5);
-  gl_PointSize = devicePixelRatio * 20. / (gl_Position.z + 1.) / (alpha * 0.2 + 0.8); 
+  gl_PointSize = devicePixelRatio * 40. / (gl_Position.z + 1.) / (alpha * 0.2 + 0.8); 
   depth = (gl_Position.z  - 2.)/ 5.;
   if (depth < near || far <= depth) {
     gl_PointSize = 0.;
     color = vec4(0.);
   }
-  color.a *= alpha;
+  color.a *= alpha * alpha;
   vTexCoord = vec2(0);
 }
