@@ -148,11 +148,6 @@ function webGLStart() {
       }
     },
 
-    textures: {
-      src: ['smoke.png'],
-      id: ['smoke']
-    },
-
     onError: function(e) {
       alert(e);
     },
@@ -279,7 +274,7 @@ function webGLStart() {
 
       var particleModel = new PhiloGL.O3D.Model({
         program: 'particles',
-        textures: [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke', 'shadowMap-texture'],
+        textures: [velocityField.getResult(), particleBuffers[0].getResult(), 'shadowMap-texture'],
         uniforms: {
           FIELD_RESO: RESOLUTION,
           devicePixelRatio: window.devicePixelRatio,
@@ -288,7 +283,7 @@ function webGLStart() {
         },
 
         onBeforeRender: function(program, camera) {
-          this.textures = [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke', 'shadowMap-texture'];
+          this.textures = [velocityField.getResult(), particleBuffers[0].getResult(), 'shadowMap-texture'];
           program.setBuffer('indices', { value: idx });
         },
 

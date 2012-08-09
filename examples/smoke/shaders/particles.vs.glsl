@@ -5,7 +5,7 @@ varying float depth;
 varying vec3 position;
 varying float idx;
 
-uniform sampler2D sampler1, sampler2, sampler3, sampler4;
+uniform sampler2D sampler1, sampler2, sampler3;
 
 uniform float multiple, near, far, platform;
 uniform vec3 cameraPosition, lightPosition;
@@ -25,7 +25,7 @@ void main(void) {
   
   float ratio = (1. - lightPosition.z) / (position.z - lightPosition.z);
   vec3 shadowPosition = mix(lightPosition, position, ratio);
-  vec4 shadowSamp = texture2D(sampler4, (shadowPosition.xy + 1.5) / 3.);
+  vec4 shadowSamp = texture2D(sampler3, (shadowPosition.xy + 1.5) / 3.);
   
 //  vec3 vel = getAA(sampler1, position) + 1.;
   float life = samp.w;
