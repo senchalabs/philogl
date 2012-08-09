@@ -154,8 +154,8 @@ function webGLStart() {
 
     onLoad: function(app) {
 
-      var RESOLUTION = 32, SHADOW_RESO = 128, mult = 2, N = 1;
-      var light = new PhiloGL.Vec3(.5, .75, 1.25);
+      var RESOLUTION = 32, SHADOW_RESO = 512, mult = 2, N = 1;
+      var light = new PhiloGL.Vec3(.5, .75, 1.2);
       PhiloGL.unpack();
       gl = app.gl;
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
@@ -211,12 +211,11 @@ function webGLStart() {
           parameters: [
             {
               name: gl.TEXTURE_MAG_FILTER,
-              value: gl.NEAREST_MIPMAP_NEAREST
+              value: gl.LINEAR
             },
             {
               name: gl.TEXTURE_MIN_FILTER,
-              value: gl.NEAREST_MIPMAP_NEAREST,
-              generateMipmap: true
+              value: gl.LINEAR
             },
             {
               name: gl.TEXTURE_WRAP_S,
@@ -387,6 +386,7 @@ function webGLStart() {
         program.setBuffer('indices', false);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
+        gl.bindTexture(gl.TEXTURE_2D, null);
       }
 
       function draw() {
@@ -398,22 +398,12 @@ function webGLStart() {
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        if (true) {
-          gl.enable(gl.DEPTH_TEST);
-          gl.depthFunc(gl.LESS);
-          gl.enable(gl.BLEND);
-          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-          gl.depthMask(1);
-          app.scene.render();
-        } else {
-          Media.Image.postProcess({
-            width: SHADOW_RESO,
-            height: SHADOW_RESO,
-            program: 'copy',
-            fromTexture: ['shadowMap-texture'],
-            toScreen: true
-          });
-        }
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LESS);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.depthMask(1);
+        app.scene.render();
 
         setTimeout(function() {
           draw();
