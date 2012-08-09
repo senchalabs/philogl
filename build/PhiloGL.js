@@ -2970,6 +2970,25 @@ $.splat = (function() {
         this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, this.near, this.far);
       }
       this.view.lookAt(this.position, this.target, this.up);  
+    },
+
+    //Set Camera view and projection matrix
+    setStatus: function (program) {
+      var camera = this,
+          pos = camera.position,
+          view = camera.view,
+          projection = camera.projection,
+          viewProjection = view.mulMat4(projection),
+          viewProjectionInverse = viewProjection.invert();
+
+      program.setUniforms({
+        cameraPosition: [pos.x, pos.y, pos.z],
+        projectionMatrix: projection,
+        viewMatrix: view,
+        viewProjectionMatrix: viewProjection,
+        viewInverseMatrix: view.invert(),
+        viewProjectionInverseMatrix: viewProjectionInverse
+      }); 
     }
   
   };
@@ -4285,7 +4304,7 @@ $.splat = (function() {
 //scene.js
 //Scene Object management and rendering
 
-(function () {
+(function() {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
       Mat4 = PhiloGL.Mat4;
@@ -4375,22 +4394,9 @@ $.splat = (function() {
       //Setup lighting and scene effects like fog, etc.
       this.setupLighting(program);
       this.setupEffects(program);
-      //Set Camera view and projection matrix
-      var camera = this.camera,
-          pos = camera.position,
-          view = camera.view,
-          projection = camera.projection,
-          viewProjection = view.mulMat4(projection),
-          viewProjectionInverse = viewProjection.invert();
-
-      program.setUniforms({
-        cameraPosition: [pos.x, pos.y, pos.z],
-        projectionMatrix: projection,
-        viewMatrix: view,
-        viewProjectionMatrix: viewProjection,
-        viewInverseMatrix: view.invert(),
-        viewProjectionInverseMatrix: viewProjectionInverse
-      });
+      if (this.camera) {
+        this.camera.setStatus(program);
+      }
     },
 
     //Setup the lighting system: ambient, directional, point lights.
