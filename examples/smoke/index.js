@@ -109,6 +109,13 @@ function webGLStart() {
         noCache: true
       },
       {
+        id: 'shadowMap',
+        from: 'uris',
+        vs: 'shaders/shadow.vs.glsl',
+        fs: 'shaders/shadowMap.fs.glsl',
+        noCache: true
+      },
+      {
         id: 'particles',
         from: 'uris',
         vs: 'shaders/particles.vs.glsl',
@@ -153,7 +160,7 @@ function webGLStart() {
     onLoad: function(app) {
 
       var RESOLUTION = 32, SHADOW_RESO = 128, mult = 2, N = 1;
-      var light = new PhiloGL.Vec3(.5, .75, 1.5);
+      var light = new PhiloGL.Vec3(.5, .75, 1.25);
       PhiloGL.unpack();
       gl = app.gl;
       var velocityField = new SwapTexture(app, {width: RESOLUTION, height: RESOLUTION * RESOLUTION});
@@ -201,7 +208,7 @@ function webGLStart() {
         idx[i] = i;
       }
 
-      app.setFrameBuffer('shadow-on-plane', {
+      var shadowConfig = {
         width: SHADOW_RESO,
         height: SHADOW_RESO,
         bindToTexture: {
@@ -235,7 +242,12 @@ function webGLStart() {
         bindToRenderBuffer: {
           attachment: gl.DEPTH_ATTACHMENT
         }
-      });
+      };
+
+      app.setFrameBuffer('softShadow', shadowConfig);
+      shadowConfig.bindToTexture.parameters[0].value = gl.NEAREST;
+      shadowConfig.bindToTexture.parameters[1].value = gl.NEAREST;
+      app.setFrameBuffer('shadowMap', shadowConfig);
 
       var plane = new PhiloGL.O3D.Plane({
         type: 'x,y',
@@ -245,9 +257,9 @@ function webGLStart() {
         ny: 2,
         offset: -1,
         program: 'plane',
-        textures: ['shadow-on-plane-texture'],
+        textures: ['softShadow-texture'],
         uniforms: {
-          lightPosition: light
+          lightPosition: [light.x, light.y, light.z]
         },
         flipCull: true
       });
@@ -267,15 +279,16 @@ function webGLStart() {
 
       var particleModel = new PhiloGL.O3D.Model({
         program: 'particles',
-        textures: [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke'],
+        textures: [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke', 'shadowMap-texture'],
         uniforms: {
           FIELD_RESO: RESOLUTION,
           devicePixelRatio: window.devicePixelRatio,
+          lightPosition: [light.x, light.y, light.z],
           multiple: mult
         },
 
         onBeforeRender: function(program, camera) {
-          this.textures = [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke'];
+          this.textures = [velocityField.getResult(), particleBuffers[0].getResult(), 'smoke', 'shadowMap-texture'];
           program.setBuffer('indices', { value: idx });
         },
 
@@ -302,7 +315,7 @@ function webGLStart() {
         var now = +new Date(),
             dt = now - lastDate,
             phase = (now - startTime) / 3000 * Math.PI,
-            center = [0.5 + Math.sin(phase) * 0.4, 0.5 + Math.sin(phase * 2.32) * 0.4, 0.5 + Math.sin(phase * 1.2523) * 0.4];
+            center = [0.5 + Math.sin(phase) * 0.4, 0.5 + Math.sin(phase * 2.32) * 0.4, 0.3 + Math.sin(phase * 1.2523) * 0.25];
         lastDate = now;
 
         gl.disable(gl.BLEND);
@@ -336,29 +349,49 @@ function webGLStart() {
       }
 
       function updateShadow() {
-        var program = app.program.shadow,
-            framebuffer = 'shadow-on-plane';
+        var program = app.program.shadow;
 
         program.use();
-        app.setFrameBuffer(framebuffer, true);
         program.setBuffer('indices', { value: idx });
         program.setUniform('platform', -1);
+        program.setUniform('SHADOW_RESO', SHADOW_RESO);
         program.setUniform('lightPosition', [light.x, light.y, light.z]);
+
+        app.setFrameBuffer('softShadow', true);
         gl.viewport(0, 0, SHADOW_RESO, SHADOW_RESO);
         gl.clearColor(1, 1, 1, 0);
         gl.clearDepth(1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.enable(gl.DEPTH_TEST);
+        gl.disable(gl.DEPTH_TEST);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.depthMask(0);
-        for (var j = 0; j < mult; j++) {
-          program.setTexture(particleBuffers[j].getResult(), gl.TEXTURE0);
-          gl.drawArrays(gl.POINTS, 0, number);
-        }
+        program.setTexture(particleBuffers[0].getResult(), gl.TEXTURE0);
+        gl.drawArrays(gl.POINTS, 0, number);
+
         gl.depthMask(1);
+        app.setFrameBuffer('softShadow', false);
+        program = app.program.shadowMap;
+        program.use();
+        program.setBuffer('indices', { value: idx });
+        program.setUniform('platform', 1);
+        program.setUniform('SHADOW_RESO', SHADOW_RESO / 100);
+        program.setUniform('lightPosition', [light.x, light.y, light.z]);
+        app.setFrameBuffer('shadowMap', true);
+        gl.viewport(0, 0, SHADOW_RESO, SHADOW_RESO);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clearDepth(1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.BLEND);
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ONE, gl.ZERO);
+        program.setTexture(particleBuffers[0].getResult(), gl.TEXTURE0);
+        gl.drawArrays(gl.POINTS, 0, number);
+        app.setFrameBuffer('shadowMap', false);
         program.setBuffer('indices', false);
-        app.setFrameBuffer(framebuffer, false);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
       }
 
       function draw() {
@@ -366,17 +399,27 @@ function webGLStart() {
         updateShadow();
 
         gl.clearColor(.2, .2, .24, 0);
-        gl.clearDepth(2);
+        gl.clearDepth(1);
         gl.viewport(0, 0, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LESS);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        if (true) {
+          gl.enable(gl.DEPTH_TEST);
+          gl.depthFunc(gl.LESS);
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+          gl.depthMask(1);
+          app.scene.render();
+        } else {
+          Media.Image.postProcess({
+            width: SHADOW_RESO,
+            height: SHADOW_RESO,
+            program: 'copy',
+            fromTexture: ['shadowMap-texture'],
+            toScreen: true
+          });
+        }
 
-        gl.depthMask(1);
-        app.scene.render();
         setTimeout(function() {
           draw();
         }, 15);
