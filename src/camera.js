@@ -50,6 +50,25 @@
         this.projection = new Mat4().ortho(xmin, xmax, ymin, ymax, this.near, this.far);
       }
       this.view.lookAt(this.position, this.target, this.up);  
+    },
+
+    //Set Camera view and projection matrix
+    setStatus: function (program) {
+      var camera = this,
+          pos = camera.position,
+          view = camera.view,
+          projection = camera.projection,
+          viewProjection = view.mulMat4(projection),
+          viewProjectionInverse = viewProjection.invert();
+
+      program.setUniforms({
+        cameraPosition: [pos.x, pos.y, pos.z],
+        projectionMatrix: projection,
+        viewMatrix: view,
+        viewProjectionMatrix: viewProjection,
+        viewInverseMatrix: view.invert(),
+        viewProjectionInverseMatrix: viewProjectionInverse
+      }); 
     }
   
   };
