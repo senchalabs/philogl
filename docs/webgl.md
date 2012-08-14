@@ -1,5 +1,5 @@
---- 
-layout: docs 
+---
+layout: docs
 title: WebGL
 categories: [Documentation]
 ---
@@ -7,13 +7,15 @@ categories: [Documentation]
 Module: WebGL {#WebGL}
 ===============================
 
-Provides the `getContext` method which is a wrapper around the method that returns the native context for a 3D canvas. Also 
-has the code to add `PhiloGL.hasWebGL()` that returns a *boolean* whether the current browser supports WebGL or not.
+Provides the `getContext` method which is a wrapper around the method that returns the native context for a 3D canvas. Also
+has the code to add `PhiloGL.hasWebGL()` that returns a *boolean* whether the current browser supports WebGL or not. Also provides
+`PhiloGL.hasExtension( name )` which returns if some WebGL extensions
+are provided by the browser.
 
 WebGL Function: getContext {#WebGL:getContext}
 ------------------------------------------------
 
-Returns a WebGL context. Tries to get the context via `experimental-webgl` or just plain `webgl` if the first one fails. 
+Returns a WebGL context. Tries to get the context via `experimental-webgl` or just plain `webgl` if the first one fails.
 
 ### Syntax:
 
@@ -37,7 +39,7 @@ buffers, textures and other things. Some of these methods can also be
 found in the [Program](program.md) class, but in this case these aren't bound to any
 particular program. A WebGL Application is created via the
 [PhiloGL](core.html) constructor function and returned on the `onLoad`
-callback. The application carries all the state regardless of the number of programs and other buffers defined via 
+callback. The application carries all the state regardless of the number of programs and other buffers defined via
 the WebGL Application or any other [Program](program.html) instance. This
 design facilitates multiple program state and management.
 
@@ -61,7 +63,7 @@ A program instance has multiple public properties.
 WebGL.Application Method: setBuffer {#WebGL:Application:setBuffer}
 -------------------------------------------------------------------
 
-This method is useful to set properties (and data) to a buffer and/or attributes. If the buffer does not exist it will be created. 
+This method is useful to set properties (and data) to a buffer and/or attributes. If the buffer does not exist it will be created.
 Also, for all properties set to a buffer, these properties are remembered so they're optional for later calls.
 
 ### Syntax:
@@ -75,7 +77,7 @@ Also, for all properties set to a buffer, these properties are remembered so the
 
 ### Options:
 
-* attribute - (*string*, optional) The name of the attribute to generate attribute calls to. If this parameter is not specified then the attribute name will 
+* attribute - (*string*, optional) The name of the attribute to generate attribute calls to. If this parameter is not specified then the attribute name will
 be the buffer name.
 * bufferType - (*enum*, optional) The type of the buffer. Possible options are `gl.ELEMENT_ARRAY_BUFFER`, `gl.ARRAY_BUFFER`. Default's `gl.ARRAY_BUFFER`.
 * size - (*numer*, optional) The size of the components in the buffer. Default's 1.
@@ -86,7 +88,7 @@ be the buffer name.
 
 ### Examples:
 
-Set buffer values for the vertices of a triangle. 
+Set buffer values for the vertices of a triangle.
 The context of this example can be seen [here](http://philogb.github.com/philogl/PhiloGL/examples/lessons/1/).
 
 {% highlight js %}
@@ -113,7 +115,7 @@ For each `key, value` of the object passed in it executes `setBuffer(key, value)
 
 ### Examples:
 
-Set buffer values for the vertices of a triangle and a square. 
+Set buffer values for the vertices of a triangle and a square.
 The context of this example can be seen [here](http://philogb.github.com/philogl/PhiloGL/examples/lessons/1/).
 
 {% highlight js %}
@@ -123,7 +125,7 @@ app.setBuffers({
     value: new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0]),
     size: 3
   },
-  
+
   'square': {
     attribute: 'aVertexPosition',
     value: new Float32Array([1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0]),
@@ -136,8 +138,8 @@ app.setBuffers({
 WebGL.Application Method: setFrameBuffer {#WebGL:Application:setFrameBuffer}
 -----------------------------------------------------------------------------
 
-Creates or binds/unbinds a framebuffer. You can also use this method to bind the framebuffer to a texture and renderbuffers. If the 
-framebuffer already exists then calling `setFrameBuffer` with `true` or `false` as options will bind/unbind the framebuffer. 
+Creates or binds/unbinds a framebuffer. You can also use this method to bind the framebuffer to a texture and renderbuffers. If the
+framebuffer already exists then calling `setFrameBuffer` with `true` or `false` as options will bind/unbind the framebuffer.
 Also, for all properties set to a buffer, these properties are remembered so they're optional for later calls.
 
 ### Syntax:
@@ -153,7 +155,7 @@ Also, for all properties set to a buffer, these properties are remembered so the
 
 * width - (*number*) The width of the framebuffer. Default's 0.
 * height - (*number*) The height of the framebuffer. Default's 0.
-* bindToTexture - (*mixed*, optional) Whether to bind the framebuffer onto a texture. If false the framebuffer wont be bound to a texture. Else you should provide an object 
+* bindToTexture - (*mixed*, optional) Whether to bind the framebuffer onto a texture. If false the framebuffer wont be bound to a texture. Else you should provide an object
 with the same options as in `setTexture`.
 * textureOptions - (*object*, optional) Some extra options for binding the framebuffer to the texture. Default's `{ attachment: gl.COLOR_ATTACHMENT0 }`.
 * bindToRenderBuffer - (*boolean*) Whether to bind the framebuffer to a renderbuffer. The `width` and `height` of the renderbuffer are the same as the ones specified above.
@@ -168,7 +170,7 @@ Using a frambuffer to render a scene into a texture. Taken from [lesson 16](http
 app.setFrameBuffer('monitor', {
   width: screenWidth,
   height: screenHeight,
-  bindToTexture: {      
+  bindToTexture: {
     parameters: [{
       name: 'TEXTURE_MAG_FILTER',
       value: 'LINEAR'
@@ -236,7 +238,7 @@ For each `key, value` of the object passed in it executes `setRenderBuffer(key, 
 WebGL.Application Method: setTexture {#WebGL:Application:setTexture}
 ---------------------------------------------------------------------
 
-This method is used to either bind/unbind an existing texture or also to create a new texture form an `Image` element or 
+This method is used to either bind/unbind an existing texture or also to create a new texture form an `Image` element or
 to create an empty texture with specified dimensions. Also, for all properties set to a texture, these properties are remembered so they're optional for later calls.
 
 ### Syntax:
@@ -251,14 +253,14 @@ to create an empty texture with specified dimensions. Also, for all properties s
 ### Options:
 
 * textureType - (*enum*, optional) The texture type used to call `gl.bindTexture` with. Default's `gl.TEXTURE_2D`.
-* pixelStore - (*array*, optional) An array of objects with name, value options to be set with `gl.pixelStorei` calls. 
+* pixelStore - (*array*, optional) An array of objects with name, value options to be set with `gl.pixelStorei` calls.
 Default's `[{ name: gl.UNPACK_FLIP_Y_WEBGL, value: true }]`.
-* parameters - (*array*, optional) An array of objects with nane, value options to be set with `gl.texParameteri`. 
+* parameters - (*array*, optional) An array of objects with nane, value options to be set with `gl.texParameteri`.
 Default's `[{ name: gl.TEXTURE_MAG_FILTER, value: gl.NEAREST }, { name: gl.TEXTURE_MIN_FILTER, value: gl.NEAREST }]`.
 * data - (*object*, optional) An object with properties described below:
   * format - (*enum*, optional) The format used for `gl.texImage2D` calls. Default's `gl.RGBA`.
   * type - (*enum*, optional) The texture pixel component type used for `gl.texImage2D` calls. Default's `gl.UNSIGNED_BYTE`. Needs `'OES_texture_float'` extension to use `gl.FLOAT`. The extension will be enabled automatically.
-  * value - (*object*, optional) If set to an `Image` object then this image will be used to fill the texture. Default's false. If no image is set then we might want to 
+  * value - (*object*, optional) If set to an `Image` object then this image will be used to fill the texture. Default's false. If no image is set then we might want to
 set the width and height of the texture.
   * width - (*number*, optional) The width of the texture. Default's 0.
   * height - (*number*, optional) The height of the texture. Default's 0.

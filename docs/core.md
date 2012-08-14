@@ -1,5 +1,5 @@
---- 
-layout: docs 
+---
+layout: docs
 title: Core
 categories: [Documentation]
 ---
@@ -7,7 +7,7 @@ categories: [Documentation]
 Script: Core {#Core}
 ===========================
 
-Provides the global `PhiloGL` function to create WebGL applications, the static `PhiloGL.hasWebGL()` method to detect if the browser is WebGL capable 
+Provides the global `PhiloGL` function to create WebGL applications, the static `PhiloGL.hasWebGL()` method to detect if the browser is WebGL capable
 and the static `PhiloGL.unpack()` method for unpacking modules into the global namespace.
 
 
@@ -21,11 +21,26 @@ Returns true or false whether the browser supports WebGL or not.
 	PhiloGL.hasWebGL();
 
 
+PhiloGL Static Method: hasExtension {#PhiloGL:hasExtension}
+-----------------------------------------------------------
+
+Returns true or false whether the browser supports a given WebGL
+extension or not.
+
+### Syntax:
+
+	PhiloGL.hasExtension(name);
+
+### Arguments:
+
+1. name  - (*string*) The name of the extension. For example `OES_texture_float`. More info [here](http://www.khronos.org/registry/webgl/extensions/).
+
+
 PhiloGL Static Method: unpack {#PhiloGL:unpack}
 -------------------------------------------------
 
-Unpacks [Vec3](math.html), [Mat4](math.html), [Quat](math.html), [Camera](camera.html), [Program](program.html), [WebGL](webgl.html), [O3D](o3d.html), 
-[Scene](scene.html), [Shaders](shaders.html), [IO](io.html), [Events](event.html), [WorkerGroup](workers.html), [Fx](fx.html) 
+Unpacks [Vec3](math.html), [Mat4](math.html), [Quat](math.html), [Camera](camera.html), [Program](program.html), [WebGL](webgl.html), [O3D](o3d.html),
+[Scene](scene.html), [Shaders](shaders.html), [IO](io.html), [Events](event.html), [WorkerGroup](workers.html), [Fx](fx.html)
 modules and classes so they can be accessed by the global scope and not through PhiloGL.*moduleName*.
 
 ### Syntax:
@@ -36,8 +51,8 @@ modules and classes so they can be accessed by the global scope and not through 
 PhiloGL Method: constructor {#PhiloGL:constructor}
 ----------------------------------------------------
 
-Creates a [PhiloGL application](webgl.html#WebGL:Application). The PhiloGL application provides a [WebGL](webgl.html) context, 
-a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), and also options for handling [Events](event.html), 
+Creates a [PhiloGL application](webgl.html#WebGL:Application). The PhiloGL application provides a [WebGL](webgl.html) context,
+a [Program](program.html), a [Camera](camera.html), a [Scene](scene.html), and also options for handling [Events](event.html),
 loading textures via [IO](io.html) and more. For more information about
 the application you may take a look at the [App](webgl.html#WebGL:Application) class. This
 section describes the configuration options you can pass in to create
@@ -94,7 +109,7 @@ the WebGL application.
       * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
       * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
     * effects - (*object*, optional) An object with scene effect options.
-      
+
       * fog - (*object*, optional) An object with linear fog options explained below.
         * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
         * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
@@ -144,8 +159,8 @@ the WebGL application.
 #### Loading callbacks:
 
 * onError - (*function*, optional) A callback for when the app creation goes wrong. The first parameter might be an object with the error description.
-* onLoad - (*function*) A function called when the application is successfully created. An [app instance](webgl.html#WebGL:Application) is created if the context is loaded, the program is compiled 
-and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly 
+* onLoad - (*function*) A function called when the application is successfully created. An [app instance](webgl.html#WebGL:Application) is created if the context is loaded, the program is compiled
+and linked correctly, the scene object is created correctly, the events are appended correctly to the canvas element, all textures and images are correctly
 loaded and set and the camera is created. The first parameter of the callback function is an [app instance](webgl.html#WebGL:Application) that has as some of the properties:
   * gl - (*object*) The WebGL context.
   * camera - (*object*) The [Camera](camera.html) instance.
@@ -158,7 +173,7 @@ instances as values.
 
 ### Examples:
 
-Creates an application from two shader files, sets some camera properties and loads two images as textures. 
+Creates an application from two shader files, sets some camera properties and loads two images as textures.
 Taken from LearningWebGL [lesson 14](http://philogb.github.com/philogl/PhiloGL/examples/lessons/14/).
 
 {% highlight js %}
@@ -196,7 +211,7 @@ Taken from LearningWebGL [lesson 14](http://philogb.github.com/philogl/PhiloGL/e
 
 {% endhighlight %}
 
-Creates an application with a moon texture and sets events to apply drag and drop to the moon object as well as to zoom in and out. 
+Creates an application with a moon texture and sets events to apply drag and drop to the moon object as well as to zoom in and out.
 Taken from LearningWebGL [lesson 11](http://philogb.github.com/philogl/PhiloGL/examples/lessons/11/).
 
 {% highlight js %}
