@@ -343,11 +343,20 @@
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
-            gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
+            if ((data.width || data.height) && (!value.width && !value.height)) {
+              gl.texImage2D(textureTarget[i], 0, format, data.width, data.height, data.border, format, type, value[i]);
+            } else {
+              gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
+            }
           }
         } else {
-          gl.texImage2D(textureTarget, 0, format, format, type, value);
+          if ((data.width || data.height) && (!value.width && !value.height)) {
+            gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, value);
+          } else {
+            gl.texImage2D(textureTarget, 0, format, format, type, value);
+          }
         }
+
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
         gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null);
