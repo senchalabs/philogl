@@ -189,7 +189,7 @@ IO Class: IO.JSONP {#IO:JSONP}
 
 The JSONP class provides an API for loading remote data asynchronously via an http request. Instead of using the `XMLHttpRequest` object JSONP creates a `script` 
 document that is appended to the head tag of the HTML page. This technique enables the user to query a different domain for JSON data. More information about this 
-technique can be found [here](http://en.wikipedia.org/wiki/JSON#JSONP).
+technique can be found [here](http://en.wikipedia.org/wiki/JSONP).
 
 IO.JSONP Method: constructor {#IO:JSONP:constructor}
 -------------------------------------------------

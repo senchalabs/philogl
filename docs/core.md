@@ -117,7 +117,7 @@ the WebGL application.
 
 #### Texture management:
 
-* textures - (*object*, optional) An object to load textures with the [IO](io.html) module. See also [Program.setTexture](). The object has as properties:
+* textures - (*object*, optional) An object to load textures with the [IO](io.html) module. See also [Program.setTexture](program.html#Program:setTexture). The object has as properties:
   * src - (*array*) An array of strings containing the path of the images to be loaded.
   * textureType - (*string*, optional) The type of the texture. Default's `TEXTURE_2D`.
   * pixelStore - (*array*, optional) An array of name, value objects to define how pixels are stored into the texture. Defualt's `[ { name: 'UNPACK_FLIP_Y_WEBGL', value: true }]`.
@@ -127,7 +127,7 @@ the WebGL application.
     * value - (*ImageElement*, optional) An image element (if any) to paste into the texture.
     * width - (*number*, optional) The width of the texture. Used when no image is provided. Default's 0.
     * height - (*number*, optional) The height of the texture. Used when no image is provided. Default's 0.
-    * border - (*number*, optional) The borde of the texture. Default's 0.
+    * border - (*number*, optional) The border of the texture. Default's 0.
 
 #### Event handling:
 
