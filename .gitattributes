@@ -12,6 +12,7 @@ examples/groups export-ignore
 examples/histogram export-ignore
 examples/hoc export-ignore
 examples/mapProjections export-ignore
+examples/smoke export-ignore
 examples/metaballs export-ignore
 examples/quasicrystal export-ignore
 examples/quaternion export-ignore
