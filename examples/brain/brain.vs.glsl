@@ -1,4 +1,4 @@
-    #define LIGHT_MAX 40
+    #define LIGHT_MAX 4
     //object attributes
     attribute vec3 position;
     attribute vec3 normal;
@@ -35,7 +35,7 @@
     void main(void) {
       vec4 mvPosition = worldMatrix * vec4(position, 1.0);
       vec4 transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
-      //lighting code 
+      //lighting code
       if(!enableLights) {
         lightWeighting = vec3(1.0, 1.0, 1.0);
       } else {
@@ -60,4 +60,4 @@
       vNormal = transformedNormal;
       gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
     }
-  
+

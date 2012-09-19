@@ -587,6 +587,12 @@ $.splat = (function() {
         }, {
           name: gl.TEXTURE_MIN_FILTER,
           value: gl.NEAREST
+        }, {
+          name: gl.TEXTURE_WRAP_S,
+          value: gl.CLAMP_TO_EDGE
+        }, {
+          name: gl.TEXTURE_WRAP_T,
+          value: gl.CLAMP_TO_EDGE
         }],
         data: {
           format: gl.RGBA,
@@ -631,11 +637,20 @@ $.splat = (function() {
         //beware that we can be loading multiple textures (i.e. it could be a cubemap)
         if (isCube) {
           for (var i = 0; i < 6; ++i) {
-            gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
+            if ((data.width || data.height) && (!value.width && !value.height)) {
+              gl.texImage2D(textureTarget[i], 0, format, data.width, data.height, data.border, format, type, value[i]);
+            } else {
+              gl.texImage2D(textureTarget[i], 0, format, format, type, value[i]);
+            }
           }
         } else {
-          gl.texImage2D(textureTarget, 0, format, format, type, value);
+          if ((data.width || data.height) && (!value.width && !value.height)) {
+            gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, value);
+          } else {
+            gl.texImage2D(textureTarget, 0, format, format, type, value);
+          }
         }
+
       //we're setting a texture to a framebuffer
       } else if (data.width || data.height) {
         gl.texImage2D(textureTarget, 0, format, data.width, data.height, data.border, format, type, null);
@@ -684,8 +699,8 @@ $.splat = (function() {
 
   //Feature test WebGL
   (function() {
+    var canvas = document.createElement('canvas');
     try {
-      var canvas = document.createElement('canvas');
       PhiloGL.hasWebGL = function() {
           return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
       };
@@ -694,6 +709,10 @@ $.splat = (function() {
           return false;
       };
     }
+    PhiloGL.hasExtension = function(name) {
+      if (!PhiloGL.hasWebGL()) return false;
+      return (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')).getExtension(name);
+    };
   })();
 
   PhiloGL.WebGL = WebGL;
@@ -4154,7 +4173,7 @@ $.splat = (function() {
       FragmentShaders = Shaders.Fragment;
 
   VertexShaders.Default = [
-    "#define LIGHT_MAX 40",
+    "#define LIGHT_MAX 4",
     //object attributes
     "attribute vec3 position;",
     "attribute vec3 normal;",
@@ -4194,7 +4213,7 @@ $.splat = (function() {
     "void main(void) {",
       "vec4 mvPosition = worldMatrix * vec4(position, 1.0);",
       "vec4 transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);",
-      //lighting code 
+      //lighting code
       "if(!enableLights) {",
         "lightWeighting = vec3(1.0, 1.0, 1.0);",
       "} else {",
@@ -4225,7 +4244,7 @@ $.splat = (function() {
       "vNormal = transformedNormal;",
       "gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);",
     "}"
-  
+
   ].join("\n");
 
 
@@ -4298,7 +4317,7 @@ $.splat = (function() {
   ].join("\n");
 
   PhiloGL.Shaders = Shaders;
-  
+
 })();
 
 //scene.js
@@ -4736,7 +4755,7 @@ $.splat = (function() {
   };
 
   Scene.MAX_TEXTURES = 10;
-  Scene.MAX_POINT_LIGHTS = 50;
+  Scene.MAX_POINT_LIGHTS = 4;
   Scene.PICKING_RES = 4;
 
   PhiloGL.Scene = Scene;

@@ -433,7 +433,7 @@
   };
 
   Scene.MAX_TEXTURES = 10;
-  Scene.MAX_POINT_LIGHTS = 50;
+  Scene.MAX_POINT_LIGHTS = 4;
   Scene.PICKING_RES = 4;
 
   PhiloGL.Scene = Scene;

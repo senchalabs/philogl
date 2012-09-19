@@ -1,27 +1,27 @@
---- 
-layout: docs 
-title: Shaders 
+---
+layout: docs
+title: Shaders
 categories: [Documentation]
 ---
 
 Object: Shaders {#Shaders}
 ===============================
 
-An object that contains default shaders that could be used with the [Scene](scene.html) class. Only one vertex shader and one fragment 
-shader are shipped in this object. This is so because we encourage having shaders in separate files and access them in 
-an asynchronous way by using `Program.fromShaderURIs` and other methods available in the Framework. You can set shader strings 
-into `Shaders.Vertex` and `Shaders.Fragment`. We provide a default vertex and fragment shader in `Shaders.Vertex.Default` and 
+An object that contains default shaders that could be used with the [Scene](scene.html) class. Only one vertex shader and one fragment
+shader are shipped in this object. This is so because we encourage having shaders in separate files and access them in
+an asynchronous way by using `Program.fromShaderURIs` and other methods available in the Framework. You can set shader strings
+into `Shaders.Vertex` and `Shaders.Fragment`. We provide a default vertex and fragment shader in `Shaders.Vertex.Default` and
 `Shaders.Fragment.Default`. These shaders can also be conveniently used with `Program.fromDefaultShaders(vertexShaderName, fragmentShaderName)`.
 
 
 Shaders Object: Vertex {#Shaders:Vertex}
 --------------------------------------
 
-Append in this object vertex shaders to be used with a [Scene](scene.html). We provide `Shaders.Vertex.Default` which is the 
-default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/philogl/tree/master/shaders). 
+Append in this object vertex shaders to be used with a [Scene](scene.html). We provide `Shaders.Vertex.Default` which is the
+default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/philogl/tree/master/shaders).
 In order to get familiar with the attributes and uniforms used by the [Scene](scene.html) we provide the default vertex shader code:
 
-    #define LIGHT_MAX 40
+    #define LIGHT_MAX 4
     //object attributes
     attribute vec3 position;
     attribute vec3 normal;
@@ -61,7 +61,7 @@ In order to get familiar with the attributes and uniforms used by the [Scene](sc
     void main(void) {
       vec4 mvPosition = worldMatrix * vec4(position, 1.0);
       vec4 transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
-      //lighting code 
+      //lighting code
       if(!enableLights) {
         lightWeighting = vec3(1.0, 1.0, 1.0);
       } else {
@@ -106,8 +106,8 @@ See the example on how to extend the fragment shader object below.
 Shaders Object: Fragment {#Shaders:Fragment}
 -----------------------------------------
 
-Append in this object fragment shaders to be used with a [Scene](scene.html). We provide `Shaders.Fragment.Default` which is the 
-default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/philogl/tree/master/shaders). 
+Append in this object fragment shaders to be used with a [Scene](scene.html). We provide `Shaders.Fragment.Default` which is the
+default shader used in the library. You can find more scene compatible shaders [here](https://github.com/philogb/philogl/tree/master/shaders).
 In order to get familiar with the attributes and uniforms used by the [Scene](scene.html) we provide the default fragment shader code:
 
     #ifdef GL_ES
@@ -189,23 +189,23 @@ PhiloGL.Shaders.Fragment.Blend = [
     "#ifdef GL_ES",
     "precision highp float;",
     "#endif",
-    
+
     "varying vec4 vColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
-    
+
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
     "uniform float alpha;",
 
     "void main(){",
-      
+
       "if (hasTexture1) {",
-      
+
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, alpha);",
 
       "}",
-    
+
     "}"
 
 ].join("\n");

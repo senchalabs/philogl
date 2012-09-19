@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-#define LIGHT_MAX 50
+#define LIGHT_MAX 4
 
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
@@ -41,18 +41,18 @@ void main(void) {
   float diffuseLightWeighting = 0.0;
   vec3  specularLight = vec3(0.0, 0.0, 0.0);
   vec3  diffuseLight = vec3(0.0, 0.0, 0.0);
-  
+
   vec3 transformedPointLocation;
   vec3 normal = vTransformedNormal.xyz;
-  
+
   vec3 eyeDirection = normalize(-vPosition.xyz);
   vec3 reflectionDirection;
-  
+
   for (int i = 0; i < LIGHT_MAX; i++) {
     if (i < numberPoints) {
       transformedPointLocation = (viewMatrix * vec4(pointLocation[i], 1.0)).xyz;
       lightDirection = normalize(transformedPointLocation - vPosition.xyz);
-      
+
       if (enableSpecularHighlights) {
         reflectionDirection = reflect(-lightDirection, normal);
         specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
@@ -65,7 +65,7 @@ void main(void) {
         break;
     }
   }
-  
+
   vec3 matAmbientColor = materialAmbientColor;
   vec3 matDiffuseColor = materialDiffuseColor;
   vec3 matSpecularColor = materialSpecularColor;

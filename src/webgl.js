@@ -299,6 +299,12 @@
         }, {
           name: gl.TEXTURE_MIN_FILTER,
           value: gl.NEAREST
+        }, {
+          name: gl.TEXTURE_WRAP_S,
+          value: gl.CLAMP_TO_EDGE
+        }, {
+          name: gl.TEXTURE_WRAP_T,
+          value: gl.CLAMP_TO_EDGE
         }],
         data: {
           format: gl.RGBA,

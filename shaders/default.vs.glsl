@@ -1,4 +1,4 @@
-#define LIGHT_MAX 50
+#define LIGHT_MAX 4
 
 attribute vec3 position;
 attribute vec3 normal;
@@ -25,7 +25,7 @@ varying vec3 lightWeighting;
 
 void main(void) {
   vec4 mvPosition = worldMatrix * vec4(position, 1.0);
-  
+
   if(!enableLights) {
     lightWeighting = vec3(1.0, 1.0, 1.0);
   } else {
@@ -44,7 +44,7 @@ void main(void) {
 
     lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
   }
-  
+
   vColor = color;
   vTexCoord = texCoord1;
   gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
