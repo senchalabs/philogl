@@ -10,7 +10,7 @@ function initControls(options) {
       buttonChange = $1('button.pattern-change'),
       buttonSave = $1('button.pattern-save');
 
-  initCodeEditor(buttonChange, buttonSave);
+  //initCodeEditor(buttonChange, buttonSave);
 
   currentGroup.addEventListener('change', function() {
     options.currentGroupIndex = this.selectedIndex;
@@ -28,18 +28,18 @@ function initControls(options) {
   aura.addEventListener('change', function() {
     options.radialFactor = +this.value;
   }, false);
-  
+
   offset.addEventListener('change', function() {
     options.offset = +this.value;
   }, false);
-  
+
   hyperbole.addEventListener('change', function() {
     options.hyperbole = +this.value;
   }, false);
 
   //set first group description
   setGroupDescription(options.currentGroupIndex);
-  
+
   function setGroupDescription(index) {
     var node = descriptionContainer.firstChild;
     if (node) {
@@ -72,6 +72,6 @@ function initCodeEditor(buttonChange) {
   // style.display = 'none';
 
   buttonChange.addEventListener('click', function() {
-    
+
   }, false);
 }
