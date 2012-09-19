@@ -253,10 +253,32 @@ to create an empty texture with specified dimensions. Also, for all properties s
 ### Options:
 
 * textureType - (*enum*, optional) The texture type used to call `gl.bindTexture` with. Default's `gl.TEXTURE_2D`.
-* pixelStore - (*array*, optional) An array of objects with name, value options to be set with `gl.pixelStorei` calls.
-Default's `[{ name: gl.UNPACK_FLIP_Y_WEBGL, value: true }]`.
-* parameters - (*array*, optional) An array of objects with nane, value options to be set with `gl.texParameteri`.
-Default's `[{ name: gl.TEXTURE_MAG_FILTER, value: gl.NEAREST }, { name: gl.TEXTURE_MIN_FILTER, value: gl.NEAREST }]`.
+* pixelStore - (*array*, optional) An array of objects with name, value options to be set with `gl.pixelStorei` calls. Default's
+
+        pixelStore: [{
+          name: gl.UNPACK_FLIP_Y_WEBGL,
+          value: true
+        }, {
+          name: gl.UNPACK_ALIGNMENT,
+          value: 1
+        }]
+
+* parameters - (*array*, optional) An array of objects with nane, value options to be set with `gl.texParameteri`. Default's
+
+        parameters: [{
+          name: gl.TEXTURE_MAG_FILTER,
+          value: gl.NEAREST
+        }, {
+          name: gl.TEXTURE_MIN_FILTER,
+          value: gl.NEAREST
+        }, {
+          name: gl.TEXTURE_WRAP_S,
+          value: gl.CLAMP_TO_EDGE
+        }, {
+          name: gl.TEXTURE_WRAP_T,
+          value: gl.CLAMP_TO_EDGE
+        }]
+
 * data - (*object*, optional) An object with properties described below:
   * format - (*enum*, optional) The format used for `gl.texImage2D` calls. Default's `gl.RGBA`.
   * type - (*enum*, optional) The texture pixel component type used for `gl.texImage2D` calls. Default's `gl.UNSIGNED_BYTE`. Needs `'OES_texture_float'` extension to use `gl.FLOAT`. The extension will be enabled automatically.
