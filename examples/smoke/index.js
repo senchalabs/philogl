@@ -1,6 +1,14 @@
 PhiloGL.unpack();
 window.addEventListener('DOMContentLoaded', webGLStart, false);
 function webGLStart() {
+
+  if (!PhiloGL.hasWebGL() || !PhiloGL.hasExtension('OES_texture_float')) {
+    alert('Your browser does not support floating point textures');
+    return;
+  }
+
+  window.devicePixelRatio = window.devicePixelRatio || 1;
+
   var width = 1024 * window.devicePixelRatio,
       height = 550 * window.devicePixelRatio,
       i, ln, gl,
