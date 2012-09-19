@@ -59,10 +59,10 @@ void main(void) {
   if (abs(data.x - 8.) < DELTA) {
     vAngle = -1.;
   } else {
-    if (angleFrom > angleTo 
+    if (angleFrom > angleTo
      && angleFrom - angleTo > PI2 + angleTo - angleFrom) {
       angleTo += PI2;
-    } else if (angleTo > angleFrom 
+    } else if (angleTo > angleFrom
             && angleTo - angleFrom > PI2 + angleFrom - angleTo) {
       angleFrom += PI2;
     }
@@ -91,7 +91,7 @@ void main(void) {
 
   pos.x  = (pos.x - fromx) / (tox - fromx) * (toxt - fromxt) + fromxt;
   pos.y  = (pos.y - fromy) / (toy - fromy) * (toyt - fromyt) + fromyt;
-  pos.z = .0001 / scale;
+  pos.z = .0001 / (scale + .1);
 
   pos = vec3(position.xy * scale, 0) + pos;
 
