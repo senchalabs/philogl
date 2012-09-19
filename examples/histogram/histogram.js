@@ -1,14 +1,47 @@
 (function() {
   //Unpack PhiloGL modules
   PhiloGL.unpack();
-  
+
   //Utility fn to getElementById
-  function $id(d) {
+  function $(d) {
     return document.getElementById(d);
   }
 
+  //Log
+  //Singleton that logs information
+  //Log singleton
+  var Log = {
+    elem: null,
+    timer: null,
+
+    getElem: function() {
+      if (!this.elem) {
+        return (this.elem = $('log-message'));
+      }
+      return this.elem;
+    },
+
+    write: function(text, hide) {
+      if (this.timer) {
+        this.timer = clearTimeout(this.timer);
+      }
+
+      var elem = this.getElem(),
+          style = elem.parentNode.style;
+
+      elem.innerHTML = text;
+      style.display = '';
+
+      if (hide) {
+        this.timer = setTimeout(function() {
+          style.display = 'none';
+        }, 2000);
+      }
+    }
+  };
+
   //color histogram elements, models
-  var dim = 8, histogram, photos, video, 
+  var dim = 8, histogram, photos, video,
       worker = new WorkerGroup('histogram-models.js', 1),
       histogramModel = new O3D.Model({
         uniforms: {
@@ -24,7 +57,7 @@
           program.setBuffer('indices');
         }
       });
-  
+
   //returns a color array from an image
   var createColorArray = (function() {
     var pastie, width, height, ctx, round = Math.round,
@@ -32,13 +65,13 @@
         histogram, photos;
 
     return function(elem) {
-      pastie = pastie || $id('pastie');
+      pastie = pastie || $('pastie');
       ctx = ctx || pastie.getContext('2d');
       width = width || pastie.width;
       height = height || pastie.height;
 
       ctx.drawImage(elem, 0, 0, width, height);
-      var ans = Array(dim3), 
+      var ans = Array(dim3),
           expando = Array(dim3 * (dim + 1) * (dim +1));
           pixels = ctx.getImageData(0, 0, width, height).data,
           dim2 = dim * dim;
@@ -48,7 +81,7 @@
             g = round(pixels[i +1] / 255 * dim),
             b = round(pixels[i +2] / 255 * dim),
             index = r + g * dim + b * dim2;
-        
+
         ans[index] = (ans[index] || 0) + 1;
       }
 
@@ -65,7 +98,7 @@
 
   })();
 
-  window.init = function() {
+  function init() {
     //create the models
     worker.map(function() { return {}; }).reduce({
       onComplete: function(ans) {
@@ -87,7 +120,7 @@
         },
         camera: {
           position: {
-            x: 0, y: 0, z: 5 
+            x: 0, y: 0, z: 5
           }
         },
         scene: {
@@ -100,20 +133,20 @@
             },
             points: [
             {
-              diffuse: { 
-                r: 0.7, 
-                g: 0.7, 
-                b: 0.7 
+              diffuse: {
+                r: 0.7,
+                g: 0.7,
+                b: 0.7
               },
-              specular: { 
-                r: 0.8, 
-                g: 0.8, 
-                b: 0 
+              specular: {
+                r: 0.8,
+                g: 0.8,
+                b: 0
               },
-              position: { 
-                x: 3, 
-                y: 3, 
-                z: 3 
+              position: {
+                x: 3,
+                y: 3,
+                z: 3
               }
             }]
           }
@@ -177,39 +210,75 @@
           }
         },
         onError: function(m) {
-          alert("There was an error while creating the WebGL application" + String(m));
+          Log.write("There was an error while creating the WebGL application " + String(m));
         },
         onLoad: function(app) {
           var gl = app.gl,
               canvas = gl.canvas,
               scene = app.scene,
               program = app.program,
-              movie = $id('movie'),
-              grayscale = $id('grayscale'),
+              movie = $('movie'),
+              grayscale = $('grayscale'),
+              controls = document.querySelector('.controls'),
               lis = document.querySelectorAll('ul.schemes li'),
               radios = document.querySelectorAll('ul.schemes li input'),
               grains = document.querySelectorAll('input[name=grain]'),
-              size = $id('size'),
+              size = $('size'),
               color = 0.3,
               played = true,
               currentIndex = 0,
               sizeValue = 0.01;
 
+          //setup camera option
+          $('camera').addEventListener('click', function() {
+            var getUserMediaKey = ['getUserMedia', 'webkitGetUserMedia', 'mozGetUserMedia'],
+                urlKey = ['URL', 'webkitURL', 'mozURL'],
+                found = false,
+                videoHandler  = function(localMediaStream) {
+                  controls.classList.add('camera');
+                  movie.src = window[urlKey[i]].createObjectURL(localMediaStream);
+                },
+                videoHandler2 = function(stream) {
+                  controls.classList.add('camera');
+                  movie.src = stream;
+                },
+                errorHandler  = function() {
+                  Log.write('An error occurred while loading the camera.', true);
+                },
+                key;
+
+            for (var i = 0, l = getUserMediaKey.length; i < l; ++i) {
+              key = getUserMediaKey[i];
+              if (key in navigator) {
+                if (i > 0) {
+                  navigator[key]({ video: true}, videoHandler, errorHandler);
+                } else {
+                  navigator[key]({ video: true }, videoHandler2, errorHandler);
+                }
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              Log.write('Sorry, your browser isn\'t supported!', true);
+            }
+          }, false);
+
           //Add event listeners
           for (var i = 0, l = lis.length; i < l; i++) {
-            (function(li, index) { 
+            (function(li, index) {
               li.addEventListener('click', function () {
                 radios[index].checked = true;
                 fx.start({
                   from: currentIndex,
-                  to: index 
+                  to: index
                 });
               }, false);
             })(lis[i], i);
           }
-          
+
           for (var i = 0, l = grains.length; i < l; i++) {
-            (function(li, index) { 
+            (function(li, index) {
               li.addEventListener('change', function() {
                 if (li.checked) {
                   fxSize.start({
@@ -220,17 +289,17 @@
               }, false);
             })(grains[i], i);
           }
-          
+
           grayscale.addEventListener('change', function() {
             color = +grayscale.value;
           }, false);
-         
+
           //Basic gl setup
           gl.clearDepth(1.0);
           gl.enable(gl.DEPTH_TEST);
           gl.depthFunc(gl.LEQUAL);
           gl.viewport(0, 0, canvas.width, canvas.height);
-          
+
           //Add element(s) to the scene
           scene.add(histogramModel);
 
@@ -285,7 +354,7 @@
                 'delta': delta
               });
             },
-            onComplete: function() { 
+            onComplete: function() {
               var to = fx.opt.to;
               program.setUniforms({
                 'from': to,
@@ -302,17 +371,17 @@
             onCompute: function(delta) {
               var from = fxSize.opt.from,
                   to = fxSize.opt.to;
-              
+
               sizeValue = Fx.compute(from, to, delta);
             },
-            onComplete: function() { 
+            onComplete: function() {
               sizeValue = fxSize.opt.to;
             }
           });
 
           loop();
-          
-          function loop() { 
+
+          function loop() {
             program.setUniform('size', sizeValue);
             if (played) {
               if (movie.paused || movie.ended) {
@@ -324,13 +393,13 @@
                 });
               }
             }
-            
+
             if (!app.dragging) {
               theta += 0.007;
               histogramModel.rotation.set(-Math.PI / 4, theta, 0.3);
               histogramModel.update();
             }
-            
+
             gl.clearColor(color, color, color, 1);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             scene.render();
@@ -340,4 +409,6 @@
       });
     }
   };
+
+  window.addEventListener('DOMContentLoaded', init, false);
 })();
