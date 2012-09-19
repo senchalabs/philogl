@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-#define LIGHT_MAX 5
+#define LIGHT_MAX 4
 
 varying vec2 vTexCoord1;
 varying vec2 vTexCoord2;
