@@ -15,6 +15,12 @@ input, select {
   font-family: 'Crimson Text', Times;
 }
 
+.twitter-share-button {
+  position: absolute;
+  top: 33px;
+  left: 1px;
+}
+
 div.top {
   position: absolute;
   top: 0;

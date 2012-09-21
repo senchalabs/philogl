@@ -154,7 +154,7 @@ window.initDrawOptions = function(canvas, options) {
   }, false);
 
   save.addEventListener('click', function(e) {
-    window.location.href = surface.toDataURL();
+    window.open(surface.toDataURL());
   }, false);
 
  function draw(e) {
