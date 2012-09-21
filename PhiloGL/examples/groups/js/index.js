@@ -43,7 +43,6 @@ var options = {
 
 document.addEventListener('DOMContentLoaded', function() {
   if (!PhiloGL.hasWebGL()) {
-    alert("Your browser does not support WebGL");
     return;
   }
 
