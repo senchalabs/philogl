@@ -1,13 +1,13 @@
 PhiloGL.unpack();
 
 function init() {
-  var imageUrls = ['wave', 'lic', 'smoke', 'winds', 'worldflights2', 'metaballs', 'histogram', 'explorer', 'tanomalies', 'quaternion', 'mercator'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
-      descriptions = ['Wave Simulation',
+  var imageUrls = ['groups', 'wave', 'lic', 'smoke', 'winds', 'worldflights2', 'histogram', 'explorer', 'tanomalies', 'quaternion', 'mercator'].map(function(i) { return 'img/marquee/' + i + '.png'; }),
+      descriptions = ['Wallpaper Groups',
+                      'Wave Simulation',
                       'Flow Interaction',
                       'Smoke Visualization',
                       'Explore Wind Patterns',
                       'World Airline Routes',
-                      'Reflective Metaballs',
                       'Real-time 3D Color Histogram Analysis',
                       '3D Surface Explorer',
                       'World Temperature Anomalies from 1880 to 2010',
