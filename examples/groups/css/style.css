@@ -7,8 +7,26 @@ html, body {
   font-size: 1.0em;
 }
 
+body.no-webgl {
+  background: #888;
+}
+
 input, select {
   font-family: 'Crimson Text', Times;
+}
+
+div.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.8em;
+  z-index: 4000;
+}
+
+div.top > a {
+  display: block;
+  padding: 6px;
 }
 
 section#group-descriptions {

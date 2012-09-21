@@ -13,6 +13,10 @@
     <script src="js/index.js"></script>
   </head>
   <body>
+    <div class='top'>
+      <a href='#'>What's this?</a>
+    </div>
+
     <section id="container">
 
       <header id="title">
@@ -22,7 +26,7 @@
       <canvas id="surface"></canvas>
 
       <section id="controls">
-        <header>&raquo; Pattern</header>
+        <header>&raquo; Draw here</header>
         <div class='options-body pattern'>
           <canvas id="canvas" width="128" height="128"></canvas>
           <section class='controls'>
@@ -80,7 +84,7 @@
           </section>
         </div>
 
-        <header>&raquo; Groups</header>
+        <header>&raquo; Choose a pattern</header>
         <div class='options-body groups'>
           <label for='current-group'>Current group: </label>
           <select id='current-group'>
@@ -110,7 +114,7 @@
         </div>
         </div>
 
-        <header>&raquo; Other</header>
+        <header>&raquo; Apply effects</header>
         <div class='options-body other'>
           <label for='offset'>Offset: </label>
           <input type='range' id='offset' min='0' max='40' value='20'
@@ -246,7 +250,7 @@ This group applies for symmetrically staggered rows (i.e. there is a shift per r
 
       <footer>
         Authors: <a href="http://philogb.github.com/">Nicolas Garcia
-          Belmonte</a> - <a href="http://twitter.com/ikarienator/">Zhang, Bei</a>
+          Belmonte</a> - <a href="http://zhangbei.github.com/">Zhang, Bei</a>
       </footer>
 
     </section>
@@ -262,7 +266,7 @@ This group applies for symmetrically staggered rows (i.e. there is a shift per r
         +  '<div style="margin:10px;">'
         +   'Your browser (or hardware) does not support WebGL. Go <a href="http://get.webgl.org">here</a> to find more information.'
         +  '</div>'
-        +  '<iframe width="480" height="390" src="http://www.youtube.com/embed/ELbYO_GnjqM?rel=0" frameborder="0" allowfullscreen></iframe>';
+        +  '<iframe width="960" height="720" src="http://www.youtube.com/embed/uNbKqv2kO-Y?rel=0" frameborder="0" allowfullscreen></iframe>';
     }
   </script>
   </body>
