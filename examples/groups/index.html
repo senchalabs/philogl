@@ -3,37 +3,86 @@
   <head>
     <title>PhiloGL - Wallpaper Groups</title>
     <meta charset='utf-8'>
-    <!-- link href='http://fonts.googleapis.com/css?family=Crimson+Text'
-    rel='stylesheet' type='text/css' -->
-    <link rel="stylesheet" media="all" type="text/css" href="style.css" />
-    <!--link rel="stylesheet" media="all" type="text/css" href="codemirror/lib/codemirror.css" / -->
-    <script src="codemirror/lib/codemirror.js"></script>
-    <script src="codemirror/mode/javascript/javascript.js"></script>
-    
+    <link rel="stylesheet" media="all" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="css/spectrum.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script src="js/spectrum.js"></script>
+    <script src="js/range.js"></script>
     <script src="../../build/PhiloGL.js"></script>
-    <script src="lib.js"></script>
-    <script src="controls.js"></script>
-    <script src="index.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/index.js"></script>
   </head>
-  <body onload="load();">
+  <body>
     <section id="container">
-      
+
       <header id="title">
         <h1>Wallpaper Groups</h1>
       </header>
-      
+
       <canvas id="surface"></canvas>
 
       <section id="controls">
         <header>&raquo; Pattern</header>
         <div class='options-body pattern'>
           <canvas id="canvas" width="128" height="128"></canvas>
-          <button class='pattern-change' type='button'>Change Pattern...</button>
+          <section class='controls'>
+          <label>Pencil type</label>
+          <select id='pencil'>
+            <option>line</option>
+            <option>circle</option>
+            <option>rectangle</option>
+            <option>hairy</option>
+          </select>
+          <br>
+
+          <div class='size'>
+            <label>Size</label>
+            <input type='range' min='0' max='100' step='0.1'
+            value='15' id='size'/>
+            <br>
+          </div>
+
+          <label>Stroke width</label>
+          <input type='range' min='0' max='20' step='0.1'
+          value='15' id='stroke-width'/>
+          <br>
+
+          <label>Stroke color</label>
+          <input type='color' id='stroke-color' value='#00ff00' />
+          <br>
+
+          <label>Background</label>
+          <input type='color' id='background-color'
+          value='#000000' />
+          <br>
+
+          <!--<label>Shadow color</label>-->
+          <!--<input type='color' id='shadow-color'/>-->
+          <!--<br>-->
+
+          <!--<label>Shadow offsetX</label>-->
+          <!--<input type='range' min='-10' max='10' step='0.1'-->
+          <!--value='0' id='shadow-x'/>-->
+          <!--<br>-->
+
+          <!--<label>Shadow offsetY</label>-->
+          <!--<input type='range' min='-10' max='10' step='0.1'-->
+          <!--value='0' id='shadow-y'/>-->
+          <!--<br>-->
+
+          <!--<label>Shadow blur</label>-->
+          <!--<input type='range' min='0' max='20' step='0.1'-->
+          <!--value='0' id='shadow-blur'/>-->
+          <!--<br>-->
+          <div class='buttons'>
+            <button id='clear'>Clear canvas</button> <button id='save'>Save image</button>
+          </div>
+          </section>
         </div>
 
         <header>&raquo; Groups</header>
         <div class='options-body groups'>
-          <label for='current-group'>Current group: </label> 
+          <label for='current-group'>Current group: </label>
           <select id='current-group'>
             <option>p1 (o)</option>
             <option>p2 (2222)</option>
@@ -48,43 +97,41 @@
             <option>p4m (*442)</option>
             <option>p4g (4*2)</option>
             <option>p3 (333)</option>
-            <option>p3m1 (*333)</option>
-            <option>p31m (3*3)</option>
-            <option>p6 (632)</option>
-            <option>p6m (*632)</option>
+            <!--<option>p3m1 (*333)</option>-->
+            <!--<option>p31m (3*3)</option>-->
+            <!--<option>p6 (632)</option>-->
+            <!--<option>p6m (*632)</option>-->
           </select>
 
           <div class='group-description'>
           </div>
+        <div class='options-body details'>
+
+        </div>
         </div>
 
         <header>&raquo; Other</header>
         <div class='options-body other'>
-          <label for='offset'>Offset: </label> 
+          <label for='offset'>Offset: </label>
           <input type='range' id='offset' min='0' max='40' value='20'
           step='0.2'> <br>
-          
-          <label for='scale'>Scale: </label> 
+
+          <label for='scale'>Scale: </label>
           <input type='range' id='scale' min='1' max='10' value='1'
           step='0.2'> <br>
 
-          <label for='rotate'>Rotate: </label> 
+          <label for='rotate'>Rotate: </label>
           <input type='range' id='rotate' min='0' max='180' value='0'
           step='1'> <br>
-          
-          <label for='aura'>Aura: </label> 
+
+          <label for='aura'>Aura: </label>
           <input type='range' id='aura' min='0' max='1' value='0.1'
           step='0.1'> <br>
-          
-          <label for='hyperbole'>Hyperbole: </label> 
+
+          <label for='hyperbole'>Hyperbole: </label>
           <input type='range' id='hyperbole' min='0' max='1'
           value='0'
           step='0.00001'> <br>
-        </div>
-        
-        <header>&raquo; Description </header>
-        <div class='options-body details'>
-
         </div>
 
         </section>
@@ -196,15 +243,17 @@ This group applies for symmetrically staggered rows (i.e. there is a shift per r
           </div>
         </section>
 
-      
+
       <footer>
         Authors: <a href="http://philogb.github.com/">Nicolas Garcia
           Belmonte</a> - <a href="http://twitter.com/ikarienator/">Zhang, Bei</a>
       </footer>
 
     </section>
-    
+
     <section id="fallback" class="fallback"></section>
+
+    <canvas id='bck-canvas' style='display:none'></canvas>
 
   <script>
     if (!PhiloGL.hasWebGL()) {
