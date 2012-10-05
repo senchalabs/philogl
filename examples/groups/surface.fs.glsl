@@ -679,7 +679,7 @@ void main(void) {
 
   //add a radial blend
   vec4 colorFrom = color;
-  vec4 colorTo = vec4(background.rgb * radialFactor, 1);
+  vec4 colorTo = vec4(mix(background.rgb, colorFrom.rgb, radialFactor), 1);
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   float ratio = resolution.y / resolution.x;
   vec2 center = vec2(.5, .5);
