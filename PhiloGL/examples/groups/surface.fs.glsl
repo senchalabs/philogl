@@ -34,6 +34,7 @@ uniform vec2 scaling;
 uniform vec2 resolution;
 uniform float radialFactor;
 uniform float hyperbolic;
+uniform vec4 background;
 
 uniform sampler2D sampler1;
 
@@ -179,11 +180,11 @@ vec2 pgg(float xt, float yt) {
   float to = 1. - offset / PATTERN_DIM;
   float xtmod = mod(xt, PATTERN_DIM) / PATTERN_DIM;
   float ytmod = mod(yt, heightDim) / heightDim;
-  
+
   if (mod(yt / heightDim, 2.0) < 1.0) {
     float xfrom = (1. - ytmod) / 2.;
     float xto = ytmod / 2. + .5;
-    
+
     if (xtmod > xfrom && xtmod < xto) {
       xt = xtmod;
       yt = ytmod * (to - from) + from;
@@ -194,7 +195,7 @@ vec2 pgg(float xt, float yt) {
   } else {
     float xfrom = ytmod / 2.;
     float xto = (1. - ytmod) * .5 + .5;
-    
+
     if (xtmod > xfrom && xtmod < xto) {
       xt =  1. - xtmod;
       yt = (1. - ytmod) * (to - from) + from;
@@ -424,7 +425,7 @@ vec2 p3m1(float xt, float yt) {
 
   float from = offset;
   float to = 1. - offset;
-  
+
   float fromy = 0.;
   float toy = 0.;
 
@@ -436,7 +437,7 @@ vec2 p3m1(float xt, float yt) {
     toy = 1. - fromy;
 
     if (ytmod > toy) {
-      
+
 
     } else if (ytmod <= toy && ytmod >= fromy) {
       ans.x = from + xtmod * (to - from);
@@ -449,7 +450,7 @@ vec2 p3m1(float xt, float yt) {
     toy = 1. - fromy;
 
     if (ytmod > toy) {
-      
+
 
     } else if (ytmod <= toy && ytmod >= fromy) {
       ans.x = from + (1. - xtmod) * (to - from);
@@ -460,38 +461,6 @@ vec2 p3m1(float xt, float yt) {
   }
 
   return ans;
-
-  /*
-  float xtmod = mod(xt, w * PATTERN_DIM) / PATTERN_DIM;
-  float ytmod = mod(yt, PATTERN_DIM) / PATTERN_DIM;
-
-  if (mod(floor(yt / PATTERN_DIM), 2.0) < l) {
-    xtmod = mod(xtmod + w_2, w);
-  }
-
-  if (xtmod > w_2) {
-    if (ytmod > l && ytmod < l + l ||
-      ytmod < l && ytmod > (w - xtmod) * w_2 ||
-      ytmod > l + l && ytmod < 1.0 - (xtmod - w_2) * w_2
-      ) {
-      return vec2(xtmod - w_2 + offsetX, ytmod);
-    }
-  } else {
-    if (ytmod > l && ytmod < l + l ||
-        ytmod < l && ytmod > xtmod * w_2 ||
-        ytmod > l + l && ytmod < 1.0 - (w_2 - xtmod) * w_2
-        ) {
-        return vec2(- xtmod * 0.5 + ytmod / w + offsetX, 1.0 - ytmod * 0.5 - xtmod / w);
-      }
-  }
-
-  if (ytmod > l) {
-    ytmod -= 1.0;
-    xtmod = mod(xtmod + w_2, w);
-  }
-
-  return vec2(offsetX + (w - xtmod) * 0.5 - ytmod / w, 1.0 - (w - xtmod) / w - ytmod * 0.5);
-  */
 }
 
 vec2 p31m(float xt, float yt) {
@@ -601,7 +570,7 @@ float cubic(float x) {
 }
 
 vec4 sampDirNearest(float x, float y) {
-  return texture2D(sampler1, vec2(floor(mod(x, PATTERN_DIM)) / PATTERN_DIM, 
+  return texture2D(sampler1, vec2(floor(mod(x, PATTERN_DIM)) / PATTERN_DIM,
                                   floor(mod(y, PATTERN_DIM)) / PATTERN_DIM));
 }
 
@@ -657,7 +626,7 @@ void main(void) {
     yt /= minDim;
     vec2 v = vec2(xt, yt);
     float vlen = length(v);
-    
+
     if (vlen < 1.0 - EPSILON && vlen > EPSILON) {
       float len = sqrt ( xt * xt + yt * yt );
       xt = xt / (1. - len) * minDim;
@@ -677,7 +646,7 @@ void main(void) {
   } else if (group == GROUP_PG) {
     pos = pg(xt, yt);
   } else if (group == GROUP_CM) {
-    pos = cm(xt, yt);  
+    pos = cm(xt, yt);
   } else if (group == GROUP_PMM) {
     pos = pmm(xt, yt);
   } else if (group == GROUP_PMG) {
@@ -701,14 +670,16 @@ void main(void) {
   } else if (group == GROUP_P6M) {
     pos = p6m(xt, yt);
   } else {
-    pos = vec2( mod(xt, PATTERN_DIM) / PATTERN_DIM, 
+    pos = vec2( mod(xt, PATTERN_DIM) / PATTERN_DIM,
                 mod(yt, PATTERN_DIM) / PATTERN_DIM );
   }
 
-  vec4 color = texture2D(sampler1, pos);
+  vec4 color = vec4(texture2D(sampler1, pos));
+  color = vec4(mix(color.rgb, background.rgb, 1. - color.a), 1);
+
   //add a radial blend
   vec4 colorFrom = color;
-  vec4 colorTo = color * radialFactor;
+  vec4 colorTo = vec4(mix(background.rgb, colorFrom.rgb, radialFactor), 1);
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   float ratio = resolution.y / resolution.x;
   vec2 center = vec2(.5, .5);
