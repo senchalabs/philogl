@@ -154,7 +154,7 @@ window.initDrawOptions = function(canvas, options) {
   }, false);
 
   save.addEventListener('click', function(e) {
-    window.open(surface.toDataURL());
+    window.open(surface.toDataURL('image/jpeg'));
   }, false);
 
  function draw(e) {
