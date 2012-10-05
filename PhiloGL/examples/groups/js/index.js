@@ -33,7 +33,7 @@ var width = 128,
     descriptions;
 
 var options = {
-  currentGroupIndex: 0,
+  currentGroupIndex: 9,
   scale: 1,
   rotate: 0,
   radialFactor: 0.1,
