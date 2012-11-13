@@ -113,7 +113,7 @@ this.PhiloGL = null;
       //get Camera
       var canvas = gl.canvas,
           camera = new PhiloGL.Camera(optCamera.fov,
-                                      canvas.width / canvas.height,
+                                      optCamera.aspect || (canvas.width / canvas.height),
                                       optCamera.near,
                                       optCamera.far, optCamera);
       camera.update();
