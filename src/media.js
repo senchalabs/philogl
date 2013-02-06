@@ -2,6 +2,7 @@
 //media has utility functions for image, video and audio manipulation (and
 //maybe others like device, etc).
 (function() {
+  var $ = PhiloGL.$;
   var Media = {};
 
   var Image = function() {};

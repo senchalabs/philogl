@@ -2,6 +2,7 @@
 //Provides loading of assets with XHR and JSONP methods.
 
 (function () {
+  var $ = PhiloGL.$;
   var IO = {};
 
   var XHR = function(opt) {

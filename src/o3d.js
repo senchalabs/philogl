@@ -2,6 +2,7 @@
 //Scene Objects
 
 (function () {
+  var $ = PhiloGL.$;
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
       Mat4 = PhiloGL.Mat4,

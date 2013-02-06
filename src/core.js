@@ -8,6 +8,7 @@ this.PhiloGL = null;
 //with a gl context, a camera, a program, a scene, and an event system.
 (function () {
   PhiloGL = function(canvasId, opt) {
+    var $ = PhiloGL.$;
     opt = $.merge({
       context: {
         /*
@@ -166,7 +167,7 @@ PhiloGL.unpack = function(branch) {
       branch[module] = PhiloGL[module];
   });
   branch.gl = gl;
-  branch.Utils = $;
+  branch.Utils = PhiloGL.$;
 };
 
 //Version
@@ -176,47 +177,48 @@ PhiloGL.version = '1.5.2';
 var gl, app, globalContext = this;
 
 //Utility functions
-function $(d) {
-  return document.getElementById(d);
-}
-
-$.empty = function() {};
-
-$.time = Date.now;
-
-$.uid = (function() {
-  var t = $.time();
-
-  return function() {
-    return t++;
-  };
-})();
-
-$.extend = function(to, from) {
-  for (var p in from) {
-    to[p] = from[p];
-  }
-  return to;
-};
-
-$.type = (function() {
-  var oString = Object.prototype.toString,
-      type = function(e) {
-        var t = oString.call(e);
-        return t.substr(8, t.length - 9).toLowerCase();
-      };
-
-  return function(elem) {
-    var elemType = type(elem);
-    if (elemType != 'object') {
-      return elemType;
-    }
-    if (elem.$$family) return elem.$$family;
-    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
-  };
-})();
-
 (function() {
+  PhiloGL.$ = function (d) {
+    return document.getElementById(d);
+  }
+  var $ = PhiloGL.$;
+
+  $.empty = function() {};
+
+  $.time = Date.now;
+
+  $.uid = (function() {
+    var t = $.time();
+
+    return function() {
+      return t++;
+    };
+  })();
+
+  $.extend = function(to, from) {
+    for (var p in from) {
+      to[p] = from[p];
+    }
+    return to;
+  };
+
+  $.type = (function() {
+    var oString = Object.prototype.toString,
+        type = function(e) {
+          var t = oString.call(e);
+          return t.substr(8, t.length - 9).toLowerCase();
+        };
+
+    return function(elem) {
+      var elemType = type(elem);
+      if (elemType != 'object') {
+        return elemType;
+      }
+      if (elem.$$family) return elem.$$family;
+      return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
+    };
+  })();
+
   function detach(elem) {
     var type = $.type(elem), ans;
     if (type == 'object') {
@@ -252,12 +254,12 @@ $.type = (function() {
     }
     return mix;
   };
-})();
 
-$.splat = (function() {
-  var isArray = Array.isArray;
-  return function(a) {
-    return isArray(a) && a || [a];
-  };
-})();
+  $.splat = (function() {
+    var isArray = Array.isArray;
+    return function(a) {
+      return isArray(a) && a || [a];
+    };
+  })();
 
+})();

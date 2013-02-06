@@ -2,6 +2,7 @@
 //Handle keyboard/mouse/touch events in the Canvas
 
 (function() {
+  var $ = PhiloGL.$;
   
   //returns an O3D object or false otherwise.
   function toO3D(n) {

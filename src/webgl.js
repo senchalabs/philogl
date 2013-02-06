@@ -2,6 +2,7 @@
 //Checks if WebGL is enabled and creates a context for using WebGL.
 
 (function () {
+  var $ = PhiloGL.$;
 
   var WebGL = {
 

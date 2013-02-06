@@ -3,6 +3,7 @@
 //buffers attributes and uniforms
 
 (function() {
+  var $ = PhiloGL.$;
   //First, some privates to handle compiling/linking shaders to programs.
   
   //Creates a shader from a string source.
