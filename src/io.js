@@ -266,8 +266,7 @@
   };
 
   //Load multiple textures from images
-  var Textures = function(opt) {
-    var app = PhiloGL.app;
+  var Textures = function(opt, app) {
     opt = $.merge({
       src: [],
       noCache: false,

@@ -51,15 +51,20 @@ this.PhiloGL = null;
         optEvents = opt.events,
         optTextures = opt.textures,
         optProgram = $.splat(opt.program),
-        optScene = opt.scene;
+        optScene = opt.scene
+        program = null;
 
-    //get Context global to all framework
-    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+    //Get the 3D context, holds the application
+    var gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+    PhiloGL.glConstants = gl;
 
     if (!gl) {
         opt.onError("The WebGL context couldn't been initialized");
         return null;
     }
+
+    //make app instance
+    var app = new PhiloGL.WebGL.Application({gl: gl});
 
     //get Program
     var popt = {
@@ -80,7 +85,7 @@ this.PhiloGL = null;
               count--;
               if (count === 0 && !error) {
                 loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
-                  opt.onLoad(PhiloGL.app);
+                  opt.onLoad(app);
                 });
               }
             },
@@ -94,13 +99,15 @@ this.PhiloGL = null;
 
     optProgram.forEach(function(optProgram, i) {
       var pfrom = optProgram.from, program;
+      optProgram.gl = gl;
+      optProgram.app = app;
       for (var p in popt) {
         if (pfrom == p) {
-          try {
+          //try {
             program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
-          } catch(e) {
-            programCallback.onError(e);
-          }
+          //} catch(e) {
+          //  programCallback.onError(e);
+          //}
           break;
         }
       }
@@ -122,14 +129,10 @@ this.PhiloGL = null;
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
 
-      PhiloGL.app = new PhiloGL.WebGL.Application({
-        gl: gl,
-        canvas: canvas,
-        program: program,
-        scene: scene,
-        camera: camera
-      });
-      var app = PhiloGL.app;
+      app.program = program;
+      app.canvas = canvas;
+      app.scene = scene;
+      app.camera = camera;
 
       //Use program
       if (program.$$family == 'program') {
@@ -149,7 +152,7 @@ this.PhiloGL = null;
           onComplete: function() {
             callback(app);
           }
-        }));
+        }), app);
       } else {
         callback(app);
       }
@@ -175,9 +178,6 @@ this.PhiloGL = null;
 
 //Version
 PhiloGL.version = '1.5.2';
-
-//Holds the 3D context, holds the application
-var gl
 
 //Utility functions
 (function() {

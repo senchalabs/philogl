@@ -26,7 +26,7 @@
   };
   
   //Creates a program from vertex and fragment shader sources.
-  var createProgram = function(gl, vertexShader, fragmentShader) {
+  var createProgram = function(vertexShader, fragmentShader, gl, app) {
     var program = gl.createProgram();
     gl.attachShader(
         program,
@@ -207,10 +207,10 @@
   };
 
   //Program Class: Handles loading of programs and mapping of attributes and uniforms
-  var Program = function(vertexShader, fragmentShader) {
-    var program = createProgram(gl, vertexShader, fragmentShader);
+  var Program = function(vertexShader, fragmentShader, gl, app) {
+    var program = createProgram(vertexShader, fragmentShader, gl);
     if (!program) return false;
-    
+
     var attributes = {},
         attributeEnabled = {},
         uniforms = {},
@@ -240,6 +240,10 @@
     this.attributes = attributes;
     this.attributeEnabled = attributeEnabled;
     this.uniforms = uniforms;
+    this.app = app;
+    this.gl = gl;
+
+    return this;
   };
 
   Program.prototype = {
@@ -263,7 +267,7 @@
 
   ['setBuffer', 'setBuffers', 'use'].forEach(function(name) {
     Program.prototype[name] = function() {
-      var app = PhiloGL.app;
+      var app = this.app;
       var args = Array.prototype.slice.call(arguments);
       args.unshift(this);
       app[name].apply(app, args);
@@ -274,7 +278,7 @@
   ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
-      var app = PhiloGL.app;
+      var app = this.app;
       app[name].apply(app, arguments);
       return this;
     };
@@ -283,10 +287,11 @@
   //Get options in object or arguments
   function getOptions(args, base) {
     var opt;
-    if (args.length == 2) {
+    if (args.length == 3) {
       opt = {
         vs: args[0],
-        fs: args[1]
+        fs: args[1],
+        gl: args[2]
       };
     } else {
       opt = args[0] || {};
@@ -296,23 +301,30 @@
 
   //Create a program from vertex and fragment shader node ids
   Program.fromShaderIds = function() {
-    var opt = getOptions(arguments),
+    var $ = PhiloGL.$,
+      opt = getOptions(arguments),
       vs = $(opt.vs),
-      fs = $(opt.fs);
-    return preprocess(opt.path, vs.innerHTML, function(vectexShader) {
+      fs = $(opt.fs),
+      gl = opt.gl,
+      app = opt.app
+      program = null;
+    preprocess(opt.path, vs.innerHTML, function(vectexShader) {
       return preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
-        opt.onSuccess(new Program(vectexShader, fragmentShader), opt);
+        opt.onSuccess(program = new Program(vectexShader, fragmentShader, gl, app), opt);
       });
     });
+    return program;
   };
 
   //Create a program from vs and fs sources
   Program.fromShaderSources = function() {
-    var opt = getOptions(arguments, {path: './'});
+    var opt = getOptions(arguments, {path: './'})
+        gl = opt.gl,
+        app = opt.app;
     return preprocess(opt.path, opt.vs, function(vectexShader) {
       return preprocess(opt.path, opt.fs, function(fragmentShader) {
         try {
-          var program = new Program(vectexShader, fragmentShader);
+          var program = new Program(vectexShader, fragmentShader, gl, app);
           if(opt.onSuccess) {
             opt.onSuccess(program, opt); 
           } else {

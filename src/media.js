@@ -18,8 +18,8 @@
       position: { x: 0, y: 0, z: 1.205 }
     }), scene = new PhiloGL.Scene({}, camera);
 
-    return function(opt) {
-      var app = PhiloGL.app,
+    return function(opt, app) {
+      var gl = app.gl,
           program = app.program.$$family ? app.program : app.program[opt.program],
           textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
           framebuffer = opt.toFrameBuffer,
@@ -39,7 +39,6 @@
           scene.add(plane);
       }
 
-      var app = PhiloGL.app;
       if (framebuffer) {
         //create framebuffer
         if (!(framebuffer in app.frameBufferMemo)) {

@@ -157,12 +157,13 @@
     },
 
     setIndices: function(program) {
+      var glc = PhiloGL.glConstants
       if (!this.$indices) return;
 
       if (this.dynamic) {
         program.setBuffer('indices-' + this.id, {
-          bufferType: gl.ELEMENT_ARRAY_BUFFER,
-          drawType: gl.STATIC_DRAW,
+          bufferType: glc.ELEMENT_ARRAY_BUFFER,
+          drawType: glc.STATIC_DRAW,
           value: this.$indices,
           size: 1
         });
@@ -237,7 +238,8 @@
     },
 
     setTextures: function(program, force) {
-      var app = PhiloGL.app;
+      var app = program.app;
+          glc = PhiloGL.glConstants;
       this.textures = this.textures? $.splat(this.textures) : [];
       var dist = 5;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
@@ -245,10 +247,10 @@
           var isCube = app.textureMemo[texs[i]].isCube;
           if (isCube) {
             program.setUniform('hasTextureCube' + (i + 1), true);
-            program.setTexture(texs[i], gl['TEXTURE' + (i + dist)]);
+            program.setTexture(texs[i], glc['TEXTURE' + (i + dist)]);
           } else {
             program.setUniform('hasTexture' + (i + 1), true);
-            program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setTexture(texs[i], glc['TEXTURE' + i]);
           }
         } else {
           program.setUniform('hasTextureCube' + (i + 1), false);
@@ -272,7 +274,8 @@
     },
 
     unsetState: function(program) {
-      var attributes = program.attributes;
+      var attributes = program.attributes,
+          gl = program.gl;
 
       //unbind the array and element buffers
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
