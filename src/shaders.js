@@ -2,6 +2,7 @@
 //Default Shaders
 
 (function() {
+  var $ = PhiloGL.$;
   //Add default shaders
   var Shaders = {
     Vertex: {},

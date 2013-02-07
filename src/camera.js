@@ -4,7 +4,8 @@
 (function () {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+      Mat4 = PhiloGL.Mat4,
+      $ = PhiloGL.$;
 
   //Camera class
   var Camera = function(fov, aspect, near, far, opt) {

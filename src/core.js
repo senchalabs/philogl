@@ -8,6 +8,7 @@ this.PhiloGL = null;
 //with a gl context, a camera, a program, a scene, and an event system.
 (function () {
   PhiloGL = function(canvasId, opt) {
+    var $ = PhiloGL.$;
     opt = $.merge({
       context: {
         /*
@@ -50,15 +51,20 @@ this.PhiloGL = null;
         optEvents = opt.events,
         optTextures = opt.textures,
         optProgram = $.splat(opt.program),
-        optScene = opt.scene;
+        optScene = opt.scene
+        program = null;
 
-    //get Context global to all framework
-    gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+    //Get the 3D context, holds the application
+    var gl = PhiloGL.WebGL.getContext(canvasId, optContext);
+    PhiloGL.glConstants = gl;
 
     if (!gl) {
         opt.onError("The WebGL context couldn't been initialized");
         return null;
     }
+
+    //make app instance
+    var app = new PhiloGL.WebGL.Application({gl: gl});
 
     //get Program
     var popt = {
@@ -93,13 +99,15 @@ this.PhiloGL = null;
 
     optProgram.forEach(function(optProgram, i) {
       var pfrom = optProgram.from, program;
+      optProgram.gl = gl;
+      optProgram.app = app;
       for (var p in popt) {
         if (pfrom == p) {
-          try {
+          //try {
             program = PhiloGL.Program[popt[p]]($.extend(programCallback, optProgram));
-          } catch(e) {
-            programCallback.onError(e);
-          }
+          //} catch(e) {
+          //  programCallback.onError(e);
+          //}
           break;
         }
       }
@@ -121,14 +129,10 @@ this.PhiloGL = null;
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
 
-      //make app instance global to all framework
-      app = new PhiloGL.WebGL.Application({
-        gl: gl,
-        canvas: canvas,
-        program: program,
-        scene: scene,
-        camera: camera
-      });
+      app.program = program;
+      app.canvas = canvas;
+      app.scene = scene;
+      app.camera = camera;
 
       //Use program
       if (program.$$family == 'program') {
@@ -148,7 +152,7 @@ this.PhiloGL = null;
           onComplete: function() {
             callback(app);
           }
-        }));
+        }), app);
       } else {
         callback(app);
       }
@@ -158,65 +162,66 @@ this.PhiloGL = null;
 })();
 
 
-//Unpacks the submodules to the global space.
-PhiloGL.unpack = function(branch) {
-  branch = branch || globalContext;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D',
-   'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
-      branch[module] = PhiloGL[module];
-  });
-  branch.gl = gl;
-  branch.Utils = $;
-};
+(function() {
+  globalContext = this;
+  //Unpacks the submodules to the global space.
+  PhiloGL.unpack = function(branch) {
+    branch = branch || globalContext;
+    ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D',
+     'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
+        branch[module] = PhiloGL[module];
+    });
+    branch.gl = gl;
+    branch.Utils = PhiloGL.$;
+  };
+});
 
 //Version
 PhiloGL.version = '1.5.2';
 
-//Holds the 3D context, holds the application
-var gl, app, globalContext = this;
-
 //Utility functions
-function $(d) {
-  return document.getElementById(d);
-}
-
-$.empty = function() {};
-
-$.time = Date.now;
-
-$.uid = (function() {
-  var t = $.time();
-
-  return function() {
-    return t++;
-  };
-})();
-
-$.extend = function(to, from) {
-  for (var p in from) {
-    to[p] = from[p];
-  }
-  return to;
-};
-
-$.type = (function() {
-  var oString = Object.prototype.toString,
-      type = function(e) {
-        var t = oString.call(e);
-        return t.substr(8, t.length - 9).toLowerCase();
-      };
-
-  return function(elem) {
-    var elemType = type(elem);
-    if (elemType != 'object') {
-      return elemType;
-    }
-    if (elem.$$family) return elem.$$family;
-    return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
-  };
-})();
-
 (function() {
+  PhiloGL.$ = function (d) {
+    return document.getElementById(d);
+  }
+  var $ = PhiloGL.$;
+
+  $.empty = function() {};
+
+  $.time = Date.now;
+
+  $.uid = (function() {
+    var t = $.time();
+
+    return function() {
+      return t++;
+    };
+  })();
+
+  $.extend = function(to, from) {
+    for (var p in from) {
+      to[p] = from[p];
+    }
+    return to;
+  };
+
+  $.type = (function() {
+    var oString = Object.prototype.toString,
+        type = function(e) {
+          var t = oString.call(e);
+          return t.substr(8, t.length - 9).toLowerCase();
+        };
+
+    return function(elem) {
+      var elemType = type(elem);
+      if (elemType != 'object') {
+        return elemType;
+      }
+      if (elem.$$family) return elem.$$family;
+      return (elem && elem.nodeName && elem.nodeType == 1) ? 'element' : elemType;
+    };
+  })();
+
   function detach(elem) {
     var type = $.type(elem), ans;
     if (type == 'object') {
@@ -252,12 +257,12 @@ $.type = (function() {
     }
     return mix;
   };
-})();
 
-$.splat = (function() {
-  var isArray = Array.isArray;
-  return function(a) {
-    return isArray(a) && a || [a];
-  };
-})();
+  $.splat = (function() {
+    var isArray = Array.isArray;
+    return function(a) {
+      return isArray(a) && a || [a];
+    };
+  })();
 
+})();

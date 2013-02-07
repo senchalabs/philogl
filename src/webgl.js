@@ -2,6 +2,7 @@
 //Checks if WebGL is enabled and creates a context for using WebGL.
 
 (function () {
+  var $ = PhiloGL.$;
 
   var WebGL = {
 
@@ -78,6 +79,7 @@
     $$family: 'application',
 
     setBuffer: function(program, name, opt) {
+      var gl = this.gl;
       //unbind buffer
       if (opt === false || opt === null) {
         opt = this.bufferMemo[name];
@@ -157,6 +159,7 @@
     },
 
     setFrameBuffer: function(name, opt) {
+      var gl = this.gl;
       //bind/unbind framebuffer
       if (typeof opt != 'object') {
         gl.bindFramebuffer(gl.FRAMEBUFFER, opt? this.frameBuffers[name] : null);
@@ -234,6 +237,7 @@
     },
 
     setRenderBuffer: function(name, opt) {
+      var gl = this.gl;
       if (typeof opt != 'object') {
         gl.bindRenderbuffer(gl.RENDERBUFFER, opt? this.renderBufferMemo[name] : null);
         return;
@@ -269,6 +273,7 @@
     },
 
     setTexture: function(name, opt) {
+      var gl = this.gl;
       //bind texture
       if (!opt || typeof opt != 'object') {
         gl.activeTexture(opt || gl.TEXTURE0);
@@ -400,6 +405,7 @@
     },
 
     use: function(program) {
+      var gl = this.gl;
       gl.useProgram(program.program);
       //remember last used program.
       this.usedProgram = program;

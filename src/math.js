@@ -2,6 +2,7 @@
 //Vec3, Mat4 and Quat classes
 
 (function() {
+
   var sqrt = Math.sqrt, 
       sin = Math.sin,
       cos = Math.cos,

@@ -2,6 +2,7 @@
 //media has utility functions for image, video and audio manipulation (and
 //maybe others like device, etc).
 (function() {
+  var $ = PhiloGL.$;
   var Media = {};
 
   var Image = function() {};
@@ -17,8 +18,9 @@
       position: { x: 0, y: 0, z: 1.205 }
     }), scene = new PhiloGL.Scene({}, camera);
 
-    return function(opt) {
-      var program = app.program.$$family ? app.program : app.program[opt.program],
+    return function(opt, app) {
+      var gl = app.gl,
+          program = app.program.$$family ? app.program : app.program[opt.program],
           textures = opt.fromTexture ? $.splat(opt.fromTexture) : [],
           framebuffer = opt.toFrameBuffer,
           screen = !!opt.toScreen,

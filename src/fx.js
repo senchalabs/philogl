@@ -1,4 +1,6 @@
 (function() {
+  var $ = PhiloGL.$;
+
   //Timer based animation
   var Fx = function(options) {
       this.opt = $.merge({

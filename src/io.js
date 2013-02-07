@@ -2,6 +2,7 @@
 //Provides loading of assets with XHR and JSONP methods.
 
 (function () {
+  var $ = PhiloGL.$;
   var IO = {};
 
   var XHR = function(opt) {
@@ -265,7 +266,7 @@
   };
 
   //Load multiple textures from images
-  var Textures = function(opt) {
+  var Textures = function(opt, app) {
     opt = $.merge({
       src: [],
       noCache: false,

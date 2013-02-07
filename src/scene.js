@@ -4,7 +4,8 @@
 (function() {
   //Define some locals
   var Vec3 = PhiloGL.Vec3,
-      Mat4 = PhiloGL.Mat4;
+      Mat4 = PhiloGL.Mat4,
+      $ = PhiloGL.$;
 
   //Scene class
   var Scene = function(program, camera, opt) {
@@ -40,6 +41,7 @@
     }, opt || {});
 
     this.program = opt.program ? program[opt.program] : program;
+    this.app = this.program.app;
     this.camera = camera;
     this.models = [];
     this.config = opt;
@@ -211,6 +213,8 @@
     },
 
     renderToTexture: function(name, opt) {
+      var app = this.app,
+          gl = app.gl;
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
           texMemo = app.textureMemo[name + '-texture'];
@@ -230,6 +234,8 @@
           world = view.mulMat4(object),
           worldInverse = world.invert(),
           worldInverseTranspose = worldInverse.transpose();
+          app = program.app,
+          gl = app.gl;
 
       obj.setState(program);
 
@@ -259,8 +265,9 @@
 
     //setup picking framebuffer
     setupPicking: function() {
+      var app = this.app;
       //create picking program
-      var program = PhiloGL.Program.fromDefaultShaders(),
+      var program = PhiloGL.Program.fromDefaultShaders({app: app, gl: app.gl}),
           floor = Math.floor;
       //create framebuffer
       app.setFrameBuffer('$picking', {
