@@ -212,6 +212,7 @@
     },
 
     renderToTexture: function(name, opt) {
+      var app = PhiloGL.app;
       opt = opt || {};
       var texture = app.textures[name + '-texture'],
           texMemo = app.textureMemo[name + '-texture'];
@@ -260,6 +261,7 @@
 
     //setup picking framebuffer
     setupPicking: function() {
+      var app = PhiloGL.app;
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
           floor = Math.floor;
@@ -285,6 +287,7 @@
 
     //returns an element at the given position
     pick: function(x, y, lazy) {
+      var app = PhiloGL.app;
       //setup the picking program if this is
       //the first time we enter the method.
       if (!this.pickingProgram) {

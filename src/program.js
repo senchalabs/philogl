@@ -263,6 +263,7 @@
 
   ['setBuffer', 'setBuffers', 'use'].forEach(function(name) {
     Program.prototype[name] = function() {
+      var app = PhiloGL.app;
       var args = Array.prototype.slice.call(arguments);
       args.unshift(this);
       app[name].apply(app, args);
@@ -273,6 +274,7 @@
   ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
+      var app = PhiloGL.app;
       app[name].apply(app, arguments);
       return this;
     };

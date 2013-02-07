@@ -237,6 +237,7 @@
     },
 
     setTextures: function(program, force) {
+      var app = PhiloGL.app;
       this.textures = this.textures? $.splat(this.textures) : [];
       var dist = 5;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {

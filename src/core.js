@@ -80,7 +80,7 @@ this.PhiloGL = null;
               count--;
               if (count === 0 && !error) {
                 loadProgramDeps(gl, programLength == 1? p : programs, function(app) {
-                  opt.onLoad(app);
+                  opt.onLoad(PhiloGL.app);
                 });
               }
             },
@@ -122,14 +122,14 @@ this.PhiloGL = null;
       //get Scene
       var scene = new PhiloGL.Scene(program, camera, optScene);
 
-      //make app instance global to all framework
-      app = new PhiloGL.WebGL.Application({
+      PhiloGL.app = new PhiloGL.WebGL.Application({
         gl: gl,
         canvas: canvas,
         program: program,
         scene: scene,
         camera: camera
       });
+      var app = PhiloGL.app;
 
       //Use program
       if (program.$$family == 'program') {
@@ -159,22 +159,25 @@ this.PhiloGL = null;
 })();
 
 
-//Unpacks the submodules to the global space.
-PhiloGL.unpack = function(branch) {
-  branch = branch || globalContext;
-  ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D',
-   'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
-      branch[module] = PhiloGL[module];
-  });
-  branch.gl = gl;
-  branch.Utils = PhiloGL.$;
-};
+(function() {
+  globalContext = this;
+  //Unpacks the submodules to the global space.
+  PhiloGL.unpack = function(branch) {
+    branch = branch || globalContext;
+    ['Vec3', 'Mat4', 'Quat', 'Camera', 'Program', 'WebGL', 'O3D',
+     'Scene', 'Shaders', 'IO', 'Events', 'WorkerGroup', 'Fx', 'Media'].forEach(function(module) {
+        branch[module] = PhiloGL[module];
+    });
+    branch.gl = gl;
+    branch.Utils = PhiloGL.$;
+  };
+});
 
 //Version
 PhiloGL.version = '1.5.2';
 
 //Holds the 3D context, holds the application
-var gl, app, globalContext = this;
+var gl
 
 //Utility functions
 (function() {
