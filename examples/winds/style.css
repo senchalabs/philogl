@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Crimson Text';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Crimson Text'), local('CrimsonText-Roman'), url(font.woff) format('woff');
+}
+
 html, body {
   text-align: center;
   font-family: 'Crimson Text', Times, Verdana;

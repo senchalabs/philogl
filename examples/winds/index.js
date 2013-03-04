@@ -124,14 +124,14 @@ function init() {
               dir = data[0] == 8 ? 'NA' : ['E', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'][data[0]],
               spd = data[1];
 
-          var html = '<h1>' + title + '</h1>' + 
-            '<ul>' + 
-            '<li><b>latitude</b>: ' + lat + '</li>' + 
-            '<li><b>longitude</b>: ' + lon + '</li>' + 
-            '<li><b>elevation</b>: ' + elv + 'm</li>' + 
-            '<li><b>temperature</b>: ' + tmp + 'C</li>' + 
-            '<li><b>wind direction</b>: ' + dir + '</li>' + 
-            '<li><b>wind speed</b>: ' + spd + ' knots</li>' + 
+          var html = '<h1>' + title + '</h1>' +
+            '<ul>' +
+            '<li><b>latitude</b>: ' + lat + '</li>' +
+            '<li><b>longitude</b>: ' + lon + '</li>' +
+            '<li><b>elevation</b>: ' + elv + 'm</li>' +
+            '<li><b>temperature</b>: ' + tmp + 'C</li>' +
+            '<li><b>wind direction</b>: ' + dir + '</li>' +
+            '<li><b>wind speed</b>: ' + spd + ' knots</li>' +
             '</ul>';
 
           return html;
@@ -245,7 +245,7 @@ function init() {
           //Basic gl setup
           gl.clearColor(0.0, 0.0, 0.0, 1.0);
           gl.clearDepth(1.0);
-          gl.enable(gl.DEPTH_TEST);
+          gl.disable(gl.DEPTH_TEST);
           gl.depthFunc(gl.LEQUAL);
           gl.viewport(0, 0, +canvas.width, +canvas.height);
 
