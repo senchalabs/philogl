@@ -40,6 +40,8 @@ job to other texture(s) or to the main screen.
 * toFrameBuffer - (*string*, optional) The `id` of the framebuffer to render the scene to. The associated texture will have as `id` the framebuffer id plus `-texture` as suffix.
 * toScreen - (*boolean*, optional) Set this to `true` to render the result to the screen. Default's false.
 * aspectRatio - (*number*, optional) Sets the aspect ratio for the camera. If not specified it's automatically set.
+* viewportX - (*number*, optional) The offset with of the frame. Default's `0`.
+* viewportY - (*number*, optional) The offset height of the frame. Default's `0`.
 * width - (*number*, optional) The with of the frame. Default's the with of the canvas.
 * height - (*number*, optional) The height of the frame. Default's the height of the canvas.
 * uniforms - (*object*, optional) An object descriptor with the name and value of the uniforms to be sent to the shaders. Default's an empty object.

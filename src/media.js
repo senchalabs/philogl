@@ -23,7 +23,10 @@
           framebuffer = opt.toFrameBuffer,
           screen = !!opt.toScreen,
           width = opt.width || app.canvas.width,
-          height = opt.height || app.canvas.height;
+          height = opt.height || app.canvas.height,
+          x = opt.viewportX || 0,
+          y = opt.viewportY || 0;
+
 
       camera.aspect = opt.aspectRatio ? opt.aspectRatio : Math.max(height / width, width / height);
       camera.update();
@@ -58,7 +61,7 @@
         }
         program.use();
         app.setFrameBuffer(framebuffer, true);
-        gl.viewport(0, 0, width, height);
+        gl.viewport(x, y, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
@@ -67,7 +70,7 @@
 
       if (screen) {
         program.use();
-        gl.viewport(0, 0, width, height);
+        gl.viewport(x, y, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         program.setUniforms(opt.uniforms || {});
         scene.render();
