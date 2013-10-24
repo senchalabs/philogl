@@ -106,7 +106,7 @@
       this.opt.onError(e);
     },
 
-    handleAbort: function() {
+    handleAbort: function(e) {
       this.opt.onAbort(e);
     },
 
