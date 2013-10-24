@@ -3,11 +3,11 @@
     "#ifdef GL_ES",
     "precision highp float;",
     "#endif",
-    
+
     "varying vec4 vColor;",
     "varying vec2 vTexCoord;",
     "varying vec3 lightWeighting;",
-    
+
     "uniform bool hasTexture1;",
     "uniform sampler2D sampler1;",
 
@@ -23,24 +23,23 @@
     "uniform vec4 colorUfm;",
 
     "void main(){",
-      
+
       "if(!hasTexture1) {",
         "gl_FragColor = vec4(colorUfm.rgb * lightWeighting, colorUfm.a);",
       "} else {",
         "gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);",
       "}",
 
-      "if(enablePicking) {",
-        "gl_FragColor = vec4(pickColor, 1.0);",
-      "}",
-      
       /* handle fog */
       "if (hasFog && colorUfm.r != 1.0) {",
         "float depth = gl_FragCoord.z / gl_FragCoord.w;",
         "float fogFactor = smoothstep(fogNear, fogFar, depth);",
         "gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);",
-      "}",  
-    
+      "}",
+
+      "if(enablePicking) {",
+        "gl_FragColor = vec4(pickColor, 1.0);",
+      "}",
     "}"
 
   ].join("\n");
@@ -48,12 +47,12 @@
 (function() {
   //Unpack PhiloGL modules
   PhiloGL.unpack();
-  
+
   //Utility fn to getElementById
   function $id(d) {
     return document.getElementById(d);
   }
-  
+
   var models = [], i = 50;
   while (i--) {
     var model = new O3D[["Cylinder", "Cone", "Cube", "Sphere"][i % 4]]({
@@ -85,18 +84,18 @@
   }
 
   window.init = function() {
-    // var stats = new xStats();
-    // document.body.appendChild(stats.element);
-
     //Create App
     PhiloGL('surface-explorer-canvas', {
       program: {
         fs: 'Ufm'
       },
       camera: {
+        //near: 30,
+        //far: 50,
         position: {
-          x: 0, y: 0, z: -30
-        }
+          x: 0, y: 0, z: -50
+        },
+        //type: 'orthographic'
       },
       scene: {
         lights: {
@@ -128,16 +127,24 @@
       events: {
         picking: true,
         // lazyPicking: true,
-        // centerOrigin: false,
+        centerOrigin: false,
+        cachePosition: false,
         onMouseEnter: function(e, model) {
           model.uniforms.colorUfm = [1, 1, 1, 1];
         },
         onMouseLeave: function(e, model) {
           model.uniforms.colorUfm = [0.5, 0.5, 0.5, 1];
+        },
+        onMouseWheel: function(e) {
+          e.stop();
+          var camera = this.camera;
+          camera.position.z += e.wheel;
+          camera.update();
         }
       },
       onError: function() {
-        alert("There was an error while creating the WebGL application");
+        console.log(arguments);
+        //alert("There was an error while creating the WebGL application");
       },
       onLoad: function(app) {
         var gl = app.gl,
@@ -157,7 +164,7 @@
           gl.viewport(0, 0, canvas.width, canvas.height);
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
           scene.render();
-          Fx.requestAnimationFrame(render); 
+          Fx.requestAnimationFrame(render);
         }
       }
     });

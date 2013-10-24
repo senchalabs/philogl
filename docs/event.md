@@ -1,18 +1,19 @@
---- 
-layout: docs 
-title: Event 
+---
+layout: docs
+title: Event
 categories: [Documentation]
 ---
 
 Module: Event {#Event}
 ===========================
 
-Provides the [Events](event.html) object to bind events to the canvas to interact with 3D objects. 
+Provides the [Events](event.html) object to bind events to the canvas to interact with 3D objects.
 The first parameter of each event callback function is an event wrapper object that contains as properties:
 
 * event - (*element*) The native event.
 * x - (*number*) The x position of the mouse pointer when the event was triggered.
 * y - (*number*) The y position of the mouse pointer when the event was triggered.
+* posArray - (*array*) If multiple events where triggered at the same time (like multiple fingers touching a screen), then the array of transformed positions will be here.
 * stop - (*function*) A method that can be called to stop the propagation of the event.
 * wheel - (*number*) Only on the mousewheel event. A number specifying the delta for the mouse scroll.
 * isRightClick - (*boolean*) Whether is right or left click.
@@ -30,7 +31,7 @@ Creates a set of events for the given domElement that can be handled through a c
 
 ### Syntax:
 
-    PhiloGL.Events.create(app, options);	
+    PhiloGL.Events.create(app, options);
 
 ### Arguments:
 
@@ -39,14 +40,17 @@ Creates a set of events for the given domElement that can be handled through a c
 
 ### Options:
 
-* picking - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
-* lazyPicking - (*boolean*, optional) When using lazy picking the framebuffer only stores a new image used for color picking when `scene.resetPicking();` is called. This is useful for when images of large resolution are being used and the scene is static most of the time (i.e. pickable objects don't change their shape/position too often). **Currently this only works for Chrome, Opera, Safari**. Default's false.
 * cachePosition - (*boolean*, optional) Whether to cache the current position of the canvas or calculate it each time in the event loop. Default's `true`.
 * cacheSize - (*boolean*, optional) Whether to cache the size of the canvas or calculate it each time in the event loop. Default's `true`.
 * relative - (*boolean*, optional) Whether to calculate the mouse position as relative to the canvas position or absolute. Default's `true`.
 * centerOrigin - (*boolean*, optional) Whether to set the center (0, 0) coordinate to the center of the canvas or to the top-left corner. Default's `true`.
 * disableContextMenu - (*boolean*, optional) Disable the context menu (generally shown when the canvas is right clicked). Default's `true`.
+* enableTouch - (*boolean*, optional) Whether to append listeners to touch events. Default's `true`.
+* enableMouse - (*boolean*, optional) Whether to append listeners to mouse events. Default's `true`.
+* enableKeyboard - (*boolean*, optional) Whether to append listeners to keyboard events. Default's `true`.
 * bind - (*mixed*, optional) bind the *thisArg* in the callbacks to the specified object.
+* picking - (*boolean*, optional) Whether to use picking. If true, the second parameter for the callback functions will be an [O3D](o3d.html) target for the event (or a falsy value otherwise). Default's false.
+* lazyPicking - (*boolean*, optional) When using lazy picking the framebuffer only stores a new image used for color picking when `scene.resetPicking();` is called. This is useful for when images of large resolution are being used and the scene is static most of the time (i.e. pickable objects don't change their shape/position too often). **Currently this only works for Chrome, Opera, Safari**. Default's false.
 
 ### Callbacks:
 
@@ -68,6 +72,7 @@ following callbacks are:
 * onTouchMove - (*function*, optional) Handles the onTouchMove event.
 * onTouchEnd - (*function*, optional) Handles the onTouchEnd event.
 * onTouchCancel - (*function*, optional) Handles the onTouchCancel event.
+* onTap - (*function*, optional) Handles the tap touch event.
 * onMouseMove - (*function*, optional) Handles the onMouseMove event.
 * onMouseEnter - (*function*, optional) Handles the onMouseEnter event.
 * onMouseLeave - (*function*, optional) Handles the onMouseLeave event.
@@ -86,7 +91,7 @@ Setting rotation and zoom to a moon object with drag and drop and mousewheel eve
 
 {% highlight js %}
     var pos, camera, moon, app;
-    
+
     //create and assign variables to objects...
 
     PhiloGL.Events.create(app, {
@@ -111,5 +116,5 @@ Setting rotation and zoom to a moon object with drag and drop and mousewheel eve
         camera.position.z += e.wheel;
         camera.update();
       }
-  });  
+  });
 {% endhighlight %}
