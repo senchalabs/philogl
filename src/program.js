@@ -298,7 +298,7 @@
       fs = $(opt.fs);
     return preprocess(opt.path, vs.innerHTML, function(vectexShader) {
       return preprocess(opt.path, fs.innerHTML, function(fragmentShader) {
-        opt.onSuccess(new Program(vectexShader, fragmentShader), opt);
+        return new Program(vectexShader, fragmentShader);
       });
     });
   };
