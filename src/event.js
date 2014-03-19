@@ -205,7 +205,7 @@
         //get the target element of the event
         getTarget: function() {
           if (cacheTarget) return cacheTarget;
-          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || false);
+          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || true);
         }
       });
       //wrap native event

@@ -1,6 +1,5 @@
 /**
-@preserve
-Copyright (c) 2011 Sencha Labs - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
+@preserveCopyright (c) 2013 Sencha Labs - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -2095,7 +2094,7 @@ $.splat = (function() {
         //get the target element of the event
         getTarget: function() {
           if (cacheTarget) return cacheTarget;
-          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || false);
+          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || true);
         }
       });
       //wrap native event
@@ -2793,7 +2792,7 @@ $.splat = (function() {
       this.opt.onError(e);
     },
 
-    handleAbort: function() {
+    handleAbort: function(e) {
       this.opt.onAbort(e);
     },
 
