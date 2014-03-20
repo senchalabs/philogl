@@ -237,23 +237,27 @@
 
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      var dist = 5;
+      var dist = 5, tex2D = 0, texCube = 0;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           var isCube = app.textureMemo[texs[i]].isCube;
           if (isCube) {
             program.setUniform('hasTextureCube' + (i + 1), true);
-            program.setTexture(texs[i], gl['TEXTURE' + (i + dist)]);
+            program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('samplerCube' + (texCube + 1), i);
+            texCube++;
           } else {
             program.setUniform('hasTexture' + (i + 1), true);
             program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('sampler' + (tex2D + 1), i);
+            tex2D++;
           }
         } else {
           program.setUniform('hasTextureCube' + (i + 1), false);
           program.setUniform('hasTexture' + (i + 1), false);
+          program.setUniform('sampler' + (++tex2D), i);
+          program.setUniform('samplerCube' + (++texCube), i);
         }
-        program.setUniform('sampler' + (i + 1), i);
-        program.setUniform('samplerCube' + (i + 1), i + dist);
       }
     },
 
