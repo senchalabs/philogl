@@ -3302,23 +3302,27 @@ $.splat = (function() {
 
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      var dist = 5;
+      var dist = 5, tex2D = 0, texCube = 0;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           var isCube = app.textureMemo[texs[i]].isCube;
           if (isCube) {
             program.setUniform('hasTextureCube' + (i + 1), true);
-            program.setTexture(texs[i], gl['TEXTURE' + (i + dist)]);
+            program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('samplerCube' + (texCube + 1), i);
+            texCube++;
           } else {
             program.setUniform('hasTexture' + (i + 1), true);
             program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('sampler' + (tex2D + 1), i);
+            tex2D++;
           }
         } else {
           program.setUniform('hasTextureCube' + (i + 1), false);
           program.setUniform('hasTexture' + (i + 1), false);
+          program.setUniform('sampler' + (++tex2D), i);
+          program.setUniform('samplerCube' + (++texCube), i);
         }
-        program.setUniform('sampler' + (i + 1), i);
-        program.setUniform('samplerCube' + (i + 1), i + dist);
       }
     },
 
@@ -3800,7 +3804,6 @@ $.splat = (function() {
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
 
-  //Code based on http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
   O3D.IcoSphere = function(opt) {
     var iterations = opt.iterations || 0,
         vertices = [],
@@ -3814,49 +3817,12 @@ $.splat = (function() {
     //Add a callback for when a vertex is created
     opt.onAddVertex = opt.onAddVertex || $.empty;
 
-    // and Icosahedron vertices
+    // and octahedron vertices
     var t = (1 + sqrt(5)) / 2,
-        len = sqrt(1 + t * t);
+        square = sqrt(1 + t * t);
 
-    vertices.push(-1 / len,  t / len,  0,
-                   1 / len,  t / len,  0,
-                  -1 / len, -t / len,  0,
-                   1 / len, -t / len,  0,
-
-                   0, -1 / len,  t / len,
-                   0,  1 / len,  t / len,
-                   0, -1 / len, -t / len,
-                   0,  1 / len, -t / len,
-
-                   t / len,  0, -1 / len,
-                   t / len,  0,  1 / len,
-                  -t / len,  0, -1 / len,
-                  -t / len,  0,  1 / len);
-
-
-      indices.push(0, 11, 5,
-                 0, 5, 1,
-                 0, 1, 7,
-                 0, 7, 10,
-                 0, 10, 11,
-
-                 1, 5, 9,
-                 5, 11, 4,
-                 11, 10, 2,
-                 10, 7, 6,
-                 7, 1, 8,
-
-                 3, 9, 4,
-                 3, 4, 2,
-                 3, 2, 6,
-                 3, 6, 8,
-                 3, 8, 9,
-
-                 4, 9, 5,
-                 2, 4, 11,
-                 6, 2, 10,
-                 8, 6, 7,
-                 9, 8, 1);
+    vertices.push(-1,0,0, 0,1,0, 0,0,-1, 0,0,1, 0,-1,0, 1,0,0);
+    indices.push(3,4,5,3,5,1,3,1,0,3,0,4,4,0,2,4,2,5,2,0,1,5,2,1);
 
     var getMiddlePoint = (function() {
       var pointMemo = {};
@@ -3900,20 +3866,17 @@ $.splat = (function() {
             b = getMiddlePoint(indices[j + 1], indices[j + 2]),
             c = getMiddlePoint(indices[j + 2], indices[j    ]);
 
-        indices2.push(indices[j], a, c,
-                      indices[j + 1], b, a,
-                      indices[j + 2], c, b,
-                      a, b, c);
+        indices2.push(c, indices[j    ], a, a, indices[j + 1], b, b, indices[j + 2], c, a, b, c);
       }
       indices = indices2;
     }
 
     //Calculate texCoords and normals
     var l = indices.length,
-        normals = new Float32Array(l * 3),
-        texCoords = new Float32Array(l * 2);
+        normals = new Array(l * 3),
+        texCoords = new Array(l * 2);
 
-    for (var i = 0; i < l; i += 3) {
+    for (var i = l - 3; i >= 0; i -= 3) {
       var i1 = indices[i    ],
           i2 = indices[i + 1],
           i3 = indices[i + 2],
@@ -3927,34 +3890,80 @@ $.splat = (function() {
           y1 = vertices[in1 + 1],
           z1 = vertices[in1 + 2],
           theta1 = acos(z1 / sqrt(x1 * x1 + y1 * y1 + z1 * z1)),
-          phi1 = atan2(y1, x1),
+          phi1 = atan2(y1, x1) + pi,
           v1 = theta1 / pi,
           u1 = 1 - phi1 / pi2,
           x2 = vertices[in2    ],
           y2 = vertices[in2 + 1],
           z2 = vertices[in2 + 2],
           theta2 = acos(z2 / sqrt(x2 * x2 + y2 * y2 + z2 * z2)),
-          phi2 = atan2(y2, x2),
+          phi2 = atan2(y2, x2) + pi,
           v2 = theta2 / pi,
           u2 = 1 - phi2 / pi2,
           x3 = vertices[in3    ],
           y3 = vertices[in3 + 1],
           z3 = vertices[in3 + 2],
           theta3 = acos(z3 / sqrt(x3 * x3 + y3 * y3 + z3 * z3)),
-          phi3 = atan2(y3, x3),
+          phi3 = atan2(y3, x3) + pi,
           v3 = theta3 / pi,
           u3 = 1 - phi3 / pi2,
-          vec1 = {
-            x: x3 - x2,
-            y: y3 - y2,
-            z: z3 - z2
-          },
-          vec2 = {
-            x: x1 - x2,
-            y: y1 - y2,
-            z: z1 - z2
-          },
-          normal = Vec3.cross(vec1, vec2).$unit();
+          vec1 = [
+            x3 - x2,
+            y3 - y2,
+            z3 - z2
+          ],
+          vec2 = [
+            x1 - x2,
+            y1 - y2,
+            z1 - z2
+          ],
+          normal = Vec3.cross(vec1, vec2).$unit(),
+          newIndex;
+
+      if ((u1 == 0 || u2 == 0 || u3 == 0) &&
+          (u1 == 0 || u1 > 0.5) &&
+            (u2 == 0 || u2 > 0.5) &&
+              (u3 == 0 || u3 > 0.5)) {
+
+          vertices.push(
+            vertices[in1    ],
+            vertices[in1 + 1],
+            vertices[in1 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v1;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+
+          vertices.push(
+            vertices[in2    ],
+            vertices[in2 + 1],
+            vertices[in2 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v2;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+
+          vertices.push(
+            vertices[in3    ],
+            vertices[in3 + 1],
+            vertices[in3 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v3;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+      }
 
       normals[in1    ] = normals[in2    ] = normals[in3    ] = normal.x;
       normals[in1 + 1] = normals[in2 + 1] = normals[in3 + 1] = normal.y;
@@ -3977,6 +3986,7 @@ $.splat = (function() {
       texCoords: texCoords
     }, opt || {}));
   };
+
 
   O3D.IcoSphere.prototype = Object.create(O3D.Model.prototype);
 
@@ -5086,13 +5096,15 @@ $.splat = (function() {
   //post process an image by setting it to a texture with a specified fragment
   //and vertex shader.
   Image.postProcess = (function() {
+    //length given a 45 fov angle, and 0.2 distance to camera
+    var length = 0.08284271247461902 * 2;
     var plane = new PhiloGL.O3D.Plane({
       type: 'x,y',
-      xlen: 1,
-      ylen: 1,
+      xlen: length,
+      ylen: length,
       offset: 0
     }), camera = new PhiloGL.Camera(45, 1, 0.1, 500, {
-      position: { x: 0, y: 0, z: 1.205 }
+      position: { x: 0, y: 0, z: -0.2 }
     }), scene = new PhiloGL.Scene({}, camera);
 
     return function(opt) {
