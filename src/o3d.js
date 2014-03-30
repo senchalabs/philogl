@@ -79,7 +79,7 @@
     //override the render method
     this.render = opt.render;
     //whether to render as triangles, lines, points, etc.
-    this.drawType = opt.drawType || 'TRIANGLES';
+    this.drawType = opt.hasOwnProperty('drawType') ? opt.drawType : 'TRIANGLES';
     //whether to display the object at all
     this.display = 'display' in opt? opt.display : true;
     //before and after render callbacks
@@ -1044,7 +1044,7 @@
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset,
-        flipCull = !!config.flipCull, 
+        flipCull = !!config.flipCull,
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
@@ -1054,7 +1054,7 @@
     if (flipCull) {
       c1len = - c1len;
     }
-    
+
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
