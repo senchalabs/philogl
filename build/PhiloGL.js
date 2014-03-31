@@ -3144,7 +3144,7 @@ $.splat = (function() {
     //override the render method
     this.render = opt.render;
     //whether to render as triangles, lines, points, etc.
-    this.drawType = opt.drawType || 'TRIANGLES';
+    this.drawType = opt.hasOwnProperty('drawType') ? opt.drawType : 'TRIANGLES';
     //whether to display the object at all
     this.display = 'display' in opt? opt.display : true;
     //before and after render callbacks
@@ -4109,7 +4109,7 @@ $.splat = (function() {
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset,
-        flipCull = !!config.flipCull, 
+        flipCull = !!config.flipCull,
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
@@ -4119,7 +4119,7 @@ $.splat = (function() {
     if (flipCull) {
       c1len = - c1len;
     }
-    
+
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
@@ -5097,14 +5097,14 @@ $.splat = (function() {
   //and vertex shader.
   Image.postProcess = (function() {
     //length given a 45 fov angle, and 0.2 distance to camera
-    var length = 0.08284271247461902 * 2;
+    var length = 0.16568542494923805;
     var plane = new PhiloGL.O3D.Plane({
       type: 'x,y',
       xlen: length,
       ylen: length,
       offset: 0
     }), camera = new PhiloGL.Camera(45, 1, 0.1, 500, {
-      position: { x: 0, y: 0, z: -0.2 }
+      position: { x: 0, y: 0, z: 0.2 }
     }), scene = new PhiloGL.Scene({}, camera);
 
     return function(opt) {
