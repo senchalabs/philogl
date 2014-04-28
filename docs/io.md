@@ -137,7 +137,7 @@ answers for each request.
 Creating a request object to a specific url.
 
 {% highlight js %}
-  var req = new PhiloGL.IO.XHR({
+  var req = new PhiloGL.IO.XHR.Group({
     urls: ['/mydomain/1/' '/mydomain/2/'],
 
     onError: function() {
