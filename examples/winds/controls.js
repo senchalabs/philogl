@@ -11,8 +11,8 @@ function setupControls(callback) {
   callback.time = time;
   callback.play = play;
   callback.elevation = elevation;
-  
-  time.addEventListener('change', function() {
+
+  time.addEventListener('mousemove', function() {
     callback.onTimeChange(+time.value, time);
   }, false);
 
@@ -29,7 +29,7 @@ function setupControls(callback) {
       callback.onMarkerChange({ r1: 0, r2: 1, r3: 2 }[this.id]);
     }
   }
-  
+
   r1.addEventListener('change', markerHandler, false);
   r2.addEventListener('change', markerHandler, false);
   r3.addEventListener('change', markerHandler, false);
