@@ -102,11 +102,13 @@
         dataType: gl.FLOAT,
         stride: 0,
         offset: 0,
-        drawType: gl.STATIC_DRAW
+        drawType: gl.STATIC_DRAW,
+        instanced: 0
       }, opt || {});
 
       var attributeName = opt.attribute || name,
           bufferType = opt.bufferType,
+          instanced = opt.instanced,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
           hasValue = 'value' in opt,
@@ -117,7 +119,8 @@
           offset = opt.offset,
           drawType = opt.drawType,
           loc = program.attributes[attributeName],
-          isAttribute = loc !== undefined;
+          isAttribute = loc !== undefined,
+          ext;
 
       if (!hasBuffer) {
         this.buffers[name] = buffer;
@@ -135,6 +138,14 @@
 
       if (isAttribute) {
         gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+        if (instanced) {
+          ext = gl.getExtension('ANGLE_instanced_arrays');
+          if (!ext) {
+            console.warn('ANGLE_instanced_arrays not supported!');
+          } else {
+            ext.vertexAttribDivisorANGLE(loc, instanced === true ? 1 : instanced);
+          }
+        }
       }
 
       //set default options so we don't have to next time.

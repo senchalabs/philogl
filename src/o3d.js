@@ -1038,6 +1038,7 @@
 
   O3D.Plane = function(config) {
     var type = config.type,
+        unpack = config.unpack,
         coords = type.split(','),
         c1len = config[coords[0] + 'len'], //width
         c2len = config[coords[1] + 'len'], //height
@@ -1115,11 +1116,12 @@
     }
 
     var numVertsAcross = subdivisions1 + 1,
-        indices = [];
+        indices = [],
+        index;
 
     for (z = 0; z < subdivisions2; z++) {
       for (x = 0; x < subdivisions1; x++) {
-        var index = (z * subdivisions1 + x) * 6;
+        index = (z * subdivisions1 + x) * 6;
         // Make triangle 1 of quad.
         indices[index + 0] = (z + 0) * numVertsAcross + x;
         indices[index + 1] = (z + 1) * numVertsAcross + x;
@@ -1132,13 +1134,37 @@
       }
     }
 
-    O3D.Model.call(this, $.extend({
-      vertices: positions,
-      normals: normals,
-      texCoords: texCoords,
-      indices: indices
-    }, config));
+    var positions2, normals2, texCoords2;
+    if (config.unpack) {
+      positions2 = new Float32Array(indices.length * 3);
+      normals2 = new Float32Array(indices.length * 3);
+      texCoords2 = new Float32Array(indices.length * 2);
 
+      for (x = 0, l = indices.length; x < l; ++x) {
+        index = indices[x];
+        positions2[x * 3    ] = positions[index * 3    ];
+        positions2[x * 3 + 1] = positions[index * 3 + 1];
+        positions2[x * 3 + 2] = positions[index * 3 + 2];
+        normals2[x * 3    ] = normals[index * 3    ];
+        normals2[x * 3 + 1] = normals[index * 3 + 1];
+        normals2[x * 3 + 2] = normals[index * 3 + 2];
+        texCoords2[x * 2    ] = texCoords[index * 2    ];
+        texCoords2[x * 2 + 1] = texCoords[index * 2 + 1];
+      }
+
+      O3D.Model.call(this, $.extend({
+        vertices: positions2,
+        normals: normals2,
+        texCoords: texCoords2
+      }, config));
+    } else {
+      O3D.Model.call(this, $.extend({
+        vertices: positions,
+        normals: normals,
+        texCoords: texCoords,
+        indices: indices
+      }, config));
+    }
   };
 
   O3D.Plane.prototype = Object.create(O3D.Model.prototype);
