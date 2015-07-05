@@ -4705,8 +4705,6 @@ $.splat = (function() {
       this.pickingProgram = program;
     },
 
-    //returns an element at the given position
-    //returns an element at the given position
     pick: function(x, y, opt) {
       opt = opt || {};
       //setup the picking program if this is
@@ -4727,13 +4725,14 @@ $.splat = (function() {
           memoFog = config.effects.fog,
           canvas = gl.canvas,
           viewport = opt.viewport || {},
-          width = viewport.width || canvas.offsetWidth || canvas.width,
-          height = viewport.height || canvas.offsetHeight || canvas.height,
+          pixelRatio = opt.pixelRatio || 1,
+          width = (viewport.width || canvas.offsetWidth || canvas.width),
+          height = (viewport.height || canvas.offsetHeight || canvas.height),
           floor = Math.floor,
           resWidth = 5,
           resHeight = 1,
-          xp = x - (viewport.x || 0),
-          yp = y - (viewport.y || 0),
+          xp = (x * pixelRatio - (viewport.x || 0)),
+          yp = (y * pixelRatio - (viewport.y || 0)),
           ndcx = xp * 2 / width - 1,
           ndcy = 1 - yp * 2 / height,
           target = this.unproject([ndcx, ndcy,  1.0], camera),

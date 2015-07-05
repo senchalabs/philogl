@@ -1,0 +1,26 @@
+{
+  "name": "philogl",
+  "version": "1.6.0",
+  "description": "A WebGL JavaScript visualization library.",
+  "keywords": [
+    "webgl",
+    "w3c",
+    "visualization",
+    "canvas",
+    "animation",
+    "3d"
+  ],
+  "homepage": "http://philogl.org/",
+  "author": {
+    "name": "Nicolas Garcia Belmonte",
+    "url": "http://philogb.github.io"
+  },
+  "contributors": [
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philogb/philogl.git"
+  },
+  "main": "./build/PhiloGL.cls.js",
+  "license": "MIT"
+}
