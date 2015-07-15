@@ -1,6 +1,6 @@
 {
   "name": "philogl",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "A WebGL JavaScript visualization library.",
   "keywords": [
     "webgl",
@@ -15,8 +15,7 @@
     "name": "Nicolas Garcia Belmonte",
     "url": "http://philogb.github.io"
   },
-  "contributors": [
-  ],
+  "contributors": [],
   "repository": {
     "type": "git",
     "url": "https://github.com/philogb/philogl.git"
