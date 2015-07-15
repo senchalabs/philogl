@@ -260,7 +260,7 @@
     },
 
     //setup picking framebuffer
-    setupPicking: function() {
+    setupPicking: function(opt) {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
           floor = Math.floor;
