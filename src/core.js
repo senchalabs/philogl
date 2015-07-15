@@ -2,7 +2,7 @@
 //Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
 //Global
-this.PhiloGL = null;
+PhiloGL = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.

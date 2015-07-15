@@ -20,12 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-(function() { 
+!function() {var PhiloGL; 
 //core.js
 //Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
 //Global
-this.PhiloGL = null;
+PhiloGL = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.
@@ -5210,4 +5210,5 @@ $.splat = (function() {
   PhiloGL.Media = Media;
 })();
 
-})();
+ if (typeof define === "function" && define.amd) define(PhiloGL); else if (typeof module === "object" && module.exports) module.exports = PhiloGL;
+ this.PhiloGL = PhiloGL;}();
