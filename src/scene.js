@@ -271,10 +271,10 @@
         bindToTexture: {
           parameters: [{
             name: 'TEXTURE_MAG_FILTER',
-            value: 'LINEAR'
+            value: 'NEAREST'
           }, {
             name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR'
+            value: 'NEAREST'
           },{
             name: 'TEXTURE_WRAP_S',
             value: 'CLAMP_TO_EDGE'
