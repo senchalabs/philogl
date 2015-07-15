@@ -1,6 +1,6 @@
 {
   "name": "philogl",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "A WebGL JavaScript visualization library.",
   "keywords": [
     "webgl",
