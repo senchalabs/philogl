@@ -286,7 +286,7 @@
         bindToRenderBuffer: true
       });
       app.setFrameBuffer('$picking', false);
-      this.pickingProgram = program;
+      this.pickingProgram = opt.pickingProgram || program;
     },
 
     pick: function(x, y, opt) {
@@ -294,7 +294,7 @@
       //setup the picking program if this is
       //the first time we enter the method.
       if (!this.pickingProgram) {
-        this.setupPicking();
+        this.setupPicking(opt);
       }
 
       var o3dHash = {},
