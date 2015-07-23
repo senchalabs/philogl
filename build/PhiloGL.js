@@ -4776,7 +4776,7 @@ $.splat = (function() {
           elem = o3dHash[stringColor],
           pick;
 
-     console.log('o3dHash', stringColor, x, y, width, height);
+     //console.log('o3dHash', stringColor, x, y, width, height);
 
       if (!elem) {
         for (var i = 0, l = o3dList.length; i < l; i++) {
