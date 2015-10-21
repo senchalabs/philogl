@@ -377,6 +377,7 @@
       //restore all values and unbind buffers
       app.setFrameBuffer('$picking', false);
       app.setTexture('$picking-texture', false);
+      pickingProgram.use();
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
