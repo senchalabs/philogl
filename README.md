@@ -1,3 +1,8 @@
+Important
+====================================
+
+Work on PhiloGL has been discontinued since Sep 2012. An updated framework with similar notions is being developed [here](https://github.com/uber-common/luma.gl).
+
 PhiloGL: A JavaScript WebGL Framework
 =====================================
 
