@@ -20,12 +20,12 @@ var files = [
 
 function build() {
   var license = fs.readFileSync('../LICENSE'), body;
-  
+
   body = files.map(function(name) {
     return fs.readFileSync(path + name);
   });
 
-  console.log('/**\n@preserve' + license + '*/\n' + '(function() { \n' + body.join('\n') + '\n})();');
+  console.log('/**\n@preserve' + license + '*/\n' + '!function() {var PhiloGL; \n' + body.join('\n') + '\n if (typeof define === "function" && define.amd) define(PhiloGL); else if (typeof module === "object" && module.exports) module.exports = PhiloGL;\n this.PhiloGL = PhiloGL;}();');
 }
 
 build();

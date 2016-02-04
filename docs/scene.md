@@ -1,21 +1,21 @@
---- 
-layout: docs 
-title: Scene 
+---
+layout: docs
+title: Scene
 categories: [Documentation]
 ---
 
 Class: Scene {#Scene}
 ===============================
 
-The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that 
-plays well with objects created with [O3D](o3d.html) and the default shaders in [Shaders](shaders.html) to enable rendering of multiple 
-models in the scene with different options. The Scene role is to connect the properties set in the [O3D](o3d.html) models to the 
-attributes defined in the shaders so that the buffer creation and updating is transparent to the user. 
-The good thing about the design though is that the Scene provides many callback functions that can be executed at different 
-stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you 
-to create your own shader files that are compatible with the [Scene](scene.html) class. Some examples of [Scene](scene.html) compatible shader 
-files can be found [here](https://github.com/philogb/philogl/tree/master/shaders). Also, for more information about the 
-default shaders take a look at the [Shaders](shaders.html) class. The [O3D](o3d.html) options describe how to override or set callbacks when rendering 
+The Scene class abstracts the use of low level code for lighting and other effects and creates a high level structure that
+plays well with objects created with [O3D](o3d.html) and the default shaders in [Shaders](shaders.html) to enable rendering of multiple
+models in the scene with different options. The Scene role is to connect the properties set in the [O3D](o3d.html) models to the
+attributes defined in the shaders so that the buffer creation and updating is transparent to the user.
+The good thing about the design though is that the Scene provides many callback functions that can be executed at different
+stages of the rendering process for the user to update or bypass setting of the attributes and uniforms. This also enables you
+to create your own shader files that are compatible with the [Scene](scene.html) class. Some examples of [Scene](scene.html) compatible shader
+files can be found [here](https://github.com/philogb/philogl/tree/master/shaders). Also, for more information about the
+default shaders take a look at the [Shaders](shaders.html) class. The [O3D](o3d.html) options describe how to override or set callbacks when rendering
 objects with a default scene.
 
 
@@ -57,7 +57,7 @@ Creates a new [Scene](scene.html) instance.
     * color|diffuse - (*object*) A r, g, b object with values in [0, 1] that sets the (diffuse) color for the point light.
     * specular - (*object*, optional) A r, g, b object with values in [0, 1] that sets the specular light color.
   * effects - (*object*, optional) An object with scene effect options.
-    
+
     * fog - (*object*, optional) An object with linear fog options explained below.
       * near - (*number*, optional) The near fog factor. Default's the [Camera](camera.html) near factor.
       * far - (*number*) The far fog factor. Default's the [Camera](camera.html) far factor.
@@ -190,7 +190,7 @@ right after rendering each element.
 Scene Method: renderToTexture {#Scene:renderToTexture}
 -------------------------------------------------------
 
-Performs `scene.render()` but binds a texture afterwards to store the rendered image in the texture itself and not the main 
+Performs `scene.render()` but binds a texture afterwards to store the rendered image in the texture itself and not the main
 buffer.
 
 ### Syntax:
@@ -203,34 +203,34 @@ buffer.
 
 ### Examples:
 
-Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done 
+Bind a framebuffer, render the scene to a texture, and unbind the framebuffer. This is the procedure done
 to render the inner scene in the laptop example on [lesson 16](http://philogb.github.com/philogl/PhiloGL/examples/lessons/16/).
 
 {% highlight js %}
 function drawInnerScene() {
   program.setFrameBuffer('monitor', true);
-  
+
   gl.viewport(0, 0, screenWidth, screenHeight);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  
+
   theta += 0.01;
-  
+
   moon.position = {
     x: rho * Math.cos(theta),
     y: 0,
     z: rho * Math.sin(theta)
   };
   moon.update();
-  
+
   box.position = {
     x: rho * Math.cos(Math.PI + theta),
     y: 0,
     z: rho * Math.sin(Math.PI + theta)
   };
   box.update();
-  
+
   innerScene.renderToTexture('monitor');
-  
+
   program.setFrameBuffer('monitor', false);
 }
 {% endhighlight %}
@@ -245,9 +245,9 @@ coordinates. The object must have `pickable` set to `true`.
 ### About the picking algorithm
 
 The picking algorithm used in PhiloGL is a color picking
-algorithm. Each model is assigned a different color and the scene is 
+algorithm. Each model is assigned a different color and the scene is
 rendered to a texture. Then, the pixel pointed by the mouse
-position is retrieved from the texture and the color of that pixel is 
+position is retrieved from the texture and the color of that pixel is
 used to identify the model.
 
 ### Customizing the picking algorithm
@@ -258,14 +258,14 @@ picked. In that case the [O3D](o3d.html) constructor options
 `pickingColors` and `pick` are useful. By defining your own set of per
 vertex colors and a method that given a pixel returns special
 information on what part of the object has been retrieved, then it is
-possible to have finer grain picking. For more information about how to 
+possible to have finer grain picking. For more information about how to
 use this you can take a look at the Air Flights example or go to the
 [Google group of the framework](http://groups.google.com/group/philogl)
 and ask for more info.
 
 ### Syntax:
 
-    scene.pick(x, y);
+    scene.pick(x, y, options);
 
 ### Arguments:
 
@@ -273,10 +273,17 @@ and ask for more info.
 is considered to be `(0, 0)`.
 * y - (*number*) The `y` position. The upper left corner of the viewport
 is considered to be `(0, 0)`.
+* options - (*object*, optional) An object containing the following properties:
+  * viewport - (*object*, optional) An object containing viewport
+    information:
+    * x - (*number*, optional) Viewport start `x` position. Default's `0`.
+    * y - (*number*, optional) Viewport start `y` position. Default's `0`.
+    * width - (*number*, optional) Viewport `width` dimension. Default's `canvas.offsetWidth`.
+    * height - (*number*, optional) Viewport `height` dimension. Default's `canvas.offsetHeight`.
 
 ### Notes:
 
- * You might want to check how picking is used in the [Event](event.html) options. There you can grab 
+ * You might want to check how picking is used in the [Event](event.html) options. There you can grab
 the target of the event in a simple way.
  * Also, the picking method will disable blending. If you are using
    blending in your application (along with picking), you might want to

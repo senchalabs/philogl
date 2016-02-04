@@ -2,12 +2,12 @@
 //Handle keyboard/mouse/touch events in the Canvas
 
 (function() {
-  
+
   //returns an O3D object or false otherwise.
   function toO3D(n) {
     return n !== true ? n : false;
   }
-  
+
   //Returns an element position
   var getPos = function(elem) {
     var bbox = elem.getBoundingClientRect();
@@ -34,7 +34,7 @@
       var fKey = code - 111;
       if (fKey > 0 && fKey < 13) key = 'f' + fKey;
       key = key || String.fromCharCode(code).toLowerCase();
-      
+
       return {
         code: code,
         key: key,
@@ -51,17 +51,25 @@
       // get mouse position
       win = win || window;
       e = e || win.event;
-      var doc = win.document;
+      var doc = win.document, touchesPos;
       doc = doc.documentElement || doc.body;
       //TODO(nico): make touch event handling better
       if(e.touches && e.touches.length) {
-        e = e.touches[0];
+        touchesPos = [];
+        for (var i = 0, l = e.touches.length, evt; i < l; ++i) {
+            evt = e.touches[i];
+            touchesPos.push({
+              x: evt.pageX || (evt.clientX + doc.scrollLeft),
+              y: evt.pageY || (evt.clientY + doc.scrollTop)
+            });
+        }
+        return touchesPos;
       }
       var page = {
         x: e.pageX || (e.clientX + doc.scrollLeft),
         y: e.pageY || (e.clientY + doc.scrollTop)
       };
-      return page;
+      return [ page ];
     },
     stop: function(e) {
       if (e.stopPropagation) e.stopPropagation();
@@ -85,49 +93,60 @@
 
     this.attachEvents();
   };
-  
+
   EventsProxy.prototype = {
     hovered: false,
     pressed: false,
     touched: false,
-
+    touchedLastPosition: { x: 0, y: 0 },
     touchMoved: false,
     moved: false,
-    
+
     attachEvents: function() {
       var domElem = this.domElem,
           opt = this.opt,
           that = this;
-      
+
       if (opt.disableContextMenu) {
         domElem.oncontextmenu = function() { return false; };
       }
-      
-      ['mouseup', 'mousedown', 'mousemove', 'mouseover', 'mouseout', 
-       'touchstart', 'touchmove', 'touchend'].forEach(function(action) {
-        domElem.addEventListener(action, function(e, win) {
-          that[action](that.eventInfo(action, e, win));
-        }, false);
-      });
-      
-       ['keydown', 'keyup'].forEach(function(action) {
-        document.addEventListener(action, function(e, win) {
-          that[action](that.eventInfo(action, e, win));
-        }, false);
-      });
 
-      //"well, this is embarrassing..."
-      var type = '';
-      if (!document.getBoxObjectFor && window.mozInnerScreenX == null) {
-        type = 'mousewheel';
-      } else {
-        type = 'DOMMouseScroll';
+      if (opt.enableMouse) {
+    	  ['mouseup', 'mousedown', 'mousemove', 'mouseover', 'mouseout'].forEach(function(action) {
+	        domElem.addEventListener(action, function(e, win) {
+	            that[action](that.eventInfo(action, e, win));
+	        }, false);
+	      });
+
+    	  //"well, this is embarrassing..."
+          var type = '';
+          if (!document.getBoxObjectFor && window.mozInnerScreenX == null) {
+            type = 'mousewheel';
+          } else {
+            type = 'DOMMouseScroll';
+          }
+          domElem.addEventListener(type, function(e, win) {
+            that['mousewheel'](that.eventInfo('mousewheel', e, win));
+          }, false);
       }
-      domElem.addEventListener(type, function(e, win) {
-        that['mousewheel'](that.eventInfo('mousewheel', e, win));
-      }, false);
+
+      if (opt.enableTouch) {
+          ['touchstart', 'touchmove', 'touchend'].forEach(function(action) {
+            domElem.addEventListener(action, function(e, win) {
+              that[action](that.eventInfo(action, e, win));
+            }, false);
+          });
+      }
+
+      if (opt.enableKeyboard) {
+	      ['keydown', 'keyup'].forEach(function(action) {
+	        document.addEventListener(action, function(e, win) {
+	          that[action](that.eventInfo(action, e, win));
+	        }, false);
+	      });
+      }
     },
-    
+
     eventInfo: function(type, e, win) {
       var domElem = this.domElem,
           scene = this.scene,
@@ -138,18 +157,25 @@
           pos = opt.cachePosition && this.pos || getPos(domElem),
           ge = event.get(e, win),
           epos = event.getPos(e, win),
-          evt = {};
+          origPos = { x: epos[0].x, y: epos[0].y },
+          evt = {},
+          x, y;
 
       //get Position
-      var x = epos.x, y = epos.y;
-      if (relative) {
-        x -= pos.x; y-= pos.y;
-        if (centerOrigin) {
-          x -= size.width / 2;
-          y -= size.height / 2;
-          y *= -1; //y axis now points to the top of the screen
-        }
-      }
+	  for (var i = 0, l = epos.length; i < l; ++i) {
+	      x = epos[i].x;
+	      y = epos[i].y;
+	      if (relative) {
+	        x -= pos.x; y-= pos.y;
+	        if (centerOrigin) {
+	          x -= size.width / 2;
+	          y -= size.height / 2;
+	          y *= -1; //y axis now points to the top of the screen
+	        }
+	      }
+	      epos[i].x = x;
+	      epos[i].y = y;
+	  }
 
       switch (type) {
         case 'mousewheel':
@@ -165,10 +191,12 @@
       }
 
       var cacheTarget;
-      
+
       $.extend(evt, {
-        x: x,
-        y: y,
+        x: epos[0].x,
+        y: epos[0].y,
+        posArray: epos,
+
         cache: false,
         //stop event propagation
         stop: function() {
@@ -177,12 +205,12 @@
         //get the target element of the event
         getTarget: function() {
           if (cacheTarget) return cacheTarget;
-          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y, opt.lazyPicking) || true);
+          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || true);
         }
       });
       //wrap native event
       evt.event = ge;
-      
+
       return evt;
     },
 
@@ -196,7 +224,7 @@
         height: domElem.height || domElem.offsetHeight
       };
     },
-    
+
     mouseup: function(e) {
       if(!this.moved) {
         if(e.isRightClick) {
@@ -232,9 +260,9 @@
         this.pressed = this.moved = false;
       }
     },
-    
+
     mouseover: function(e) {},
-    
+
     mousemove: function(e) {
       if(this.pressed) {
         this.moved = true;
@@ -266,33 +294,37 @@
         this.callbacks.onMouseMove(e);
       }
     },
-    
+
     mousewheel: function(e) {
       this.callbacks.onMouseWheel(e);
     },
-    
+
     mousedown: function(e) {
       this.pressed = e.getTarget();
       this.callbacks.onDragStart(e, toO3D(this.pressed));
     },
-    
+
     touchstart: function(e) {
       this.touched = e.getTarget();
+      this.touchedLastPosition = { x: e.x, y: e.y };
       this.callbacks.onTouchStart(e, toO3D(this.touched));
     },
-    
+
     touchmove: function(e) {
       if(this.touched) {
         this.touchMoved = true;
         this.callbacks.onTouchMove(e, toO3D(this.touched));
       }
     },
-    
+
     touchend: function(e) {
       if(this.touched) {
         if(this.touchMoved) {
           this.callbacks.onTouchEnd(e, toO3D(this.touched));
         } else {
+          e.x = isNaN(e.x) ? this.touchedLastPosition.x : e.x;
+          e.y = isNaN(e.y) ? this.touchedLastPosition.y : e.y;
+          this.callbacks.onTap(e, toO3D(this.touched));
           this.callbacks.onTouchCancel(e, toO3D(this.touched));
         }
         this.touched = this.touchMoved = false;
@@ -307,7 +339,7 @@
       this.callbacks.onKeyUp(e);
     }
   };
-    
+
   var Events = {};
 
   Events.create = function(app, opt) {
@@ -320,7 +352,11 @@
       bind: false,
       picking: false,
       lazyPicking: false,
-      
+
+      enableTouch: true,
+      enableMouse: true,
+      enableKeyboard: true,
+
       onClick: $.empty,
       onRightClick: $.empty,
       onDragStart: $.empty,
@@ -331,13 +367,14 @@
       onTouchMove: $.empty,
       onTouchEnd: $.empty,
       onTouchCancel: $.empty,
+      onTap: $.empty,
       onMouseMove: $.empty,
       onMouseEnter: $.empty,
       onMouseLeave: $.empty,
       onMouseWheel: $.empty,
       onKeyDown: $.empty,
       onKeyUp: $.empty
-      
+
     }, opt || {});
 
     var bind = opt.bind;
@@ -382,5 +419,5 @@
   }
 
   PhiloGL.Events = Events;
-    
+
 })();

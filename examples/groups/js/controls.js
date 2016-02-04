@@ -31,24 +31,24 @@ window.initGroupOptions = function(options) {
     updateCanvas(ctx, canvas, options);
   }, false);
 
-  scale.addEventListener('change', function() {
+  scale.addEventListener('mousemove', function() {
     options.scale = +this.value;
   }, false);
 
-  rotate.addEventListener('change', function() {
+  rotate.addEventListener('mousemove', function() {
     options.rotate = +this.value * Math.PI / 180;
   }, false);
 
-  aura.addEventListener('change', function() {
+  aura.addEventListener('mousemove', function() {
     options.radialFactor = +this.value;
   }, false);
 
-  offset.addEventListener('change', function() {
+  offset.addEventListener('mousemove', function() {
     options.offset = +this.value;
     updateCanvas(ctx, canvas, options);
   }, false);
 
-  hyperbole.addEventListener('change', function() {
+  hyperbole.addEventListener('mousemove', function() {
     options.hyperbole = +this.value;
   }, false);
 

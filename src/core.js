@@ -2,7 +2,7 @@
 //Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
 //Global
-this.PhiloGL = null;
+PhiloGL = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.
@@ -113,7 +113,7 @@ this.PhiloGL = null;
       //get Camera
       var canvas = gl.canvas,
           camera = new PhiloGL.Camera(optCamera.fov,
-                                      canvas.width / canvas.height,
+                                      optCamera.aspect || (canvas.width / canvas.height),
                                       optCamera.near,
                                       optCamera.far, optCamera);
       camera.update();

@@ -137,18 +137,20 @@
   //animationTime - function branching
   var global = self || window,
       checkFxQueue = function() {
-        var newQueue = [];
-        if (Queue.length) {
-          for (var i = 0, l = Queue.length, fx; i < l; i++) {
-            fx = Queue[i];
+        var oldQueue = Queue;
+        Queue = [];
+        if (oldQueue.length) {
+          for (var i = 0, l = oldQueue.length, fx; i < l; i++) {
+            fx = oldQueue[i];
             fx.step();
             if (fx.animating) {
-              newQueue.push(fx);
+              Queue.push(fx);
             }
           }
-          Fx.Queue = Queue = newQueue;
+          Fx.Queue = Queue;
         }
       };
+
   if (global) {
     var found = false;
     ['webkitAnimationTime', 'mozAnimationTime', 'animationTime',

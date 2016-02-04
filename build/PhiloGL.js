@@ -1,6 +1,5 @@
 /**
-@preserve
-Copyright (c) 2011 Sencha Labs - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
+@preserveCopyright (c) 2013 Sencha Labs - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-(function() { 
+!function() {var PhiloGL; 
 //core.js
 //Provides general utility methods, module unpacking methods and the PhiloGL app creation method.
 
 //Global
-this.PhiloGL = null;
+PhiloGL = null;
 
 //Creates a single application object asynchronously
 //with a gl context, a camera, a program, a scene, and an event system.
@@ -137,7 +136,7 @@ this.PhiloGL = null;
       //get Camera
       var canvas = gl.canvas,
           camera = new PhiloGL.Camera(optCamera.fov,
-                                      canvas.width / canvas.height,
+                                      optCamera.aspect || (canvas.width / canvas.height),
                                       optCamera.near,
                                       optCamera.far, optCamera);
       camera.update();
@@ -390,11 +389,13 @@ $.splat = (function() {
         dataType: gl.FLOAT,
         stride: 0,
         offset: 0,
-        drawType: gl.STATIC_DRAW
+        drawType: gl.STATIC_DRAW,
+        instanced: 0
       }, opt || {});
 
       var attributeName = opt.attribute || name,
           bufferType = opt.bufferType,
+          instanced = opt.instanced,
           hasBuffer = name in this.buffers,
           buffer = hasBuffer? this.buffers[name] : gl.createBuffer(),
           hasValue = 'value' in opt,
@@ -405,7 +406,8 @@ $.splat = (function() {
           offset = opt.offset,
           drawType = opt.drawType,
           loc = program.attributes[attributeName],
-          isAttribute = loc !== undefined;
+          isAttribute = loc !== undefined,
+          ext;
 
       if (!hasBuffer) {
         this.buffers[name] = buffer;
@@ -423,6 +425,14 @@ $.splat = (function() {
 
       if (isAttribute) {
         gl.vertexAttribPointer(loc, size, dataType, false, stride, offset);
+        if (instanced) {
+          ext = gl.getExtension('ANGLE_instanced_arrays');
+          if (!ext) {
+            console.warn('ANGLE_instanced_arrays not supported!');
+          } else {
+            ext.vertexAttribDivisorANGLE(loc, instanced === true ? 1 : instanced);
+          }
+        }
       }
 
       //set default options so we don't have to next time.
@@ -724,7 +734,7 @@ $.splat = (function() {
 //Vec3, Mat4 and Quat classes
 
 (function() {
-  var sqrt = Math.sqrt, 
+  var sqrt = Math.sqrt,
       sin = Math.sin,
       cos = Math.cos,
       tan = Math.tan,
@@ -768,7 +778,7 @@ $.splat = (function() {
       this[1] = y || 0;
       this[2] = z || 0;
     } else {
-      
+
       this.push(x || 0,
                 y || 0,
                 z || 0);
@@ -787,14 +797,14 @@ $.splat = (function() {
     $$family: {
       value: 'Vec3'
     },
-    
+
     x: descriptor(0),
     y: descriptor(1),
     z: descriptor(2)
   });
 
   var generics = {
-    
+
     setVec3: function(dest, vec) {
       dest[0] = vec[0];
       dest[1] = vec[1];
@@ -808,53 +818,53 @@ $.splat = (function() {
       dest[2] = z;
       return dest;
     },
-    
+
     add: function(dest, vec) {
       return new Vec3(dest[0] + vec[0],
-                      dest[1] + vec[1], 
+                      dest[1] + vec[1],
                       dest[2] + vec[2]);
     },
-    
+
     $add: function(dest, vec) {
       dest[0] += vec[0];
       dest[1] += vec[1];
       dest[2] += vec[2];
       return dest;
     },
-    
+
     add2: function(dest, a, b) {
       dest[0] = a[0] + b[0];
       dest[1] = a[1] + b[1];
       dest[2] = a[2] + b[2];
       return dest;
     },
-    
+
     sub: function(dest, vec) {
       return new Vec3(dest[0] - vec[0],
-                      dest[1] - vec[1], 
+                      dest[1] - vec[1],
                       dest[2] - vec[2]);
     },
-    
+
     $sub: function(dest, vec) {
       dest[0] -= vec[0];
       dest[1] -= vec[1];
       dest[2] -= vec[2];
       return dest;
     },
-    
+
     sub2: function(dest, a, b) {
       dest[0] = a[0] - b[0];
       dest[1] = a[1] - b[1];
       dest[2] = a[2] - b[2];
       return dest;
     },
-    
+
     scale: function(dest, s) {
       return new Vec3(dest[0] * s,
                       dest[1] * s,
                       dest[2] * s);
     },
-    
+
     $scale: function(dest, s) {
       dest[0] *= s;
       dest[1] *= s;
@@ -877,7 +887,7 @@ $.splat = (function() {
 
     unit: function(dest) {
       var len = Vec3.norm(dest);
-      
+
       if (len > 0) {
         return Vec3.scale(dest, 1 / len);
       }
@@ -892,7 +902,7 @@ $.splat = (function() {
       }
       return dest;
     },
-    
+
     cross: function(dest, vec) {
       var dx = dest[0],
           dy = dest[1],
@@ -900,12 +910,12 @@ $.splat = (function() {
           vx = vec[0],
           vy = vec[1],
           vz = vec[2];
-      
+
       return new Vec3(dy * vz - dz * vy,
                       dz * vx - dx * vz,
                       dx * vy - dy * vx);
     },
-    
+
     $cross: function(dest, vec) {
       var dx = dest[0],
           dy = dest[1],
@@ -924,9 +934,9 @@ $.splat = (function() {
       var dx = dest[0] - vec[0],
           dy = dest[1] - vec[1],
           dz = dest[2] - vec[2];
-      
-      return sqrt(dx * dx + 
-                  dy * dy + 
+
+      return sqrt(dx * dx +
+                  dy * dy +
                   dz * dz);
     },
 
@@ -966,7 +976,7 @@ $.splat = (function() {
           var ans = dest.typedContainer;
 
           if (!ans) return dest;
-          
+
           ans[0] = dest[0];
           ans[1] = dest[1];
           ans[2] = dest[2];
@@ -974,7 +984,7 @@ $.splat = (function() {
           return ans;
     }
   };
-  
+
   //add generics and instance methods
   var proto = Vec3.prototype;
   for (var method in generics) {
@@ -982,7 +992,7 @@ $.splat = (function() {
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Vec3[m].apply(Vec3, args);
       };
@@ -994,18 +1004,18 @@ $.splat = (function() {
                       n21, n22, n23, n24,
                       n31, n32, n33, n34,
                       n41, n42, n43, n44) {
-    
+
     ArrayImpl.call(this, 16);
 
     this.length = 16;
-    
+
     if (typeof n11 == 'number') {
-      
+
       this.set(n11, n12, n13, n14,
                n21, n22, n23, n24,
                n31, n32, n33, n34,
                n41, n42, n43, n44);
-    
+
     } else {
       this.id();
     }
@@ -1019,16 +1029,16 @@ $.splat = (function() {
 
   //create fancy components setters and getters.
   Mat4.prototype = Object.create(ArrayImpl.prototype, {
-    
+
     $$family: {
       value: 'Mat4'
     },
-    
+
     n11: descriptor(0),
     n12: descriptor(4),
     n13: descriptor(8),
     n14: descriptor(12),
-    
+
     n21: descriptor(1),
     n22: descriptor(5),
     n23: descriptor(9),
@@ -1043,13 +1053,13 @@ $.splat = (function() {
     n42: descriptor(7),
     n43: descriptor(11),
     n44: descriptor(15)
-  
+
   });
 
   generics = {
-    
+
     id: function(dest) {
-      
+
       dest[0 ] = 1;
       dest[1 ] = 0;
       dest[2 ] = 0;
@@ -1066,7 +1076,7 @@ $.splat = (function() {
       dest[13] = 0;
       dest[14] = 0;
       dest[15] = 1;
-      
+
       return dest;
     },
 
@@ -1085,7 +1095,7 @@ $.splat = (function() {
                         n21, n22, n23, n24,
                         n31, n32, n33, n34,
                         n41, n42, n43, n44) {
-      
+
       dest[0 ] = n11;
       dest[4 ] = n12;
       dest[8 ] = n13;
@@ -1102,7 +1112,7 @@ $.splat = (function() {
       dest[7 ] = n42;
       dest[11] = n43;
       dest[15] = n44;
-      
+
       return dest;
     },
 
@@ -1156,7 +1166,7 @@ $.splat = (function() {
       dest[15] = b41 * a14 + b42 * a24 + b43 * a34 + b44 * a44;
       return dest;
     },
-    
+
     mulMat4: function(a, b) {
       var m = Mat4.clone(a);
       return Mat4.mulMat42(m, a, b);
@@ -1170,7 +1180,7 @@ $.splat = (function() {
       var copy = Mat4.clone(dest);
       return Mat4.$add(copy, m);
     },
-   
+
     $add: function(dest, m) {
       dest[0 ] += m[0];
       dest[1 ] += m[1];
@@ -1188,7 +1198,7 @@ $.splat = (function() {
       dest[13] += m[13];
       dest[14] += m[14];
       dest[15] += m[15];
-      
+
       return dest;
     },
 
@@ -1225,20 +1235,20 @@ $.splat = (function() {
     },
 
     $rotateAxis: function(dest, theta, vec) {
-      var s = sin(theta), 
-          c = cos(theta), 
+      var s = sin(theta),
+          c = cos(theta),
           nc = 1 - c,
-          vx = vec[0], 
-          vy = vec[1], 
+          vx = vec[0],
+          vy = vec[1],
           vz = vec[2],
-          m11 = vx * vx * nc + c, 
-          m12 = vx * vy * nc + vz * s, 
+          m11 = vx * vx * nc + c,
+          m12 = vx * vy * nc + vz * s,
           m13 = vx * vz * nc - vy * s,
-          m21 = vy * vx * nc - vz * s, 
-          m22 = vy * vy * nc + c, 
+          m21 = vy * vx * nc - vz * s,
+          m22 = vy * vy * nc + c,
           m23 = vy * vz * nc + vx * s,
-          m31 = vx * vz * nc + vy * s, 
-          m32 = vy * vz * nc - vx * s, 
+          m31 = vx * vz * nc + vy * s,
+          m32 = vy * vz * nc - vx * s,
           m33 = vz * vz * nc + c,
           d11 = dest[0],
           d12 = dest[1],
@@ -1256,7 +1266,7 @@ $.splat = (function() {
           d42 = dest[13],
           d43 = dest[14],
           d44 = dest[15];
-      
+
       dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
       dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
       dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
@@ -1302,9 +1312,9 @@ $.splat = (function() {
           m11 =  cry * crz,
           m21 = -crx * srz + srx * sry * crz,
           m31 =  srx * srz + crx * sry * crz,
-          m12 =  cry * srz, 
-          m22 =  crx * crz + srx * sry * srz, 
-          m32 = -srx * crz + crx * sry * srz, 
+          m12 =  cry * srz,
+          m22 =  crx * crz + srx * sry * srz,
+          m32 = -srx * crz + crx * sry * srz,
           m13 = -sry,
           m23 =  srx * cry,
           m33 =  crx * cry;
@@ -1313,12 +1323,12 @@ $.splat = (function() {
       dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
       dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
       dest[3 ] = d14 * m11 + d24 * m12 + d34 * m13;
-      
+
       dest[4 ] = d11 * m21 + d21 * m22 + d31 * m23;
       dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
       dest[6 ] = d13 * m21 + d23 * m22 + d33 * m23;
       dest[7 ] = d14 * m21 + d24 * m22 + d34 * m23;
-      
+
       dest[8 ] = d11 * m31 + d21 * m32 + d31 * m33;
       dest[9 ] = d12 * m31 + d22 * m32 + d32 * m33;
       dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
@@ -1337,7 +1347,7 @@ $.splat = (function() {
       dest[13] = dest[1 ] * x + dest[5 ] * y + dest[9 ] * z + dest[13];
       dest[14] = dest[2 ] * x + dest[6 ] * y + dest[10] * z + dest[14];
       dest[15] = dest[3 ] * x + dest[7 ] * y + dest[11] * z + dest[15];
-      
+
       return dest;
     },
 
@@ -1360,7 +1370,7 @@ $.splat = (function() {
       dest[9 ] *= z;
       dest[10] *= z;
       dest[11] *= z;
-      
+
       return dest;
     },
 
@@ -1411,7 +1421,7 @@ $.splat = (function() {
       return dest;
 
     },
-    //TODO(nico) breaking convention here... 
+    //TODO(nico) breaking convention here...
     //because I don't think it's useful to add
     //two methods for each of these.
     lookAt: function(dest, eye, center, up) {
@@ -1431,7 +1441,7 @@ $.splat = (function() {
       var rl = right - left,
           tb = top - bottom,
           fn = far - near;
-          
+
       dest[0] = (near * 2) / rl;
       dest[1] = 0;
       dest[2] = 0;
@@ -1461,36 +1471,53 @@ $.splat = (function() {
       return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
     },
 
-    ortho: function(dest, left, right, bottom, top, near, far) {
-      var rl = right - left,
-          tb = top - bottom,
-          fn = far - near;
+    //ortho: function(dest, left, right, bottom, top, near, far) {
+      //var rl = right - left,
+          //tb = top - bottom,
+          //fn = far - near;
 
-      dest[0] = 2 / rl;
-      dest[1] = 0;
-      dest[2] = 0;
-      dest[3] = 0;
-      dest[4] = 0;
-      dest[5] = 2 / tb;
-      dest[6] = 0;
-      dest[7] = 0;
-      dest[8] = 0;
-      dest[9] = 0;
-      dest[10] = -2 / fn;
-      dest[11] = 0;
-      dest[12] = -(left + right) / rl;
-      dest[13] = -(top + bottom) / tb;
-      dest[14] = -(far + near) / fn;
-      dest[15] = 1;
+      //dest[0] = 2 / rl;
+      //dest[1] = 0;
+      //dest[2] = 0;
+      //dest[3] = 0;
+      //dest[4] = 0;
+      //dest[5] = 2 / tb;
+      //dest[6] = 0;
+      //dest[7] = 0;
+      //dest[8] = 0;
+      //dest[9] = 0;
+      //dest[10] = -2 / fn;
+      //dest[11] = 0;
+      //dest[12] = -(left + right) / rl;
+      //dest[13] = -(top + bottom) / tb;
+      //dest[14] = -(far + near) / fn;
+      //dest[15] = 1;
+
+      //return dest;
+    //},
+
+    ortho: function (dest, left, right, top, bottom, near, far) {
+      var te = this.elements,
+          w = right - left,
+          h = top - bottom,
+          p = far - near,
+          x = (right + left) / w,
+          y = (top + bottom) / h,
+          z = (far + near) / p;
+
+      dest[0] = 2 / w;	dest[4] = 0;	dest[8] = 0;	dest[12] = -x;
+      dest[1] = 0;	dest[5] = 2 / h;	dest[9] = 0;	dest[13] = -y;
+      dest[2] = 0;	dest[6] = 0;	dest[10] = -2/p;	dest[14] = -z;
+      dest[3] = 0;	dest[7] = 0;	dest[11] = 0;	dest[15] = 1;
 
       return dest;
-    },
+  	},
 
     toFloat32Array: function(dest) {
           var ans = dest.typedContainer;
 
           if (!ans) return dest;
-          
+
           ans[0] = dest[0];
           ans[1] = dest[1];
           ans[2] = dest[2];
@@ -1511,7 +1538,7 @@ $.splat = (function() {
           return ans;
     }
   };
-  
+
   //add generics and instance methods
   proto = Mat4.prototype;
   for (method in generics) {
@@ -1519,7 +1546,7 @@ $.splat = (function() {
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Mat4[m].apply(Mat4, args);
       };
@@ -1561,7 +1588,7 @@ $.splat = (function() {
 
       return dest;
     },
-    
+
     clone: function(dest) {
       if (dest.$$family) {
         return new Quat(dest[0], dest[1], dest[2], dest[3]);
@@ -1579,7 +1606,7 @@ $.splat = (function() {
       dest[1] = -dest[1];
       dest[2] = -dest[2];
       dest[3] = -dest[3];
-      
+
       return dest;
     },
 
@@ -1595,7 +1622,7 @@ $.splat = (function() {
       dest[1] += q[1];
       dest[2] += q[2];
       dest[3] += q[3];
-      
+
       return dest;
     },
 
@@ -1611,7 +1638,7 @@ $.splat = (function() {
       dest[1] -= q[1];
       dest[2] -= q[2];
       dest[3] -= q[3];
-      
+
       return dest;
     },
 
@@ -1627,7 +1654,7 @@ $.splat = (function() {
       dest[1] *= s;
       dest[2] *= s;
       dest[3] *= s;
-      
+
       return dest;
     },
 
@@ -1676,7 +1703,7 @@ $.splat = (function() {
           bW = q[3];
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
-      
+
       return new Quat((aX * bW - aW * bX - aY * bZ + aZ * bY) * d,
                       (aX * bZ - aW * bY + aY * bW - aZ * bX) * d,
                       (aY * bX + aZ * bW - aW * bZ - aX * bY) * d,
@@ -1694,7 +1721,7 @@ $.splat = (function() {
           bW = q[3];
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
-      
+
       dest[0] = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
       dest[1] = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
       dest[2] = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
@@ -1710,7 +1737,7 @@ $.splat = (function() {
           q3 = dest[3];
 
       var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
-      
+
       return new Quat(-q0 * d, -q1 * d, -q2 * d, q3 * d);
     },
 
@@ -1726,7 +1753,7 @@ $.splat = (function() {
       dest[1] = -q1 * d;
       dest[2] = -q2 * d;
       dest[3] =  q3 * d;
-      
+
       return dest;
     },
 
@@ -1767,7 +1794,7 @@ $.splat = (function() {
       dest[0] = -dest[0];
       dest[1] = -dest[1];
       dest[2] = -dest[2];
-      
+
       return dest;
     }
   };
@@ -1778,13 +1805,13 @@ $.splat = (function() {
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Quat[m].apply(Quat, args);
       };
    })(method);
   }
-  
+
   //Add static methods
   Vec3.fromQuat = function(q) {
     return new Vec3(q[0], q[1], q[2]);
@@ -1817,7 +1844,7 @@ $.splat = (function() {
 
     var r = sqrt(1 + m[u * 5] - m[v * 5] - m[w * 5]);
     var q = new Quat;
-    
+
     q[u] = 0.5 * r;
     q[v] = 0.5 * (m['n' + v + '' + u] + m['n' + u + '' + v]) / r;
     q[w] = 0.5 * (m['n' + u + '' + w] + m['n' + w + '' + u]) / r;
@@ -1825,7 +1852,7 @@ $.splat = (function() {
 
     return q;
   };
-  
+
   Quat.fromXRotation = function(angle) {
     return new Quat(sin(angle / 2), 0, 0, cos(angle / 2));
   };
@@ -1851,13 +1878,13 @@ $.splat = (function() {
                     s * z * d,
                     c);
   };
-  
+
   Mat4.fromQuat = function(q) {
     var a = q[3],
         b = q[0],
         c = q[1],
         d = q[2];
-    
+
     return new Mat4(a * a + b * b - c * c - d * d, 2 * b * c - 2 * a * d, 2 * b * d + 2 * a * c, 0,
                     2 * b * c + 2 * a * d, a * a - b * b + c * c - d * d, 2 * c * d - 2 * a * b, 0,
                     2 * b * d - 2 * a * c, 2 * c * d + 2 * a * b, a * a - b * b - c * c + d * d, 0,
@@ -1875,12 +1902,12 @@ $.splat = (function() {
 //Handle keyboard/mouse/touch events in the Canvas
 
 (function() {
-  
+
   //returns an O3D object or false otherwise.
   function toO3D(n) {
     return n !== true ? n : false;
   }
-  
+
   //Returns an element position
   var getPos = function(elem) {
     var bbox = elem.getBoundingClientRect();
@@ -1907,7 +1934,7 @@ $.splat = (function() {
       var fKey = code - 111;
       if (fKey > 0 && fKey < 13) key = 'f' + fKey;
       key = key || String.fromCharCode(code).toLowerCase();
-      
+
       return {
         code: code,
         key: key,
@@ -1924,17 +1951,25 @@ $.splat = (function() {
       // get mouse position
       win = win || window;
       e = e || win.event;
-      var doc = win.document;
+      var doc = win.document, touchesPos;
       doc = doc.documentElement || doc.body;
       //TODO(nico): make touch event handling better
       if(e.touches && e.touches.length) {
-        e = e.touches[0];
+        touchesPos = [];
+        for (var i = 0, l = e.touches.length, evt; i < l; ++i) {
+            evt = e.touches[i];
+            touchesPos.push({
+              x: evt.pageX || (evt.clientX + doc.scrollLeft),
+              y: evt.pageY || (evt.clientY + doc.scrollTop)
+            });
+        }
+        return touchesPos;
       }
       var page = {
         x: e.pageX || (e.clientX + doc.scrollLeft),
         y: e.pageY || (e.clientY + doc.scrollTop)
       };
-      return page;
+      return [ page ];
     },
     stop: function(e) {
       if (e.stopPropagation) e.stopPropagation();
@@ -1958,49 +1993,60 @@ $.splat = (function() {
 
     this.attachEvents();
   };
-  
+
   EventsProxy.prototype = {
     hovered: false,
     pressed: false,
     touched: false,
-
+    touchedLastPosition: { x: 0, y: 0 },
     touchMoved: false,
     moved: false,
-    
+
     attachEvents: function() {
       var domElem = this.domElem,
           opt = this.opt,
           that = this;
-      
+
       if (opt.disableContextMenu) {
         domElem.oncontextmenu = function() { return false; };
       }
-      
-      ['mouseup', 'mousedown', 'mousemove', 'mouseover', 'mouseout', 
-       'touchstart', 'touchmove', 'touchend'].forEach(function(action) {
-        domElem.addEventListener(action, function(e, win) {
-          that[action](that.eventInfo(action, e, win));
-        }, false);
-      });
-      
-       ['keydown', 'keyup'].forEach(function(action) {
-        document.addEventListener(action, function(e, win) {
-          that[action](that.eventInfo(action, e, win));
-        }, false);
-      });
 
-      //"well, this is embarrassing..."
-      var type = '';
-      if (!document.getBoxObjectFor && window.mozInnerScreenX == null) {
-        type = 'mousewheel';
-      } else {
-        type = 'DOMMouseScroll';
+      if (opt.enableMouse) {
+    	  ['mouseup', 'mousedown', 'mousemove', 'mouseover', 'mouseout'].forEach(function(action) {
+	        domElem.addEventListener(action, function(e, win) {
+	            that[action](that.eventInfo(action, e, win));
+	        }, false);
+	      });
+
+    	  //"well, this is embarrassing..."
+          var type = '';
+          if (!document.getBoxObjectFor && window.mozInnerScreenX == null) {
+            type = 'mousewheel';
+          } else {
+            type = 'DOMMouseScroll';
+          }
+          domElem.addEventListener(type, function(e, win) {
+            that['mousewheel'](that.eventInfo('mousewheel', e, win));
+          }, false);
       }
-      domElem.addEventListener(type, function(e, win) {
-        that['mousewheel'](that.eventInfo('mousewheel', e, win));
-      }, false);
+
+      if (opt.enableTouch) {
+          ['touchstart', 'touchmove', 'touchend'].forEach(function(action) {
+            domElem.addEventListener(action, function(e, win) {
+              that[action](that.eventInfo(action, e, win));
+            }, false);
+          });
+      }
+
+      if (opt.enableKeyboard) {
+	      ['keydown', 'keyup'].forEach(function(action) {
+	        document.addEventListener(action, function(e, win) {
+	          that[action](that.eventInfo(action, e, win));
+	        }, false);
+	      });
+      }
     },
-    
+
     eventInfo: function(type, e, win) {
       var domElem = this.domElem,
           scene = this.scene,
@@ -2011,18 +2057,25 @@ $.splat = (function() {
           pos = opt.cachePosition && this.pos || getPos(domElem),
           ge = event.get(e, win),
           epos = event.getPos(e, win),
-          evt = {};
+          origPos = { x: epos[0].x, y: epos[0].y },
+          evt = {},
+          x, y;
 
       //get Position
-      var x = epos.x, y = epos.y;
-      if (relative) {
-        x -= pos.x; y-= pos.y;
-        if (centerOrigin) {
-          x -= size.width / 2;
-          y -= size.height / 2;
-          y *= -1; //y axis now points to the top of the screen
-        }
-      }
+	  for (var i = 0, l = epos.length; i < l; ++i) {
+	      x = epos[i].x;
+	      y = epos[i].y;
+	      if (relative) {
+	        x -= pos.x; y-= pos.y;
+	        if (centerOrigin) {
+	          x -= size.width / 2;
+	          y -= size.height / 2;
+	          y *= -1; //y axis now points to the top of the screen
+	        }
+	      }
+	      epos[i].x = x;
+	      epos[i].y = y;
+	  }
 
       switch (type) {
         case 'mousewheel':
@@ -2038,10 +2091,12 @@ $.splat = (function() {
       }
 
       var cacheTarget;
-      
+
       $.extend(evt, {
-        x: x,
-        y: y,
+        x: epos[0].x,
+        y: epos[0].y,
+        posArray: epos,
+
         cache: false,
         //stop event propagation
         stop: function() {
@@ -2050,12 +2105,12 @@ $.splat = (function() {
         //get the target element of the event
         getTarget: function() {
           if (cacheTarget) return cacheTarget;
-          return (cacheTarget = !opt.picking || scene.pick(epos.x - pos.x, epos.y - pos.y, opt.lazyPicking) || true);
+          return (cacheTarget = opt.picking && scene.pick(origPos.x - pos.x, origPos.y - pos.y) || true);
         }
       });
       //wrap native event
       evt.event = ge;
-      
+
       return evt;
     },
 
@@ -2069,7 +2124,7 @@ $.splat = (function() {
         height: domElem.height || domElem.offsetHeight
       };
     },
-    
+
     mouseup: function(e) {
       if(!this.moved) {
         if(e.isRightClick) {
@@ -2105,9 +2160,9 @@ $.splat = (function() {
         this.pressed = this.moved = false;
       }
     },
-    
+
     mouseover: function(e) {},
-    
+
     mousemove: function(e) {
       if(this.pressed) {
         this.moved = true;
@@ -2139,33 +2194,37 @@ $.splat = (function() {
         this.callbacks.onMouseMove(e);
       }
     },
-    
+
     mousewheel: function(e) {
       this.callbacks.onMouseWheel(e);
     },
-    
+
     mousedown: function(e) {
       this.pressed = e.getTarget();
       this.callbacks.onDragStart(e, toO3D(this.pressed));
     },
-    
+
     touchstart: function(e) {
       this.touched = e.getTarget();
+      this.touchedLastPosition = { x: e.x, y: e.y };
       this.callbacks.onTouchStart(e, toO3D(this.touched));
     },
-    
+
     touchmove: function(e) {
       if(this.touched) {
         this.touchMoved = true;
         this.callbacks.onTouchMove(e, toO3D(this.touched));
       }
     },
-    
+
     touchend: function(e) {
       if(this.touched) {
         if(this.touchMoved) {
           this.callbacks.onTouchEnd(e, toO3D(this.touched));
         } else {
+          e.x = isNaN(e.x) ? this.touchedLastPosition.x : e.x;
+          e.y = isNaN(e.y) ? this.touchedLastPosition.y : e.y;
+          this.callbacks.onTap(e, toO3D(this.touched));
           this.callbacks.onTouchCancel(e, toO3D(this.touched));
         }
         this.touched = this.touchMoved = false;
@@ -2180,7 +2239,7 @@ $.splat = (function() {
       this.callbacks.onKeyUp(e);
     }
   };
-    
+
   var Events = {};
 
   Events.create = function(app, opt) {
@@ -2193,7 +2252,11 @@ $.splat = (function() {
       bind: false,
       picking: false,
       lazyPicking: false,
-      
+
+      enableTouch: true,
+      enableMouse: true,
+      enableKeyboard: true,
+
       onClick: $.empty,
       onRightClick: $.empty,
       onDragStart: $.empty,
@@ -2204,13 +2267,14 @@ $.splat = (function() {
       onTouchMove: $.empty,
       onTouchEnd: $.empty,
       onTouchCancel: $.empty,
+      onTap: $.empty,
       onMouseMove: $.empty,
       onMouseEnter: $.empty,
       onMouseLeave: $.empty,
       onMouseWheel: $.empty,
       onKeyDown: $.empty,
       onKeyUp: $.empty
-      
+
     }, opt || {});
 
     var bind = opt.bind;
@@ -2255,7 +2319,7 @@ $.splat = (function() {
   }
 
   PhiloGL.Events = Events;
-    
+
 })();
 
 //program.js
@@ -2264,7 +2328,7 @@ $.splat = (function() {
 
 (function() {
   //First, some privates to handle compiling/linking shaders to programs.
-  
+
   //Creates a shader from a string source.
   var createShader = function(gl, shaderSource, shaderType) {
     var shader = gl.createShader(shaderType);
@@ -2283,7 +2347,7 @@ $.splat = (function() {
     }
     return shader;
   };
-  
+
   //Creates a program from vertex and fragment shader sources.
   var createProgram = function(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
@@ -2296,7 +2360,7 @@ $.splat = (function() {
     linkProgram(gl, program);
     return program;
   };
-  
+
   var getpath = function(path) {
     var last = path.lastIndexOf('/');
     if (last == '/') {
@@ -2341,7 +2405,7 @@ $.splat = (function() {
     } else {
       return callback(source);
     }
-  };  
+  };
 
   //Link a program.
   var linkProgram = function(gl, program) {
@@ -2377,7 +2441,7 @@ $.splat = (function() {
           break;
       }
     }
-    
+
     if (vector) {
       switch (type) {
         case gl.FLOAT:
@@ -2425,34 +2489,27 @@ $.splat = (function() {
       }
     }
 
-    //TODO(nico): Safari 5.1 doesn't have Function.prototype.bind.
-    //remove this check when they implement it.
-    if (glFunction.bind) {
-      glFunction = glFunction.bind(gl);
-    } else {
-      var target = glFunction;
-      glFunction = function() { target.apply(gl, arguments); };
-    }
+    glFunction = glFunction.bind(gl);
 
     //Set a uniform array
     if (isArray && typedArray) {
       return function(val) {
         glFunction(loc, new typedArray(val));
       };
-    
+
     //Set a matrix uniform
     } else if (matrix) {
       return function(val) {
         glFunction(loc, false, val.toFloat32Array());
       };
-    
+
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
         typedArray.set(val.toFloat32Array ? val.toFloat32Array() : val);
         glFunction(loc, typedArray);
       };
-    
+
     //Set a primitive-valued uniform
     } else {
       return function(val) {
@@ -2469,12 +2526,12 @@ $.splat = (function() {
   var Program = function(vertexShader, fragmentShader) {
     var program = createProgram(gl, vertexShader, fragmentShader);
     if (!program) return false;
-    
+
     var attributes = {},
         attributeEnabled = {},
         uniforms = {},
         info, name, index;
-  
+
     //fill attribute locations
     var len = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < len; i++) {
@@ -2483,7 +2540,7 @@ $.splat = (function() {
       index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
     }
-    
+
     //create uniform setters
     len = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
     for (i = 0; i < len; i++) {
@@ -2502,7 +2559,7 @@ $.splat = (function() {
   };
 
   Program.prototype = {
-    
+
     $$family: 'program',
 
     setUniform: function(name, val) {
@@ -2529,7 +2586,7 @@ $.splat = (function() {
     };
   });
 
-  ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
+  ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer',
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
       app[name].apply(app, arguments);
@@ -2571,7 +2628,7 @@ $.splat = (function() {
         try {
           var program = new Program(vectexShader, fragmentShader);
           if(opt.onSuccess) {
-            opt.onSuccess(program, opt); 
+            opt.onSuccess(program, opt);
           } else {
             return program;
           }
@@ -2746,7 +2803,7 @@ $.splat = (function() {
       this.opt.onError(e);
     },
 
-    handleAbort: function() {
+    handleAbort: function(e) {
       this.opt.onAbort(e);
     },
 
@@ -3098,7 +3155,7 @@ $.splat = (function() {
     //override the render method
     this.render = opt.render;
     //whether to render as triangles, lines, points, etc.
-    this.drawType = opt.drawType || 'TRIANGLES';
+    this.drawType = opt.hasOwnProperty('drawType') ? opt.drawType : 'TRIANGLES';
     //whether to display the object at all
     this.display = 'display' in opt? opt.display : true;
     //before and after render callbacks
@@ -3256,23 +3313,27 @@ $.splat = (function() {
 
     setTextures: function(program, force) {
       this.textures = this.textures? $.splat(this.textures) : [];
-      var dist = 5;
+      var dist = 5, tex2D = 0, texCube = 0;
       for (var i = 0, texs = this.textures, l = texs.length, mtexs = PhiloGL.Scene.MAX_TEXTURES; i < mtexs; i++) {
         if (i < l) {
           var isCube = app.textureMemo[texs[i]].isCube;
           if (isCube) {
             program.setUniform('hasTextureCube' + (i + 1), true);
-            program.setTexture(texs[i], gl['TEXTURE' + (i + dist)]);
+            program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('samplerCube' + (texCube + 1), i);
+            texCube++;
           } else {
             program.setUniform('hasTexture' + (i + 1), true);
             program.setTexture(texs[i], gl['TEXTURE' + i]);
+            program.setUniform('sampler' + (tex2D + 1), i);
+            tex2D++;
           }
         } else {
           program.setUniform('hasTextureCube' + (i + 1), false);
           program.setUniform('hasTexture' + (i + 1), false);
+          program.setUniform('sampler' + (++tex2D), i);
+          program.setUniform('samplerCube' + (++texCube), i);
         }
-        program.setUniform('sampler' + (i + 1), i);
-        program.setUniform('samplerCube' + (i + 1), i + dist);
       }
     },
 
@@ -3754,7 +3815,6 @@ $.splat = (function() {
 
   O3D.Sphere.prototype = Object.create(O3D.Model.prototype);
 
-  //Code based on http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
   O3D.IcoSphere = function(opt) {
     var iterations = opt.iterations || 0,
         vertices = [],
@@ -3768,49 +3828,12 @@ $.splat = (function() {
     //Add a callback for when a vertex is created
     opt.onAddVertex = opt.onAddVertex || $.empty;
 
-    // and Icosahedron vertices
+    // and octahedron vertices
     var t = (1 + sqrt(5)) / 2,
-        len = sqrt(1 + t * t);
+        square = sqrt(1 + t * t);
 
-    vertices.push(-1 / len,  t / len,  0,
-                   1 / len,  t / len,  0,
-                  -1 / len, -t / len,  0,
-                   1 / len, -t / len,  0,
-
-                   0, -1 / len,  t / len,
-                   0,  1 / len,  t / len,
-                   0, -1 / len, -t / len,
-                   0,  1 / len, -t / len,
-
-                   t / len,  0, -1 / len,
-                   t / len,  0,  1 / len,
-                  -t / len,  0, -1 / len,
-                  -t / len,  0,  1 / len);
-
-
-      indices.push(0, 11, 5,
-                 0, 5, 1,
-                 0, 1, 7,
-                 0, 7, 10,
-                 0, 10, 11,
-
-                 1, 5, 9,
-                 5, 11, 4,
-                 11, 10, 2,
-                 10, 7, 6,
-                 7, 1, 8,
-
-                 3, 9, 4,
-                 3, 4, 2,
-                 3, 2, 6,
-                 3, 6, 8,
-                 3, 8, 9,
-
-                 4, 9, 5,
-                 2, 4, 11,
-                 6, 2, 10,
-                 8, 6, 7,
-                 9, 8, 1);
+    vertices.push(-1,0,0, 0,1,0, 0,0,-1, 0,0,1, 0,-1,0, 1,0,0);
+    indices.push(3,4,5,3,5,1,3,1,0,3,0,4,4,0,2,4,2,5,2,0,1,5,2,1);
 
     var getMiddlePoint = (function() {
       var pointMemo = {};
@@ -3854,20 +3877,17 @@ $.splat = (function() {
             b = getMiddlePoint(indices[j + 1], indices[j + 2]),
             c = getMiddlePoint(indices[j + 2], indices[j    ]);
 
-        indices2.push(indices[j], a, c,
-                      indices[j + 1], b, a,
-                      indices[j + 2], c, b,
-                      a, b, c);
+        indices2.push(c, indices[j    ], a, a, indices[j + 1], b, b, indices[j + 2], c, a, b, c);
       }
       indices = indices2;
     }
 
     //Calculate texCoords and normals
     var l = indices.length,
-        normals = new Float32Array(l * 3),
-        texCoords = new Float32Array(l * 2);
+        normals = new Array(l * 3),
+        texCoords = new Array(l * 2);
 
-    for (var i = 0; i < l; i += 3) {
+    for (var i = l - 3; i >= 0; i -= 3) {
       var i1 = indices[i    ],
           i2 = indices[i + 1],
           i3 = indices[i + 2],
@@ -3881,34 +3901,80 @@ $.splat = (function() {
           y1 = vertices[in1 + 1],
           z1 = vertices[in1 + 2],
           theta1 = acos(z1 / sqrt(x1 * x1 + y1 * y1 + z1 * z1)),
-          phi1 = atan2(y1, x1),
+          phi1 = atan2(y1, x1) + pi,
           v1 = theta1 / pi,
           u1 = 1 - phi1 / pi2,
           x2 = vertices[in2    ],
           y2 = vertices[in2 + 1],
           z2 = vertices[in2 + 2],
           theta2 = acos(z2 / sqrt(x2 * x2 + y2 * y2 + z2 * z2)),
-          phi2 = atan2(y2, x2),
+          phi2 = atan2(y2, x2) + pi,
           v2 = theta2 / pi,
           u2 = 1 - phi2 / pi2,
           x3 = vertices[in3    ],
           y3 = vertices[in3 + 1],
           z3 = vertices[in3 + 2],
           theta3 = acos(z3 / sqrt(x3 * x3 + y3 * y3 + z3 * z3)),
-          phi3 = atan2(y3, x3),
+          phi3 = atan2(y3, x3) + pi,
           v3 = theta3 / pi,
           u3 = 1 - phi3 / pi2,
-          vec1 = {
-            x: x3 - x2,
-            y: y3 - y2,
-            z: z3 - z2
-          },
-          vec2 = {
-            x: x1 - x2,
-            y: y1 - y2,
-            z: z1 - z2
-          },
-          normal = Vec3.cross(vec1, vec2).$unit();
+          vec1 = [
+            x3 - x2,
+            y3 - y2,
+            z3 - z2
+          ],
+          vec2 = [
+            x1 - x2,
+            y1 - y2,
+            z1 - z2
+          ],
+          normal = Vec3.cross(vec1, vec2).$unit(),
+          newIndex;
+
+      if ((u1 == 0 || u2 == 0 || u3 == 0) &&
+          (u1 == 0 || u1 > 0.5) &&
+            (u2 == 0 || u2 > 0.5) &&
+              (u3 == 0 || u3 > 0.5)) {
+
+          vertices.push(
+            vertices[in1    ],
+            vertices[in1 + 1],
+            vertices[in1 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v1;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+
+          vertices.push(
+            vertices[in2    ],
+            vertices[in2 + 1],
+            vertices[in2 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v2;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+
+          vertices.push(
+            vertices[in3    ],
+            vertices[in3 + 1],
+            vertices[in3 + 2]
+          );
+          newIndex = vertices.length / 3 - 1;
+          indices.push(newIndex);
+          texCoords[newIndex * 2    ] = 1;
+          texCoords[newIndex * 2 + 1] = v3;
+          normals[newIndex * 3    ] = normal.x;
+          normals[newIndex * 3 + 1] = normal.y;
+          normals[newIndex * 3 + 2] = normal.z;
+      }
 
       normals[in1    ] = normals[in2    ] = normals[in3    ] = normal.x;
       normals[in1 + 1] = normals[in2 + 1] = normals[in3 + 1] = normal.y;
@@ -3931,6 +3997,7 @@ $.splat = (function() {
       texCoords: texCoords
     }, opt || {}));
   };
+
 
   O3D.IcoSphere.prototype = Object.create(O3D.Model.prototype);
 
@@ -4047,13 +4114,14 @@ $.splat = (function() {
 
   O3D.Plane = function(config) {
     var type = config.type,
+        unpack = config.unpack,
         coords = type.split(','),
         c1len = config[coords[0] + 'len'], //width
         c2len = config[coords[1] + 'len'], //height
         subdivisions1 = config['n' + coords[0]] || 1, //subdivisionsWidth
         subdivisions2 = config['n' + coords[1]] || 1, //subdivisionsDepth
         offset = config.offset,
-        flipCull = !!config.flipCull, 
+        flipCull = !!config.flipCull,
         numVertices = (subdivisions1 + 1) * (subdivisions2 + 1),
         positions = new Float32Array(numVertices * 3),
         normals = new Float32Array(numVertices * 3),
@@ -4063,7 +4131,7 @@ $.splat = (function() {
     if (flipCull) {
       c1len = - c1len;
     }
-    
+
     for (var z = 0; z <= subdivisions2; z++) {
       for (var x = 0; x <= subdivisions1; x++) {
         var u = x / subdivisions1,
@@ -4124,11 +4192,12 @@ $.splat = (function() {
     }
 
     var numVertsAcross = subdivisions1 + 1,
-        indices = [];
+        indices = [],
+        index;
 
     for (z = 0; z < subdivisions2; z++) {
       for (x = 0; x < subdivisions1; x++) {
-        var index = (z * subdivisions1 + x) * 6;
+        index = (z * subdivisions1 + x) * 6;
         // Make triangle 1 of quad.
         indices[index + 0] = (z + 0) * numVertsAcross + x;
         indices[index + 1] = (z + 1) * numVertsAcross + x;
@@ -4141,13 +4210,37 @@ $.splat = (function() {
       }
     }
 
-    O3D.Model.call(this, $.extend({
-      vertices: positions,
-      normals: normals,
-      texCoords: texCoords,
-      indices: indices
-    }, config));
+    var positions2, normals2, texCoords2;
+    if (config.unpack) {
+      positions2 = new Float32Array(indices.length * 3);
+      normals2 = new Float32Array(indices.length * 3);
+      texCoords2 = new Float32Array(indices.length * 2);
 
+      for (x = 0, l = indices.length; x < l; ++x) {
+        index = indices[x];
+        positions2[x * 3    ] = positions[index * 3    ];
+        positions2[x * 3 + 1] = positions[index * 3 + 1];
+        positions2[x * 3 + 2] = positions[index * 3 + 2];
+        normals2[x * 3    ] = normals[index * 3    ];
+        normals2[x * 3 + 1] = normals[index * 3 + 1];
+        normals2[x * 3 + 2] = normals[index * 3 + 2];
+        texCoords2[x * 2    ] = texCoords[index * 2    ];
+        texCoords2[x * 2 + 1] = texCoords[index * 2 + 1];
+      }
+
+      O3D.Model.call(this, $.extend({
+        vertices: positions2,
+        normals: normals2,
+        texCoords: texCoords2
+      }, config));
+    } else {
+      O3D.Model.call(this, $.extend({
+        vertices: positions,
+        normals: normals,
+        texCoords: texCoords,
+        indices: indices
+      }, config));
+    }
   };
 
   O3D.Plane.prototype = Object.create(O3D.Model.prototype);
@@ -4470,15 +4563,17 @@ $.splat = (function() {
         }
       }
 
-      program.setUniforms({
-        'pointLocation': pointLocations,
-        'pointColor': pointColors
-      });
+      if (pointLocations.length) {
+        program.setUniforms({
+          'pointLocation': pointLocations,
+          'pointColor': pointColors
+        });
+        program.setUniforms({
+          'enableSpecular': enableSpecular,
+          'pointSpecularColor': pointSpecularColors
+        });
+      }
 
-      program.setUniforms({
-        'enableSpecular': enableSpecular,
-        'pointSpecularColor': pointSpecularColors
-      });
     },
 
     //Setup effects like fog, etc.
@@ -4581,7 +4676,7 @@ $.splat = (function() {
     },
 
     //setup picking framebuffer
-    setupPicking: function() {
+    setupPicking: function(opt) {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
           floor = Math.floor;
@@ -4591,26 +4686,31 @@ $.splat = (function() {
         height: 1,
         bindToTexture: {
           parameters: [{
-            name: 'TEXTURE_ MAG_FILTER',
-            value: 'LINEAR'
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'NEAREST'
           }, {
             name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR',
-            generateMipmap: false
+            value: 'NEAREST'
+          },{
+            name: 'TEXTURE_WRAP_S',
+            value: 'CLAMP_TO_EDGE'
+          }, {
+            name: 'TEXTURE_WRAP_T',
+            value: 'CLAMP_TO_EDGE'
           }]
         },
         bindToRenderBuffer: true
       });
       app.setFrameBuffer('$picking', false);
-      this.pickingProgram = program;
+      this.pickingProgram = opt.pickingProgram || program;
     },
 
-    //returns an element at the given position
-    pick: function(x, y, lazy) {
+    pick: function(x, y, opt) {
+      opt = opt || {};
       //setup the picking program if this is
       //the first time we enter the method.
       if (!this.pickingProgram) {
-        this.setupPicking();
+        this.setupPicking(opt);
       }
 
       var o3dHash = {},
@@ -4623,14 +4723,18 @@ $.splat = (function() {
           config = this.config,
           memoLightEnable = config.lights.enable,
           memoFog = config.effects.fog,
-          width = gl.canvas.width,
-          height = gl.canvas.height,
+          canvas = gl.canvas,
+          viewport = opt.viewport || {},
+          pixelRatio = opt.pixelRatio || 1,
+          width = (viewport.width || canvas.offsetWidth || canvas.width),
+          height = (viewport.height || canvas.offsetHeight || canvas.height),
           floor = Math.floor,
-          pickingRes = Scene.PICKING_RES,
           resWidth = 5,
           resHeight = 1,
-          ndcx = x * 2 / width - 1,
-          ndcy = 1 - y * 2 / height,
+          xp = (x * pixelRatio - (viewport.x || 0)),
+          yp = (y * pixelRatio - (viewport.y || 0)),
+          ndcx = xp * 2 / width - 1,
+          ndcy = 1 - yp * 2 / height,
           target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
@@ -4672,6 +4776,8 @@ $.splat = (function() {
           elem = o3dHash[stringColor],
           pick;
 
+     //console.log('o3dHash', stringColor, x, y, width, height);
+
       if (!elem) {
         for (var i = 0, l = o3dList.length; i < l; i++) {
           elem = o3dList[i];
@@ -4687,6 +4793,7 @@ $.splat = (function() {
       //restore all values and unbind buffers
       app.setFrameBuffer('$picking', false);
       app.setTexture('$picking-texture', false);
+      pickingProgram.use();
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
@@ -4694,7 +4801,10 @@ $.splat = (function() {
       //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
-      gl.viewport(0, 0, width, height);
+      gl.viewport(viewport.x || 0,
+    		          viewport.y || 0,
+    		          width,
+    		          height);
       //restore camera properties
       camera.target = oldtarget;
       camera.aspect = oldaspect;
@@ -4957,18 +5067,20 @@ $.splat = (function() {
   //animationTime - function branching
   var global = self || window,
       checkFxQueue = function() {
-        var newQueue = [];
-        if (Queue.length) {
-          for (var i = 0, l = Queue.length, fx; i < l; i++) {
-            fx = Queue[i];
+        var oldQueue = Queue;
+        Queue = [];
+        if (oldQueue.length) {
+          for (var i = 0, l = oldQueue.length, fx; i < l; i++) {
+            fx = oldQueue[i];
             fx.step();
             if (fx.animating) {
-              newQueue.push(fx);
+              Queue.push(fx);
             }
           }
-          Fx.Queue = Queue = newQueue;
+          Fx.Queue = Queue;
         }
       };
+
   if (global) {
     var found = false;
     ['webkitAnimationTime', 'mozAnimationTime', 'animationTime',
@@ -5021,13 +5133,15 @@ $.splat = (function() {
   //post process an image by setting it to a texture with a specified fragment
   //and vertex shader.
   Image.postProcess = (function() {
+    //length given a 45 fov angle, and 0.2 distance to camera
+    var length = 0.16568542494923805;
     var plane = new PhiloGL.O3D.Plane({
       type: 'x,y',
-      xlen: 1,
-      ylen: 1,
+      xlen: length,
+      ylen: length,
       offset: 0
     }), camera = new PhiloGL.Camera(45, 1, 0.1, 500, {
-      position: { x: 0, y: 0, z: 1.205 }
+      position: { x: 0, y: 0, z: 0.2 }
     }), scene = new PhiloGL.Scene({}, camera);
 
     return function(opt) {
@@ -5036,7 +5150,10 @@ $.splat = (function() {
           framebuffer = opt.toFrameBuffer,
           screen = !!opt.toScreen,
           width = opt.width || app.canvas.width,
-          height = opt.height || app.canvas.height;
+          height = opt.height || app.canvas.height,
+          x = opt.viewportX || 0,
+          y = opt.viewportY || 0;
+
 
       camera.aspect = opt.aspectRatio ? opt.aspectRatio : Math.max(height / width, width / height);
       camera.update();
@@ -5071,7 +5188,7 @@ $.splat = (function() {
         }
         program.use();
         app.setFrameBuffer(framebuffer, true);
-        gl.viewport(0, 0, width, height);
+        gl.viewport(x, y, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         program.setUniforms(opt.uniforms || {});
         scene.renderToTexture(framebuffer);
@@ -5080,7 +5197,7 @@ $.splat = (function() {
 
       if (screen) {
         program.use();
-        gl.viewport(0, 0, width, height);
+        gl.viewport(x, y, width, height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         program.setUniforms(opt.uniforms || {});
         scene.render();
@@ -5094,4 +5211,5 @@ $.splat = (function() {
   PhiloGL.Media = Media;
 })();
 
-})();
+ if (typeof define === "function" && define.amd) define(PhiloGL); else if (typeof module === "object" && module.exports) module.exports = PhiloGL;
+ this.PhiloGL = PhiloGL;}();

@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>PhiloGL - US Wind Patterns</title>
-    <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
     <script src="../../build/PhiloGL.js"></script>
     <script src="models.js"></script>
@@ -13,7 +12,7 @@
     <div id="log-panel" style="display:none;">
       <span id="log-message"></span>
     </div>
-  
+
     <div id="fallback" class="fallback"></div>
 
     <div id="container">
@@ -27,30 +26,30 @@
 
       <div class='description'>
         This map tracks wind direction (lines), speed (radius) and
-        temperature (hue) measurements from 1200 weather stations across the country. 
-        You can play an animation of the wind movements and hover the weather stations 
-        in the map to get more 
+        temperature (hue) measurements from 1200 weather stations across the country.
+        You can play an animation of the wind movements and hover the weather stations
+        in the map to get more
         information. Use the slider at the bottom to focus on a
         particular hour.
       </div>
 
       <fieldset>
-        Markers: 
+        Markers:
           <input type='radio' name='group1' id='r1' checked> <label
             for='r1'>disk </label>
           <input type='radio' name='group1' id='r2'> <label
             for='r2'>circle </label>
           <input type='radio' name='group1' id='r3'> <label
             for='r3'>line </label> <br>
-          
-          <button id='play' class='blue'>Play 72 hour wind motion</button> 
+
+          <button id='play' class='blue'>Play 72 hour wind motion</button>
       </fieldset>
 
       <div id="canvas-container">
         <canvas id="map" width="900" height="450"></canvas>
         <div id='front-layer'></div>
       </div>
-      
+
       <fieldset>
         1h
         <input id='time' type='range' value='0' min='0' max='71'>
@@ -64,7 +63,7 @@
         </div>
       </fieldset>
   </div>
-  
+
   <div class="footer">
     Copyright &copy; <a href="http://philogb.github.com/">Nicolas Garcia
       Belmonte</a> - Elevation map by <a
@@ -73,9 +72,9 @@
       href='http://www.nws.noaa.gov/climate/'>National Weather
       Service</a>.
   </div>
-  
+
   <div class="tooltip hide" id="tooltip" style="width:auto;"></div>
-  
+
   <script>
     if (!PhiloGL.hasWebGL()) {
       document.body.className = 'no-webgl';

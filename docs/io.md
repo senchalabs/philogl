@@ -137,7 +137,7 @@ answers for each request.
 Creating a request object to a specific url.
 
 {% highlight js %}
-  var req = new PhiloGL.IO.XHR({
+  var req = new PhiloGL.IO.XHR.Group({
     urls: ['/mydomain/1/' '/mydomain/2/'],
 
     onError: function() {
@@ -288,12 +288,11 @@ Can be called without the `new` keyword.
 
 ### Syntax:
 
-	PhiloGL.IO.Textures(program, options);
+	PhiloGL.IO.Textures(options);
 
 ### Arguments:
 
-1. program - (*object*) The program instance where we want to load the textures to. Read [Program](program.html) for more information.
-2. options - (*object*) An object containing the following options:
+1. options - (*object*) An object containing the following options:
 
 ### Options:
 
@@ -307,10 +306,9 @@ Default's `false`.
 Creating a request to load images and set them as textures for a specific program.
 
 {% highlight js %}
-  var program = PhiloGL.Program.fromShaderIds('vs-id', 'fs-id');
   var imageUrls = ['image1.png', 'image2.png', 'image3.png'];
 
-  PhiloGL.IO.Textures(program, {
+  PhiloGL.IO.Textures({
     src: imageUrls,
     onComplete: function() {
       alert("All images and textures loaded!");

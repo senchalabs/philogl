@@ -147,15 +147,17 @@
         }
       }
 
-      program.setUniforms({
-        'pointLocation': pointLocations,
-        'pointColor': pointColors
-      });
+      if (pointLocations.length) {
+        program.setUniforms({
+          'pointLocation': pointLocations,
+          'pointColor': pointColors
+        });
+        program.setUniforms({
+          'enableSpecular': enableSpecular,
+          'pointSpecularColor': pointSpecularColors
+        });
+      }
 
-      program.setUniforms({
-        'enableSpecular': enableSpecular,
-        'pointSpecularColor': pointSpecularColors
-      });
     },
 
     //Setup effects like fog, etc.
@@ -258,7 +260,7 @@
     },
 
     //setup picking framebuffer
-    setupPicking: function() {
+    setupPicking: function(opt) {
       //create picking program
       var program = PhiloGL.Program.fromDefaultShaders(),
           floor = Math.floor;
@@ -268,26 +270,31 @@
         height: 1,
         bindToTexture: {
           parameters: [{
-            name: 'TEXTURE_ MAG_FILTER',
-            value: 'LINEAR'
+            name: 'TEXTURE_MAG_FILTER',
+            value: 'NEAREST'
           }, {
             name: 'TEXTURE_MIN_FILTER',
-            value: 'LINEAR',
-            generateMipmap: false
+            value: 'NEAREST'
+          },{
+            name: 'TEXTURE_WRAP_S',
+            value: 'CLAMP_TO_EDGE'
+          }, {
+            name: 'TEXTURE_WRAP_T',
+            value: 'CLAMP_TO_EDGE'
           }]
         },
         bindToRenderBuffer: true
       });
       app.setFrameBuffer('$picking', false);
-      this.pickingProgram = program;
+      this.pickingProgram = opt.pickingProgram || program;
     },
 
-    //returns an element at the given position
-    pick: function(x, y, lazy) {
+    pick: function(x, y, opt) {
+      opt = opt || {};
       //setup the picking program if this is
       //the first time we enter the method.
       if (!this.pickingProgram) {
-        this.setupPicking();
+        this.setupPicking(opt);
       }
 
       var o3dHash = {},
@@ -300,14 +307,18 @@
           config = this.config,
           memoLightEnable = config.lights.enable,
           memoFog = config.effects.fog,
-          width = gl.canvas.width,
-          height = gl.canvas.height,
+          canvas = gl.canvas,
+          viewport = opt.viewport || {},
+          pixelRatio = opt.pixelRatio || 1,
+          width = (viewport.width || canvas.offsetWidth || canvas.width),
+          height = (viewport.height || canvas.offsetHeight || canvas.height),
           floor = Math.floor,
-          pickingRes = Scene.PICKING_RES,
           resWidth = 5,
           resHeight = 1,
-          ndcx = x * 2 / width - 1,
-          ndcy = 1 - y * 2 / height,
+          xp = (x * pixelRatio - (viewport.x || 0)),
+          yp = (y * pixelRatio - (viewport.y || 0)),
+          ndcx = xp * 2 / width - 1,
+          ndcy = 1 - yp * 2 / height,
           target = this.unproject([ndcx, ndcy,  1.0], camera),
           hash = [],
           pixel = new Uint8Array(1 * 1 * 4),
@@ -349,6 +360,8 @@
           elem = o3dHash[stringColor],
           pick;
 
+     //console.log('o3dHash', stringColor, x, y, width, height);
+
       if (!elem) {
         for (var i = 0, l = o3dList.length; i < l; i++) {
           elem = o3dList[i];
@@ -364,6 +377,7 @@
       //restore all values and unbind buffers
       app.setFrameBuffer('$picking', false);
       app.setTexture('$picking-texture', false);
+      pickingProgram.use();
       pickingProgram.setUniform('enablePicking', false);
       config.lights.enable = memoLightEnable;
       config.effects.fog = memoFog;
@@ -371,7 +385,10 @@
       //restore previous program
       if (program) program.use();
       //restore the viewport size to original size
-      gl.viewport(0, 0, width, height);
+      gl.viewport(viewport.x || 0,
+    		          viewport.y || 0,
+    		          width,
+    		          height);
       //restore camera properties
       camera.target = oldtarget;
       camera.aspect = oldaspect;

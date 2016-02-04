@@ -4,7 +4,7 @@
 
 (function() {
   //First, some privates to handle compiling/linking shaders to programs.
-  
+
   //Creates a shader from a string source.
   var createShader = function(gl, shaderSource, shaderType) {
     var shader = gl.createShader(shaderType);
@@ -23,7 +23,7 @@
     }
     return shader;
   };
-  
+
   //Creates a program from vertex and fragment shader sources.
   var createProgram = function(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
@@ -36,7 +36,7 @@
     linkProgram(gl, program);
     return program;
   };
-  
+
   var getpath = function(path) {
     var last = path.lastIndexOf('/');
     if (last == '/') {
@@ -81,7 +81,7 @@
     } else {
       return callback(source);
     }
-  };  
+  };
 
   //Link a program.
   var linkProgram = function(gl, program) {
@@ -117,7 +117,7 @@
           break;
       }
     }
-    
+
     if (vector) {
       switch (type) {
         case gl.FLOAT:
@@ -165,34 +165,27 @@
       }
     }
 
-    //TODO(nico): Safari 5.1 doesn't have Function.prototype.bind.
-    //remove this check when they implement it.
-    if (glFunction.bind) {
-      glFunction = glFunction.bind(gl);
-    } else {
-      var target = glFunction;
-      glFunction = function() { target.apply(gl, arguments); };
-    }
+    glFunction = glFunction.bind(gl);
 
     //Set a uniform array
     if (isArray && typedArray) {
       return function(val) {
         glFunction(loc, new typedArray(val));
       };
-    
+
     //Set a matrix uniform
     } else if (matrix) {
       return function(val) {
         glFunction(loc, false, val.toFloat32Array());
       };
-    
+
     //Set a vector/typed array uniform
     } else if (typedArray) {
       return function(val) {
         typedArray.set(val.toFloat32Array ? val.toFloat32Array() : val);
         glFunction(loc, typedArray);
       };
-    
+
     //Set a primitive-valued uniform
     } else {
       return function(val) {
@@ -209,12 +202,12 @@
   var Program = function(vertexShader, fragmentShader) {
     var program = createProgram(gl, vertexShader, fragmentShader);
     if (!program) return false;
-    
+
     var attributes = {},
         attributeEnabled = {},
         uniforms = {},
         info, name, index;
-  
+
     //fill attribute locations
     var len = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var i = 0; i < len; i++) {
@@ -223,7 +216,7 @@
       index = gl.getAttribLocation(program, info.name);
       attributes[name] = index;
     }
-    
+
     //create uniform setters
     len = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
     for (i = 0; i < len; i++) {
@@ -242,7 +235,7 @@
   };
 
   Program.prototype = {
-    
+
     $$family: 'program',
 
     setUniform: function(name, val) {
@@ -269,7 +262,7 @@
     };
   });
 
-  ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer', 
+  ['setFrameBuffer', 'setFrameBuffers', 'setRenderBuffer',
    'setRenderBuffers', 'setTexture', 'setTextures'].forEach(function(name) {
     Program.prototype[name] = function() {
       app[name].apply(app, arguments);
@@ -311,7 +304,7 @@
         try {
           var program = new Program(vectexShader, fragmentShader);
           if(opt.onSuccess) {
-            opt.onSuccess(program, opt); 
+            opt.onSuccess(program, opt);
           } else {
             return program;
           }

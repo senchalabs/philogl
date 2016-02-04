@@ -1,0 +1,29 @@
+{
+  "name": "PhiloGL",
+  "version": "1.5.3",
+  "description": "A WebGL Framework for Data Visualization, Creative Coding and Game Development.",
+  "keywords": [
+    "dom",
+    "w3c",
+    "visualization",
+    "WebGL",
+    "animation"
+  ],
+  "main": "build/PhiloGL.js",
+  "homepage": "http://senchalabs.org/philogl",
+  "author": {
+    "name": "Nicolas Garcia Belmonte",
+    "url": "http://philogb.github.io/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philogb/philogl.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/philogb/philogl/blob/master/LICENSE"
+    }
+  ]
+}
+

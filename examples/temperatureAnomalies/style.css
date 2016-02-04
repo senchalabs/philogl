@@ -1,6 +1,13 @@
+@font-face {
+  font-family: 'Crimson Text';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Crimson Text'), local('CrimsonText-Roman'), url(font.woff) format('woff');
+}
+
 html, body {
   text-align: center;
-  font-family: 'Crimson Text', Verdana;
+  font-family: 'Crimson Text', Times, Verdana;
   margin: 0;
   padding: 0;
 }
@@ -107,7 +114,7 @@ h1 {
   -webkit-box-shadow: #333 0 0 3px;
   -o-box-shadow: #333 0 0 3px;
   -moz-box-shadow: #333 0 0 3px;
-  box-shadow: #333 0 0 3px;  
+  box-shadow: #333 0 0 3px;
 }
 
 #controls .title {

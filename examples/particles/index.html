@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PhiloGL - Picking Test</title>
+    <title>PhiloGL - Surface Explorer</title>
     <link href='http://fonts.googleapis.com/css?family=Crimson+Text' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" media="all" type="text/css" href="style.css" />
     <script type="text/javascript" src="../../build/PhiloGL.js"></script>
-    <script type="text/javascript" src="balls.js"></script>
+    <script type="text/javascript" src="explorer.js"></script>
   </head>
-  <body onload="setTimeout(init, 200);">
+  <body>
     <div id="container">
 
       <div id="title">
-        <h1>Picking Test</h1>
+        <h1>Ripples</h1>
       </div>
 
       <div class="controls">
-        Shapes, picking and fog test. (Because of the configuration, not a lib limitation!) Cones and Spheres are pickable only.
+        Using floating point buffers and vertex shader textures to simulate ripples and waves.
       </div>
 
       <div id="canvas-container">
-        <canvas id="surface-explorer-canvas" width="900" height="500"></canvas>
+        <canvas id="surface-explorer-canvas" width="900" height="450"></canvas>
+        <!--<canvas id="surface-explorer-canvas" width="1024" height="1024"></canvas>-->
       </div>
 
       <div class="footer">
-        Copyright &copy; <a href="http://blog.thejit.org/">Nicolas Garcia Belmonte</a>.
+        by <a href="https://twitter.com/philogb">@philogb</a>.
       </div>
 
     </div>

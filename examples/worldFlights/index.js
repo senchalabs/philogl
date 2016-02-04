@@ -423,8 +423,9 @@ function createApp() {
     textures: {
       src: ['img/lala.jpg']
     },
-    onError: function() {
-      Log.write("There was an error creating the app.", true);
+    onError: function(e) {
+      Log.write("There was an error creating the app. ", true);
+      console.log(e);
     },
     onLoad: function(app) {
       Log.write('Done.', true);

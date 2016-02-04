@@ -91,8 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
           ctx = drawCanvas.getContext('2d'),
           rgb;
 
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      gl.enable(gl.BLEND);
       gl.disable(gl.DEPTH_TEST);
 
       draw();
@@ -104,6 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
         rgb = glStyle.backgroundColor.match(/rgb\((.+),(.+),(.+)\)/);
         gl.clearColor(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
+
+        app.program.setUniform('background', [rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1]);
 
         app.setTexture('pattern', {
           data: {

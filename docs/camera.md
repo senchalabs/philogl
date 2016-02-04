@@ -1,5 +1,5 @@
---- 
-layout: docs 
+---
+layout: docs
 title: Camera
 categories: [Documentation]
 ---
@@ -41,6 +41,7 @@ The Camera object, used as eye to project the scene into.
 
 * position - (*object*) An x, y, z object with the camera position.
 * target - (*object*) An x, y, z object with the target position.
+* type - (*string*, optional) The type of projection. Either "perspective" or "orthographic". Default's "perspective".
 
 ### Examples:
 
@@ -51,7 +52,7 @@ Creates a camera with position (0, 0, 10) pointing to a target in (0, 0, 0).
   var camera = new PhiloGL.Camera(45, canvas.width / canvas.height, 0.1, 100, {
         position: {
           x: 0, y: 0, z: 10
-        }                             
+        }
       });
 {% endhighlight %}
 
@@ -71,7 +72,7 @@ Updates the Camera *view* matrix with the information provided on *position* and
   var camera = new PhiloGL.Camera(45, canvas.width / canvas.height, 0.1, 100, {
     position: {
       x: 0, y: 0, z: 10
-    }                             
+    }
   });
 
   camera.position = {

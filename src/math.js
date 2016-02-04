@@ -2,7 +2,7 @@
 //Vec3, Mat4 and Quat classes
 
 (function() {
-  var sqrt = Math.sqrt, 
+  var sqrt = Math.sqrt,
       sin = Math.sin,
       cos = Math.cos,
       tan = Math.tan,
@@ -46,7 +46,7 @@
       this[1] = y || 0;
       this[2] = z || 0;
     } else {
-      
+
       this.push(x || 0,
                 y || 0,
                 z || 0);
@@ -65,14 +65,14 @@
     $$family: {
       value: 'Vec3'
     },
-    
+
     x: descriptor(0),
     y: descriptor(1),
     z: descriptor(2)
   });
 
   var generics = {
-    
+
     setVec3: function(dest, vec) {
       dest[0] = vec[0];
       dest[1] = vec[1];
@@ -86,53 +86,53 @@
       dest[2] = z;
       return dest;
     },
-    
+
     add: function(dest, vec) {
       return new Vec3(dest[0] + vec[0],
-                      dest[1] + vec[1], 
+                      dest[1] + vec[1],
                       dest[2] + vec[2]);
     },
-    
+
     $add: function(dest, vec) {
       dest[0] += vec[0];
       dest[1] += vec[1];
       dest[2] += vec[2];
       return dest;
     },
-    
+
     add2: function(dest, a, b) {
       dest[0] = a[0] + b[0];
       dest[1] = a[1] + b[1];
       dest[2] = a[2] + b[2];
       return dest;
     },
-    
+
     sub: function(dest, vec) {
       return new Vec3(dest[0] - vec[0],
-                      dest[1] - vec[1], 
+                      dest[1] - vec[1],
                       dest[2] - vec[2]);
     },
-    
+
     $sub: function(dest, vec) {
       dest[0] -= vec[0];
       dest[1] -= vec[1];
       dest[2] -= vec[2];
       return dest;
     },
-    
+
     sub2: function(dest, a, b) {
       dest[0] = a[0] - b[0];
       dest[1] = a[1] - b[1];
       dest[2] = a[2] - b[2];
       return dest;
     },
-    
+
     scale: function(dest, s) {
       return new Vec3(dest[0] * s,
                       dest[1] * s,
                       dest[2] * s);
     },
-    
+
     $scale: function(dest, s) {
       dest[0] *= s;
       dest[1] *= s;
@@ -155,7 +155,7 @@
 
     unit: function(dest) {
       var len = Vec3.norm(dest);
-      
+
       if (len > 0) {
         return Vec3.scale(dest, 1 / len);
       }
@@ -170,7 +170,7 @@
       }
       return dest;
     },
-    
+
     cross: function(dest, vec) {
       var dx = dest[0],
           dy = dest[1],
@@ -178,12 +178,12 @@
           vx = vec[0],
           vy = vec[1],
           vz = vec[2];
-      
+
       return new Vec3(dy * vz - dz * vy,
                       dz * vx - dx * vz,
                       dx * vy - dy * vx);
     },
-    
+
     $cross: function(dest, vec) {
       var dx = dest[0],
           dy = dest[1],
@@ -202,9 +202,9 @@
       var dx = dest[0] - vec[0],
           dy = dest[1] - vec[1],
           dz = dest[2] - vec[2];
-      
-      return sqrt(dx * dx + 
-                  dy * dy + 
+
+      return sqrt(dx * dx +
+                  dy * dy +
                   dz * dz);
     },
 
@@ -244,7 +244,7 @@
           var ans = dest.typedContainer;
 
           if (!ans) return dest;
-          
+
           ans[0] = dest[0];
           ans[1] = dest[1];
           ans[2] = dest[2];
@@ -252,7 +252,7 @@
           return ans;
     }
   };
-  
+
   //add generics and instance methods
   var proto = Vec3.prototype;
   for (var method in generics) {
@@ -260,7 +260,7 @@
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Vec3[m].apply(Vec3, args);
       };
@@ -272,18 +272,18 @@
                       n21, n22, n23, n24,
                       n31, n32, n33, n34,
                       n41, n42, n43, n44) {
-    
+
     ArrayImpl.call(this, 16);
 
     this.length = 16;
-    
+
     if (typeof n11 == 'number') {
-      
+
       this.set(n11, n12, n13, n14,
                n21, n22, n23, n24,
                n31, n32, n33, n34,
                n41, n42, n43, n44);
-    
+
     } else {
       this.id();
     }
@@ -297,16 +297,16 @@
 
   //create fancy components setters and getters.
   Mat4.prototype = Object.create(ArrayImpl.prototype, {
-    
+
     $$family: {
       value: 'Mat4'
     },
-    
+
     n11: descriptor(0),
     n12: descriptor(4),
     n13: descriptor(8),
     n14: descriptor(12),
-    
+
     n21: descriptor(1),
     n22: descriptor(5),
     n23: descriptor(9),
@@ -321,13 +321,13 @@
     n42: descriptor(7),
     n43: descriptor(11),
     n44: descriptor(15)
-  
+
   });
 
   generics = {
-    
+
     id: function(dest) {
-      
+
       dest[0 ] = 1;
       dest[1 ] = 0;
       dest[2 ] = 0;
@@ -344,7 +344,7 @@
       dest[13] = 0;
       dest[14] = 0;
       dest[15] = 1;
-      
+
       return dest;
     },
 
@@ -363,7 +363,7 @@
                         n21, n22, n23, n24,
                         n31, n32, n33, n34,
                         n41, n42, n43, n44) {
-      
+
       dest[0 ] = n11;
       dest[4 ] = n12;
       dest[8 ] = n13;
@@ -380,7 +380,7 @@
       dest[7 ] = n42;
       dest[11] = n43;
       dest[15] = n44;
-      
+
       return dest;
     },
 
@@ -434,7 +434,7 @@
       dest[15] = b41 * a14 + b42 * a24 + b43 * a34 + b44 * a44;
       return dest;
     },
-    
+
     mulMat4: function(a, b) {
       var m = Mat4.clone(a);
       return Mat4.mulMat42(m, a, b);
@@ -448,7 +448,7 @@
       var copy = Mat4.clone(dest);
       return Mat4.$add(copy, m);
     },
-   
+
     $add: function(dest, m) {
       dest[0 ] += m[0];
       dest[1 ] += m[1];
@@ -466,7 +466,7 @@
       dest[13] += m[13];
       dest[14] += m[14];
       dest[15] += m[15];
-      
+
       return dest;
     },
 
@@ -503,20 +503,20 @@
     },
 
     $rotateAxis: function(dest, theta, vec) {
-      var s = sin(theta), 
-          c = cos(theta), 
+      var s = sin(theta),
+          c = cos(theta),
           nc = 1 - c,
-          vx = vec[0], 
-          vy = vec[1], 
+          vx = vec[0],
+          vy = vec[1],
           vz = vec[2],
-          m11 = vx * vx * nc + c, 
-          m12 = vx * vy * nc + vz * s, 
+          m11 = vx * vx * nc + c,
+          m12 = vx * vy * nc + vz * s,
           m13 = vx * vz * nc - vy * s,
-          m21 = vy * vx * nc - vz * s, 
-          m22 = vy * vy * nc + c, 
+          m21 = vy * vx * nc - vz * s,
+          m22 = vy * vy * nc + c,
           m23 = vy * vz * nc + vx * s,
-          m31 = vx * vz * nc + vy * s, 
-          m32 = vy * vz * nc - vx * s, 
+          m31 = vx * vz * nc + vy * s,
+          m32 = vy * vz * nc - vx * s,
           m33 = vz * vz * nc + c,
           d11 = dest[0],
           d12 = dest[1],
@@ -534,7 +534,7 @@
           d42 = dest[13],
           d43 = dest[14],
           d44 = dest[15];
-      
+
       dest[0 ] = d11 * m11 + d21 * m12 + d31 * m13;
       dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
       dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
@@ -580,9 +580,9 @@
           m11 =  cry * crz,
           m21 = -crx * srz + srx * sry * crz,
           m31 =  srx * srz + crx * sry * crz,
-          m12 =  cry * srz, 
-          m22 =  crx * crz + srx * sry * srz, 
-          m32 = -srx * crz + crx * sry * srz, 
+          m12 =  cry * srz,
+          m22 =  crx * crz + srx * sry * srz,
+          m32 = -srx * crz + crx * sry * srz,
           m13 = -sry,
           m23 =  srx * cry,
           m33 =  crx * cry;
@@ -591,12 +591,12 @@
       dest[1 ] = d12 * m11 + d22 * m12 + d32 * m13;
       dest[2 ] = d13 * m11 + d23 * m12 + d33 * m13;
       dest[3 ] = d14 * m11 + d24 * m12 + d34 * m13;
-      
+
       dest[4 ] = d11 * m21 + d21 * m22 + d31 * m23;
       dest[5 ] = d12 * m21 + d22 * m22 + d32 * m23;
       dest[6 ] = d13 * m21 + d23 * m22 + d33 * m23;
       dest[7 ] = d14 * m21 + d24 * m22 + d34 * m23;
-      
+
       dest[8 ] = d11 * m31 + d21 * m32 + d31 * m33;
       dest[9 ] = d12 * m31 + d22 * m32 + d32 * m33;
       dest[10] = d13 * m31 + d23 * m32 + d33 * m33;
@@ -615,7 +615,7 @@
       dest[13] = dest[1 ] * x + dest[5 ] * y + dest[9 ] * z + dest[13];
       dest[14] = dest[2 ] * x + dest[6 ] * y + dest[10] * z + dest[14];
       dest[15] = dest[3 ] * x + dest[7 ] * y + dest[11] * z + dest[15];
-      
+
       return dest;
     },
 
@@ -638,7 +638,7 @@
       dest[9 ] *= z;
       dest[10] *= z;
       dest[11] *= z;
-      
+
       return dest;
     },
 
@@ -689,7 +689,7 @@
       return dest;
 
     },
-    //TODO(nico) breaking convention here... 
+    //TODO(nico) breaking convention here...
     //because I don't think it's useful to add
     //two methods for each of these.
     lookAt: function(dest, eye, center, up) {
@@ -709,7 +709,7 @@
       var rl = right - left,
           tb = top - bottom,
           fn = far - near;
-          
+
       dest[0] = (near * 2) / rl;
       dest[1] = 0;
       dest[2] = 0;
@@ -739,36 +739,53 @@
       return Mat4.frustum(dest, xmin, xmax, ymin, ymax, near, far);
     },
 
-    ortho: function(dest, left, right, bottom, top, near, far) {
-      var rl = right - left,
-          tb = top - bottom,
-          fn = far - near;
+    //ortho: function(dest, left, right, bottom, top, near, far) {
+      //var rl = right - left,
+          //tb = top - bottom,
+          //fn = far - near;
 
-      dest[0] = 2 / rl;
-      dest[1] = 0;
-      dest[2] = 0;
-      dest[3] = 0;
-      dest[4] = 0;
-      dest[5] = 2 / tb;
-      dest[6] = 0;
-      dest[7] = 0;
-      dest[8] = 0;
-      dest[9] = 0;
-      dest[10] = -2 / fn;
-      dest[11] = 0;
-      dest[12] = -(left + right) / rl;
-      dest[13] = -(top + bottom) / tb;
-      dest[14] = -(far + near) / fn;
-      dest[15] = 1;
+      //dest[0] = 2 / rl;
+      //dest[1] = 0;
+      //dest[2] = 0;
+      //dest[3] = 0;
+      //dest[4] = 0;
+      //dest[5] = 2 / tb;
+      //dest[6] = 0;
+      //dest[7] = 0;
+      //dest[8] = 0;
+      //dest[9] = 0;
+      //dest[10] = -2 / fn;
+      //dest[11] = 0;
+      //dest[12] = -(left + right) / rl;
+      //dest[13] = -(top + bottom) / tb;
+      //dest[14] = -(far + near) / fn;
+      //dest[15] = 1;
+
+      //return dest;
+    //},
+
+    ortho: function (dest, left, right, top, bottom, near, far) {
+      var te = this.elements,
+          w = right - left,
+          h = top - bottom,
+          p = far - near,
+          x = (right + left) / w,
+          y = (top + bottom) / h,
+          z = (far + near) / p;
+
+      dest[0] = 2 / w;	dest[4] = 0;	dest[8] = 0;	dest[12] = -x;
+      dest[1] = 0;	dest[5] = 2 / h;	dest[9] = 0;	dest[13] = -y;
+      dest[2] = 0;	dest[6] = 0;	dest[10] = -2/p;	dest[14] = -z;
+      dest[3] = 0;	dest[7] = 0;	dest[11] = 0;	dest[15] = 1;
 
       return dest;
-    },
+  	},
 
     toFloat32Array: function(dest) {
           var ans = dest.typedContainer;
 
           if (!ans) return dest;
-          
+
           ans[0] = dest[0];
           ans[1] = dest[1];
           ans[2] = dest[2];
@@ -789,7 +806,7 @@
           return ans;
     }
   };
-  
+
   //add generics and instance methods
   proto = Mat4.prototype;
   for (method in generics) {
@@ -797,7 +814,7 @@
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Mat4[m].apply(Mat4, args);
       };
@@ -839,7 +856,7 @@
 
       return dest;
     },
-    
+
     clone: function(dest) {
       if (dest.$$family) {
         return new Quat(dest[0], dest[1], dest[2], dest[3]);
@@ -857,7 +874,7 @@
       dest[1] = -dest[1];
       dest[2] = -dest[2];
       dest[3] = -dest[3];
-      
+
       return dest;
     },
 
@@ -873,7 +890,7 @@
       dest[1] += q[1];
       dest[2] += q[2];
       dest[3] += q[3];
-      
+
       return dest;
     },
 
@@ -889,7 +906,7 @@
       dest[1] -= q[1];
       dest[2] -= q[2];
       dest[3] -= q[3];
-      
+
       return dest;
     },
 
@@ -905,7 +922,7 @@
       dest[1] *= s;
       dest[2] *= s;
       dest[3] *= s;
-      
+
       return dest;
     },
 
@@ -954,7 +971,7 @@
           bW = q[3];
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
-      
+
       return new Quat((aX * bW - aW * bX - aY * bZ + aZ * bY) * d,
                       (aX * bZ - aW * bY + aY * bW - aZ * bX) * d,
                       (aY * bX + aZ * bW - aW * bZ - aX * bY) * d,
@@ -972,7 +989,7 @@
           bW = q[3];
 
       var d = 1 / (bW * bW + bX * bX + bY * bY + bZ * bZ);
-      
+
       dest[0] = (aX * bW - aW * bX - aY * bZ + aZ * bY) * d;
       dest[1] = (aX * bZ - aW * bY + aY * bW - aZ * bX) * d;
       dest[2] = (aY * bX + aZ * bW - aW * bZ - aX * bY) * d;
@@ -988,7 +1005,7 @@
           q3 = dest[3];
 
       var d = 1 / (q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
-      
+
       return new Quat(-q0 * d, -q1 * d, -q2 * d, q3 * d);
     },
 
@@ -1004,7 +1021,7 @@
       dest[1] = -q1 * d;
       dest[2] = -q2 * d;
       dest[3] =  q3 * d;
-      
+
       return dest;
     },
 
@@ -1045,7 +1062,7 @@
       dest[0] = -dest[0];
       dest[1] = -dest[1];
       dest[2] = -dest[2];
-      
+
       return dest;
     }
   };
@@ -1056,13 +1073,13 @@
     proto[method] = (function (m) {
       return function() {
         var args = slice.call(arguments);
-        
+
         args.unshift(this);
         return Quat[m].apply(Quat, args);
       };
    })(method);
   }
-  
+
   //Add static methods
   Vec3.fromQuat = function(q) {
     return new Vec3(q[0], q[1], q[2]);
@@ -1095,7 +1112,7 @@
 
     var r = sqrt(1 + m[u * 5] - m[v * 5] - m[w * 5]);
     var q = new Quat;
-    
+
     q[u] = 0.5 * r;
     q[v] = 0.5 * (m['n' + v + '' + u] + m['n' + u + '' + v]) / r;
     q[w] = 0.5 * (m['n' + u + '' + w] + m['n' + w + '' + u]) / r;
@@ -1103,7 +1120,7 @@
 
     return q;
   };
-  
+
   Quat.fromXRotation = function(angle) {
     return new Quat(sin(angle / 2), 0, 0, cos(angle / 2));
   };
@@ -1129,13 +1146,13 @@
                     s * z * d,
                     c);
   };
-  
+
   Mat4.fromQuat = function(q) {
     var a = q[3],
         b = q[0],
         c = q[1],
         d = q[2];
-    
+
     return new Mat4(a * a + b * b - c * c - d * d, 2 * b * c - 2 * a * d, 2 * b * d + 2 * a * c, 0,
                     2 * b * c + 2 * a * d, a * a - b * b + c * c - d * d, 2 * c * d - 2 * a * b, 0,
                     2 * b * d - 2 * a * c, 2 * c * d + 2 * a * b, a * a - b * b - c * c + d * d, 0,

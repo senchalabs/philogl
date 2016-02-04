@@ -1,9 +1,14 @@
+Important
+====================================
+
+Work on PhiloGL has been discontinued since Sep 2012. An updated framework with similar notions is being developed [here](https://github.com/uber-common/luma.gl).
+ 
 PhiloGL: A JavaScript WebGL Framework
 =====================================
 
 Author: [Nicolas Garcia Belmonte](http://philogb.github.com/). More information in the [home page of the project](http://senchalabs.github.com/philogl/)!
 
-      Copyright (c) 2011 Sencha Labs (http://senchalabs.org/).
+      Copyright (c) Sencha Labs (http://senchalabs.org/).
 
       Permission is hereby granted, free of charge, to any person obtaining a copy
       of this software and associated documentation files (the "Software"), to deal
